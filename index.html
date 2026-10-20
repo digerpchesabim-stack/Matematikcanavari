@@ -47,6 +47,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .ghost{background:transparent;color:var(--accent);border:2px solid var(--accent);border-radius:16px;padding:14px;font-size:17px;font-weight:600;width:100%;margin-bottom:12px}
 .inp{width:100%;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:14px;font-size:17px;margin-bottom:10px}
 .card{display:block;width:100%;height:auto;max-width:380px;margin:0 auto 14px;border-radius:18px}
+.card.wide{max-width:none;border:1px solid var(--line)}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1d2433;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
 </style>
 </head>
@@ -60,7 +61,7 @@ var OPS={
   mul:{name:'Çarpma',sym:'×',mode:false},
   div:{name:'Bölme',sym:'÷',mode:false}
 };
-var PTS=100,ROUND=10;
+var PTS=100;
 var st={screen:'welcome',op:null,eldeli:null,d:null,q:null,idx:0,score:0,ok:0,bad:0,streak:0,seen:{},picked:null,profile:null,last:null};
 var app=document.getElementById('app');
 
@@ -145,21 +146,22 @@ function drawCard(cv,L){
   c.fillStyle='rgba(255,255,255,.6)';c.font='400 32px '+FONT;c.fillText(fmtDate(new Date()),W/2,1295);
 }
 
+function fmtTime(d){return pad(d.getHours())+':'+pad(d.getMinutes())}
 function histData(){
-  var recs=records().filter(function(r){return r.p===st.profile}).sort(function(a,b){return a.t<b.t?1:-1});
+  var cut=Date.now()-14*86400000;
+  var recs=records().filter(function(r){return r.p===st.profile&&new Date(r.t).getTime()>=cut}).sort(function(a,b){return a.t<b.t?1:-1}).slice(0,80);
   var days=[],map={};
   recs.forEach(function(r){
-    var day=fmtDate(new Date(r.t));
-    if(!map[day]){map[day]={day:day,cats:[],cm:{},total:0};days.push(map[day])}
-    var m=map[day],lab=catLabel(r.op,r.e,r.d);
-    if(!m.cm[lab]){m.cm[lab]={lab:lab,s:0,n:0,ok:0,bad:0};m.cats.push(m.cm[lab])}
-    var x=m.cm[lab];x.s+=r.s;x.n++;x.ok+=r.ok;x.bad+=r.bad;m.total+=r.s;
+    var dt=new Date(r.t),day=fmtDate(dt);
+    if(!map[day]){map[day]={day:day,rows:[],total:0};days.push(map[day])}
+    map[day].rows.push({lab:catLabel(r.op,r.e,r.d),dt:dt,s:r.s,ok:r.ok,bad:r.bad});
+    map[day].total+=r.s;
   });
-  return days.slice(0,14);
+  return days;
 }
 function drawHistory(cv){
   var days=histData(),W=1080,H=500,total=0,y,c;
-  days.forEach(function(d){total+=d.total;H+=100+d.cats.length*100});
+  days.forEach(function(d){total+=d.total;H+=100+d.rows.length*120});
   if(!days.length)H+=140;
   H+=70;
   cv.width=W;cv.height=H;c=cv.getContext('2d');
@@ -169,20 +171,22 @@ function drawHistory(cv){
   c.fillStyle='#1d2433';c.font='800 46px '+FONT;c.fillText('Matematik Canavarı · '+st.profile,W/2,385);
   c.fillStyle='#6b7385';c.font='500 36px '+FONT;c.fillText('Son 14 gün · Toplam: '+total+' puan',W/2,440);
   y=500;
-  if(!days.length){c.fillStyle='#6b7385';c.font='500 40px '+FONT;c.fillText('Henüz kayıtlı tur yok.',W/2,y+80)}
+  if(!days.length){c.fillStyle='#6b7385';c.font='500 40px '+FONT;c.fillText('Henüz kayıtlı skor yok.',W/2,y+80)}
   days.forEach(function(d){
     c.textAlign='left';c.fillStyle='#7048e8';c.font='800 44px '+FONT;c.fillText(d.day,70,y+55);
-    c.textAlign='right';c.fillStyle='#1d2433';c.font='800 42px '+FONT;c.fillText(d.total+' puan',W-70,y+55);
+    c.textAlign='right';c.fillStyle='#1d2433';c.font='800 42px '+FONT;c.fillText('Gün toplamı: '+d.total,W-70,y+55);
     c.fillStyle='#e0daf0';c.fillRect(70,y+75,W-140,3);
     y+=100;
-    d.cats.forEach(function(x){
-      c.textAlign='left';c.fillStyle='#1d2433';c.font='600 34px '+FONT;c.fillText(x.lab,70,y+36);
-      c.fillStyle='#6b7385';c.font='400 28px '+FONT;c.fillText(x.n+' tur · '+x.ok+' doğru · '+x.bad+' yanlış',70,y+76);
-      c.textAlign='right';c.fillStyle='#1d2433';c.font='800 38px '+FONT;c.fillText(x.s+' puan',W-70,y+52);
-      y+=100;
+    d.rows.forEach(function(x){
+      c.textAlign='left';c.fillStyle='#1d2433';c.font='700 34px '+FONT;c.fillText(x.lab,70,y+38);
+      c.fillStyle='#6b7385';c.font='400 28px '+FONT;
+      c.fillText(fmtDate(x.dt)+' '+fmtTime(x.dt)+' · '+(x.ok+x.bad)+' soru · '+x.ok+' doğru · '+x.bad+' yanlış',70,y+84);
+      c.textAlign='right';c.fillStyle=x.s<0?'#d64545':'#1f9d55';c.font='800 40px '+FONT;
+      c.fillText((x.s>0?'+':'')+x.s+' puan',W-70,y+52);
+      y+=120;
     });
   });
-  c.textAlign='center';c.fillStyle='#9aa3b5';c.font='400 28px '+FONT;c.fillText(fmtDate(new Date()),W/2,H-30);
+  c.textAlign='center';c.fillStyle='#9aa3b5';c.font='400 28px '+FONT;c.fillText(fmtDate(new Date())+' '+fmtTime(new Date()),W/2,H-30);
 }
 
 function shareCanvas(cv,name){
@@ -217,7 +221,7 @@ function topBar(t){return '<div class="top"><button class="back" onclick="back()
 function render(){
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Doğru bil 100 puan kazan,<br>yanlış yaparsan 100 puan kaybet!</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Doğru bil 100 puan kazan,<br>yanlış yaparsan 100 puan kaybet!</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 3</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button>'});
@@ -242,28 +246,32 @@ function render(){
     h+='</div>';
   }else if(s==='quiz'){
     var q=st.q,tag=catLabel(st.op,st.eldeli,st.d);
-    h=topBar('Soru '+(st.idx+1)+'/'+ROUND)+'<div class="score">'+
+    h=topBar('Soru '+(st.idx+1))+'<div class="score">'+
       '<div class="pill main"><b id="p-sc">'+st.score+'</b>PUAN</div>'+
       '<div class="pill"><b id="p-ok">'+st.ok+'</b>Doğru</div>'+
       '<div class="pill"><b id="p-bad">'+st.bad+'</b>Yanlış</div>'+
       '<div class="pill"><b id="p-st">'+st.streak+'</b>Seri</div></div>'+
       '<div class="tag">'+tag+'</div><div class="q">'+q.text+'</div><div class="col" id="opts">';
     q.opts.forEach(function(v){h+='<button class="btn opt" data-v="'+v+'" onclick="answer('+v+',this)">'+v+'</button>'});
-    h+='</div><div class="msg" id="msg"></div><button class="next" id="next" hidden onclick="nextQ()">'+(st.idx===ROUND-1?'Sonucu Gör':'Sonraki soru →')+'</button>';
+    h+='</div><div class="msg" id="msg"></div><button class="next" id="next" hidden onclick="nextQ()">Sonraki soru →</button><button class="ghost" onclick="finish()">🏁 Bitir ve Skoru Gör</button><div class="tag" id="saved"></div>';
   }else if(s==='summary'){
-    h=topBar('Tur bitti!')+'<canvas id="card" class="card"></canvas>'+
+    h=topBar('Skorun')+'<canvas id="card" class="card"></canvas>'+
       (st.profile?'':'<p class="sub center">Misafir oturumu: bu sonuç kaydedilmedi.</p>')+
       '<button class="next" onclick="saveCard()">📷 Fotoğrafı Kaydet / Paylaş</button>'+
-      '<button class="ghost" onclick="pickDigits('+st.d+')">Tekrar Oyna</button>'+
+      '<button class="ghost" onclick="pickDigits('+st.d+')">Yeni Oturum</button>'+
       '<button class="ghost" onclick="go(\'home\')">Menüye Dön</button>';
   }else if(s==='history'){
-    h=topBar('Skorlarım')+'<canvas id="hist" class="card"></canvas><button class="next" onclick="saveHist()">📷 Fotoğrafı Kaydet / Paylaş</button>';
+    h=topBar('Skorlarım')+'<button class="next" onclick="saveHist()">📷 Fotoğrafı Kaydet / Paylaş</button><p class="sub center" id="hint"></p><canvas id="hist" class="card wide"></canvas>';
   }
   app.innerHTML=h;
   window.scrollTo(0,0);
   if(s==='welcome')drawMonster(document.getElementById('mon').getContext('2d'),240,245,150);
   if(s==='summary')drawCard(document.getElementById('card'),st.last);
-  if(s==='history')drawHistory(document.getElementById('hist'));
+  if(s==='history'){
+    drawHistory(document.getElementById('hist'));
+    var all=records(),mine=all.filter(function(r){return r.p===st.profile}).length;
+    document.getElementById('hint').textContent='Bu telefonda toplam '+all.length+' kayıt var, '+st.profile+' için '+mine+' kayıt.';
+  }
 }
 
 function pickProfile(i){st.profile=profiles()[i];go('home')}
@@ -277,7 +285,7 @@ function createProfile(){
 }
 function pickOp(k){st.op=k;st.eldeli=null;go(OPS[k].mode?'mode':'digits')}
 function pickMode(e){st.eldeli=e;go('digits')}
-function pickDigits(d){st.d=d;st.idx=0;st.score=0;st.ok=0;st.bad=0;st.streak=0;st.seen={};newQ();go('quiz')}
+function pickDigits(d){st.d=d;st.sid=Date.now();st.t=new Date().toISOString();st.idx=0;st.score=0;st.ok=0;st.bad=0;st.streak=0;st.seen={};newQ();go('quiz')}
 
 function answer(v,el){
   if(st.picked!==null)return;
@@ -293,18 +301,22 @@ function answer(v,el){
   document.getElementById('p-bad').textContent=st.bad;
   document.getElementById('p-st').textContent=st.streak;
   document.getElementById('next').hidden=false;
+  var saved=saveProgress(),sv=document.getElementById('saved');
+  sv.textContent=st.profile===null?'👤 Misafir: skor kaydedilmiyor':(saved?'💾 Skor kaydedildi':'⚠️ Kaydedilemedi (tarayıcı depolaması kapalı)');
+  sv.style.color=(saved||st.profile===null)?'var(--muted)':'var(--bad)';
 }
-function nextQ(){
-  if(st.idx===ROUND-1)return finish();
-  st.idx++;newQ();render();
+function nextQ(){st.idx++;newQ();render()}
+function saveProgress(){
+  if(st.profile===null)return true;
+  var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad};
+  for(i=l.length-1;i>=0;i--){if(l[i].id===st.sid){l[i]=r;break}}
+  if(i<0)l.push(r);
+  var done=lsSet('mc_records',l);
+  if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
+  return done;
 }
 function finish(){
   st.last={score:st.score,ok:st.ok,bad:st.bad,label:catLabel(st.op,st.eldeli,st.d)};
-  if(st.profile!==null){
-    var l=records();
-    l.push({p:st.profile,t:new Date().toISOString(),op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad});
-    if(!lsSet('mc_records',l))toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
-  }
   go('summary');
 }
 
