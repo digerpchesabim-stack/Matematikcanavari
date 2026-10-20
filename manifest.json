@@ -1,0 +1,16 @@
+{
+  "name": "Matematik Canavarı",
+  "short_name": "Mat. Canavarı",
+  "description": "4 işlem pratik uygulaması",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#6d3df2",
+  "theme_color": "#7048e8",
+  "lang": "tr",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
