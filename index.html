@@ -48,12 +48,34 @@ h1{font-size:28px;margin:8px 0 4px}
 .inp{width:100%;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:14px;font-size:17px;margin-bottom:10px}
 .card{display:block;width:100%;height:auto;max-width:380px;margin:0 auto 14px;border-radius:18px}
 .card.wide{max-width:none;border:1px solid var(--line)}
+.timer{text-align:center;font-weight:700;font-size:18px;color:var(--accent);margin-bottom:8px}
+.ghost:disabled{opacity:.5}
+.prow{display:flex;gap:8px}.prow .btn{flex:1}
+.del{border:1px solid var(--bad);color:var(--bad);background:var(--card);border-radius:16px;padding:0 20px;font-size:22px}
+.fmt{text-align:right;margin-bottom:6px}
+.mini{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:600}
+#ov{position:fixed;inset:0;background:rgba(10,8,25,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+#ov.solid{background:var(--bg)}
+#ov[hidden]{display:none}
+.box{background:var(--card);border-radius:20px;padding:22px;max-width:380px;width:100%;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.box p{font-size:18px;line-height:1.4;margin:0 0 18px}
+.box h2{margin:0 0 8px;font-size:28px}
+.vert{display:inline-flex;flex-direction:column;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(34px,11vw,52px);line-height:1.2;min-width:3ch}
+.vert .r{display:flex;justify-content:flex-end}
+.vert .sp{justify-content:space-between;gap:.6em}
+.vert .bar{height:4px;background:currentColor;margin:4px 0;border-radius:2px}
+.vdiv{display:inline-flex;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(34px,11vw,52px);line-height:1.25}
+.vdiv .dd{padding-right:.5em}
+.vdiv .dv{border-left:4px solid currentColor;padding-left:.5em;min-width:2.4ch;text-align:left}
+.vdiv .dt{border-bottom:4px solid currentColor;padding-bottom:2px}
+.vdiv .qq{padding-top:2px}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1d2433;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div id="toast"></div>
+<div id="ov" hidden></div>
 <script>
 var OPS={
   add:{name:'Toplama',sym:'+',mode:true},
@@ -61,8 +83,9 @@ var OPS={
   mul:{name:'Çarpma',sym:'×',mode:false},
   div:{name:'Bölme',sym:'÷',mode:false}
 };
-var PTS=100;
-var st={screen:'welcome',op:null,eldeli:null,d:null,q:null,idx:0,score:0,ok:0,bad:0,streak:0,seen:{},picked:null,profile:null,last:null};
+var PTS=10;
+var st={screen:'welcome',op:null,eldeli:null,d:null,q:null,idx:0,score:0,ok:0,bad:0,streak:0,seen:{},picked:null,profile:null,last:null,log:[],acc:0,qStart:null,breakUsed:false,onBreak:false,modal:false,vert:false};
+var tmr=null;
 var app=document.getElementById('app');
 
 /* ---------- depolama (telefonda, internetsiz) ---------- */
@@ -83,13 +106,13 @@ function hasCarry(a,b){var c=0,any=false;while(a>0||b>0){var s=a%10+b%10+c;if(s>
 function hasBorrow(a,b){var br=0,any=false;while(a>0||b>0){var da=a%10-br,db=b%10;if(da<db){any=true;br=1}else br=0;a=Math.floor(a/10);b=Math.floor(b/10)}return any}
 function genQuestion(){
   var op=st.op,d=st.d,a,b,i;
-  if(op==='add'){for(i=0;i<5000;i++){a=num(d);b=num(d);if(hasCarry(a,b)===st.eldeli)break}return {text:a+' + '+b+' = ?',ans:a+b}}
-  if(op==='sub'){for(i=0;i<5000;i++){a=num(d);b=num(d);if(a<b){var t=a;a=b;b=t}if(a!==b&&hasBorrow(a,b)===st.eldeli)break}return {text:a+' − '+b+' = ?',ans:a-b}}
-  if(op==='mul'){a=d===1?rnd(2,9):num(d);b=rnd(2,9);return {text:a+' × '+b+' = ?',ans:a*b}}
+  if(op==='add'){for(i=0;i<5000;i++){a=num(d);b=num(d);if(hasCarry(a,b)===st.eldeli)break}return {text:a+' + '+b+' = ?',ans:a+b,a:a,b:b,sym:'+'}}
+  if(op==='sub'){for(i=0;i<5000;i++){a=num(d);b=num(d);if(a<b){var t=a;a=b;b=t}if(a!==b&&hasBorrow(a,b)===st.eldeli)break}return {text:a+' − '+b+' = ?',ans:a-b,a:a,b:b,sym:'−'}}
+  if(op==='mul'){a=d===1?rnd(2,9):num(d);b=rnd(2,9);return {text:a+' × '+b+' = ?',ans:a*b,a:a,b:b,sym:'×'}}
   b=rnd(2,9);
   var lo=d===1?1:Math.pow(10,d-1),hi=Math.pow(10,d)-1;
   var q=rnd(Math.ceil(lo/b),Math.floor(hi/b));
-  return {text:(b*q)+' ÷ '+b+' = ?',ans:q};
+  return {text:(b*q)+' ÷ '+b+' = ?',ans:q,a:b*q,b:b,sym:'÷'};
 }
 function choices(ans){
   var set=[ans],deltas=[-10,-1,1,10,-100,100,2,-2,-9,9,11,-11],tries=0;
@@ -101,7 +124,7 @@ function choices(ans){
 function newQ(){
   var q,i;
   for(i=0;i<60;i++){q=genQuestion();if(!st.seen[q.text])break}
-  st.seen[q.text]=1;q.opts=choices(q.ans);st.q=q;st.picked=null;
+  st.seen[q.text]=1;q.opts=choices(q.ans);st.q=q;st.picked=null;st.acc=0;st.qStart=Date.now();
 }
 
 /* ---------- çizim ---------- */
@@ -129,23 +152,12 @@ function drawMonster(c,cx,cy,r){
 }
 var FONT='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
 
-function drawCard(cv,L){
-  var c=cv.getContext('2d'),W=1080,H=1350;
-  cv.width=W;cv.height=H;
-  var g=c.createLinearGradient(0,0,0,H);g.addColorStop(0,'#6d3df2');g.addColorStop(1,'#2a1b6e');
-  c.fillStyle=g;c.fillRect(0,0,W,H);
-  c.fillStyle='rgba(255,255,255,.12)';rr(c,60,60,W-120,H-120,48);c.fill();
-  drawMonster(c,W/2,400,220);
-  c.textAlign='center';
-  c.fillStyle='#fff';c.font='700 72px '+FONT;c.fillText('Matematik Canavarı',W/2,790);
-  c.fillStyle='#ddd6fe';c.font='500 48px '+FONT;c.fillText(st.profile||'Misafir',W/2,860);
-  c.fillStyle='#fde047';c.font='800 200px '+FONT;c.fillText(String(L.score),W/2,1050);
-  c.fillStyle='#fff';c.font='600 44px '+FONT;c.fillText('PUAN',W/2,1110);
-  c.font='500 40px '+FONT;c.fillStyle='#ddd6fe';c.fillText(L.label,W/2,1180);
-  c.fillStyle='#fff';c.font='600 44px '+FONT;c.fillText('✅ '+L.ok+' doğru     ❌ '+L.bad+' yanlış',W/2,1245);
-  c.fillStyle='rgba(255,255,255,.6)';c.font='400 32px '+FONT;c.fillText(fmtDate(new Date()),W/2,1295);
-}
-
+function fmtSec(s){if(s<60)return s.toFixed(1).replace('.',',')+' sn';return Math.floor(s/60)+' dk '+Math.round(s%60)+' sn'}
+function fmtClock(s){return pad(Math.floor(s/60))+':'+pad(Math.floor(s%60))}
+function elapsed(){return (st.acc+(st.qStart?Date.now()-st.qStart:0))/1000}
+function pauseT(){if(st.screen==='quiz'&&st.qStart){st.acc+=Date.now()-st.qStart;st.qStart=null}}
+function resumeT(){if(st.screen==='quiz'&&!st.qStart&&!st.modal&&!st.onBreak&&st.picked===null)st.qStart=Date.now()}
+document.addEventListener('visibilitychange',function(){if(document.hidden)pauseT();else resumeT()});
 function fmtTime(d){return pad(d.getHours())+':'+pad(d.getMinutes())}
 function histData(){
   var cut=Date.now()-14*86400000;
@@ -154,7 +166,8 @@ function histData(){
   recs.forEach(function(r){
     var dt=new Date(r.t),day=fmtDate(dt);
     if(!map[day]){map[day]={day:day,rows:[],total:0};days.push(map[day])}
-    map[day].rows.push({lab:catLabel(r.op,r.e,r.d),dt:dt,s:r.s,ok:r.ok,bad:r.bad});
+    var av=null;if(r.qs&&r.qs.length){var t0=0;r.qs.forEach(function(x){t0+=x.s});av=t0/r.qs.length}
+    map[day].rows.push({lab:catLabel(r.op,r.e,r.d),dt:dt,s:r.s,ok:r.ok,bad:r.bad,av:av});
     map[day].total+=r.s;
   });
   return days;
@@ -180,7 +193,7 @@ function drawHistory(cv){
     d.rows.forEach(function(x){
       c.textAlign='left';c.fillStyle='#1d2433';c.font='700 34px '+FONT;c.fillText(x.lab,70,y+38);
       c.fillStyle='#6b7385';c.font='400 28px '+FONT;
-      c.fillText(fmtDate(x.dt)+' '+fmtTime(x.dt)+' · '+(x.ok+x.bad)+' soru · '+x.ok+' doğru · '+x.bad+' yanlış',70,y+84);
+      c.fillText(fmtDate(x.dt)+' '+fmtTime(x.dt)+' · '+(x.ok+x.bad)+' soru · '+x.ok+'✓ '+x.bad+'✗'+(x.av!==null?' · ort. '+fmtSec(x.av):''),70,y+84);
       c.textAlign='right';c.fillStyle=x.s<0?'#d64545':'#1f9d55';c.font='800 40px '+FONT;
       c.fillText((x.s>0?'+':'')+x.s+' puan',W-70,y+52);
       y+=120;
@@ -189,6 +202,53 @@ function drawHistory(cv){
   c.textAlign='center';c.fillStyle='#9aa3b5';c.font='400 28px '+FONT;c.fillText(fmtDate(new Date())+' '+fmtTime(new Date()),W/2,H-30);
 }
 
+function drawReport(cv){
+  var L=st.log,n=L.length,W=1080,sum=0,mn=1e9,mx=0,sc=0,nc=0,c,y;
+  L.forEach(function(x){sum+=x.s;if(x.s<mn)mn=x.s;if(x.s>mx)mx=x.s;if(x.ok){sc+=x.s;nc++}});
+  var H=1440+(n?110+n*76:120)+100;
+  cv.width=W;cv.height=H;c=cv.getContext('2d');
+  c.fillStyle='#ffffff';c.fillRect(0,0,W,H);
+  var g=c.createLinearGradient(0,0,0,740);g.addColorStop(0,'#6d3df2');g.addColorStop(1,'#2a1b6e');
+  c.fillStyle=g;c.fillRect(0,0,W,740);
+  drawMonster(c,W/2,160,85);
+  var t0=new Date(st.t||Date.now());
+  c.textAlign='center';
+  c.fillStyle='#fff';c.font='800 58px '+FONT;c.fillText('Matematik Canavarı',W/2,345);
+  c.fillStyle='#ddd6fe';c.font='600 46px '+FONT;c.fillText(st.profile||'Misafir',W/2,405);
+  c.font='500 34px '+FONT;c.fillText(st.last.label,W/2,455);
+  c.font='400 30px '+FONT;c.fillText(fmtDate(t0)+' '+fmtTime(t0),W/2,500);
+  c.fillStyle='#fde047';c.font='800 190px '+FONT;c.fillText(String(st.last.score),W/2,670);
+  c.fillStyle='#fff';c.font='600 40px '+FONT;c.fillText('PUAN',W/2,722);
+  var cards=[
+    ['Doğru',String(st.last.ok),'#1f9d55'],['Yanlış',String(st.last.bad),'#d64545'],
+    ['Toplam soru',String(n)],['Ortalama süre / soru',n?fmtSec(sum/n):'-'],
+    ['Toplam süre',n?fmtSec(sum):'-'],['En hızlı · En yavaş',n?fmtSec(mn)+' · '+fmtSec(mx):'-'],
+    ['Doğru cevaplarda ort.',nc?fmtSec(sc/nc):'-'],['Acil mola',st.breakUsed?'Kullanıldı':'Kullanılmadı']
+  ];
+  cards.forEach(function(k,i){
+    var x=50+(i%2)*500,yy=780+Math.floor(i/2)*150;
+    c.fillStyle='#f4f1fb';rr(c,x,yy,480,130,24);c.fill();
+    c.textAlign='left';c.fillStyle='#6b7385';c.font='500 28px '+FONT;c.fillText(k[0],x+28,yy+44);
+    c.fillStyle=k[2]||'#1d2433';c.font='800 40px '+FONT;c.fillText(k[1],x+28,yy+100);
+  });
+  y=1440;
+  if(!n){c.textAlign='center';c.fillStyle='#6b7385';c.font='500 40px '+FONT;c.fillText('Henüz cevaplanmış soru yok.',W/2,y+60);return}
+  c.fillStyle='#6b7385';c.font='700 30px '+FONT;
+  c.textAlign='left';c.fillText('#',70,y);c.fillText('Soru',150,y);
+  c.textAlign='center';c.fillText('Sonuç',770,y);
+  c.textAlign='right';c.fillText('Süre',W-70,y);
+  c.fillStyle='#e0daf0';c.fillRect(50,y+14,W-100,3);
+  y+=24;
+  L.forEach(function(x,i){
+    if(i%2===0){c.fillStyle='#f7f5fc';c.fillRect(50,y,W-100,76)}
+    c.textAlign='left';c.fillStyle='#6b7385';c.font='600 32px '+FONT;c.fillText(String(i+1),70,y+50);
+    c.fillStyle='#1d2433';c.font='700 36px '+FONT;c.fillText(x.q+' = '+x.a,150,y+50);
+    c.textAlign='center';c.fillStyle=x.ok?'#1f9d55':'#d64545';c.font='700 30px '+FONT;c.fillText(x.ok?'✓ Doğru':'✗ Yanlış',770,y+50);
+    c.textAlign='right';c.fillStyle='#1d2433';c.font='800 34px '+FONT;c.fillText(fmtSec(x.s),W-70,y+50);
+    y+=76;
+  });
+  c.textAlign='center';c.fillStyle='#9aa3b5';c.font='400 28px '+FONT;c.fillText('Rapor: '+fmtDate(new Date())+' '+fmtTime(new Date()),W/2,H-30);
+}
 function shareCanvas(cv,name){
   cv.toBlob(function(b){
     if(!b){toast('Görsel oluşturulamadı');return}
@@ -203,10 +263,54 @@ function shareCanvas(cv,name){
     }
   },'image/png');
 }
-function saveCard(){shareCanvas(document.getElementById('card'),'matematik-canavari-skor.png')}
+function saveCard(){shareCanvas(document.getElementById('card'),'matematik-canavari-rapor.png')}
 function saveHist(){shareCanvas(document.getElementById('hist'),'matematik-canavari-skorlarim.png')}
 
 /* ---------- ekranlar ---------- */
+function fmtLabel(){return st.vert?'↔ Yan yana göster':'↕ Alt alta göster'}
+function qHtml(q){
+  if(!st.vert)return q.text;
+  if(q.sym==='÷')return '<div class="vdiv"><div class="dd">'+q.a+'</div><div class="dv"><div class="dt">'+q.b+'</div><div class="qq">?</div></div></div>';
+  return '<div class="vert"><div class="r">'+q.a+'</div><div class="r sp"><span>'+q.sym+'</span><span>'+q.b+'</span></div><div class="bar"></div><div class="r">?</div></div>';
+}
+function toggleFmt(){
+  st.vert=!st.vert;lsSet('mc_vert',st.vert);
+  document.getElementById('qbox').innerHTML=qHtml(st.q);
+  document.getElementById('fmtb').textContent=fmtLabel();
+}
+function modal(msg,yes,no,onYes,onNo){
+  st.modal=true;pauseT();
+  var ov=document.getElementById('ov');
+  ov.className='';
+  ov.innerHTML='<div class="box"><p>'+msg+'</p><button class="next" id="my">'+yes+'</button><button class="ghost" id="mn">'+no+'</button></div>';
+  ov.hidden=false;
+  document.getElementById('my').onclick=function(){closeModal();onYes()};
+  document.getElementById('mn').onclick=function(){closeModal();if(onNo)onNo()};
+}
+function closeModal(){var ov=document.getElementById('ov');ov.hidden=true;ov.className='';ov.innerHTML='';st.modal=false}
+function askFinish(){modal('Bitirmek istediğine emin misin?<br>Skor kartına geçilecek.','Evet, bitir','Hayır, devam et',finish,resumeT)}
+function askBreak(){
+  if(st.breakUsed||st.picked!==null)return;
+  modal('Acil mola hakkını kullanmak istediğine emin misin?<br>Bu hak her oturumda yalnızca 1 kez kullanılabilir. Süre duracak.','Evet, mola ver','Hayır, devam et',startBreak,resumeT);
+}
+function startBreak(){
+  st.breakUsed=true;st.onBreak=true;st.modal=true;pauseT();
+  var b=document.getElementById('brk');if(b){b.disabled=true;b.textContent='⏸ Acil mola hakkı kullanıldı'}
+  var ov=document.getElementById('ov');
+  ov.className='solid';
+  ov.innerHTML='<div class="box"><h2>⏸ Mola</h2><p>Süre durdu. Hazır olunca devam et.</p><button class="next" id="my">▶ Devam Et</button></div>';
+  ov.hidden=false;
+  document.getElementById('my').onclick=function(){closeModal();st.onBreak=false;resumeT()};
+}
+function askDelProfile(i){
+  var n=profiles()[i];
+  modal('<b>'+esc(n)+'</b> profilini silmek istediğine emin misin?<br>Bu profile ait tüm skorlar da silinir.','Evet, sil','Vazgeç',function(){
+    var l=profiles();l.splice(i,1);lsSet('mc_profiles',l);
+    lsSet('mc_records',records().filter(function(r){return r.p!==n}));
+    if(st.profile===n)st.profile=null;
+    toast('Profil silindi');render();
+  });
+}
 function go(s){st.screen=s;render()}
 function back(){
   var o=OPS[st.op],s=st.screen;
@@ -219,12 +323,13 @@ function back(){
 function topBar(t){return '<div class="top"><button class="back" onclick="back()">←</button><div class="title">'+t+'</div></div>'}
 
 function render(){
+  if(tmr){clearInterval(tmr);tmr=null}
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Doğru bil 100 puan kazan,<br>yanlış yaparsan 100 puan kaybet!</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 3</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 6</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
-    profiles().forEach(function(n,i){h+='<button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button>'});
+    profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
     h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='home'){
     h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="grid">';
@@ -251,11 +356,11 @@ function render(){
       '<div class="pill"><b id="p-ok">'+st.ok+'</b>Doğru</div>'+
       '<div class="pill"><b id="p-bad">'+st.bad+'</b>Yanlış</div>'+
       '<div class="pill"><b id="p-st">'+st.streak+'</b>Seri</div></div>'+
-      '<div class="tag">'+tag+'</div><div class="q">'+q.text+'</div><div class="col" id="opts">';
+      '<div class="tag">'+tag+'</div><div class="fmt"><button class="mini" id="fmtb" onclick="toggleFmt()">'+fmtLabel()+'</button></div><div class="q" id="qbox">'+qHtml(q)+'</div><div class="col" id="opts">';
     q.opts.forEach(function(v){h+='<button class="btn opt" data-v="'+v+'" onclick="answer('+v+',this)">'+v+'</button>'});
-    h+='</div><div class="msg" id="msg"></div><button class="next" id="next" hidden onclick="nextQ()">Sonraki soru →</button><button class="ghost" onclick="finish()">🏁 Bitir ve Skoru Gör</button><div class="tag" id="saved"></div>';
+    h+='</div><div class="msg" id="msg"></div><button class="next" id="next" hidden onclick="nextQ()">Sonraki soru →</button><button class="ghost" onclick="askFinish()">🏁 Bitir ve Skoru Gör</button><button class="ghost" id="brk" onclick="askBreak()"'+(st.breakUsed?' disabled':'')+'>'+(st.breakUsed?'⏸ Acil mola hakkı kullanıldı':'⏸ Acil Mola (1 hak)')+'</button><div class="tag" id="saved"></div>';
   }else if(s==='summary'){
-    h=topBar('Skorun')+'<canvas id="card" class="card"></canvas>'+
+    h=topBar('Skorun')+'<canvas id="card" class="card wide"></canvas>'+
       (st.profile?'':'<p class="sub center">Misafir oturumu: bu sonuç kaydedilmedi.</p>')+
       '<button class="next" onclick="saveCard()">📷 Fotoğrafı Kaydet / Paylaş</button>'+
       '<button class="ghost" onclick="pickDigits('+st.d+')">Yeni Oturum</button>'+
@@ -266,7 +371,7 @@ function render(){
   app.innerHTML=h;
   window.scrollTo(0,0);
   if(s==='welcome')drawMonster(document.getElementById('mon').getContext('2d'),240,245,150);
-  if(s==='summary')drawCard(document.getElementById('card'),st.last);
+  if(s==='summary')drawReport(document.getElementById('card'));
   if(s==='history'){
     drawHistory(document.getElementById('hist'));
     var all=records(),mine=all.filter(function(r){return r.p===st.profile}).length;
@@ -285,15 +390,19 @@ function createProfile(){
 }
 function pickOp(k){st.op=k;st.eldeli=null;go(OPS[k].mode?'mode':'digits')}
 function pickMode(e){st.eldeli=e;go('digits')}
-function pickDigits(d){st.d=d;st.sid=Date.now();st.t=new Date().toISOString();st.idx=0;st.score=0;st.ok=0;st.bad=0;st.streak=0;st.seen={};newQ();go('quiz')}
+function pickDigits(d){st.d=d;st.sid=Date.now();st.t=new Date().toISOString();st.idx=0;st.log=[];st.breakUsed=false;st.onBreak=false;st.score=0;st.ok=0;st.bad=0;st.streak=0;st.seen={};newQ();go('quiz')}
 
 function answer(v,el){
   if(st.picked!==null)return;
   st.picked=v;
+  if(tmr){clearInterval(tmr);tmr=null}
+  var sec=Math.round(elapsed()*10)/10;
   var right=v===st.q.ans,msg=document.getElementById('msg');
+  st.log.push({q:st.q.text.replace(' = ?',''),a:st.q.ans,ok:right,s:sec});
+  var bb=document.getElementById('brk');if(bb)bb.disabled=true;
   if(right){el.classList.add('ok');st.ok++;st.streak++;st.score+=PTS;msg.style.color='var(--ok)';msg.textContent='Doğru! +'+PTS+' 🎉'}
   else{
-    el.classList.add('bad');st.bad++;st.streak=0;st.score-=PTS;msg.style.color='var(--bad)';msg.textContent='Yanlış −'+PTS+'. Doğru cevap: '+st.q.ans;
+    el.classList.add('bad');st.bad++;st.streak=0;msg.style.color='var(--bad)';msg.textContent='Yanlış (0 puan). Doğru cevap: '+st.q.ans;
     document.querySelectorAll('#opts .opt').forEach(function(b){if(+b.getAttribute('data-v')===st.q.ans)b.classList.add('ok')});
   }
   document.getElementById('p-sc').textContent=st.score;
@@ -308,7 +417,7 @@ function answer(v,el){
 function nextQ(){st.idx++;newQ();render()}
 function saveProgress(){
   if(st.profile===null)return true;
-  var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad};
+  var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad,qs:st.log,br:st.breakUsed?1:0};
   for(i=l.length-1;i>=0;i--){if(l[i].id===st.sid){l[i]=r;break}}
   if(i<0)l.push(r);
   var done=lsSet('mc_records',l);
@@ -322,6 +431,7 @@ function finish(){
 
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
 if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}})}
+st.vert=ls('mc_vert',false);
 render();
 </script>
 </body>
