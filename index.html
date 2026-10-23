@@ -69,6 +69,15 @@ h1{font-size:28px;margin:8px 0 4px}
 .vdiv .dv{border-left:4px solid currentColor;padding-left:.5em;min-width:2.4ch;text-align:left}
 .vdiv .dt{border-bottom:4px solid currentColor;padding-bottom:2px}
 .vdiv .qq{padding-top:2px}
+.sol{color:var(--ok);font-weight:800}
+.st{border-collapse:collapse;margin:0 auto 10px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:clamp(30px,10vw,46px);line-height:1.15}
+.st td{width:1.1em;text-align:center;padding:0}
+.st .an{font-size:.34em;line-height:1.05;height:2.4em;color:var(--accent);vertical-align:bottom;font-weight:700}
+.st .hl,.hl{background:rgba(112,72,232,.25);border-radius:6px}
+.st .bar{height:4px;background:currentColor;padding:0}
+.st .op{color:var(--accent)}
+.st .lz{opacity:.35}
+.stext{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:19px;line-height:1.45;margin:10px 0 14px;text-align:left}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1d2433;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
 </style>
 </head>
@@ -84,7 +93,7 @@ var OPS={
   div:{name:'Bölme',sym:'÷',mode:false}
 };
 var PTS=10;
-var st={screen:'welcome',op:null,eldeli:null,d:null,q:null,idx:0,score:0,ok:0,bad:0,streak:0,seen:{},picked:null,profile:null,last:null,log:[],acc:0,qStart:null,breakUsed:false,onBreak:false,modal:false,vert:false};
+var st={screen:'welcome',op:null,eldeli:null,d:null,q:null,idx:0,score:0,ok:0,bad:0,streak:0,seen:{},picked:null,profile:null,last:null,log:[],acc:0,qStart:null,breakUsed:false,onBreak:false,modal:false,vert:false,tries:0,fix:0,showSol:false,steps:null,sk:0};
 var tmr=null;
 var app=document.getElementById('app');
 
@@ -124,7 +133,7 @@ function choices(ans){
 function newQ(){
   var q,i;
   for(i=0;i<60;i++){q=genQuestion();if(!st.seen[q.text])break}
-  st.seen[q.text]=1;q.opts=choices(q.ans);st.q=q;st.picked=null;st.acc=0;st.qStart=Date.now();
+  st.seen[q.text]=1;q.opts=choices(q.ans);st.q=q;st.picked=null;st.tries=0;st.showSol=false;st.acc=0;st.qStart=Date.now();
 }
 
 /* ---------- çizim ---------- */
@@ -167,7 +176,7 @@ function histData(){
     var dt=new Date(r.t),day=fmtDate(dt);
     if(!map[day]){map[day]={day:day,rows:[],total:0};days.push(map[day])}
     var av=null;if(r.qs&&r.qs.length){var t0=0;r.qs.forEach(function(x){t0+=x.s});av=t0/r.qs.length}
-    map[day].rows.push({lab:catLabel(r.op,r.e,r.d),dt:dt,s:r.s,ok:r.ok,bad:r.bad,av:av});
+    map[day].rows.push({lab:catLabel(r.op,r.e,r.d),dt:dt,s:r.s,ok:r.ok,bad:r.bad,fix:r.fix||0,av:av});
     map[day].total+=r.s;
   });
   return days;
@@ -193,7 +202,7 @@ function drawHistory(cv){
     d.rows.forEach(function(x){
       c.textAlign='left';c.fillStyle='#1d2433';c.font='700 34px '+FONT;c.fillText(x.lab,70,y+38);
       c.fillStyle='#6b7385';c.font='400 28px '+FONT;
-      c.fillText(fmtDate(x.dt)+' '+fmtTime(x.dt)+' · '+(x.ok+x.bad)+' soru · '+x.ok+'✓ '+x.bad+'✗'+(x.av!==null?' · ort. '+fmtSec(x.av):''),70,y+84);
+      c.fillText(fmtDate(x.dt)+' '+fmtTime(x.dt)+' · '+(x.ok+x.fix+x.bad)+' soru · '+x.ok+'✓ '+x.fix+'↻ '+x.bad+'✗'+(x.av!==null?' · ort. '+fmtSec(x.av):''),70,y+84);
       c.textAlign='right';c.fillStyle=x.s<0?'#d64545':'#1f9d55';c.font='800 40px '+FONT;
       c.fillText((x.s>0?'+':'')+x.s+' puan',W-70,y+52);
       y+=120;
@@ -205,7 +214,7 @@ function drawHistory(cv){
 function drawReport(cv){
   var L=st.log,n=L.length,W=1080,sum=0,mn=1e9,mx=0,sc=0,nc=0,c,y;
   L.forEach(function(x){sum+=x.s;if(x.s<mn)mn=x.s;if(x.s>mx)mx=x.s;if(x.ok){sc+=x.s;nc++}});
-  var H=1440+(n?110+n*76:120)+100;
+  var H=1570+(n?110+n*76:120)+100;
   cv.width=W;cv.height=H;c=cv.getContext('2d');
   c.fillStyle='#ffffff';c.fillRect(0,0,W,H);
   var g=c.createLinearGradient(0,0,0,740);g.addColorStop(0,'#6d3df2');g.addColorStop(1,'#2a1b6e');
@@ -220,10 +229,11 @@ function drawReport(cv){
   c.fillStyle='#fde047';c.font='800 190px '+FONT;c.fillText(String(st.last.score),W/2,670);
   c.fillStyle='#fff';c.font='600 40px '+FONT;c.fillText('PUAN',W/2,722);
   var cards=[
-    ['Doğru',String(st.last.ok),'#1f9d55'],['Yanlış',String(st.last.bad),'#d64545'],
+    ['Doğru (ilk denemede)',String(st.last.ok),'#1f9d55'],['Düzeltti (2. denemede)',String(st.last.fix),'#d97706'],
+    ['Yanlış',String(st.last.bad),'#d64545'],['İlk denemede doğru oranı',n?'%'+Math.round(100*st.last.ok/n):'-'],
     ['Toplam soru',String(n)],['Ortalama süre / soru',n?fmtSec(sum/n):'-'],
     ['Toplam süre',n?fmtSec(sum):'-'],['En hızlı · En yavaş',n?fmtSec(mn)+' · '+fmtSec(mx):'-'],
-    ['Doğru cevaplarda ort.',nc?fmtSec(sc/nc):'-'],['Acil mola',st.breakUsed?'Kullanıldı':'Kullanılmadı']
+    ['İlk denemede doğrularda ort.',nc?fmtSec(sc/nc):'-'],['Acil mola',st.breakUsed?'Kullanıldı':'Kullanılmadı']
   ];
   cards.forEach(function(k,i){
     var x=50+(i%2)*500,yy=780+Math.floor(i/2)*150;
@@ -231,11 +241,11 @@ function drawReport(cv){
     c.textAlign='left';c.fillStyle='#6b7385';c.font='500 28px '+FONT;c.fillText(k[0],x+28,yy+44);
     c.fillStyle=k[2]||'#1d2433';c.font='800 40px '+FONT;c.fillText(k[1],x+28,yy+100);
   });
-  y=1440;
+  y=1570;
   if(!n){c.textAlign='center';c.fillStyle='#6b7385';c.font='500 40px '+FONT;c.fillText('Henüz cevaplanmış soru yok.',W/2,y+60);return}
   c.fillStyle='#6b7385';c.font='700 30px '+FONT;
   c.textAlign='left';c.fillText('#',70,y);c.fillText('Soru',150,y);
-  c.textAlign='center';c.fillText('Sonuç',770,y);
+  c.textAlign='center';c.fillText('Sonuç',720,y);
   c.textAlign='right';c.fillText('Süre',W-70,y);
   c.fillStyle='#e0daf0';c.fillRect(50,y+14,W-100,3);
   y+=24;
@@ -243,7 +253,7 @@ function drawReport(cv){
     if(i%2===0){c.fillStyle='#f7f5fc';c.fillRect(50,y,W-100,76)}
     c.textAlign='left';c.fillStyle='#6b7385';c.font='600 32px '+FONT;c.fillText(String(i+1),70,y+50);
     c.fillStyle='#1d2433';c.font='700 36px '+FONT;c.fillText(x.q+' = '+x.a,150,y+50);
-    c.textAlign='center';c.fillStyle=x.ok?'#1f9d55':'#d64545';c.font='700 30px '+FONT;c.fillText(x.ok?'✓ Doğru':'✗ Yanlış',770,y+50);
+    c.textAlign='center';c.fillStyle=x.r===1?'#1f9d55':(x.r===2?'#d97706':'#d64545');c.font='700 30px '+FONT;c.fillText(x.r===1?'✓ Doğru':(x.r===2?'↻ 2. denemede':'✗ Yanlış'),720,y+50);
     c.textAlign='right';c.fillStyle='#1d2433';c.font='800 34px '+FONT;c.fillText(fmtSec(x.s),W-70,y+50);
     y+=76;
   });
@@ -268,14 +278,15 @@ function saveHist(){shareCanvas(document.getElementById('hist'),'matematik-canav
 
 /* ---------- ekranlar ---------- */
 function fmtLabel(){return st.vert?'↔ Yan yana göster':'↕ Alt alta göster'}
-function qHtml(q){
-  if(!st.vert)return q.text;
-  if(q.sym==='÷')return '<div class="vdiv"><div class="dd">'+q.a+'</div><div class="dv"><div class="dt">'+q.b+'</div><div class="qq">?</div></div></div>';
-  return '<div class="vert"><div class="r">'+q.a+'</div><div class="r sp"><span>'+q.sym+'</span><span>'+q.b+'</span></div><div class="bar"></div><div class="r">?</div></div>';
+function qHtml(q,sol){
+  var rs=sol?'<span class="sol">'+q.ans+'</span>':'?';
+  if(!st.vert)return sol?q.text.replace('?','<span class="sol">'+q.ans+'</span>'):q.text;
+  if(q.sym==='÷')return '<div class="vdiv"><div class="dd">'+q.a+'</div><div class="dv"><div class="dt">'+q.b+'</div><div class="qq">'+rs+'</div></div></div>';
+  return '<div class="vert"><div class="r">'+q.a+'</div><div class="r sp"><span>'+q.sym+'</span><span>'+q.b+'</span></div><div class="bar"></div><div class="r">'+rs+'</div></div>';
 }
 function toggleFmt(){
   st.vert=!st.vert;lsSet('mc_vert',st.vert);
-  document.getElementById('qbox').innerHTML=qHtml(st.q);
+  document.getElementById('qbox').innerHTML=qHtml(st.q,st.showSol);
   document.getElementById('fmtb').textContent=fmtLabel();
 }
 function modal(msg,yes,no,onYes,onNo){
@@ -326,7 +337,7 @@ function render(){
   if(tmr){clearInterval(tmr);tmr=null}
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 6</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 8</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -358,7 +369,7 @@ function render(){
       '<div class="pill"><b id="p-st">'+st.streak+'</b>Seri</div></div>'+
       '<div class="tag">'+tag+'</div><div class="fmt"><button class="mini" id="fmtb" onclick="toggleFmt()">'+fmtLabel()+'</button></div><div class="q" id="qbox">'+qHtml(q)+'</div><div class="col" id="opts">';
     q.opts.forEach(function(v){h+='<button class="btn opt" data-v="'+v+'" onclick="answer('+v+',this)">'+v+'</button>'});
-    h+='</div><div class="msg" id="msg"></div><button class="next" id="next" hidden onclick="nextQ()">Sonraki soru →</button><button class="ghost" onclick="askFinish()">🏁 Bitir ve Skoru Gör</button><button class="ghost" id="brk" onclick="askBreak()"'+(st.breakUsed?' disabled':'')+'>'+(st.breakUsed?'⏸ Acil mola hakkı kullanıldı':'⏸ Acil Mola (1 hak)')+'</button><div class="tag" id="saved"></div>';
+    h+='</div><div class="msg" id="msg"></div><div id="steps"></div><button class="next" id="sol" hidden onclick="showSol()">💡 Sonucu Gör</button><button class="next" id="next" hidden onclick="nextQ()">Sonraki soru →</button><button class="ghost" onclick="askFinish()">🏁 Bitir ve Skoru Gör</button><button class="ghost" id="brk" onclick="askBreak()"'+(st.breakUsed?' disabled':'')+'>'+(st.breakUsed?'⏸ Acil mola hakkı kullanıldı':'⏸ Acil Mola (1 hak)')+'</button><div class="tag" id="saved"></div>';
   }else if(s==='summary'){
     h=topBar('Skorun')+'<canvas id="card" class="card wide"></canvas>'+
       (st.profile?'':'<p class="sub center">Misafir oturumu: bu sonuç kaydedilmedi.</p>')+
@@ -390,34 +401,145 @@ function createProfile(){
 }
 function pickOp(k){st.op=k;st.eldeli=null;go(OPS[k].mode?'mode':'digits')}
 function pickMode(e){st.eldeli=e;go('digits')}
-function pickDigits(d){st.d=d;st.sid=Date.now();st.t=new Date().toISOString();st.idx=0;st.log=[];st.breakUsed=false;st.onBreak=false;st.score=0;st.ok=0;st.bad=0;st.streak=0;st.seen={};newQ();go('quiz')}
+function pickDigits(d){st.d=d;st.sid=Date.now();st.t=new Date().toISOString();st.idx=0;st.log=[];st.fix=0;st.breakUsed=false;st.onBreak=false;st.score=0;st.ok=0;st.bad=0;st.streak=0;st.seen={};newQ();go('quiz')}
 
+function lockOpts(){document.querySelectorAll('#opts .opt').forEach(function(b){b.disabled=true})}
 function answer(v,el){
   if(st.picked!==null)return;
-  st.picked=v;
-  if(tmr){clearInterval(tmr);tmr=null}
-  var sec=Math.round(elapsed()*10)/10;
   var right=v===st.q.ans,msg=document.getElementById('msg');
-  st.log.push({q:st.q.text.replace(' = ?',''),a:st.q.ans,ok:right,s:sec});
-  var bb=document.getElementById('brk');if(bb)bb.disabled=true;
-  if(right){el.classList.add('ok');st.ok++;st.streak++;st.score+=PTS;msg.style.color='var(--ok)';msg.textContent='Doğru! +'+PTS+' 🎉'}
-  else{
-    el.classList.add('bad');st.bad++;st.streak=0;msg.style.color='var(--bad)';msg.textContent='Yanlış (0 puan). Doğru cevap: '+st.q.ans;
-    document.querySelectorAll('#opts .opt').forEach(function(b){if(+b.getAttribute('data-v')===st.q.ans)b.classList.add('ok')});
+  if(st.tries===0){
+    if(right){el.classList.add('ok');return resolve(1,msg)}
+    st.tries=1;el.classList.add('bad');el.disabled=true;
+    msg.style.color='var(--bad)';msg.textContent='Yanlış. Tekrar dene! (Bu denemede puan yok)';
+    return;
   }
+  if(right){el.classList.add('ok');return resolve(2,msg)}
+  el.classList.add('bad');resolve(0,msg);
+}
+function resolve(r,msg){
+  st.picked=1;
+  var sec=Math.round(elapsed()*10)/10;
+  st.log.push({q:st.q.text.replace(' = ?',''),a:st.q.ans,ok:r===1,r:r,s:sec});
+  lockOpts();
+  var bb=document.getElementById('brk');if(bb)bb.disabled=true;
+  if(r===1){st.ok++;st.streak++;st.score+=PTS;msg.style.color='var(--ok)';msg.textContent='Doğru! +'+PTS+' 🎉'}
+  else if(r===2){st.fix++;st.streak=0;msg.style.color='var(--ok)';msg.textContent='Düzelttin! 👍 (2. denemede puan yok)'}
+  else{st.bad++;st.streak=0;msg.style.color='var(--bad)';msg.textContent='Yanlış. Çözümü görmek için butona bas.'}
   document.getElementById('p-sc').textContent=st.score;
   document.getElementById('p-ok').textContent=st.ok;
   document.getElementById('p-bad').textContent=st.bad;
   document.getElementById('p-st').textContent=st.streak;
-  document.getElementById('next').hidden=false;
+  document.getElementById(r===0?'sol':'next').hidden=false;
   var saved=saveProgress(),sv=document.getElementById('saved');
   sv.textContent=st.profile===null?'👤 Misafir: skor kaydedilmiyor':(saved?'💾 Skor kaydedildi':'⚠️ Kaydedilemedi (tarayıcı depolaması kapalı)');
   sv.style.color=(saved||st.profile===null)?'var(--muted)':'var(--bad)';
 }
+var BNAME=['birler','onlar','yüzler','binler','on binler','yüz binler'];
+function BN(i){return BNAME[i]||(i+'. basamak')}
+function cap(t){return t.charAt(0).toUpperCase()+t.slice(1)}
+function digs(n){return String(n).split('').map(Number)}
+function cp(o){var r={};for(var k in o)r[k]=o[k].slice();return r}
+function stepsAdd(a,b,ans){
+  var A=digs(a).reverse(),B=digs(b).reverse(),N=String(ans).length,L=Math.max(A.length,B.length),list=[],carry=0,wr=[],an={},i;
+  for(i=0;i<L;i++){
+    var da=A[i]||0,db=B[i]||0,sm=da+db+carry,w=sm%10,nc=sm>=10?1:0,t;
+    if(carry)an[i]=['+1'];
+    t=BN(i)+' basamağı: '+da+' + '+db+(carry?' + 1 (elde)':'')+' = '+sm+'. ';
+    t+=nc?(w+' yaz, 1 elde olarak '+BN(i+1)+' basamağına ekle.'):(sm+' yaz.');
+    wr[i]=w;list.push({t:cap(t),hl:i,wr:wr.slice(),an:cp(an)});
+    carry=nc;
+  }
+  if(carry){wr[N-1]=1;list.push({t:'Son eldeyi (1) '+BN(N-1)+' basamağına yaz.',hl:N-1,wr:wr.slice(),an:cp(an)})}
+  return {kind:'tbl',N:N,a:a,b:b,sym:'+',list:list};
+}
+function stepsSub(a,b,ans){
+  var A=digs(a).reverse(),B=digs(b).reverse(),N=A.length,list=[],lent=0,wr=[],an={},i;
+  for(i=0;i<N;i++){
+    var da=A[i],db=B[i]||0,cur=da-lent,bor=cur<db,r=(bor?cur+10:cur)-db,t='';
+    if(lent){t+=BN(i)+' basamağından 1 verilmişti: '+da+' − 1 = '+cur+'. '}else{t+=BN(i)+' basamağı: '}
+    if(bor){
+      t+=cur+' sayısı, '+db+' sayısından küçük. '+cap(BN(i+1))+' basamağından 1 onluk alırız: '+(cur+10)+' − '+db+' = '+r+'.';
+      an[i]=(an[i]||[]).concat(['+10']);an[i+1]=(an[i+1]||[]).concat(['−1']);
+    }else{t+=cur+' − '+db+' = '+r+'.'}
+    wr[i]=r;list.push({t:cap(t),hl:i,wr:wr.slice(),an:cp(an)});
+    lent=bor?1:0;
+  }
+  return {kind:'tbl',N:N,a:a,b:b,sym:'−',list:list};
+}
+function stepsMul(a,b,ans){
+  var A=digs(a).reverse(),N=String(ans).length,list=[],carry=0,wr=[],an={},i;
+  for(i=0;i<A.length;i++){
+    var x=A[i]*b,p=x+carry,w=p%10,nc=Math.floor(p/10),t;
+    if(carry)an[i]=['+'+carry];
+    t=BN(i)+' basamağı: '+A[i]+' × '+b+' = '+x+'. '+(carry?x+' + '+carry+' (elde) = '+p+'. ':'');
+    t+=nc?(w+' yaz, '+nc+' elde olarak '+BN(i+1)+' basamağına ekle.'):(p+' yaz.');
+    wr[i]=w;list.push({t:cap(t),hl:i,wr:wr.slice(),an:cp(an)});
+    carry=nc;
+  }
+  if(carry){wr[N-1]=carry;list.push({t:'Son eldeyi ('+carry+') '+BN(N-1)+' basamağına yaz.',hl:N-1,wr:wr.slice(),an:cp(an)})}
+  return {kind:'tbl',N:N,a:a,b:b,sym:'×',hlb:true,list:list};
+}
+function stepsDiv(a,b,ans){
+  var D=digs(a),pos=0,cur=D[0],q='',list=[],first=true,prevRem=0;
+  while(cur<b&&pos<D.length-1){pos++;cur=cur*10+D[pos]}
+  for(;;){
+    var qd=Math.floor(cur/b),prod=qd*b,rem=cur-prod,t;
+    if(first){t=(pos>0?'İlk '+(pos+1)+' basamağı alırız: '+cur+'. ':'')}
+    else{t='Kalan '+prevRem+'. Yanına '+D[pos]+' indir: '+cur+'. '}
+    t+=cur+' sayısında '+b+' kaç kere var? '+qd+' kere. '+qd+' × '+b+' = '+prod+'. '+cur+' − '+prod+' = '+rem+'.';
+    q+=qd;list.push({t:t,pos:pos,q:q});
+    if(pos>=D.length-1)break;
+    prevRem=rem;pos++;cur=rem*10+D[pos];first=false;
+  }
+  return {kind:'div',a:a,b:b,list:list};
+}
+function buildSteps(q){
+  if(q.sym==='+')return stepsAdd(q.a,q.b,q.ans);
+  if(q.sym==='−')return stepsSub(q.a,q.b,q.ans);
+  if(q.sym==='×')return stepsMul(q.a,q.b,q.ans);
+  return stepsDiv(q.a,q.b,q.ans);
+}
+function tblHtml(S,stp){
+  var N=S.N,A=digs(S.a).reverse(),B=digs(S.b).reverse(),resLen=String(S.sym==='+'||S.sym==='×'?S.a*(S.sym==='×'?S.b:1)+(S.sym==='+'?S.b:0):S.a-S.b).length,c,r0='<td></td>',r1='<td></td>',r2='<td class="op">'+S.sym+'</td>',r4='<td></td>';
+  for(c=N-1;c>=0;c--){
+    var h=stp.hl===c?' hl':'',a=stp.an[c]?stp.an[c].join('<br>'):'';
+    r0+='<td class="an">'+a+'</td>';
+    r1+='<td class="'+h.trim()+'">'+(A[c]!==undefined?A[c]:'')+'</td>';
+    r2+='<td class="'+((S.hlb&&c===0)||h?'hl':'')+'">'+(B[c]!==undefined?B[c]:'')+'</td>';
+    var w=stp.wr[c];
+    r4+='<td class="'+h.trim()+'">'+(w===undefined?'':(c>=resLen?'<span class="lz">'+w+'</span>':w))+'</td>';
+  }
+  return '<table class="st"><tr>'+r0+'</tr><tr>'+r1+'</tr><tr>'+r2+'</tr><tr><td class="bar" colspan="'+(N+1)+'"></td></tr><tr>'+r4+'</tr></table>';
+}
+function divStepHtml(S,stp){
+  var d=String(S.a),k=stp.pos+1;
+  return '<div style="text-align:center"><div class="vdiv"><div class="dd"><span class="hl">'+d.slice(0,k)+'</span>'+d.slice(k)+'</div><div class="dv"><div class="dt">'+S.b+'</div><div class="qq">'+stp.q+'</div></div></div></div>';
+}
+function renderSteps(){
+  var S=st.steps,k=st.sk,n=S.list.length,stp=S.list[k-1];
+  var h='<div class="tag">Adım '+k+' / '+n+'</div>'+(S.kind==='div'?divStepHtml(S,stp):tblHtml(S,stp))+'<div class="stext">'+stp.t+'</div>';
+  if(k<n)h+='<button class="next" onclick="nextStep()">Sonraki adım →</button>';
+  document.getElementById('steps').innerHTML=h;
+  if(k===n)finishSol();
+}
+function nextStep(){st.sk++;renderSteps()}
+function finishSol(){
+  st.showSol=true;
+  document.getElementById('qbox').innerHTML=qHtml(st.q,true);
+  var msg=document.getElementById('msg');msg.style.color='var(--ok)';msg.textContent='Doğru cevap: '+st.q.ans;
+  document.getElementById('next').hidden=false;
+}
+function showSol(){
+  st.steps=buildSteps(st.q);st.sk=1;
+  document.getElementById('sol').hidden=true;
+  document.getElementById('opts').style.display='none';
+  document.getElementById('msg').textContent='';
+  renderSteps();
+}
 function nextQ(){st.idx++;newQ();render()}
 function saveProgress(){
   if(st.profile===null)return true;
-  var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad,qs:st.log,br:st.breakUsed?1:0};
+  var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad,fix:st.fix,qs:st.log,br:st.breakUsed?1:0};
   for(i=l.length-1;i>=0;i--){if(l[i].id===st.sid){l[i]=r;break}}
   if(i<0)l.push(r);
   var done=lsSet('mc_records',l);
@@ -425,7 +547,7 @@ function saveProgress(){
   return done;
 }
 function finish(){
-  st.last={score:st.score,ok:st.ok,bad:st.bad,label:catLabel(st.op,st.eldeli,st.d)};
+  st.last={score:st.score,ok:st.ok,bad:st.bad,fix:st.fix,label:catLabel(st.op,st.eldeli,st.d)};
   go('summary');
 }
 
