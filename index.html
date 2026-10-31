@@ -87,6 +87,17 @@ h1{font-size:28px;margin:8px 0 4px}
 .pbox ul,.pbox ol{margin:4px 0 8px 20px;padding:0}
 .pbox h3{margin:0 0 8px;font-size:19px}
 .pbox p{margin:8px 0 2px}
+.tbar{height:16px;background:var(--line);border-radius:8px;overflow:hidden;margin:4px 0 14px}
+#tfill{height:100%;width:100%;background:var(--ok);border-radius:8px}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.ani{background:var(--card);border:2px solid var(--line);border-radius:20px;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit;color:var(--text);cursor:pointer;-webkit-tap-highlight-color:transparent}
+.ani .em{font-size:56px;line-height:1}
+.ani .an{font-size:36px;font-weight:800}
+.ani.ok{background:var(--ok-bg);border-color:var(--ok)}
+.ani.ok .em{animation:hop .5s}
+.ani.bad{background:var(--bad-bg);border-color:var(--bad);animation:shk .4s}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}}
+@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 </style>
 </head>
 <body>
@@ -114,7 +125,7 @@ function pad(n){return n<10?'0'+n:''+n}
 function fmtDate(d){return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity=1;setTimeout(function(){t.style.opacity=0},2400)}
-function catLabel(op,e,d,k,m){if(k==='p')return 'Problem · '+(op==='mix'?'Karma · '+(MIXN[m]||'Karma'):OPS[op].name)+' · '+d+' basamaklı';return OPS[op].name+(OPS[op].mode?' · '+(e?'Eldeli':'Eldesiz'):'')+' · '+d+' basamaklı'}
+function catLabel(op,e,d,k,m){if(k==='g')return 'Oyun · Akıldan İşlem · '+(op==='rnd'?'Karışık':OPS[op].name);if(k==='p')return 'Problem · '+(op==='mix'?'Karma · '+(MIXN[m]||'Karma'):OPS[op].name)+' · '+d+' basamaklı';return OPS[op].name+(OPS[op].mode?' · '+(e?'Eldeli':'Eldesiz'):'')+' · '+d+' basamaklı'}
 
 /* ---------- soru üretimi ---------- */
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
@@ -332,6 +343,170 @@ function choicesK(ans,extras){
   return set;
 }
 
+/* ---------- akıldan işlem oyunu ---------- */
+var ANIM=['🐱','🐶','🐰','🐼','🦁','🐵','🐧','🐸','🐥','🐘'];
+var GHEARTS=3;
+function gTime(n){return n<10?8000:(n<20?6000:(n<30?5000:4000))}
+var gT=null,gGuest={};
+function gLabel(op){return op==='rnd'?'Karışık':OPS[op].name}
+function bestGet(op){var p=st.profile;if(p===null)return gGuest[op]||0;var b=ls('mc_best',{});return (b[p]&&b[p][op])||0}
+function bestSet(op,v){
+  var p=st.profile;
+  if(p===null){gGuest[op]=v;return}
+  var b=ls('mc_best',{});if(!b[p])b[p]={};b[p][op]=v;lsSet('mc_best',b);
+}
+function gQ(){
+  var g=st.g,op=g.op==='rnd'?['add','sub','mul','div'][rnd(0,3)]:g.op,a,b,ans,txt,alt,i,t;
+  for(t=0;t<50;t++){
+    if(op==='add'){a=rnd(1,9);b=rnd(1,9);ans=a+b;txt=a+' + '+b;alt=[ans+1,ans-1,ans+2,ans-2,ans+10,Math.abs(a-b)]}
+    else if(op==='sub'){a=rnd(2,9);b=rnd(1,a-1);ans=a-b;txt=a+' − '+b;alt=[ans+1,ans-1,ans+2,ans-2,a+b]}
+    else if(op==='mul'){a=rnd(2,9);b=rnd(2,9);ans=a*b;txt=a+' × '+b;alt=[a*(b+1),a*(b-1),(a+1)*b,(a-1)*b,ans+1,ans-1,a+b]}
+    else{b=rnd(2,9);ans=rnd(2,9);a=b*ans;txt=a+' ÷ '+b;alt=[ans+1,ans-1,ans+2,ans-2,b,a-b]}
+    if(txt!==g.lastTxt)break;
+  }
+  g.lastTxt=txt;
+  var pool=[];alt.forEach(function(v){if(v>=0&&v!==ans&&pool.indexOf(v)<0)pool.push(v)});
+  var n=3;while(pool.length<3){if(ans+n!==ans&&pool.indexOf(ans+n)<0)pool.push(ans+n);n++}
+  for(i=pool.length-1;i>0;i--){var j=rnd(0,i),tmp=pool[i];pool[i]=pool[j];pool[j]=tmp}
+  var vals=pool.slice(0,3);vals.push(ans);
+  for(i=vals.length-1;i>0;i--){var k=rnd(0,i),t2=vals[i];vals[i]=vals[k];vals[k]=t2}
+  var an=ANIM.slice();for(i=an.length-1;i>0;i--){var m=rnd(0,i),t3=an[i];an[i]=an[m];an[m]=t3}
+  return {txt:txt,ans:ans,opts:vals.map(function(v,x){return {v:v,e:an[x]}})};
+}
+function gOptsHtml(q){
+  var h='';
+  q.opts.forEach(function(o,i){h+='<button class="ani" onclick="gAnswer('+i+',this)"><span class="em">'+o.e+'</span><span class="an">'+o.v+'</span></button>'});
+  return h;
+}
+function gPills(){
+  var g=st.g,best=Math.max(g.bestOld,g.score);
+  document.getElementById('g-sc').textContent=g.score;
+  document.getElementById('g-bt').textContent=best;
+  document.getElementById('g-st').textContent=g.streak;
+  document.getElementById('g-hp').textContent='❤️'+g.hearts;
+}
+function gameHtml(){
+  var g=st.g,best=Math.max(g.bestOld,g.score);
+  return topBar('Oyun · '+gLabel(g.op))+'<div class="score">'+
+    '<div class="pill main"><b id="g-sc">'+g.score+'</b>PUAN</div>'+
+    '<div class="pill"><b id="g-bt">'+best+'</b>Rekor</div>'+
+    '<div class="pill"><b id="g-st">'+g.streak+'</b>Seri</div>'+
+    '<div class="pill"><b id="g-hp">❤️'+g.hearts+'</b>Can</div></div>'+
+    '<div class="tbar"><div id="tfill"></div></div>'+
+    '<div class="q" id="gq">'+g.q.txt+' = ?</div>'+
+    '<div class="agrid" id="agrid">'+gOptsHtml(g.q)+'</div>'+
+    '<div class="msg" id="gmsg"></div>'+
+    '<button class="ghost" onclick="askQuitGame()">🏁 Oyunu Bitir</button>';
+}
+function gStartTimer(){
+  if(gT)clearInterval(gT);
+  st.g.last=Date.now();
+  gT=setInterval(gTick,50);
+}
+function gTick(){
+  var g=st.g,now=Date.now(),dt=Math.min(now-g.last,200),f,pc;
+  g.last=now;
+  if(st.screen!=='game'||g.done||g.lock||document.hidden||st.modal)return;
+  g.rem-=dt;g.el+=dt;
+  pc=Math.max(0,g.rem/g.tm*100);
+  f=document.getElementById('tfill');
+  if(f){f.style.width=pc+'%';f.style.background=pc>50?'var(--ok)':(pc>25?'#e0a100':'var(--bad)')}
+  if(g.rem<=0)gAnswer(null,null);
+}
+function gAnswer(i,el){
+  var g=st.g;
+  if(g.lock||g.done)return;
+  g.lock=true;
+  var q=g.q,right=i!==null&&q.opts[i].v===q.ans,sec=Math.round(g.el/100)/10,msg=document.getElementById('gmsg'),btns=document.querySelectorAll('#agrid .ani'),x;
+  if(i===null)sec=g.tm/1000;
+  if(right){
+    var fr=g.el/g.tm,pt=fr<=0.25?3:(fr<=0.5?2:1);
+    g.score+=pt;g.ok++;g.streak++;if(g.streak>g.bestStreak)g.bestStreak=g.streak;
+    el.classList.add('ok');msg.style.color='var(--ok)';msg.textContent='Doğru! +'+pt+' 🎉';
+  }else{
+    g.bad++;g.streak=0;g.hearts--;
+    if(el)el.classList.add('bad');
+    for(x=0;x<btns.length;x++){if(q.opts[x].v===q.ans)btns[x].classList.add('ok')}
+    msg.style.color='var(--bad)';msg.textContent=(i===null?'Süre doldu! ':'Yanlış! ')+q.txt+' = '+q.ans;
+  }
+  g.log.push({q:q.txt,a:q.ans,ok:right,r:right?1:0,s:sec});
+  gPills();gSave();
+  g.to=setTimeout(function(){
+    if(st.screen!=='game'||g.done)return;
+    if(g.hearts<=0)endGame();else gNext();
+  },right?700:1600);
+}
+function gNext(){
+  var g=st.g;
+  var old=g.tm;g.tm=gTime(g.log.length);g.q=gQ();g.rem=g.tm;g.el=0;g.lock=false;
+  document.getElementById('gq').textContent=g.q.txt+' = ?';
+  document.getElementById('agrid').innerHTML=gOptsHtml(g.q);
+  var gm=document.getElementById('gmsg');gm.textContent='';
+  if(g.tm!==old){gm.style.color='var(--accent)';gm.textContent='⚡ Hızlandı! Şimdi '+(g.tm/1000)+' saniye'}
+  var f=document.getElementById('tfill');if(f){f.style.width='100%';f.style.background='var(--ok)'}
+}
+function gSave(){
+  var g=st.g;
+  if(st.profile===null)return true;
+  var l=records(),i,r={id:g.sid,p:st.profile,t:g.t,op:g.op,e:null,d:1,s:g.score,ok:g.ok,bad:g.bad,fix:0,qs:g.log,br:0,k:'g'};
+  for(i=l.length-1;i>=0;i--){if(l[i].id===g.sid){l[i]=r;break}}
+  if(i<0)l.push(r);
+  var done=lsSet('mc_records',l);
+  if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
+  return done;
+}
+function gStart(op){
+  st.g={op:op,sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:8000,rem:8000,el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:bestGet(op),newBest:false};
+  st.g.q=gQ();
+  go('game');
+}
+function askQuitGame(){modal('Oyunu bitirmek istediğine emin misin?<br>Puanın kaydedilir.','Evet, bitir','Hayır, devam et',endGame,null)}
+function endGame(){
+  var g=st.g;
+  if(g.done)return;
+  g.done=true;
+  if(g.to)clearTimeout(g.to);
+  if(gT){clearInterval(gT);gT=null}
+  g.newBest=g.score>g.bestOld&&g.score>0;
+  if(g.newBest)bestSet(g.op,g.score);
+  if(g.log.length)gSave();
+  go('gover');
+}
+function drawGame(cv){
+  var g=st.g,W=1080,off=g.newBest?110:0,n=g.log.length,sum=0,H=780+off+450+100,c,t0=new Date(g.t);
+  g.log.forEach(function(x){sum+=x.s});
+  cv.width=W;cv.height=H;c=cv.getContext('2d');
+  c.fillStyle='#ffffff';c.fillRect(0,0,W,H);
+  var gr=c.createLinearGradient(0,0,0,740);gr.addColorStop(0,'#6d3df2');gr.addColorStop(1,'#2a1b6e');
+  c.fillStyle=gr;c.fillRect(0,0,W,740);
+  drawMonster(c,W/2,160,85);
+  c.textAlign='center';
+  c.fillStyle='#fff';c.font='800 58px '+FONT;c.fillText('Matematik Canavarı',W/2,345);
+  c.fillStyle='#ddd6fe';c.font='600 46px '+FONT;c.fillText(st.profile||'Misafir',W/2,405);
+  c.font='500 34px '+FONT;c.fillText('Akıldan İşlem Oyunu · '+gLabel(g.op),W/2,455);
+  c.font='400 30px '+FONT;c.fillText(fmtDate(t0)+' '+fmtTime(t0),W/2,500);
+  c.fillStyle='#fde047';c.font='800 190px '+FONT;c.fillText(String(g.score),W/2,670);
+  c.fillStyle='#fff';c.font='600 40px '+FONT;c.fillText('PUAN',W/2,722);
+  if(g.newBest){
+    c.fillStyle='#fde047';rr(c,50,780,980,90,24);c.fill();
+    c.fillStyle='#2a1b6e';c.font='800 48px '+FONT;c.fillText('🏆 YENİ REKOR!',W/2,845);
+  }
+  var best=Math.max(g.bestOld,g.score);
+  var cards=[
+    ['Doğru',String(g.ok),'#1f9d55'],['Yanlış / süre doldu',String(g.bad),'#d64545'],
+    ['En iyi seri',String(g.bestStreak)],['Rekor',String(best)],
+    ['Toplam soru',String(n)],['Ortalama süre / soru',n?fmtSec(sum/n):'-']
+  ];
+  cards.forEach(function(k,i){
+    var x=50+(i%2)*500,yy=780+off+Math.floor(i/2)*150;
+    c.fillStyle='#f4f1fb';rr(c,x,yy,480,130,24);c.fill();
+    c.textAlign='left';c.fillStyle='#6b7385';c.font='500 28px '+FONT;c.fillText(k[0],x+28,yy+44);
+    c.fillStyle=k[2]||'#1d2433';c.font='800 40px '+FONT;c.fillText(k[1],x+28,yy+100);
+  });
+  c.textAlign='center';c.fillStyle='#9aa3b5';c.font='400 28px '+FONT;c.fillText('Rapor: '+fmtDate(new Date())+' '+fmtTime(new Date()),W/2,H-30);
+}
+function saveGame(){shareCanvas(document.getElementById('gcard'),'matematik-canavari-oyun.png')}
+
 /* ---------- çizim ---------- */
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function circ(c,x,y,r,fill){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=fill;c.fill()}
@@ -516,6 +691,7 @@ function askDelProfile(i){
   modal('<b>'+esc(n)+'</b> profilini silmek istediğine emin misin?<br>Bu profile ait tüm skorlar da silinir.','Evet, sil','Vazgeç',function(){
     var l=profiles();l.splice(i,1);lsSet('mc_profiles',l);
     lsSet('mc_records',records().filter(function(r){return r.p!==n}));
+    var bb=ls('mc_best',{});delete bb[n];lsSet('mc_best',bb);
     if(st.profile===n)st.profile=null;
     toast('Profil silindi');render();
   });
@@ -527,6 +703,9 @@ function back(){
   if(s==='digits'){if(st.kind==='p')return go(st.op==='mix'?'mixmenu':'pmenu');return go(o&&o.mode?'mode':'ops')}
   if(s==='mode')return go('ops');
   if(s==='mixmenu')return go('pmenu');
+  if(s==='gmenu')return go('home');
+  if(s==='game')return askQuitGame();
+  if(s==='gover')return go('gmenu');
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
   if(s==='home')return go('profiles');
   if(s==='profiles')return go('welcome');
@@ -535,16 +714,29 @@ function topBar(t){return '<div class="top"><button class="back" onclick="back()
 
 function render(){
   if(tmr){clearInterval(tmr);tmr=null}
+  if(gT){clearInterval(gT);gT=null}
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 9</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 11</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
     h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='home'){
-    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button></div><div style="height:12px"></div>';
+    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button></div><div style="height:12px"></div>';
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+  }else if(s==='gmenu'){
+    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru hayvana dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p><div class="col">';
+    ['add','sub','mul','div','rnd'].forEach(function(o){var b=bestGet(o);h+='<button class="btn" onclick="gStart(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>'+(b?'🏆 Rekor: '+b:'Henüz rekor yok')+'</small></button>'});
+    h+='</div>'+(st.profile?'':'<p class="sub center">Misafir oturumunda sonuçlar ve rekor kaydedilmez.</p>');
+  }else if(s==='game'){
+    h=gameHtml();
+  }else if(s==='gover'){
+    h=topBar('Oyun bitti')+'<canvas id="gcard" class="card wide"></canvas>'+
+      (st.profile?'':'<p class="sub center">Misafir oturumu: bu sonuç kaydedilmedi.</p>')+
+      '<button class="next" onclick="saveGame()">📷 Fotoğrafı Kaydet / Paylaş</button>'+
+      '<button class="ghost" onclick="gStart(st.g.op)">🔁 Tekrar Oyna</button>'+
+      '<button class="ghost" onclick="go(\'gmenu\')">Oyun Menüsüne Dön</button>';
   }else if(s==='ops'){
     h=topBar('İşlemler')+'<div class="grid">';
     for(var k in OPS)h+='<button class="btn" onclick="pickOp(\''+k+'\')"><span class="big">'+OPS[k].sym+'</span>'+OPS[k].name+'</button>';
@@ -593,6 +785,8 @@ function render(){
   window.scrollTo(0,0);
   if(s==='welcome')drawMonster(document.getElementById('mon').getContext('2d'),240,245,150);
   if(s==='summary')drawReport(document.getElementById('card'));
+  if(s==='gover')drawGame(document.getElementById('gcard'));
+  if(s==='game')gStartTimer();
   if(s==='history'){
     drawHistory(document.getElementById('hist'));
     var all=records(),mine=all.filter(function(r){return r.p===st.profile}).length;
