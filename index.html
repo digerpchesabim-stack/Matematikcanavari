@@ -79,6 +79,14 @@ h1{font-size:28px;margin:8px 0 4px}
 .st .lz{opacity:.35}
 .stext{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:19px;line-height:1.45;margin:10px 0 14px;text-align:left}
 #toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1d2433;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
+.pq{font-size:20px;font-weight:600;text-align:left;padding:20px 16px;line-height:1.7;letter-spacing:0}
+.pq .qs{display:block;margin-top:8px;font-weight:800}
+.nm{color:var(--accent);font-weight:800;font-size:1.1em}
+.pans{margin-top:12px;font-weight:800;font-size:22px}
+.pbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:18px;line-height:1.5;margin:10px 0;text-align:left}
+.pbox ul,.pbox ol{margin:4px 0 8px 20px;padding:0}
+.pbox h3{margin:0 0 8px;font-size:19px}
+.pbox p{margin:8px 0 2px}
 </style>
 </head>
 <body>
@@ -93,7 +101,7 @@ var OPS={
   div:{name:'Bölme',sym:'÷',mode:false}
 };
 var PTS=10;
-var st={screen:'welcome',op:null,eldeli:null,d:null,q:null,idx:0,score:0,ok:0,bad:0,streak:0,seen:{},picked:null,profile:null,last:null,log:[],acc:0,qStart:null,breakUsed:false,onBreak:false,modal:false,vert:false,tries:0,fix:0,showSol:false,steps:null,sk:0};
+var st={screen:'welcome',kind:'o',mix:null,pst:0,op:null,eldeli:null,d:null,q:null,idx:0,score:0,ok:0,bad:0,streak:0,seen:{},picked:null,profile:null,last:null,log:[],acc:0,qStart:null,breakUsed:false,onBreak:false,modal:false,vert:false,tries:0,fix:0,showSol:false,steps:null,sk:0};
 var tmr=null;
 var app=document.getElementById('app');
 
@@ -106,7 +114,7 @@ function pad(n){return n<10?'0'+n:''+n}
 function fmtDate(d){return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function toast(m){var t=document.getElementById('toast');t.textContent=m;t.style.opacity=1;setTimeout(function(){t.style.opacity=0},2400)}
-function catLabel(op,e,d){return OPS[op].name+(OPS[op].mode?' · '+(e?'Eldeli':'Eldesiz'):'')+' · '+d+' basamaklı'}
+function catLabel(op,e,d,k,m){if(k==='p')return 'Problem · '+(op==='mix'?'Karma · '+(MIXN[m]||'Karma'):OPS[op].name)+' · '+d+' basamaklı';return OPS[op].name+(OPS[op].mode?' · '+(e?'Eldeli':'Eldesiz'):'')+' · '+d+' basamaklı'}
 
 /* ---------- soru üretimi ---------- */
 function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a}
@@ -132,8 +140,196 @@ function choices(ans){
 }
 function newQ(){
   var q,i;
-  for(i=0;i<60;i++){q=genQuestion();if(!st.seen[q.text])break}
-  st.seen[q.text]=1;q.opts=choices(q.ans);st.q=q;st.picked=null;st.tries=0;st.showSol=false;st.acc=0;st.qStart=Date.now();
+  for(i=0;i<60;i++){q=st.kind==='p'?genProblem():genQuestion();if(!st.seen[q.text])break}
+  st.seen[q.text]=1;q.opts=st.kind==='p'?choicesK(q.ans,q.extra):choices(q.ans);st.q=q;st.picked=null;st.tries=0;st.showSol=false;st.acc=0;st.qStart=Date.now();
+}
+
+/* ---------- problemler ---------- */
+var NAMES=['Ali','Ayşe','Mehmet','Zeynep','Emre','Elif','Can','Merve','Ahmet','Selin','Burak','Deniz','Fatma','Hasan','Büşra','Yusuf','Esra','Kerem','Melek','Oğuz'];
+var VOW='aeıioöuü';
+function nameForms(w){
+  var v='e',i,L=w.charAt(w.length-1).toLowerCase();
+  for(i=w.length-1;i>=0;i--){if(VOW.indexOf(w.charAt(i).toLowerCase())>=0){v=w.charAt(i).toLowerCase();break}}
+  var ve=VOW.indexOf(L)>=0,h4='ei'.indexOf(v)>=0?'i':('aı'.indexOf(v)>=0?'ı':('ou'.indexOf(v)>=0?'u':'ü')),h2='aıou'.indexOf(v)>=0?'a':'e',hard='fstkçşhp'.indexOf(L)>=0;
+  return {n:w,g:w+"'"+(ve?'n':'')+h4+'n',d:w+"'"+(ve?'y':'')+h2,b:w+"'"+(hard?'t':'d')+h2+'n'};
+}
+function IT(n,p,pa,a,pl,v,vm,vs,money){return {n:n,p:p,pa:pa,a:a,pl:pl,v:v,vm:vm,vs:vs,money:!!money}}
+function CN(n,l,b,d){return {n:n,l:l,b:b,d:d}}
+var ITEMS=[
+  [IT('elma','elması','elmasını','elmayı','elmaları','topladı','toplamak','toplaması'),
+   IT('bilye','bilyesi','bilyesini','bilyeyi','bilyeleri','kazandı','kazanmak','kazanması'),
+   IT('kalem','kalemi','kalemini','kalemi','kalemleri','aldı','almak','alması'),
+   IT('ceviz','cevizi','cevizini','cevizi','cevizleri','topladı','toplamak','toplaması'),
+   IT('şeker','şekeri','şekerini','şekeri','şekerleri','aldı','almak','alması'),
+   IT('balon','balonu','balonunu','balonu','balonları','aldı','almak','alması')],
+  [IT('kitap','kitabı','kitabını','kitabı','kitapları','aldı','almak','alması'),
+   IT('çıkartma','çıkartması','çıkartmasını','çıkartmayı','çıkartmaları','topladı','toplamak','toplaması'),
+   IT('tuğla','tuğlası','tuğlasını','tuğlayı','tuğlaları','aldı','almak','alması'),
+   IT('fidan','fidanı','fidanını','fidanı','fidanları','dikti','dikmek','dikmesi'),
+   IT('boncuk','boncuğu','boncuğunu','boncuğu','boncukları','aldı','almak','alması'),
+   IT('TL',"TL'si","TL'sini","TL'yi",'parayı','biriktirdi','biriktirmek','biriktirmesi',true)],
+  [IT('TL',"TL'si","TL'sini","TL'yi",'parayı','biriktirdi','biriktirmek','biriktirmesi',true),
+   IT('tuğla','tuğlası','tuğlasını','tuğlayı','tuğlaları','aldı','almak','alması'),
+   IT('fidan','fidanı','fidanını','fidanı','fidanları','dikti','dikmek','dikmesi'),
+   IT('kitap','kitabı','kitabını','kitabı','kitapları','aldı','almak','alması'),
+   IT('kâğıt','kâğıdı','kâğıdını','kâğıdı','kâğıtları','aldı','almak','alması')]
+];
+var CT1=[CN('kutu','kutuda','kutudan','kutuya'),CN('torba','torbada','torbadan','torbaya'),CN('sepet','sepette','sepetten','sepete'),CN('poşet','poşette','poşetten','poşete'),CN('çanta','çantada','çantadan','çantaya')];
+var CT2=[CN('koli','kolide','koliden','koliye'),CN('palet','palette','paletten','palete'),CN('çuval','çuvalda','çuvaldan','çuvala'),CN('sandık','sandıkta','sandıktan','sandığa')];
+var CTM=[CN('cüzdan','cüzdanda','cüzdandan','cüzdana'),CN('kumbara','kumbarada','kumbaradan','kumbaraya'),CN('kasa','kasada','kasadan','kasaya')];
+var THINGS=[['defter','kalem','oyuncak','balon','şeker'],['defter','kalem','oyuncak','balon','şeker'],['ayakkabı','çanta','mont','oyuncak'],['telefon','bilgisayar','televizyon','buzdolabı']];
+var CHEAP=[['defter','defterlerden'],['kalem','kalemlerden'],['balon','balonlardan'],['şeker','şekerlerden'],['bilye','bilyelerden']];
+var MIXP=['add-sub','add-mul','add-div','sub-mul','sub-div','mul-div'];
+var MIXN={'add-sub':'Toplama + Çıkarma','add-mul':'Toplama + Çarpma','add-div':'Toplama + Bölme','sub-mul':'Çıkarma + Çarpma','sub-div':'Çıkarma + Bölme','mul-div':'Çarpma + Bölme','rnd':'Rastgele'};
+var SYMN={'+':'toplama','−':'çıkarma','×':'çarpma','÷':'bölme'};
+var HK={add:'“daha”, “toplam” gibi sözler → toplama (+)',sub:'“verdi”, “kaldı”, “alındı” gibi sözler → çıkarma (−)',mul:'“her”, “katı”, “…tanesi” gibi sözler → çarpma (×)',div:'“eşit paylaştırdı”, “eşit olarak” gibi sözler → bölme (÷)'};
+var SYMO={add:'+',sub:'−',mul:'×',div:'÷'};
+function N(x){return '<b class="nm">'+x+'</b>'}
+function pk(L){return L[rnd(0,L.length-1)]}
+function pn(d){return d===1?rnd(2,9):num(d)}
+function mulOf(k,d){
+  var lo=d===1?2:Math.pow(10,d-1),hi=Math.pow(10,d)-1,a=Math.max(2,Math.ceil(lo/k)),b=Math.floor(hi/k);
+  if(a>b)return null;return k*rnd(a,b);
+}
+function stg(sym,a,b){return {sym:sym,a:a,b:b,ans:sym==='+'?a+b:sym==='−'?a-b:sym==='×'?a*b:a/b}}
+function pickItem(d){var L=ITEMS[d<=2?0:d===3?1:2];return L[rnd(0,L.length-1)]}
+function pickC(it,d){return pk(it.money?CTM:(d<=2?CT1:CT2))}
+function pair2(){var i=rnd(0,NAMES.length-1),j;do{j=rnd(0,NAMES.length-1)}while(j===i);return [nameForms(NAMES[i]),nameForms(NAMES[j])]}
+function mkQ(s,h,ans,expr,stages,extra){
+  var last=s.length-1,html='',i;
+  for(i=0;i<s.length;i++)html+=(i===last?'<span class="qs">'+s[i]+'</span>':s[i]+' ');
+  return {text:html.replace(/<[^>]+>/g,''),html:html,ans:ans,expr:expr,stages:stages,given:s.slice(0,last),ask:s[last],hint:h,extra:extra||[]};
+}
+
+/* tek işlemli problem şablonları (nm: parayla olmaz, mo: sadece parayla) */
+var TPL={
+add:[
+ {f:function(c){return {s:[c.P.g+' '+N(c.a)+' '+c.I.p+' vardı.',pk(['Annesi','Babası','Dedesi','Ablası','Ağabeyi','Teyzesi'])+' ona '+N(c.b)+' '+c.I.n+' daha verdi.',c.P.g+' şimdi kaç '+c.I.p+' oldu?'],h:'“daha verdi” → toplama (+)'}}},
+ {f:function(c){return {s:['Bir '+c.C.l+' '+N(c.a)+' '+c.I.n+' var.','Başka bir '+c.C.l+' '+N(c.b)+' '+c.I.n+' var.','İki '+c.C.l+' toplam kaç '+c.I.n+' var?'],h:'“toplam” → toplama (+)'}}},
+ {f:function(c){return {s:[c.P.n+' sabah '+N(c.a)+' '+c.I.n+' '+c.I.v+'.','Akşam '+N(c.b)+' '+c.I.n+' daha '+c.I.v+'.',c.P.n+' toplam kaç '+c.I.n+' '+c.I.v+'?'],h:'“daha” ve “toplam” → toplama (+)'}}},
+ {nm:1,f:function(c){return {s:['Bir rafta '+N(c.a)+' '+c.I.n+' vardı.','Rafa '+N(c.b)+' '+c.I.n+' daha konuldu.','Rafta şimdi kaç '+c.I.n+' var?'],h:'“daha konuldu” → toplama (+)'}}},
+ {f:function(c){return {s:[c.P.g+' '+N(c.a)+' '+c.I.p+' var.',c.O.g+' '+N(c.b)+' '+c.I.p+' var.','İkisinin toplam kaç '+c.I.p+' var?'],h:'“ikisinin toplam” → toplama (+)'}}},
+ {f:function(c){return {s:[c.P.n+' dün '+N(c.a)+' '+c.I.n+' '+c.I.v+'.','Bugün '+N(c.b)+' '+c.I.n+' '+c.I.v+'.',c.P.n+' iki günde kaç '+c.I.n+' '+c.I.v+'?'],h:'“iki günde kaç” → toplama (+)'}}}
+],
+sub:[
+ {f:function(c){return {s:[c.P.g+' '+N(c.a)+' '+c.I.p+' vardı.',N(c.b)+' '+c.I.pa+' arkadaşına verdi.',c.P.g+' kaç '+c.I.p+' kaldı?'],h:'“verdi”, “kaldı” → çıkarma (−)'}}},
+ {f:function(c){return {s:['Bir '+c.C.l+' '+N(c.a)+' '+c.I.n+' vardı.',cap(c.C.b)+' '+N(c.b)+' '+c.I.n+' alındı.',cap(c.C.l)+' kaç '+c.I.n+' kaldı?'],h:'“alındı”, “kaldı” → çıkarma (−)'}}},
+ {f:function(c){return {s:[c.P.g+' '+N(c.a)+' '+c.I.p+' var.',c.O.g+' '+N(c.b)+' '+c.I.p+' var.',c.P.g+' '+c.O.b+' kaç '+c.I.p+' fazla?'],h:'“kaç … fazla” → çıkarma (−)'}}},
+ {f:function(c){return {s:[c.P.n+' '+N(c.a)+' '+c.I.n+' '+c.I.vm+' istiyor.','Şimdiye kadar '+N(c.b)+' '+c.I.n+' '+c.I.v+'.','Daha kaç '+c.I.n+' '+c.I.vs+' gerekir?'],h:'“daha kaç” (eksik kalan) → çıkarma (−)'}}},
+ {nm:1,f:function(c){return {s:['Bir mağazada '+N(c.a)+' '+c.I.n+' vardı.','Gün içinde '+N(c.b)+' '+c.I.n+' satıldı.','Mağazada kaç '+c.I.n+' kaldı?'],h:'“satıldı”, “kaldı” → çıkarma (−)'}}},
+ {nm:1,f:function(c){return {s:[c.P.g+' '+N(c.a)+' '+c.I.p+' vardı.','Bunlardan '+N(c.b)+' tanesini '+c.O.d+' hediye etti.',c.P.g+' elinde kaç '+c.I.n+' kaldı?'],h:'“hediye etti”, “kaldı” → çıkarma (−)'}}}
+],
+mul:[
+ {f:function(c){return {s:['Bir '+c.C.l+' '+N(c.a)+' '+c.I.n+' var.',N(c.k)+' '+c.C.l+' kaç '+c.I.n+' olur?'],h:'“bir … var, … tanesinde kaç” → çarpma (×)'}}},
+ {f:function(c){return {s:[c.P.n+' her gün '+N(c.a)+' '+c.I.n+' '+c.I.v+'.',c.P.n+' '+N(c.k)+' günde kaç '+c.I.n+' '+c.I.v+'?'],h:'“her gün”, “… günde kaç” → çarpma (×)'}}},
+ {f:function(c){return {s:['Bir '+c.T+' '+N(c.a)+' TL.',N(c.k)+' '+c.T+' kaç TL eder?'],h:'“bir tanesi … , … tanesi kaç” → çarpma (×)'}}},
+ {f:function(c){return {s:[c.P.n+' '+N(c.k)+' arkadaşına ayrı ayrı '+N(c.a)+' '+c.I.n+' verdi.',c.P.n+' toplam kaç '+c.I.n+' vermiş oldu?'],h:'“ayrı ayrı … verdi”, “toplam” → çarpma (×)'}}},
+ {f:function(c){return {s:[N(c.k)+' '+c.C.n+' var.','Her '+c.C.l+' '+N(c.a)+' '+c.I.n+' var.','Toplam kaç '+c.I.n+' var?'],h:'“her … da”, “toplam” → çarpma (×)'}}},
+ {f:function(c){return {s:[c.P.n+' '+N(c.k)+' hafta boyunca her hafta '+N(c.a)+' '+c.I.n+' '+c.I.v+'.',c.P.n+' toplam kaç '+c.I.n+' '+c.I.v+'?'],h:'“her hafta”, “toplam” → çarpma (×)'}}}
+],
+div:[
+ {f:function(c){return {s:[c.P.n+', '+N(c.a)+' '+c.I.a+' '+N(c.k)+' arkadaşına eşit olarak paylaştırdı.','Her arkadaşına kaç '+c.I.n+' verdi?'],h:'“eşit olarak paylaştırdı” → bölme (÷)'}}},
+ {f:function(c){return {s:[N(c.a)+' '+c.I.n+' eşit olarak '+N(c.k)+' '+c.C.d+' konuldu.','Her '+c.C.l+' kaç '+c.I.n+' var?'],h:'“eşit olarak … konuldu”, “her … kaç” → bölme (÷)'}}},
+ {nm:1,f:function(c){return {s:[N(c.a)+' '+c.I.n+' '+N(c.k)+' eşit gruba ayrıldı.','Her grupta kaç '+c.I.n+' var?'],h:'“eşit gruba ayrıldı”, “her grupta kaç” → bölme (÷)'}}},
+ {nm:1,f:function(c){return {s:[N(c.a)+' '+c.I.n+' paketlenecek.','Her '+c.C.d+' '+N(c.k)+' '+c.I.n+' konulacak.','Kaç '+c.C.n+' gerekir?'],h:'“her …’ya … konulacak, kaç … gerekir” → bölme (÷)'}}},
+ {f:function(c){return {s:[c.P.n+' '+N(c.k)+' günde toplam '+N(c.a)+' '+c.I.n+' '+c.I.v+'.',c.P.n+' her gün aynı sayıda '+c.I.n+' '+c.I.v+'.',c.P.n+' bir günde kaç '+c.I.n+' '+c.I.v+'?'],h:'“aynı sayıda”, “bir günde kaç” → bölme (÷)'}}},
+ {mo:1,f:function(c){return {s:[c.P.g+' '+N(c.a)+" TL'si var.",'Tanesi '+N(c.k)+' TL olan '+c.T2[1]+' kaç tane alabilir?'],h:'“tanesi … olan … kaç tane alabilir” → bölme (÷)'}}}
+]};
+
+/* karma (iki işlemli) şablonlar */
+var KT={
+'add-sub':{f:function(c){return ([c.P.g+' '+N(c.x)+' '+c.I.p+' vardı.',pk(['Annesi','Babası','Dedesi'])+' ona '+N(c.y)+' '+c.I.n+' daha verdi.','Sonra '+N(c.z)+' '+c.I.pa+' arkadaşına verdi.',c.P.g+' kaç '+c.I.p+' kaldı?'])}},
+'sub-add':{f:function(c){return ([c.P.g+' '+N(c.x)+' '+c.I.p+' vardı.',N(c.y)+' '+c.I.pa+' arkadaşına verdi.','Sonra '+N(c.z)+' '+c.I.n+' daha aldı.',c.P.g+' şimdi kaç '+c.I.p+' oldu?'])}},
+'add-mul':{f:function(c){return ([c.P.n+' sabah '+N(c.x)+' '+c.I.n+' '+c.I.v+'.','Öğleden sonra '+N(c.y)+' '+c.I.n+' daha '+c.I.v+'.',c.P.n+' her gün aynı kadar '+c.I.n+' '+c.I.v+'.',c.P.n+' '+N(c.k)+' günde kaç '+c.I.n+' '+c.I.v+'?'])}},
+'mul-add':{nm:1,f:function(c){return (['Bir '+c.C.l+' '+N(c.x)+' '+c.I.n+' var.',c.P.n+' '+N(c.k)+' '+c.C.n+' aldı.','Sonra '+N(c.z)+' '+c.I.n+' daha aldı.',c.P.g+' kaç '+c.I.p+' oldu?'])}},
+'add-div':{f:function(c){return ([c.P.n+' '+N(c.x)+' '+c.I.n+' '+c.I.v+'.',c.O.n+' '+N(c.y)+' '+c.I.n+' '+c.I.v+'.','Bunları '+N(c.k)+' arkadaşına eşit olarak paylaştırdılar.','Her arkadaşına kaç '+c.I.n+' verdiler?'])}},
+'div-add':{f:function(c){return ([N(c.x)+' '+c.I.n+' eşit olarak '+N(c.k)+' '+c.C.d+' konuldu.','Sonra her '+c.C.d+' '+N(c.z)+' '+c.I.n+' daha eklendi.','Her '+c.C.l+' kaç '+c.I.n+' oldu?'])}},
+'sub-mul':{nm:1,f:function(c){return ([c.P.g+' '+N(c.x)+' '+c.I.p+' vardı.',N(c.y)+' '+c.I.pa+' arkadaşına verdi.',c.O.g+' '+c.I.n+' sayısı, '+c.P.g+' kalan '+c.I.n+' sayısının '+N(c.k)+' katıdır.',c.O.g+' kaç '+c.I.p+' var?'])}},
+'mul-sub':{nm:1,f:function(c){return (['Bir '+c.C.l+' '+N(c.x)+' '+c.I.n+' var.',c.P.n+' '+N(c.k)+' '+c.C.n+' aldı.','Sonra '+N(c.z)+' '+c.I.pa+' arkadaşına verdi.',c.P.g+' kaç '+c.I.p+' kaldı?'])}},
+'sub-div':{f:function(c){return ([c.P.g+' '+N(c.x)+' '+c.I.p+' vardı.',N(c.y)+' '+c.I.pa+' kardeşine verdi.','Kalan '+c.I.pl+' '+N(c.k)+' arkadaşına eşit paylaştırdı.','Her arkadaşına kaç '+c.I.n+' verdi?'])}},
+'div-sub':{f:function(c){return ([N(c.x)+' '+c.I.n+' eşit olarak '+N(c.k)+' '+c.C.d+' konuldu.','Sonra her '+c.C.b+' '+N(c.z)+' '+c.I.n+' alındı.','Her '+c.C.l+' kaç '+c.I.n+' kaldı?'])}},
+'mul-div':{nm:1,f:function(c){return (['Bir '+c.C.l+' '+N(c.x)+' '+c.I.n+' var.',c.P.n+' '+N(c.k)+' '+c.C.n+' aldı.','Bunları '+N(c.m)+' arkadaşına eşit paylaştırdı.','Her arkadaşına kaç '+c.I.n+' verdi?'])}},
+'div-mul':{nm:1,f:function(c){return ([N(c.x)+' '+c.I.n+' eşit olarak '+N(c.k)+' '+c.C.d+' konuldu.',c.P.n+' bunlardan '+N(c.m)+' '+c.C.n+' aldı.',c.P.n+' kaç '+c.I.n+' almış oldu?'])}}
+};
+var ALT={
+ 'add-sub':function(v){return v.x+v.y+v.z},
+ 'sub-add':function(v){return v.x-v.y-v.z},
+ 'add-mul':function(v){return v.x+v.y*v.k},
+ 'mul-add':function(v){return v.x*(v.k+v.z)},
+ 'add-div':function(v){return v.x+Math.floor(v.y/v.k)},
+ 'div-add':function(v){return Math.floor((v.x+v.z)/v.k)},
+ 'sub-mul':function(v){return v.x-v.y*v.k},
+ 'mul-sub':function(v){return v.x*v.k+v.z},
+ 'sub-div':function(v){return v.x-Math.floor(v.y/v.k)},
+ 'div-sub':function(v){return Math.floor((v.x-v.z)/v.k)},
+ 'mul-div':function(v){return v.x*v.m},
+ 'div-mul':function(v){return Math.floor(v.x/v.m)}
+};
+function isMD(o){return o==='mul'||o==='div'}
+function mixNums(o1,o2,d){
+  var key=o1+'-'+o2,i,x,b1,b2,s1,s2,r,v;
+  for(i=0;i<6000;i++){
+    b1=isMD(o1)?rnd(2,9):pn(d);
+    x=o1==='div'?mulOf(b1,d):pn(d);
+    if(x===null)continue;
+    if(o1==='sub'&&x<=b1)continue;
+    s1=stg(SYMO[o1],x,b1);r=s1.ans;
+    b2=isMD(o2)?rnd(2,9):pn(d);
+    if(o2==='sub'&&b2>=r)continue;
+    if(o2==='div'&&(r%b2!==0||r<b2||(o1==='mul'&&b2===b1)))continue;
+    if(o1==='div'&&o2==='mul'&&(b1<3||b2>=b1))continue;
+    s2=stg(SYMO[o2],r,b2);
+    if(s2.ans<1||s2.ans>99999||r<2)continue;
+    v={x:x,y:isMD(o1)?undefined:b1,z:isMD(o2)?undefined:b2,k:isMD(o1)?b1:(isMD(o2)?b2:undefined),m:(isMD(o1)&&isMD(o2))?b2:undefined};
+    var first=x+' '+s1.sym+' '+b1;
+    v.expr=((o1==='add'||o1==='sub')&&isMD(o2))?'('+first+') '+s2.sym+' '+b2:first+' '+s2.sym+' '+b2;
+    v.stages=[s1,s2];v.r=r;v.ans=s2.ans;v.alt=ALT[key](v);
+    return v;
+  }
+  return null;
+}
+function genMix(){
+  var d=st.d,pr=st.mix==='rnd'?MIXP[rnd(0,MIXP.length-1)]:st.mix,ops=pr.split('-'),i,I,v,key,tp,P,O,c,s,pp;
+  if(Math.random()<0.5)ops.reverse();
+  key=ops[0]+'-'+ops[1];tp=KT[key];
+  for(i=0;i<60;i++){I=pickItem(d);if(!(tp.nm&&I.money))break}
+  v=mixNums(ops[0],ops[1],d);
+  pp=pair2();
+  c={x:v.x,y:v.y,z:v.z,k:v.k,m:v.m,I:I,C:pickC(I,d),P:pp[0],O:pp[1]};
+  s=tp.f(c);
+  return mkQ(s,'1. işlem: '+HK[ops[0]]+'<br>2. işlem: '+HK[ops[1]],v.ans,v.expr,v.stages,[v.r,v.alt]);
+}
+function genSingle(op){
+  var d=st.d,i,I,L,t,a,b,k,ans,pp,expr,c,r,T,T2,lo,hi,qlo,qhi;
+  if(op==='add'){a=pn(d);b=pn(d);ans=a+b;expr=a+' + '+b}
+  else if(op==='sub'){do{a=pn(d);b=pn(d)}while(a<=b);ans=a-b;expr=a+' − '+b}
+  else if(op==='mul'){a=pn(d);k=rnd(2,9);ans=a*k;expr=a+' × '+k}
+  else{
+    lo=d===1?4:Math.pow(10,d-1);hi=Math.pow(10,d)-1;
+    do{k=rnd(2,9);qlo=Math.max(2,Math.ceil(lo/k));qhi=Math.floor(hi/k)}while(qlo>qhi);
+    ans=rnd(qlo,qhi);a=ans*k;expr=a+' ÷ '+k;
+  }
+  for(i=0;i<80;i++){
+    I=pickItem(d);
+    L=TPL[op].filter(function(t){return I.money?!t.nm:!t.mo});
+    if(L.length)break;
+  }
+  t=L[rnd(0,L.length-1)];
+  pp=pair2();T=pk(THINGS[d-1]);T2=pk(CHEAP);
+  c={a:a,b:b,k:k,I:I,C:pickC(I,d),P:pp[0],O:pp[1],T:T,T2:T2};
+  r=t.f(c);
+  var stg1=op==='add'||op==='sub'?stg(SYMO[op],a,b):stg(SYMO[op],a,k);
+  var extra=op==='add'?[Math.abs(a-b)]:op==='sub'?[a+b]:op==='mul'?[a+k]:[];
+  return mkQ(r.s,r.h,ans,expr,[stg1],extra);
+}
+function genProblem(){return st.op==='mix'?genMix():genSingle(st.op)}
+function choicesK(ans,extras){
+  var set=[ans],deltas=[-10,-1,1,10,2,-2,-9,9,11,-11,-100,100],tries=0,i,e;
+  for(i=0;i<extras.length;i++){e=extras[i];if(e>0&&e<=ans*4+50&&set.indexOf(e)<0&&set.length<4)set.push(e)}
+  while(set.length<4&&tries<300){tries++;var c=ans+deltas[rnd(0,deltas.length-1)];if(c>0&&set.indexOf(c)<0)set.push(c)}
+  var n=1;while(set.length<4){if(set.indexOf(ans+n)<0)set.push(ans+n);n++}
+  for(i=set.length-1;i>0;i--){var j=rnd(0,i),t=set[i];set[i]=set[j];set[j]=t}
+  return set;
 }
 
 /* ---------- çizim ---------- */
@@ -176,11 +372,12 @@ function histData(){
     var dt=new Date(r.t),day=fmtDate(dt);
     if(!map[day]){map[day]={day:day,rows:[],total:0};days.push(map[day])}
     var av=null;if(r.qs&&r.qs.length){var t0=0;r.qs.forEach(function(x){t0+=x.s});av=t0/r.qs.length}
-    map[day].rows.push({lab:catLabel(r.op,r.e,r.d),dt:dt,s:r.s,ok:r.ok,bad:r.bad,fix:r.fix||0,av:av});
+    map[day].rows.push({lab:catLabel(r.op,r.e,r.d,r.k,r.m),dt:dt,s:r.s,ok:r.ok,bad:r.bad,fix:r.fix||0,av:av});
     map[day].total+=r.s;
   });
   return days;
 }
+function fitText(c,t,x,y,maxW,size,wt){var sz=size;c.font=wt+' '+sz+'px '+FONT;while(c.measureText(t).width>maxW&&sz>16){sz--;c.font=wt+' '+sz+'px '+FONT}c.fillText(t,x,y)}
 function drawHistory(cv){
   var days=histData(),W=1080,H=500,total=0,y,c;
   days.forEach(function(d){total+=d.total;H+=100+d.rows.length*120});
@@ -200,7 +397,7 @@ function drawHistory(cv){
     c.fillStyle='#e0daf0';c.fillRect(70,y+75,W-140,3);
     y+=100;
     d.rows.forEach(function(x){
-      c.textAlign='left';c.fillStyle='#1d2433';c.font='700 34px '+FONT;c.fillText(x.lab,70,y+38);
+      c.textAlign='left';c.fillStyle='#1d2433';fitText(c,x.lab,70,y+38,720,34,'700');
       c.fillStyle='#6b7385';c.font='400 28px '+FONT;
       c.fillText(fmtDate(x.dt)+' '+fmtTime(x.dt)+' · '+(x.ok+x.fix+x.bad)+' soru · '+x.ok+'✓ '+x.fix+'↻ '+x.bad+'✗'+(x.av!==null?' · ort. '+fmtSec(x.av):''),70,y+84);
       c.textAlign='right';c.fillStyle=x.s<0?'#d64545':'#1f9d55';c.font='800 40px '+FONT;
@@ -252,7 +449,7 @@ function drawReport(cv){
   L.forEach(function(x,i){
     if(i%2===0){c.fillStyle='#f7f5fc';c.fillRect(50,y,W-100,76)}
     c.textAlign='left';c.fillStyle='#6b7385';c.font='600 32px '+FONT;c.fillText(String(i+1),70,y+50);
-    c.fillStyle='#1d2433';c.font='700 36px '+FONT;c.fillText(x.q+' = '+x.a,150,y+50);
+    c.fillStyle='#1d2433';fitText(c,x.q+' = '+x.a,150,y+50,500,36,'700');
     c.textAlign='center';c.fillStyle=x.r===1?'#1f9d55':(x.r===2?'#d97706':'#d64545');c.font='700 30px '+FONT;c.fillText(x.r===1?'✓ Doğru':(x.r===2?'↻ 2. denemede':'✗ Yanlış'),720,y+50);
     c.textAlign='right';c.fillStyle='#1d2433';c.font='800 34px '+FONT;c.fillText(fmtSec(x.s),W-70,y+50);
     y+=76;
@@ -279,6 +476,7 @@ function saveHist(){shareCanvas(document.getElementById('hist'),'matematik-canav
 /* ---------- ekranlar ---------- */
 function fmtLabel(){return st.vert?'↔ Yan yana göster':'↕ Alt alta göster'}
 function qHtml(q,sol){
+  if(q.html)return q.html+(sol?'<div class="pans">Cevap: <span class="sol">'+q.ans+'</span></div>':'');
   var rs=sol?'<span class="sol">'+q.ans+'</span>':'?';
   if(!st.vert)return sol?q.text.replace('?','<span class="sol">'+q.ans+'</span>'):q.text;
   if(q.sym==='÷')return '<div class="vdiv"><div class="dd">'+q.a+'</div><div class="dv"><div class="dt">'+q.b+'</div><div class="qq">'+rs+'</div></div></div>';
@@ -326,8 +524,10 @@ function go(s){st.screen=s;render()}
 function back(){
   var o=OPS[st.op],s=st.screen;
   if(s==='quiz'||s==='summary')return go('digits');
-  if(s==='digits')return go(o&&o.mode?'mode':'home');
-  if(s==='mode'||s==='history')return go('home');
+  if(s==='digits'){if(st.kind==='p')return go(st.op==='mix'?'mixmenu':'pmenu');return go(o&&o.mode?'mode':'ops')}
+  if(s==='mode')return go('ops');
+  if(s==='mixmenu')return go('pmenu');
+  if(s==='ops'||s==='pmenu'||s==='history')return go('home');
   if(s==='home')return go('profiles');
   if(s==='profiles')return go('welcome');
 }
@@ -337,37 +537,47 @@ function render(){
   if(tmr){clearInterval(tmr);tmr=null}
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 8</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 9</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
     h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='home'){
-    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="grid">';
+    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button></div><div style="height:12px"></div>';
+    h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+  }else if(s==='ops'){
+    h=topBar('İşlemler')+'<div class="grid">';
     for(var k in OPS)h+='<button class="btn" onclick="pickOp(\''+k+'\')"><span class="big">'+OPS[k].sym+'</span>'+OPS[k].name+'</button>';
     h+='</div>';
-    h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+  }else if(s==='pmenu'){
+    h=topBar('Problemler')+'<div class="grid">';
+    for(var k2 in OPS)h+='<button class="btn" onclick="pickPOp(\''+k2+'\')"><span class="big">'+OPS[k2].sym+'</span>'+OPS[k2].name+'</button>';
+    h+='</div><button class="btn" onclick="go(\'mixmenu\')"><span class="big">🧩</span>Karma İşlemler<small>İki işlemli problemler</small></button>';
+  }else if(s==='mixmenu'){
+    h=topBar('Karma İşlemler')+'<div class="col">';
+    MIXP.forEach(function(m){h+='<button class="btn" onclick="pickMix(\''+m+'\')">'+MIXN[m]+'</button>'});
+    h+='<button class="btn" onclick="pickMix(\'rnd\')">🎲 Rastgele</button></div>';
   }else if(s==='mode'){
     h=topBar(o.name)+'<div class="col">'+
       '<button class="btn" onclick="pickMode(false)">Eldesiz<small>'+(st.op==='add'?'Basamaklar toplanınca 10 olmaz':'Onluk bozmaya gerek yok')+'</small></button>'+
       '<button class="btn" onclick="pickMode(true)">Eldeli<small>'+(st.op==='add'?'Eldeli toplama':'Onluk bozarak çıkarma')+'</small></button></div>';
   }else if(s==='digits'){
-    var sub=o.mode?(st.eldeli?'Eldeli':'Eldesiz'):'';
-    h=topBar(o.name+(sub?' · '+sub:''))+'<div class="col">';
+    var isP=st.kind==='p',sub=(!isP&&o.mode)?(st.eldeli?'Eldeli':'Eldesiz'):'';
+    h=topBar(isP?(st.op==='mix'?'Karma · '+MIXN[st.mix]:'Problem · '+o.name):o.name+(sub?' · '+sub:''))+'<div class="col">';
     for(var d=1;d<=4;d++){
       if(st.op==='sub'&&st.eldeli&&d===1)continue;
-      var note=st.op==='mul'?'× 1 basamaklı sayı':st.op==='div'?'÷ 1 basamaklı sayı (kalansız)':'';
+      var note=st.op==='mul'?'× 1 basamaklı sayı':st.op==='div'?'÷ 1 basamaklı sayı (kalansız)':st.op==='mix'?'Çarpma ve bölmede 1 basamaklı sayı':'';
       h+='<button class="btn" onclick="pickDigits('+d+')">'+d+' basamaklı'+(note?'<small>'+note+'</small>':'')+'</button>';
     }
     h+='</div>';
   }else if(s==='quiz'){
-    var q=st.q,tag=catLabel(st.op,st.eldeli,st.d);
+    var q=st.q,tag=catLabel(st.op,st.eldeli,st.d,st.kind,st.mix);
     h=topBar('Soru '+(st.idx+1))+'<div class="score">'+
       '<div class="pill main"><b id="p-sc">'+st.score+'</b>PUAN</div>'+
       '<div class="pill"><b id="p-ok">'+st.ok+'</b>Doğru</div>'+
       '<div class="pill"><b id="p-bad">'+st.bad+'</b>Yanlış</div>'+
       '<div class="pill"><b id="p-st">'+st.streak+'</b>Seri</div></div>'+
-      '<div class="tag">'+tag+'</div><div class="fmt"><button class="mini" id="fmtb" onclick="toggleFmt()">'+fmtLabel()+'</button></div><div class="q" id="qbox">'+qHtml(q)+'</div><div class="col" id="opts">';
+      '<div class="tag">'+tag+'</div>'+(st.kind==='p'?'':'<div class="fmt"><button class="mini" id="fmtb" onclick="toggleFmt()">'+fmtLabel()+'</button></div>')+'<div class="q'+(q.html?' pq':'')+'" id="qbox">'+qHtml(q)+'</div><div class="col" id="opts">';
     q.opts.forEach(function(v){h+='<button class="btn opt" data-v="'+v+'" onclick="answer('+v+',this)">'+v+'</button>'});
     h+='</div><div class="msg" id="msg"></div><div id="steps"></div><button class="next" id="sol" hidden onclick="showSol()">💡 Sonucu Gör</button><button class="next" id="next" hidden onclick="nextQ()">Sonraki soru →</button><button class="ghost" onclick="askFinish()">🏁 Bitir ve Skoru Gör</button><button class="ghost" id="brk" onclick="askBreak()"'+(st.breakUsed?' disabled':'')+'>'+(st.breakUsed?'⏸ Acil mola hakkı kullanıldı':'⏸ Acil Mola (1 hak)')+'</button><div class="tag" id="saved"></div>';
   }else if(s==='summary'){
@@ -399,7 +609,9 @@ function createProfile(){
   if(l.indexOf(v)<0){l.push(v);if(!lsSet('mc_profiles',l))toast('Kayıt yapılamadı: tarayıcı depolaması kapalı olabilir')}
   st.profile=v;go('home');
 }
-function pickOp(k){st.op=k;st.eldeli=null;go(OPS[k].mode?'mode':'digits')}
+function pickPOp(k){st.kind='p';st.op=k;st.mix=null;st.eldeli=null;go('digits')}
+function pickMix(m){st.kind='p';st.op='mix';st.mix=m;st.eldeli=null;go('digits')}
+function pickOp(k){st.kind='o';st.mix=null;st.op=k;st.eldeli=null;go(OPS[k].mode?'mode':'digits')}
 function pickMode(e){st.eldeli=e;go('digits')}
 function pickDigits(d){st.d=d;st.sid=Date.now();st.t=new Date().toISOString();st.idx=0;st.log=[];st.fix=0;st.breakUsed=false;st.onBreak=false;st.score=0;st.ok=0;st.bad=0;st.streak=0;st.seen={};newQ();go('quiz')}
 
@@ -419,7 +631,7 @@ function answer(v,el){
 function resolve(r,msg){
   st.picked=1;
   var sec=Math.round(elapsed()*10)/10;
-  st.log.push({q:st.q.text.replace(' = ?',''),a:st.q.ans,ok:r===1,r:r,s:sec});
+  st.log.push({q:st.q.expr||st.q.text.replace(' = ?',''),a:st.q.ans,ok:r===1,r:r,s:sec});
   lockOpts();
   var bb=document.getElementById('brk');if(bb)bb.disabled=true;
   if(r===1){st.ok++;st.streak++;st.score+=PTS;msg.style.color='var(--ok)';msg.textContent='Doğru! +'+PTS+' 🎉'}
@@ -517,10 +729,29 @@ function divStepHtml(S,stp){
 }
 function renderSteps(){
   var S=st.steps,k=st.sk,n=S.list.length,stp=S.list[k-1];
-  var h='<div class="tag">Adım '+k+' / '+n+'</div>'+(S.kind==='div'?divStepHtml(S,stp):tblHtml(S,stp))+'<div class="stext">'+stp.t+'</div>';
+  var multi=st.q.stages&&st.q.stages.length>1,pre=multi?(st.pst+1)+'. işlem · '+cap(SYMN[st.q.stages[st.pst].sym])+' · ':'';
+  var h='<div class="tag">'+pre+'Adım '+k+' / '+n+'</div>'+(S.kind==='div'?divStepHtml(S,stp):tblHtml(S,stp))+'<div class="stext">'+stp.t+'</div>';
   if(k<n)h+='<button class="next" onclick="nextStep()">Sonraki adım →</button>';
   document.getElementById('steps').innerHTML=h;
-  if(k===n)finishSol();
+  if(k===n){
+    if(st.q.stages&&st.pst<st.q.stages.length-1){
+      document.getElementById('steps').insertAdjacentHTML('beforeend','<div class="pbox"><b>Ara sonuç: <span class="sol">'+st.q.stages[st.pst].ans+'</span></b></div><button class="next" onclick="nextStage()">Sıradaki işleme geç →</button>');
+    }else finishSol();
+  }
+}
+function startStage(){var g=st.q.stages[st.pst];st.steps=buildSteps({sym:g.sym,a:g.a,b:g.b,ans:g.ans});st.sk=1;renderSteps()}
+function nextStage(){st.pst++;startStage()}
+function probIntro(){
+  var q=st.q,h='<div class="pbox"><h3>📝 Problem çözme adımları</h3><p><b>1. Verilenler</b></p><ul>';
+  q.given.forEach(function(g){h+='<li>'+g+'</li>'});
+  h+='</ul><p><b>2. Ne isteniyor?</b></p><div>'+q.ask+'</div><p><b>3. Hangi işlemi yapacağız?</b></p><div>'+q.hint+'</div>';
+  if(q.stages.length>1){
+    h+='<p><b>4. İşlem sırası</b></p><ol>';
+    q.stages.forEach(function(g,i){h+='<li>'+(i===0?'Önce ':'Sonra ')+SYMN[g.sym]+': '+(i===0?g.a+' '+g.sym+' '+g.b:'ara sonuç '+g.sym+' '+g.b)+'</li>'});
+    h+='</ol>';
+  }
+  h+='</div><button class="next" onclick="startStage()">'+(q.stages.length>1?'İlk işlemi çözelim →':'İşlemi çözelim →')+'</button>';
+  document.getElementById('steps').innerHTML=h;
 }
 function nextStep(){st.sk++;renderSteps()}
 function finishSol(){
@@ -530,16 +761,17 @@ function finishSol(){
   document.getElementById('next').hidden=false;
 }
 function showSol(){
-  st.steps=buildSteps(st.q);st.sk=1;
   document.getElementById('sol').hidden=true;
   document.getElementById('opts').style.display='none';
   document.getElementById('msg').textContent='';
+  if(st.q.stages){st.pst=0;probIntro();return}
+  st.steps=buildSteps(st.q);st.sk=1;
   renderSteps();
 }
 function nextQ(){st.idx++;newQ();render()}
 function saveProgress(){
   if(st.profile===null)return true;
-  var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad,fix:st.fix,qs:st.log,br:st.breakUsed?1:0};
+  var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad,fix:st.fix,qs:st.log,br:st.breakUsed?1:0,k:st.kind==='p'?'p':undefined,m:st.op==='mix'?st.mix:undefined};
   for(i=l.length-1;i>=0;i--){if(l[i].id===st.sid){l[i]=r;break}}
   if(i<0)l.push(r);
   var done=lsSet('mc_records',l);
@@ -547,7 +779,7 @@ function saveProgress(){
   return done;
 }
 function finish(){
-  st.last={score:st.score,ok:st.ok,bad:st.bad,fix:st.fix,label:catLabel(st.op,st.eldeli,st.d)};
+  st.last={score:st.score,ok:st.ok,bad:st.bad,fix:st.fix,label:catLabel(st.op,st.eldeli,st.d,st.kind,st.mix)};
   go('summary');
 }
 
