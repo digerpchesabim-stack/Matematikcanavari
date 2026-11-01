@@ -353,7 +353,7 @@ function choicesK(ans,extras){
   return set;
 }
 
-/* ---------- bulut: Firebase (sınıf girişi ve senkron) ---------- */
+/* ---------- internet: Firebase (sadece yarış odaları için, girişsiz) ---------- */
 var FBCFG={apiKey:"AIzaSyAZeBT5wWzDm6MSqsBnxsSuuLGffrhUs-Y",authDomain:"matematik-canavari-57e2d.firebaseapp.com",projectId:"matematik-canavari-57e2d",storageBucket:"matematik-canavari-57e2d.firebasestorage.app",messagingSenderId:"83969880151",appId:"1:83969880151:web:a528aeec8ddb9eee4cb312"};
 var FBV='10.12.2';
 var CL={fb:null,app:null,auth:null,db:null,user:null,ready:null,busy:false,dirty:false,timer:null};
@@ -380,114 +380,21 @@ function cloudInit(){
     return CL.ready.then(function(){return fb});
   });
 }
-function cloudErr(e){
-  var c=e&&e.code||'';
-  if(typeof e==='string')return e;
-  if(c==='auth/network-request-failed')return 'İnternet bağlantısı yok';
-  if(c==='auth/too-many-requests')return 'Çok fazla deneme yapıldı, biraz bekle';
-  if(c==='permission-denied'||c==='firestore/permission-denied')return 'İzin yok (sınıf kodunu kontrol et)';
-  return 'Bağlanılamadı, tekrar dene';
-}
-function cloudLogin(cls,nick,pin){
-  cls=String(cls).trim().toUpperCase()||'GENEL';nick=String(nick).trim();
-  if(!nick)return Promise.reject('Takma ad yaz');
-  if(slug(nick).length<2||slug(cls).length<2)return Promise.reject('Takma ad ve sınıf kodu en az 2 harf/rakam olmalı');
-  if(!/^\d{4}$/.test(pin))return Promise.reject('PIN 4 rakam olmalı');
-  var email=cloudEmail(nick,cls),pw=cloudPass(pin),fb,isNew=false;
-  return cloudInit().then(function(f){
-    fb=f;
-    return fb.signInWithEmailAndPassword(CL.auth,email,pw).then(function(c){return c.user},function(e){
+function rid(n){var c='abcdefghijklmnopqrstuvwxyz0123456789',o='',i;for(i=0;i<n;i++)o+=c.charAt(Math.floor(Math.random()*c.length));return o}
+function devAuth(){
+  return cloudInit().then(function(fb){
+    if(CL.user)return fb;
+    var d=ls('mc_dev',null);
+    if(!d||!d.id){d={id:rid(14),pw:rid(24)};lsSet('mc_dev',d)}
+    var email='d'+d.id+'@canavari.example.com',pw='mc'+d.pw;
+    return fb.signInWithEmailAndPassword(CL.auth,email,pw).catch(function(e){
       var code=e&&e.code||'';
       if(code==='auth/network-request-failed'||code==='auth/too-many-requests')throw e;
-      return fb.createUserWithEmailAndPassword(CL.auth,email,pw).then(function(c){isNew=true;return c.user},function(e2){
-        if(e2&&e2.code==='auth/email-already-in-use')throw 'PIN yanlış ya da bu takma ad başkası tarafından alınmış. Başka bir takma ad dene';
-        throw e2;
-      });
-    });
-  }).then(function(u){
-    var uref=fb.doc(CL.db,'users',u.uid);
-    return fb.getDoc(uref).then(function(s){
-      if(s.exists())return u;
-      var chk=cls==='GENEL'?Promise.resolve({exists:function(){return true}}):fb.getDoc(fb.doc(CL.db,'classes',cls));
-      return chk.then(function(cs){
-        if(!cs.exists()){
-          var bad=function(){throw 'Sınıf kodu bulunamadı'};
-          return isNew?u.delete().then(bad,bad):bad();
-        }
-        return fb.setDoc(uref,{nick:nick,cls:cls,created:Date.now()}).then(function(){return u});
-      });
-    });
-  }).then(function(u){
-    return {uid:u.uid,nick:nick,cls:cls};
-  }).catch(function(e){throw cloudErr(e)});
-}
-function cloudPull(){
-  return cloudInit().then(function(fb){
-    if(!CL.user)return 0;
-    return fb.getDocs(fb.collection(CL.db,'users',CL.user.uid,'records')).then(function(qs){
-      var l=records(),have={},add=0,c=ls('mc_cloud',null);
-      l.forEach(function(r){have[r.id]=1});
-      qs.forEach(function(d){var r=d.data();if(c)r.p=c.nick;if(!have[r.id]){l.push(r);add++}});
-      if(add)lsSet('mc_records',l);
-      var sync=ls('mc_synced',{});
-      qs.forEach(function(d){var r=d.data();sync[r.id]=(r.ok||0)+'/'+(r.bad||0)+'/'+(r.fix||0)+'/'+r.s});
-      lsSet('mc_synced',sync);
-      return add;
-    });
+      return fb.createUserWithEmailAndPassword(CL.auth,email,pw);
+    }).then(function(c){CL.user=c.user;return fb});
   });
 }
-function cloudSyncAll(){
-  var c=ls('mc_cloud',null);
-  if(!c||!navigator.onLine)return Promise.resolve(-1);
-  if(CL.busy){CL.dirty=true;return Promise.resolve(0)}
-  CL.busy=true;
-  return cloudInit().then(function(fb){
-    if(!CL.user)return -1;
-    var sync=ls('mc_synced',{}),jobs=[],n=0;
-    records().forEach(function(r){
-      if(r.p!==c.nick)return;
-      var sig=(r.ok||0)+'/'+(r.bad||0)+'/'+(r.fix||0)+'/'+r.s;
-      if(sync[r.id]===sig)return;
-      jobs.push(fb.setDoc(fb.doc(CL.db,'users',CL.user.uid,'records',String(r.id)),JSON.parse(JSON.stringify(r))).then(function(){sync[r.id]=sig;n++},function(){}));
-    });
-    return Promise.all(jobs).then(function(){lsSet('mc_synced',sync);return n});
-  }).catch(function(){return -1}).then(function(n){
-    CL.busy=false;
-    if(CL.dirty){CL.dirty=false;cloudQueue()}
-    return n;
-  });
-}
-function cloudNote(n){
-  var sv=document.getElementById('saved');
-  if(sv&&n>0&&st.profile!==null&&sv.textContent.indexOf('☁️')<0)sv.textContent+=' · ☁️ buluta gönderildi';
-}
-function cloudKick(){cloudSyncAll().then(cloudNote)}
-function cloudQueue(){
-  if(!ls('mc_cloud',null))return;
-  clearTimeout(CL.timer);CL.timer=setTimeout(cloudKick,1500);
-}
-function cloudLogout(){
-  var go2=function(){try{localStorage.removeItem('mc_cloud')}catch(e){}toast('Bulut bağlantısı kapatıldı');render()};
-  cloudInit().then(function(fb){return fb.signOut(CL.auth)}).then(go2,go2);
-}
-function cloudGo(){
-  var cls=document.getElementById('c-cls').value,nick=document.getElementById('c-nick').value,pin=document.getElementById('c-pin').value;
-  var msg=document.getElementById('c-msg'),btn=document.getElementById('c-go');
-  msg.style.color='var(--muted)';msg.textContent='Bağlanıyor…';btn.disabled=true;
-  cloudLogin(cls,nick,pin).then(function(r){
-    lsSet('mc_cloud',{nick:r.nick,cls:r.cls,uid:r.uid});
-    var l=profiles();if(l.indexOf(r.nick)<0){l.push(r.nick);lsSet('mc_profiles',l)}
-    st.profile=r.nick;
-    return cloudPull().then(function(n){toast('Giriş yapıldı'+(n?' · '+n+' kayıt geri yüklendi':''));cloudQueue();go('home')});
-  }).catch(function(e){
-    btn.disabled=false;msg.style.color='var(--bad)';msg.textContent=typeof e==='string'?e:'Bağlanılamadı, tekrar dene';
-  });
-}
-function cloudSyncNow(){
-  toast('Senkronlanıyor…');
-  cloudSyncAll().then(function(n){toast(n<0?'Senkron yapılamadı (internet / oturum)':(n===0?'Her şey güncel ☁️':n+' kayıt gönderildi ☁️'))});
-}
-window.addEventListener('online',cloudKick);
+function cloudQueue(){}
 
 /* ---------- ses ve müzik (Web Audio, dosyasız) ---------- */
 var AU={ctx:null,master:null,sg:null,mg:null,nb:null,sfx:true,mus:true,run:false,timer:null,step:0,next:0,bpm:100};
@@ -766,14 +673,19 @@ function drawGame(cv){
 function saveGame(){shareCanvas(document.getElementById('gcard'),'matematik-canavari-oyun.png')}
 
 /* ---------- yarış odaları ---------- */
-var RM={code:null,host:false,room:null,players:[],unsubs:[],started:false,fb:null,cd:null,chk:null,fin:false};
+var RM={nick:'',code:null,host:false,room:null,players:[],unsubs:[],started:false,fb:null,cd:null,chk:null,fin:false};
 var RCH='ABCDEFGHJKLMNPRSTUVYZ23456789';
+function rmNick(){
+  if(st.profile)return st.profile;
+  var e=document.getElementById('r-name'),v=e?e.value.trim():'';
+  if(v)lsSet('mc_gnick',v);else v=ls('mc_gnick','')||'';
+  return v;
+}
+function rcGo(){if(!rmNick()){toast('Önce adını yaz');return}go('rcreate')}
 function rmFb(){
-  var c=ls('mc_cloud',null);
-  if(!c)return Promise.reject('Önce "Sınıfa Gir" ile internete bağlan');
   if(!navigator.onLine)return Promise.reject('İnternet bağlantısı yok');
-  return cloudInit().then(function(fb){
-    if(!CL.user)return Promise.reject('Oturum kapalı, "Sınıfa Gir" ekranından tekrar gir');
+  return devAuth().then(function(fb){
+    if(!CL.user)return Promise.reject('Bağlanılamadı, tekrar dene');
     RM.fb=fb;return fb;
   });
 }
@@ -791,12 +703,13 @@ function rmReset(){
   if(RM.chk){clearInterval(RM.chk);RM.chk=null}
 }
 function rmCreate(op){
-  var c=ls('mc_cloud',null),code,tries=0,fb,inp=document.getElementById('r-new'),mine=inp?slug(inp.value).toUpperCase():'';
+  var nick=rmNick(),code,tries=0,fb,inp=document.getElementById('r-new'),mine=inp?slug(inp.value).toUpperCase():'';
   if(inp&&inp.value.trim()&&(mine.length<3||mine.length>10)){toast('Oda kodu 3-10 harf/rakam olmalı');return}
+  if(!nick){toast('Önce adını yaz');return}
   toast('Oda kuruluyor…');
   rmFb().then(function(f){
     fb=f;
-    var mk=function(){return {host:CL.user.uid,hostNick:c.nick,op:op,status:'lobby',seed:Math.floor(Math.random()*1000000)+1,created:Date.now()}};
+    var mk=function(){return {host:CL.user.uid,hostNick:nick,op:op,status:'lobby',seed:Math.floor(Math.random()*1000000)+1,created:Date.now()}};
     var attempt=function(){
       code=mine||rmCode();
       var data=mk();
@@ -814,6 +727,7 @@ function rmCreate(op){
   }).then(function(data){return rmEnter(fb,code,true,data)}).catch(function(e){toast(rmErr(e))});
 }
 function rmJoin(){
+  if(!rmNick()){toast('Önce adını yaz');return}
   var code=document.getElementById('r-code').value.trim().toUpperCase(),fb;
   if(code.length<3){toast('Oda kodunu yaz');return}
   rmFb().then(function(f){fb=f;return fb.getDoc(fb.doc(CL.db,'rooms',code))}).then(function(s){
@@ -827,8 +741,8 @@ function rmJoin(){
 function rmEnter(fb,code,host,room){
   rmReset();
   RM.code=code;RM.host=host;RM.room=room;RM.fb=fb;
-  var c=ls('mc_cloud',null);
-  var p={nick:c.nick,score:0,hearts:GHEARTS,ok:0,bad:0,n:0,tt:0,done:false,ts:Date.now(),rid:room.created};
+  RM.nick=rmNick();
+  var p={nick:RM.nick,score:0,hearts:GHEARTS,ok:0,bad:0,n:0,tt:0,done:false,ts:Date.now(),rid:room.created};
   return fb.setDoc(fb.doc(CL.db,'rooms',code,'players',CL.user.uid),p).then(function(){
     RM.unsubs.push(fb.onSnapshot(fb.doc(CL.db,'rooms',code),function(s){
       if(RM.code!==code)return;
@@ -880,10 +794,10 @@ function raceStart(){
   raceSend(false);
 }
 function raceSend(done){
-  var g=st.g,c=ls('mc_cloud',null),tt=0;
-  if(!g||!g.race||!RM.fb||!CL.user||!c)return;
+  var g=st.g,tt=0;
+  if(!g||!g.race||!RM.fb||!CL.user)return;
   g.log.forEach(function(x){tt+=x.s});
-  RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',CL.user.uid),{nick:c.nick,score:g.score,hearts:g.hearts,ok:g.ok,bad:g.bad,n:g.log.length,tt:Math.round(tt*10)/10,done:!!done||g.hearts<=0,ts:Date.now(),rid:RM.room.created}).catch(function(){});
+  RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',CL.user.uid),{nick:RM.nick,score:g.score,hearts:g.hearts,ok:g.ok,bad:g.bad,n:g.log.length,tt:Math.round(tt*10)/10,done:!!done||g.hearts<=0,ts:Date.now(),rid:RM.room.created}).catch(function(){});
 }
 function raceSorted(){
   var g=st.g,me=CL.user?CL.user.uid:null,l=RM.players.map(function(p){
@@ -1149,7 +1063,6 @@ function askDelProfile(i){
     var l=profiles();l.splice(i,1);lsSet('mc_profiles',l);
     lsSet('mc_records',records().filter(function(r){return r.p!==n}));
     var bb=ls('mc_best',{});delete bb[n];lsSet('mc_best',bb);
-    var cc0=ls('mc_cloud',null);if(cc0&&cc0.nick===n){try{localStorage.removeItem('mc_cloud')}catch(e){}}
     if(st.profile===n)st.profile=null;
     toast('Profil silindi');render();
   });
@@ -1166,7 +1079,6 @@ function back(){
   if(s==='rcreate')return go('rooms');
   if(s==='lobby'||s==='rover')return rmLeave();
   if(s==='rcount')return;
-  if(s==='cloud')return go('profiles');
   if(s==='game')return askQuitGame();
   if(s==='gover')return go('gmenu');
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
@@ -1181,13 +1093,13 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 14</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 15</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
-    h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="go(\'cloud\')">☁️ Sınıfa Gir (internet)</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+    h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='home'){
-    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Arkadaşlarınla aynı sorularla yarış</small></button></div><div style="height:12px"></div>';
+    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Oda kur ya da koda girerek arkadaşlarınla yarış</small></button></div><div style="height:12px"></div>';
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='gmenu'){
     h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru hayvana dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p>'+audioBtns()+'<div class="col">';
@@ -1202,13 +1114,9 @@ function render(){
       '<button class="ghost" onclick="gStart(st.g.op)">🔁 Tekrar Oyna</button>'+
       '<button class="ghost" onclick="go(\'gmenu\')">Oyun Menüsüne Dön</button>';
   }else if(s==='rooms'){
-    var rc=ls('mc_cloud',null);
-    h=topBar('Yarış Odası');
-    if(!rc){
-      h+='<p class="sub center">Yarışa girmek için önce internete bağlanıp sınıfa girmelisin.</p><button class="next" onclick="go(\'cloud\')">☁️ Sınıfa Gir</button>';
-    }else{
-      h+='<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır.</p><button class="btn" onclick="go(\'rcreate\')"><span class="big">➕</span>Oda Kur<small>Kodu sen belirle, arkadaşların o kodla girsin</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Katıl</button>';
-    }
+    h=topBar('Yarış Odası')+'<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır. İnternet gerekir.</p>';
+    if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
+    h+='<button class="btn" onclick="rcGo()"><span class="big">➕</span>Oyun Odası Kur<small>Kodu sen belirle, arkadaşların o kodla girsin</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button>';
   }else if(s==='rcreate'){
     h=topBar('Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)"><p class="sub center"><b>İşlemi seç, oda kurulsun:</b></p><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="rmCreate(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'</button>'});
@@ -1222,19 +1130,6 @@ function render(){
     h='<div class="cdbox">Hazır ol!<div id="cdn">3</div></div>';
   }else if(s==='rover'){
     h=topBar('Yarış sonucu · '+(RM.code||''))+'<div class="tag" id="r-st"></div><div id="r-list"></div><canvas id="rcard" class="card wide"></canvas><button class="next" onclick="saveRace()">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" onclick="rmLeave()">🏠 Yarıştan Çık</button>';
-  }else if(s==='cloud'){
-    var cc=ls('mc_cloud',null);
-    h=topBar('Sınıfa Gir');
-    if(cc){
-      h+='<div class="pbox">☁️ Bağlı: <b>'+esc(cc.nick)+'</b><br>'+(cc.cls==='GENEL'?'':'Sınıf kodu: <b>'+esc(cc.cls)+'</b><br>')+'<small>Yarış odalarına girebilirsin.</small></div>'+
-        '<button class="next" onclick="cloudSyncNow()">🔄 Şimdi Senkronla</button><button class="ghost" onclick="cloudLogout()">Bağlantıyı Kapat</button>';
-    }else{
-      h+='<p class="sub center">Bir takma ad ve 4 haneli PIN yaz. İlk girişte hesabın kendiliğinden oluşur. Başka telefondan aynı bilgilerle girersen skorların geri gelir. Sınıf kodun yoksa boş bırak.</p>'+
-        '<input id="c-cls" class="inp" maxlength="20" autocapitalize="characters" autocomplete="off" placeholder="Sınıf kodu (isteğe bağlı)">'+
-        '<input id="c-nick" class="inp" maxlength="20" autocomplete="off" placeholder="Takma ad">'+
-        '<input id="c-pin" class="inp" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="4 haneli PIN">'+
-        '<div class="msg" id="c-msg"></div><button class="next" id="c-go" onclick="cloudGo()">☁️ Giriş / Kayıt</button><p class="sub center">PIN\'ini unutma, takma adın başkasıyla aynı olamaz.</p>';
-    }
   }else if(s==='ops'){
     h=topBar('İşlemler')+'<div class="grid">';
     for(var k in OPS)h+='<button class="btn" onclick="pickOp(\''+k+'\')"><span class="big">'+OPS[k].sym+'</span>'+OPS[k].name+'</button>';
@@ -1482,7 +1377,6 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}
 if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}})}
 st.vert=ls('mc_vert',false);
 render();
-if(ls('mc_cloud',null))setTimeout(cloudKick,2500);
 </script>
 </body>
 </html>
