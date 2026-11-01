@@ -49,7 +49,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .card{display:block;width:100%;height:auto;max-width:380px;margin:0 auto 14px;border-radius:18px}
 .card.wide{max-width:none;border:1px solid var(--line)}
 .timer{text-align:center;font-weight:700;font-size:18px;color:var(--accent);margin-bottom:8px}
-.ghost:disabled{opacity:.5}
+.ghost:disabled,.next:disabled{opacity:.5}
 .prow{display:flex;gap:8px}.prow .btn{flex:1}
 .del{border:1px solid var(--bad);color:var(--bad);background:var(--card);border-radius:16px;padding:0 20px;font-size:22px}
 .fmt{text-align:right;margin-bottom:6px}
@@ -851,7 +851,12 @@ function roverUpdate(){
     else h+='<div class="rrow'+(p.uid===me?' me':'')+'"><span>'+(i+1)+'. '+esc(p.nick)+'</span><span>'+p.score+(p.done?'':' ⏳')+'</span></div>';
   }
   document.getElementById('r-list').innerHTML=h;
-  document.getElementById('r-st').textContent=s.all?'🏁 Yarış bitti!':'⏳ Diğerleri hâlâ oynuyor… (sıralama canlı güncellenir)';
+  var g=st.g,rk=myRank(),me2=document.getElementById('r-me');
+  document.getElementById('r-st').textContent=s.all?'🏁 Yarış bitti!':'Sıralama canlı güncelleniyor';
+  if(g)me2.innerHTML=s.all?'<b>🏁 Yarış bitti!</b><br>Final sıran: <b>'+rk+'.</b> · '+g.score+' puan':'<b>'+(g.hearts<=0?'💔 Elendin!':'🏁 Oyunu bitirdin!')+'</b> Puanın: <b>'+g.score+'</b><br>'+g.ok+' doğru, '+g.bad+' yanlış<br>⏳ <b>Yarış devam ediyor, bekle…</b><br>Şimdilik sıran: <b>'+rk+'.</b>';
+  var sv=document.getElementById('r-save'),ex=document.getElementById('r-exit');
+  if(sv){sv.disabled=!s.all;sv.textContent=s.all?'📷 Fotoğrafı Kaydet / Paylaş':'📷 Yarış bitince paylaşabilirsin'}
+  if(ex){ex.disabled=!s.all;ex.textContent=s.all?'🏠 Yarıştan Çık':'⏳ Yarış bitene kadar bekle'}
   if(s.all&&!RM.fin){RM.fin=true;if(myRank()===1)sndWin()}
   drawRace(document.getElementById('rcard'),s);
 }
@@ -1077,7 +1082,8 @@ function back(){
   if(s==='gmenu')return go('home');
   if(s==='rooms')return go('home');
   if(s==='rcreate')return go('rooms');
-  if(s==='lobby'||s==='rover')return rmLeave();
+  if(s==='rover'){if(!roverState().all){toast('Yarış bitmeden çıkamazsın, bekle');return}return rmLeave()}
+  if(s==='lobby')return rmLeave();
   if(s==='rcount')return;
   if(s==='game')return askQuitGame();
   if(s==='gover')return go('gmenu');
@@ -1129,7 +1135,7 @@ function render(){
   }else if(s==='rcount'){
     h='<div class="cdbox">Hazır ol!<div id="cdn">3</div></div>';
   }else if(s==='rover'){
-    h=topBar('Yarış sonucu · '+(RM.code||''))+'<div class="tag" id="r-st"></div><div id="r-list"></div><canvas id="rcard" class="card wide"></canvas><button class="next" onclick="saveRace()">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" onclick="rmLeave()">🏠 Yarıştan Çık</button>';
+    h=topBar('Yarış · '+(RM.code||''))+'<div class="pbox" id="r-me" style="text-align:center"></div><div class="tag" id="r-st"></div><div id="r-list"></div><canvas id="rcard" class="card wide"></canvas><button class="next" id="r-save" onclick="saveRace()">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" id="r-exit" onclick="rmLeave()">🏠 Yarıştan Çık</button>';
   }else if(s==='ops'){
     h=topBar('İşlemler')+'<div class="grid">';
     for(var k in OPS)h+='<button class="btn" onclick="pickOp(\''+k+'\')"><span class="big">'+OPS[k].sym+'</span>'+OPS[k].name+'</button>';
