@@ -343,6 +343,141 @@ function choicesK(ans,extras){
   return set;
 }
 
+/* ---------- bulut: Firebase (sınıf girişi ve senkron) ---------- */
+var FBCFG={apiKey:"AIzaSyAZeBT5wWzDm6MSqsBnxsSuuLGffrhUs-Y",authDomain:"matematik-canavari-57e2d.firebaseapp.com",projectId:"matematik-canavari-57e2d",storageBucket:"matematik-canavari-57e2d.firebasestorage.app",messagingSenderId:"83969880151",appId:"1:83969880151:web:a528aeec8ddb9eee4cb312"};
+var FBV='10.12.2';
+var CL={fb:null,app:null,auth:null,db:null,user:null,ready:null,busy:false,dirty:false,timer:null};
+function slug(s){
+  var m={'ç':'c','ğ':'g','ı':'i','ö':'o','ş':'s','ü':'u','İ':'i','Ç':'c','Ğ':'g','Ö':'o','Ş':'s','Ü':'u'};
+  return String(s).split('').map(function(ch){return m[ch]||ch}).join('').toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+function cloudEmail(nick,cls){return slug(nick)+'.'+slug(cls)+'@canavari.example.com'}
+function cloudPass(pin){return 'mc'+pin+'canavar'}
+function cloudLoad(){
+  if(window.__MC_FB)return Promise.resolve(window.__MC_FB);
+  if(CL.fb)return Promise.resolve(CL.fb);
+  var b='https://www.gstatic.com/firebasejs/'+FBV+'/';
+  return Promise.all([import(b+'firebase-app.js'),import(b+'firebase-auth.js'),import(b+'firebase-firestore.js')]).then(function(m){
+    var o={};m.forEach(function(x){for(var k in x)o[k]=x[k]});CL.fb=o;return o;
+  });
+}
+function cloudInit(){
+  return cloudLoad().then(function(fb){
+    if(!CL.app){CL.app=fb.initializeApp(FBCFG);CL.auth=fb.getAuth(CL.app);CL.db=fb.getFirestore(CL.app)}
+    if(!CL.ready){
+      CL.ready=new Promise(function(res){var first=true;fb.onAuthStateChanged(CL.auth,function(u){CL.user=u;if(first){first=false;res(u)}})});
+    }
+    return CL.ready.then(function(){return fb});
+  });
+}
+function cloudErr(e){
+  var c=e&&e.code||'';
+  if(typeof e==='string')return e;
+  if(c==='auth/network-request-failed')return 'İnternet bağlantısı yok';
+  if(c==='auth/too-many-requests')return 'Çok fazla deneme yapıldı, biraz bekle';
+  if(c==='permission-denied'||c==='firestore/permission-denied')return 'İzin yok (sınıf kodunu kontrol et)';
+  return 'Bağlanılamadı, tekrar dene';
+}
+function cloudLogin(cls,nick,pin){
+  cls=String(cls).trim().toUpperCase();nick=String(nick).trim();
+  if(!cls||!nick)return Promise.reject('Sınıf kodu ve takma ad yaz');
+  if(slug(nick).length<2||slug(cls).length<2)return Promise.reject('Takma ad ve sınıf kodu en az 2 harf/rakam olmalı');
+  if(!/^\d{4}$/.test(pin))return Promise.reject('PIN 4 rakam olmalı');
+  var email=cloudEmail(nick,cls),pw=cloudPass(pin),fb,isNew=false;
+  return cloudInit().then(function(f){
+    fb=f;
+    return fb.signInWithEmailAndPassword(CL.auth,email,pw).then(function(c){return c.user},function(e){
+      var code=e&&e.code||'';
+      if(code==='auth/network-request-failed'||code==='auth/too-many-requests')throw e;
+      return fb.createUserWithEmailAndPassword(CL.auth,email,pw).then(function(c){isNew=true;return c.user},function(e2){
+        if(e2&&e2.code==='auth/email-already-in-use')throw 'PIN yanlış ya da bu takma ad bu sınıfta zaten alınmış';
+        throw e2;
+      });
+    });
+  }).then(function(u){
+    var uref=fb.doc(CL.db,'users',u.uid);
+    return fb.getDoc(uref).then(function(s){
+      if(s.exists())return u;
+      return fb.getDoc(fb.doc(CL.db,'classes',cls)).then(function(cs){
+        if(!cs.exists()){
+          var bad=function(){throw 'Sınıf kodu bulunamadı'};
+          return isNew?u.delete().then(bad,bad):bad();
+        }
+        return fb.setDoc(uref,{nick:nick,cls:cls,created:Date.now()}).then(function(){return u});
+      });
+    });
+  }).then(function(u){
+    return {uid:u.uid,nick:nick,cls:cls};
+  }).catch(function(e){throw cloudErr(e)});
+}
+function cloudPull(){
+  return cloudInit().then(function(fb){
+    if(!CL.user)return 0;
+    return fb.getDocs(fb.collection(CL.db,'users',CL.user.uid,'records')).then(function(qs){
+      var l=records(),have={},add=0,c=ls('mc_cloud',null);
+      l.forEach(function(r){have[r.id]=1});
+      qs.forEach(function(d){var r=d.data();if(c)r.p=c.nick;if(!have[r.id]){l.push(r);add++}});
+      if(add)lsSet('mc_records',l);
+      var sync=ls('mc_synced',{});
+      qs.forEach(function(d){var r=d.data();sync[r.id]=(r.ok||0)+'/'+(r.bad||0)+'/'+(r.fix||0)+'/'+r.s});
+      lsSet('mc_synced',sync);
+      return add;
+    });
+  });
+}
+function cloudSyncAll(){
+  var c=ls('mc_cloud',null);
+  if(!c||!navigator.onLine)return Promise.resolve(-1);
+  if(CL.busy){CL.dirty=true;return Promise.resolve(0)}
+  CL.busy=true;
+  return cloudInit().then(function(fb){
+    if(!CL.user)return -1;
+    var sync=ls('mc_synced',{}),jobs=[],n=0;
+    records().forEach(function(r){
+      if(r.p!==c.nick)return;
+      var sig=(r.ok||0)+'/'+(r.bad||0)+'/'+(r.fix||0)+'/'+r.s;
+      if(sync[r.id]===sig)return;
+      jobs.push(fb.setDoc(fb.doc(CL.db,'users',CL.user.uid,'records',String(r.id)),JSON.parse(JSON.stringify(r))).then(function(){sync[r.id]=sig;n++},function(){}));
+    });
+    return Promise.all(jobs).then(function(){lsSet('mc_synced',sync);return n});
+  }).catch(function(){return -1}).then(function(n){
+    CL.busy=false;
+    if(CL.dirty){CL.dirty=false;cloudQueue()}
+    return n;
+  });
+}
+function cloudNote(n){
+  var sv=document.getElementById('saved');
+  if(sv&&n>0&&st.profile!==null&&sv.textContent.indexOf('☁️')<0)sv.textContent+=' · ☁️ buluta gönderildi';
+}
+function cloudKick(){cloudSyncAll().then(cloudNote)}
+function cloudQueue(){
+  if(!ls('mc_cloud',null))return;
+  clearTimeout(CL.timer);CL.timer=setTimeout(cloudKick,1500);
+}
+function cloudLogout(){
+  var go2=function(){try{localStorage.removeItem('mc_cloud')}catch(e){}toast('Bulut bağlantısı kapatıldı');render()};
+  cloudInit().then(function(fb){return fb.signOut(CL.auth)}).then(go2,go2);
+}
+function cloudGo(){
+  var cls=document.getElementById('c-cls').value,nick=document.getElementById('c-nick').value,pin=document.getElementById('c-pin').value;
+  var msg=document.getElementById('c-msg'),btn=document.getElementById('c-go');
+  msg.style.color='var(--muted)';msg.textContent='Bağlanıyor…';btn.disabled=true;
+  cloudLogin(cls,nick,pin).then(function(r){
+    lsSet('mc_cloud',{nick:r.nick,cls:r.cls,uid:r.uid});
+    var l=profiles();if(l.indexOf(r.nick)<0){l.push(r.nick);lsSet('mc_profiles',l)}
+    st.profile=r.nick;
+    return cloudPull().then(function(n){toast('Giriş yapıldı'+(n?' · '+n+' kayıt geri yüklendi':''));cloudQueue();go('home')});
+  }).catch(function(e){
+    btn.disabled=false;msg.style.color='var(--bad)';msg.textContent=typeof e==='string'?e:'Bağlanılamadı, tekrar dene';
+  });
+}
+function cloudSyncNow(){
+  toast('Senkronlanıyor…');
+  cloudSyncAll().then(function(n){toast(n<0?'Senkron yapılamadı (internet / oturum)':(n===0?'Her şey güncel ☁️':n+' kayıt gönderildi ☁️'))});
+}
+window.addEventListener('online',cloudKick);
+
 /* ---------- ses ve müzik (Web Audio, dosyasız) ---------- */
 var AU={ctx:null,master:null,sg:null,mg:null,nb:null,sfx:true,mus:true,run:false,timer:null,step:0,next:0,bpm:100};
 (function(){var o=ls('mc_audio',{});AU.sfx=o.sfx!==false;AU.mus=o.mus!==false})();
@@ -555,6 +690,7 @@ function gSave(){
   if(i<0)l.push(r);
   var done=lsSet('mc_records',l);
   if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
+  else cloudQueue();
   return done;
 }
 function gStart(op){
@@ -795,6 +931,7 @@ function askDelProfile(i){
     var l=profiles();l.splice(i,1);lsSet('mc_profiles',l);
     lsSet('mc_records',records().filter(function(r){return r.p!==n}));
     var bb=ls('mc_best',{});delete bb[n];lsSet('mc_best',bb);
+    var cc0=ls('mc_cloud',null);if(cc0&&cc0.nick===n){try{localStorage.removeItem('mc_cloud')}catch(e){}}
     if(st.profile===n)st.profile=null;
     toast('Profil silindi');render();
   });
@@ -807,6 +944,7 @@ function back(){
   if(s==='mode')return go('ops');
   if(s==='mixmenu')return go('pmenu');
   if(s==='gmenu')return go('home');
+  if(s==='cloud')return go('profiles');
   if(s==='game')return askQuitGame();
   if(s==='gover')return go('gmenu');
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
@@ -821,11 +959,11 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 12</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 13</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
-    h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+    h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="go(\'cloud\')">☁️ Sınıfa Gir (internet)</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='home'){
     h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button></div><div style="height:12px"></div>';
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
@@ -841,6 +979,19 @@ function render(){
       '<button class="next" onclick="saveGame()">📷 Fotoğrafı Kaydet / Paylaş</button>'+
       '<button class="ghost" onclick="gStart(st.g.op)">🔁 Tekrar Oyna</button>'+
       '<button class="ghost" onclick="go(\'gmenu\')">Oyun Menüsüne Dön</button>';
+  }else if(s==='cloud'){
+    var cc=ls('mc_cloud',null);
+    h=topBar('Sınıfa Gir');
+    if(cc){
+      h+='<div class="pbox">☁️ Bağlı: <b>'+esc(cc.nick)+'</b><br>Sınıf kodu: <b>'+esc(cc.cls)+'</b><br><small>Skorların öğretmenine otomatik gönderilir.</small></div>'+
+        '<button class="next" onclick="cloudSyncNow()">🔄 Şimdi Senkronla</button><button class="ghost" onclick="cloudLogout()">Bağlantıyı Kapat</button>';
+    }else{
+      h+='<p class="sub center">Öğretmeninin verdiği sınıf kodunu, takma adını ve 4 haneli PIN\'ini yaz. İlk girişte hesabın kendiliğinden oluşur. Başka telefondan aynı bilgilerle girersen skorların geri gelir.</p>'+
+        '<input id="c-cls" class="inp" maxlength="20" autocapitalize="characters" autocomplete="off" placeholder="Sınıf kodu">'+
+        '<input id="c-nick" class="inp" maxlength="20" autocomplete="off" placeholder="Takma ad">'+
+        '<input id="c-pin" class="inp" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="4 haneli PIN">'+
+        '<div class="msg" id="c-msg"></div><button class="next" id="c-go" onclick="cloudGo()">☁️ Giriş / Kayıt</button><p class="sub center">PIN\'ini unutursan öğretmenine söyle.</p>';
+    }
   }else if(s==='ops'){
     h=topBar('İşlemler')+'<div class="grid">';
     for(var k in OPS)h+='<button class="btn" onclick="pickOp(\''+k+'\')"><span class="big">'+OPS[k].sym+'</span>'+OPS[k].name+'</button>';
@@ -1075,6 +1226,7 @@ function saveProgress(){
   if(i<0)l.push(r);
   var done=lsSet('mc_records',l);
   if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
+  else cloudQueue();
   return done;
 }
 function finish(){
@@ -1086,6 +1238,7 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}
 if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}})}
 st.vert=ls('mc_vert',false);
 render();
+if(ls('mc_cloud',null))setTimeout(cloudKick,2500);
 </script>
 </body>
 </html>

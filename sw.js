@@ -1,8 +1,8 @@
-var CACHE = 'mc-v12';
+var CACHE = 'mc-v13';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }));
+  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES.map(function (f) { return new Request(f, { cache: 'reload' }); })); }));
   self.skipWaiting();
 });
 
@@ -17,6 +17,16 @@ self.addEventListener('activate', function (e) {
 
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET') return;
+  var u = e.request.url;
+  if (u.indexOf('https://www.gstatic.com/firebasejs/') === 0) {
+    e.respondWith(caches.open(CACHE).then(function (c) {
+      return c.match(e.request).then(function (hit) {
+        return hit || fetch(e.request).then(function (r) { if (r && r.ok) c.put(e.request, r.clone()); return r; });
+      });
+    }));
+    return;
+  }
+  if (u.indexOf(self.location.origin) !== 0) return;
   e.respondWith(
     caches.match(e.request).then(function (hit) {
       return hit || fetch(e.request).catch(function () { return caches.match('./index.html'); });

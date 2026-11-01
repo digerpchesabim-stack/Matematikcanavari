@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Matematik Canavarı · Öğretmen Paneli</title>
+<style>
+:root{--bg:#f4f1fb;--card:#fff;--text:#1d2433;--muted:#6b7385;--accent:#7048e8;--accent-t:#fff;--ok:#1f9d55;--ok-bg:#d9f3e3;--bad:#d64545;--bad-bg:#fbe0e0;--line:#e0daf0;--warn:#d97706}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#141122;--card:#1e1a30;--text:#eef1f7;--muted:#a49fbb;--accent:#a78bfa;--accent-t:#140f2a;--ok:#4cc784;--ok-bg:#163a27;--bad:#ff7b7b;--bad-bg:#44201f;--line:#2e2847;--warn:#f0a43a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.45}
+.wrap{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:26px;margin:8px 0 2px}
+h2{font-size:20px;margin:22px 0 8px}
+.sub{color:var(--muted);margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+input,select{font:inherit;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);width:100%;margin-bottom:10px}
+button{font:inherit;font-weight:700;padding:12px 16px;border-radius:12px;border:0;background:var(--accent);color:var(--accent-t);cursor:pointer}
+button.ghost{background:transparent;color:var(--accent);border:2px solid var(--accent)}
+button.sm{padding:8px 12px;font-size:14px}
+button:disabled{opacity:.5}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row>*{flex:0 0 auto}
+.msg{min-height:22px;margin:4px 0 10px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-size:13px;font-weight:700}
+tr.click{cursor:pointer}
+tr.click:hover{background:var(--bg)}
+.tw{overflow-x:auto}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--bg);border:1px solid var(--line);font-size:13px;margin:2px 4px 2px 0}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}.warn{color:var(--warn);font-weight:700}
+.bars{display:flex;gap:4px;align-items:flex-end;height:90px;margin:8px 0}
+.bars div{flex:1;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.bars span{position:absolute;bottom:-18px;left:0;right:0;text-align:center;font-size:10px;color:var(--muted)}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+var FBCFG={apiKey:"AIzaSyAZeBT5wWzDm6MSqsBnxsSuuLGffrhUs-Y",authDomain:"matematik-canavari-57e2d.firebaseapp.com",projectId:"matematik-canavari-57e2d",storageBucket:"matematik-canavari-57e2d.firebasestorage.app",messagingSenderId:"83969880151",appId:"1:83969880151:web:a528aeec8ddb9eee4cb312"};
+var FBV='10.12.2';
+var OPN={add:'Toplama',sub:'Çıkarma',mul:'Çarpma',div:'Bölme',rnd:'Karışık'};
+var MIXN={'add-sub':'Toplama + Çıkarma','add-mul':'Toplama + Çarpma','add-div':'Toplama + Bölme','sub-mul':'Çıkarma + Çarpma','sub-div':'Çıkarma + Bölme','mul-div':'Çarpma + Bölme','rnd':'Rastgele'};
+var fb=null,app,auth,db,user=null,P={cls:null,classes:[],students:[]};
+var el=document.getElementById('app');
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function pad(n){return n<10?'0'+n:''+n}
+function fmtDate(d){return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()}
+function fmtSec(s){return s<10?(Math.round(s*10)/10)+' sn':Math.round(s)+' sn'}
+function catLabel(r){
+  if(r.k==='g')return 'Oyun · '+(r.op==='rnd'?'Karışık':(OPN[r.op]||r.op));
+  if(r.k==='p')return 'Problem · '+(r.op==='mix'?'Karma · '+(MIXN[r.m]||'Karma'):(OPN[r.op]||r.op))+' · '+r.d+' basamak';
+  return (OPN[r.op]||r.op)+(r.e===true?' · Eldeli':(r.e===false?' · Eldesiz':''))+' · '+r.d+' basamak';
+}
+function load(){
+  if(window.__MC_FB)return Promise.resolve(window.__MC_FB);
+  if(fb)return Promise.resolve(fb);
+  var b='https://www.gstatic.com/firebasejs/'+FBV+'/';
+  return Promise.all([import(b+'firebase-app.js'),import(b+'firebase-auth.js'),import(b+'firebase-firestore.js')]).then(function(m){var o={};m.forEach(function(x){for(var k in x)o[k]=x[k]});fb=o;return o});
+}
+function init(){
+  return load().then(function(f){
+    fb=f;app=fb.initializeApp(FBCFG,'panel');auth=fb.getAuth(app);db=fb.getFirestore(app);
+    return new Promise(function(res){fb.onAuthStateChanged(auth,function(u){user=u;res(u)})});
+  });
+}
+function viewLogin(msg){
+  el.innerHTML='<h1>🧮 Matematik Canavarı</h1><p class="sub">Öğretmen paneli</p><div class="card" style="max-width:420px"><input id="em" type="email" autocomplete="username" placeholder="E-posta"><input id="pw" type="password" autocomplete="current-password" placeholder="Şifre"><div class="msg bad" id="lm">'+(msg||'')+'</div><button onclick="doLogin()">Giriş yap</button></div>';
+}
+function doLogin(){
+  var e=document.getElementById('em').value.trim(),p=document.getElementById('pw').value,m=document.getElementById('lm');
+  m.className='msg';m.textContent='Giriş yapılıyor…';
+  fb.signInWithEmailAndPassword(auth,e,p).then(function(c){user=c.user;return loadClasses()}).catch(function(err){
+    m.className='msg bad';m.textContent='Giriş başarısız. E-posta ya da şifre hatalı.';
+  });
+}
+function logout(){fb.signOut(auth).then(function(){user=null;P.cls=null;viewLogin()})}
+function loadClasses(){
+  return fb.getDocs(fb.collection(db,'classes')).then(function(qs){
+    P.classes=[];qs.forEach(function(d){P.classes.push({code:d.id,name:(d.data()||{}).name||''})});
+    P.classes.sort(function(a,b){return a.code<b.code?-1:1});
+    viewClasses();
+  });
+}
+function viewClasses(msg){
+  var h='<div class="row"><h1 style="flex:1">🧮 Sınıflarım</h1><button class="ghost sm" onclick="logout()">Çıkış</button></div><p class="sub">'+esc(user?user.email:'')+'</p>';
+  h+='<div class="card"><b>Yeni sınıf oluştur</b><p class="sub">Sınıf kodunu öğrencilerine söyleyeceksin (örn. ZIHIN11B). Harf ve rakam kullan.</p><div class="row"><input id="nc" style="width:200px" placeholder="Sınıf kodu" maxlength="20"><input id="nn" style="width:240px" placeholder="Sınıf adı (isteğe bağlı)" maxlength="40"><button onclick="addClass()">Oluştur</button></div><div class="msg bad">'+(msg||'')+'</div></div>';
+  h+='<h2>Mevcut sınıflar</h2>';
+  if(!P.classes.length)h+='<p class="sub">Henüz sınıf yok. Yukarıdan bir sınıf kodu oluştur.</p>';
+  P.classes.forEach(function(c){h+='<div class="card row"><div style="flex:1"><b>'+esc(c.code)+'</b>'+(c.name?'<br><span class="sub">'+esc(c.name)+'</span>':'')+'</div><button onclick="openClass(\''+esc(c.code)+'\')">Öğrencileri gör</button></div>'});
+  el.innerHTML=h;
+}
+function addClass(){
+  var c=document.getElementById('nc').value.trim().toUpperCase().replace(/[^A-Z0-9]/g,''),n=document.getElementById('nn').value.trim();
+  if(c.length<3)return viewClasses('Sınıf kodu en az 3 harf/rakam olmalı');
+  fb.setDoc(fb.doc(db,'classes',c),{name:n,created:Date.now()}).then(loadClasses).catch(function(){viewClasses('Kaydedilemedi (izin ya da internet)')});
+}
+function openClass(code){
+  P.cls=code;el.innerHTML='<p class="sub">Yükleniyor…</p>';
+  fb.getDocs(fb.query(fb.collection(db,'users'),fb.where('cls','==',code))).then(function(qs){
+    var us=[];qs.forEach(function(d){var u=d.data();u.uid=d.id;us.push(u)});
+    return Promise.all(us.map(function(u){
+      return fb.getDocs(fb.collection(db,'users',u.uid,'records')).then(function(rs){u.recs=[];rs.forEach(function(d){u.recs.push(d.data())});return u});
+    }));
+  }).then(function(us){P.students=us.map(stats);viewStudents()}).catch(function(){el.innerHTML='<p class="bad">Veriler okunamadı.</p><button onclick="loadClasses()">Geri</button>'});
+}
+function stats(u){
+  var s={uid:u.uid,nick:u.nick,recs:u.recs,sessions:0,q:0,first:0,fix:0,bad:0,score:0,time:0,last:0,cats:{},days:{},games:{}};
+  u.recs.forEach(function(r){
+    s.sessions++;s.score+=r.s||0;var t=new Date(r.t).getTime();if(t>s.last)s.last=t;
+    var lab=catLabel(r),c=s.cats[lab]||(s.cats[lab]={q:0,first:0,fix:0,bad:0,time:0,k:r.k});
+    var dk=fmtDate(new Date(r.t));
+    (r.qs||[]).forEach(function(x){
+      s.q++;c.q++;c.time+=x.s||0;s.time+=x.s||0;
+      if(x.r===1){s.first++;c.first++}else if(x.r===2){s.fix++;c.fix++}else{s.bad++;c.bad++}
+      s.days[dk]=(s.days[dk]||0)+1;
+    });
+    if(r.k==='g'){var g=OPN[r.op]||r.op;if(!s.games[g]||r.s>s.games[g])s.games[g]=r.s}
+  });
+  var worst=null;
+  for(var k in s.cats){var c2=s.cats[k];if(c2.q>=10&&c2.k!=='g'){var a=c2.first/c2.q;if(!worst||a<worst.a)worst={lab:k,a:a}}}
+  s.worst=worst;
+  return s;
+}
+function viewStudents(){
+  var h='<div class="row"><button class="ghost sm" onclick="loadClasses()">← Sınıflar</button><button class="sm" onclick="downloadCsv()">⬇ CSV indir</button><button class="ghost sm" onclick="openClass(P.cls)">🔄 Yenile</button></div><h1>'+esc(P.cls)+'</h1><p class="sub">'+P.students.length+' öğrenci</p>';
+  if(!P.students.length)h+='<div class="card">Bu sınıfa henüz kimse katılmadı. Öğrencilere sınıf kodunu söyle: <b>'+esc(P.cls)+'</b></div>';
+  else{
+    h+='<div class="card tw"><table><tr><th>Öğrenci</th><th>Son çalışma</th><th>Oturum</th><th>Soru</th><th>İlk denemede doğru</th><th>Puan</th><th>En zayıf alan</th></tr>';
+    P.students.sort(function(a,b){return b.last-a.last}).forEach(function(s,i){
+      var pc=s.q?Math.round(100*s.first/s.q):null,days=s.last?Math.floor((Date.now()-s.last)/86400000):null;
+      h+='<tr class="click" onclick="viewStudent('+i+')"><td><b>'+esc(s.nick)+'</b></td><td>'+(s.last?fmtDate(new Date(s.last))+(days>=3?' <span class="warn">('+days+' gün)</span>':''):'-')+'</td><td>'+s.sessions+'</td><td>'+s.q+'</td><td>'+(pc===null?'-':'<span class="'+(pc>=70?'ok':pc<40?'bad':'')+'">%'+pc+'</span>')+'</td><td>'+s.score+'</td><td>'+(s.worst?esc(s.worst.lab)+' <span class="bad">%'+Math.round(100*s.worst.a)+'</span>':'-')+'</td></tr>';
+    });
+    h+='</table></div><p class="sub">Satıra dokununca öğrencinin ayrıntısı açılır. "3 gün" uyarısı, son çalışmanın üzerinden o kadar gün geçtiğini gösterir.</p>';
+  }
+  el.innerHTML=h;
+}
+function viewStudent(i){
+  var s=P.students[i],h='<div class="row"><button class="ghost sm" onclick="viewStudents()">← '+esc(P.cls)+'</button><button class="ghost sm" onclick="delStudent('+i+')">🗑 Kayıtlarını sil</button></div><h1>'+esc(s.nick)+'</h1>';
+  var pc=s.q?Math.round(100*s.first/s.q):0;
+  h+='<div class="card"><span class="pill">Oturum: <b>'+s.sessions+'</b></span><span class="pill">Soru: <b>'+s.q+'</b></span><span class="pill">İlk denemede doğru: <b>%'+pc+'</b></span><span class="pill">Düzeltti: <b>'+s.fix+'</b></span><span class="pill">Yanlış: <b>'+s.bad+'</b></span><span class="pill">Ort. süre: <b>'+(s.q?fmtSec(s.time/s.q):'-')+'</b></span><span class="pill">Toplam puan: <b>'+s.score+'</b></span></div>';
+  var keys=[],d=new Date();
+  for(var k=13;k>=0;k--){var dd=new Date(d.getTime()-k*86400000);keys.push(fmtDate(dd))}
+  var mx=1;keys.forEach(function(x){if((s.days[x]||0)>mx)mx=s.days[x]});
+  h+='<h2>Son 14 gün (günlük soru sayısı)</h2><div class="card"><div class="bars">';
+  keys.forEach(function(x){var v=s.days[x]||0;h+='<div style="height:'+Math.max(2,Math.round(100*v/mx))+'%" title="'+x+': '+v+'"><span>'+x.slice(0,2)+'</span></div>'});
+  h+='</div><div style="height:18px"></div></div>';
+  h+='<h2>Kategorilere göre</h2><div class="card tw"><table><tr><th>Kategori</th><th>Soru</th><th>İlk denemede doğru</th><th>Düzeltti</th><th>Yanlış</th><th>Ort. süre</th></tr>';
+  Object.keys(s.cats).sort(function(a,b){return s.cats[b].q-s.cats[a].q}).forEach(function(k2){
+    var c=s.cats[k2],p=c.q?Math.round(100*c.first/c.q):0;
+    h+='<tr><td>'+esc(k2)+'</td><td>'+c.q+'</td><td><span class="'+(p>=70?'ok':p<40?'bad':'')+'">%'+p+'</span></td><td>'+c.fix+'</td><td>'+c.bad+'</td><td>'+(c.q?fmtSec(c.time/c.q):'-')+'</td></tr>';
+  });
+  h+='</table></div>';
+  var gs=Object.keys(s.games);
+  if(gs.length){h+='<h2>Oyun rekorları</h2><div class="card">';gs.forEach(function(g){h+='<span class="pill">'+esc(g)+': <b>'+s.games[g]+'</b> puan</span>'});h+='</div>'}
+  el.innerHTML=h;
+}
+function delStudent(i){
+  var s=P.students[i];
+  if(!confirm(s.nick+' öğrencisinin tüm bulut kayıtları silinsin mi? (Giriş hesabı Firebase konsolundan ayrıca silinir.)'))return;
+  Promise.all(s.recs.map(function(r){return fb.deleteDoc(fb.doc(db,'users',s.uid,'records',String(r.id)))})).then(function(){return fb.deleteDoc(fb.doc(db,'users',s.uid))}).then(function(){openClass(P.cls)}).catch(function(){alert('Silinemedi')});
+}
+function downloadCsv(){
+  var rows=[['Öğrenci','Tarih','Saat','Kategori','Puan','Soru','İlk denemede doğru','Düzeltti','Yanlış','Ort. süre (sn)']];
+  P.students.forEach(function(s){
+    s.recs.slice().sort(function(a,b){return a.t<b.t?-1:1}).forEach(function(r){
+      var d=new Date(r.t),n=(r.qs||[]).length,tt=0;(r.qs||[]).forEach(function(x){tt+=x.s||0});
+      rows.push([s.nick,fmtDate(d),pad(d.getHours())+':'+pad(d.getMinutes()),catLabel(r),r.s||0,n,r.ok||0,r.fix||0,r.bad||0,n?(Math.round(tt/n*10)/10).toString().replace('.',','):'']);
+    });
+  });
+  var csv='﻿'+rows.map(function(r){return r.map(function(c){c=String(c);return /[;"\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(';')}).join('\r\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='matematik-canavari-'+P.cls+'.csv';document.body.appendChild(a);a.click();a.remove();
+}
+viewLogin('');
+init().then(function(u){if(u)return loadClasses().catch(function(){return fb.signOut(auth).then(function(){user=null;viewLogin('Bu hesap öğretmen hesabı değil. Öğretmen e-postanla giriş yap.')})})}).catch(function(){viewLogin('Bağlantı kurulamadı (internet yok olabilir).')});
+</script>
+</body>
+</html>
