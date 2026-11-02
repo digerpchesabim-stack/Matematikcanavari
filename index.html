@@ -104,11 +104,12 @@ details.pbox summary{cursor:pointer;font-size:17px}
 #tfill{height:100%;width:100%;background:var(--ok);border-radius:8px}
 .agrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
 .ani{background:var(--card);border:2px solid var(--line);border-radius:20px;min-height:130px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-family:inherit;color:var(--text);cursor:pointer;-webkit-tap-highlight-color:transparent}
-.ani .em{font-size:56px;line-height:1}
-.ani .an{font-size:36px;font-weight:800}
-.ani.ok{background:var(--ok-bg);border-color:var(--ok)}
-.ani.ok .em{animation:hop .5s}
-.ani.bad{background:var(--bad-bg);border-color:var(--bad);animation:shk .4s}
+.ani .an{font-size:48px;font-weight:800;line-height:1}
+.ani.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.ani.ok .an{animation:hop .5s}
+.ani.ok .an::after{content:' ✓'}
+.ani.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad);animation:shk .4s}
+.ani.bad .an::after{content:' ✗'}
 @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}}
 @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
 </style>
@@ -502,7 +503,6 @@ document.addEventListener('click',function(e){
 });
 
 /* ---------- akıldan işlem oyunu ---------- */
-var ANIM=['🐱','🐶','🐰','🐼','🦁','🐵','🐧','🐸','🐥','🐘'];
 var GHEARTS=3;
 function gTime(n){return n<10?8000:(n<20?6000:(n<30?5000:4000))}
 var gT=null,gGuest={};
@@ -533,12 +533,11 @@ function gQ0(){
   for(i=pool.length-1;i>0;i--){var j=rnd(0,i),tmp=pool[i];pool[i]=pool[j];pool[j]=tmp}
   var vals=pool.slice(0,3);vals.push(ans);
   for(i=vals.length-1;i>0;i--){var k=rnd(0,i),t2=vals[i];vals[i]=vals[k];vals[k]=t2}
-  var an=ANIM.slice();for(i=an.length-1;i>0;i--){var m=rnd(0,i),t3=an[i];an[i]=an[m];an[m]=t3}
-  return {txt:txt,ans:ans,opts:vals.map(function(v,x){return {v:v,e:an[x]}})};
+  return {txt:txt,ans:ans,opts:vals.map(function(v){return {v:v}})};
 }
 function gOptsHtml(q){
   var h='';
-  q.opts.forEach(function(o,i){h+='<button class="ani" onclick="gAnswer('+i+',this)"><span class="em">'+o.e+'</span><span class="an">'+o.v+'</span></button>'});
+  q.opts.forEach(function(o,i){h+='<button class="ani" onclick="gAnswer('+i+',this)"><span class="an">'+o.v+'</span></button>'});
   return h;
 }
 function gPills(){
@@ -1294,7 +1293,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 18</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 19</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -1303,7 +1302,7 @@ function render(){
     h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Oda kur ya da koda girerek arkadaşlarınla yarış</small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='gmenu'){
-    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru hayvana dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p>'+audioBtns()+(st.profile?'':'<input id="g-name" class="inp" maxlength="12" autocomplete="off" placeholder="Adın (rekor tablosunda görünür)" value="'+esc(ls('mc_gnick',''))+'">')+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><div class="col">';
+    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p>'+audioBtns()+(st.profile?'':'<input id="g-name" class="inp" maxlength="12" autocomplete="off" placeholder="Adın (rekor tablosunda görünür)" value="'+esc(ls('mc_gnick',''))+'">')+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){var b=bestGet(o);h+='<button class="btn" onclick="gStart(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>'+(b?'🏆 Rekor: '+b:'Henüz rekor yok')+'</small></button>'});
     h+='</div>'+(st.profile?'':'<p class="sub center">Misafir oturumunda sonuçlar ve rekor kaydedilmez.</p>');
   }else if(s==='game'){
