@@ -1,4 +1,4 @@
-var CACHE = 'mc-v20';
+var CACHE = 'mc-v21';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', function (e) {
