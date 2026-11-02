@@ -92,6 +92,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .tabs{display:flex;gap:8px;margin-bottom:10px}.tabs button{flex:1;border:2px solid var(--accent);background:transparent;color:var(--accent);border-radius:14px;padding:12px 6px;font-size:16px;font-weight:700}.tabs button.on{background:var(--accent);color:var(--accent-t)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:20px;padding:8px 12px;font-size:15px;font-weight:600}.chip.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
 .lbx{text-align:center}
+.gd p,.gd li{font-size:16px;line-height:1.55}.gd ul{padding-left:20px;margin:8px 0 0}.gd p{margin:8px 0 0}
 .lnk{font-size:13px;word-break:break-all;color:var(--muted);margin:6px 0}
 details.pbox summary{cursor:pointer;font-size:17px}
 .cdbox{text-align:center;padding-top:25vh;font-size:26px;font-weight:700}
@@ -682,6 +683,7 @@ function saveGame(){shareCanvas(document.getElementById('gcard'),'matematik-cana
 /* ---------- yarış odaları ---------- */
 var RM={nick:'',code:null,host:false,room:null,players:[],unsubs:[],started:false,fb:null,cd:null,chk:null,fin:false};
 var RCH='ABCDEFGHJKLMNPRSTUVYZ23456789';
+var QV=1; /* soru üretimi sürümü: soru üreten kod değişirse 1 artır */
 function rmNick(){
   if(st.profile)return st.profile;
   var e=document.getElementById('r-name'),v=e?e.value.trim():'';
@@ -716,7 +718,7 @@ function rmCreate(op){
   toast('Oda kuruluyor…');
   rmFb().then(function(f){
     fb=f;
-    var mk=function(){return {host:CL.user.uid,hostNick:nick,op:op,status:'lobby',seed:Math.floor(Math.random()*1000000)+1,created:Date.now()}};
+    var mk=function(){return {host:CL.user.uid,hostNick:nick,op:op,status:'lobby',seed:Math.floor(Math.random()*1000000)+1,created:Date.now(),qv:QV}};
     var attempt=function(){
       code=mine||rmCode();
       var data=mk();
@@ -744,6 +746,7 @@ function rmJoinCode(code,onFail){
     if(!s.exists())throw 'Oda bulunamadı';
     var room=s.data();
     if(room.status!=='lobby')throw 'Yarış başlamış, katılamazsın';
+    if((room.qv||1)!==QV)throw 'Bu odayı farklı sürümdeki bir telefon kurdu. Uygulamayı kapatıp yeniden aç, sonra tekrar dene';
     if(Date.now()-room.created>86400000)throw 'Bu odanın süresi dolmuş';
     return rmEnter(fb,code,room.host===CL.user.uid,room);
   }).then(function(){RJOIN=null}).catch(function(e){toast(rmErr(e));if(onFail)onFail()});
@@ -800,7 +803,9 @@ function rmEnter(fb,code,host,room){
 }
 function rmStart(){
   if(!RM.host||!RM.fb||!RM.room)return;
-  var r=RM.room,d={host:r.host,hostNick:r.hostNick,op:r.op,status:'playing',seed:r.seed,created:r.created};
+  var r=RM.room,d={};
+  ['host','hostNick','op','seed','created','qv'].forEach(function(k){if(r[k]!==undefined)d[k]=r[k]});
+  d.status='playing';
   RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code),d).catch(function(e){toast(rmErr(e))});
 }
 function rmLeaveLocal(){
@@ -1074,6 +1079,27 @@ function rhistHtml(){
   return h;
 }
 
+
+/* ---------- uygulama kılavuzu ---------- */
+var GV={from:'welcome',open:null};
+var GUIDE=[
+ {id:'what',t:'🐲 Bu uygulama ne işe yarar?',h:'<p>Matematik Canavarı ile <b>toplama, çıkarma, çarpma ve bölme</b> çalışırsın.</p><p>Ana menüde 4 bölüm var:</p><ul><li><b>İşlemler:</b> Sakin sakin işlem çözersin.</li><li><b>Problemler:</b> Hikâyeli sorular çözersin.</li><li><b>Akıldan İşlem Oyunu:</b> Hızlı cevap verip rekor kırarsın.</li><li><b>Yarış Odası:</b> Arkadaşlarınla aynı sorularla yarışırsın.</li></ul><p>İnternet sadece <b>Yarış Odası</b> ve <b>Rekorlar Tablosu</b> için gerekir. Diğerleri internetsiz çalışır.</p>'},
+ {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> Bir takma ad yazıp profil oluşturursun. Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın. İşlemler ve Problemler sonuçların kaydedilmez.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar sadece <b>bu telefonda</b> saklanır. Tarayıcı verisi silinirse kaybolur.</li></ul>'},
+ {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
+ {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
+ {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>Süre sınırlıdır. İlk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Rekorun menüde işlemin altında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
+ {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>İşlemi seç. Oda açılır.</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>3-2-1 sayılır. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
+ {id:'lb',t:'🏆 Rekorlar Tablosu',h:'<ul><li>Ana menüdeki <b>Rekorlar Tablosu</b>ndan açılır. İnternet gerekir.</li><li>İki sekme var: <b>Akıldan İşlem</b> ve <b>Yarış Odası</b>. İşlem türünü de seçersin.</li><li>En yüksek 10 kişi görünür. İlk 10 içinde değilsen kendi sıran altta yazar.</li><li>Her kişinin her işlemde tek satırı vardır. Sadece rekor kırınca yükselir.</li><li>Birinci olursan tebrik ve konfeti çıkar 🎉</li><li>Tabloda <b>adın herkese görünür</b>. Soyadını ya da kişisel bilgini yazma.</li></ul>'},
+ {id:'score',t:'📊 Skorlarım ve skor kartı',h:'<ul><li>Profille oynarsan <b>Skorlarım</b> bölümünde son 14 günün skorlarını görürsün.</li><li>Her oturumun sonunda bir <b>skor kartı</b> çıkar.</li><li><b>Fotoğrafı Kaydet / Paylaş</b> ile kartı kaydedip WhatsApp ile öğretmenine gönderebilirsin.</li></ul>'},
+ {id:'faq',t:'❓ Sorun çözümü',h:'<ul><li><b>Skorlarım kayboldu:</b> Tarayıcı verisi silinmiş ya da telefon değişmiş olabilir. Skorlar sadece telefonda durur.</li><li><b>Yarışa giremiyorum:</b> İnternetin açık olduğundan, kodu doğru yazdığından ve yarışın başlamadığından emin ol. Oda kodu 24 saat geçerlidir.</li><li><b>"Farklı sürüm" uyarısı:</b> Uygulamayı tamamen kapatıp yeniden aç. Güncellenir.</li><li><b>Rekorlar Tablosu açılmıyor:</b> İnternetini kontrol et, biraz sonra tekrar dene.</li><li><b>Uygulamayı ana ekrana eklemek:</b> Tarayıcı menüsünden "Ana ekrana ekle"ye dokun.</li></ul>'}
+];
+function guideOpen(sec){if(st.screen!=='guide')GV.from=st.screen;GV.open=sec||null;go('guide')}
+function guideHtml(){
+  var h='<p class="sub center">Uygulamayı kullanmak için bilmen gerekenler. Bir başlığa dokun, açılsın.</p>';
+  GUIDE.forEach(function(g){h+='<details class="pbox gd"'+(GV.open===g.id?' open':'')+'><summary><b>'+g.t+'</b></summary>'+g.h+'</details>'});
+  return h;
+}
+
 /* ---------- çizim ---------- */
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function circ(c,x,y,r,fill){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=fill;c.fill()}
@@ -1263,7 +1289,11 @@ function askDelProfile(i){
     toast('Profil silindi');render();
   });
 }
-function go(s){st.screen=s;render()}
+var PENDRELOAD=false;
+function go(s){
+  if(PENDRELOAD&&(s==='home'||s==='welcome'||s==='profiles')){location.reload();return}
+  st.screen=s;render();
+}
 function back(){
   var o=OPS[st.op],s=st.screen;
   if(s==='quiz'||s==='summary')return go('digits');
@@ -1272,6 +1302,7 @@ function back(){
   if(s==='mixmenu')return go('pmenu');
   if(s==='gmenu')return go('home');
   if(s==='rooms')return go('home');
+  if(s==='guide')return go(GV.from||'welcome');
   if(s==='rjoin'){RJOIN=null;return go('welcome')}
   if(s==='lb')return go(LBV.from||'home');
   if(s==='rhist')return go('rooms');
@@ -1293,7 +1324,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 19</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 20</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -1301,8 +1332,9 @@ function render(){
   }else if(s==='home'){
     h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Oda kur ya da koda girerek arkadaşlarınla yarış</small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+    h+='<div style="height:10px"></div><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button>';
   }else if(s==='gmenu'){
-    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p>'+audioBtns()+(st.profile?'':'<input id="g-name" class="inp" maxlength="12" autocomplete="off" placeholder="Adın (rekor tablosunda görünür)" value="'+esc(ls('mc_gnick',''))+'">')+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><div class="col">';
+    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p>'+audioBtns()+(st.profile?'':'<input id="g-name" class="inp" maxlength="12" autocomplete="off" placeholder="Adın (rekor tablosunda görünür)" value="'+esc(ls('mc_gnick',''))+'">')+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'game\')">❓ Nasıl oynanır?</button><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){var b=bestGet(o);h+='<button class="btn" onclick="gStart(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>'+(b?'🏆 Rekor: '+b:'Henüz rekor yok')+'</small></button>'});
     h+='</div>'+(st.profile?'':'<p class="sub center">Misafir oturumunda sonuçlar ve rekor kaydedilmez.</p>');
   }else if(s==='game'){
@@ -1313,6 +1345,8 @@ function render(){
       '<button class="next" onclick="saveGame()">📷 Fotoğrafı Kaydet / Paylaş</button>'+
       '<button class="ghost" onclick="gStart(st.g.op)">🔁 Tekrar Oyna</button>'+
       '<button class="ghost" onclick="go(\'gmenu\')">Oyun Menüsüne Dön</button>';
+  }else if(s==='guide'){
+    h=topBar('Uygulama Kılavuzu')+guideHtml();
   }else if(s==='lb'){
     h=topBar('Rekorlar Tablosu')+lbTabsHtml()+'<div id="lb-body"></div>';
   }else if(s==='rhist'){
@@ -1324,7 +1358,7 @@ function render(){
   }else if(s==='rooms'){
     h=topBar('Yarış Odası')+'<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır. İnternet gerekir.</p>';
     if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
-    h+='<button class="btn" onclick="rcGo()"><span class="big">➕</span>Oyun Odası Kur<small>Kodu sen belirle, arkadaşların o kodla girsin</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
+    h+='<button class="btn" onclick="rcGo()"><span class="big">➕</span>Oyun Odası Kur<small>Kodu sen belirle, arkadaşların o kodla girsin</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
   }else if(s==='rcreate'){
     h=topBar('Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)"><p class="sub center"><b>İşlemi seç, oda kurulsun:</b></p><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="rmCreate(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'</button>'});
@@ -1584,7 +1618,16 @@ function finish(){
 }
 
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-if('serviceWorker' in navigator){window.addEventListener('load',function(){try{navigator.serviceWorker.register('sw.js').catch(function(){})}catch(e){}})}
+if('serviceWorker' in navigator){window.addEventListener('load',function(){try{
+  var had=!!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    if(!had){had=true;return}
+    PENDRELOAD=true;
+    if(['welcome','profiles','home'].indexOf(st.screen)>=0)location.reload();
+    else toast('Yeni sürüm hazır. Ana menüye dönünce yenilenecek');
+  });
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}catch(e){}})}
 st.vert=ls('mc_vert',false);
 render();
 </script>

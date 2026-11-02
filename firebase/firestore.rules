@@ -9,7 +9,7 @@ service cloud.firestore {
       allow get: if signedIn();
       allow create: if signedIn()
         && request.resource.data.host == request.auth.uid
-        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created'])
+        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv'])
         && request.resource.data.status == 'lobby'
         && request.resource.data.op in ['add', 'sub', 'mul', 'div', 'rnd']
         && code.size() >= 3 && code.size() <= 10;
