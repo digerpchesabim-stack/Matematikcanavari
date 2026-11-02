@@ -637,7 +637,7 @@ function endGame(){
   g.done=true;
   if(g.to)clearTimeout(g.to);
   if(gT){clearInterval(gT);gT=null}
-  if(g.race){sndEnd();if(g.log.length)gSave();raceSend(true);go('rover');lbRun(g,'race',g.score,RM.nick);return}
+  if(g.race){sndEnd();if(g.log.length)gSave();raceSend(true);lbRun(g,'race',g.score,RM.nick);go('rover');return}
   g.newBest=g.score>g.bestOld&&g.score>0;
   if(g.newBest)sndWin();else sndEnd();
   if(g.newBest)bestSet(g.op,g.score);
@@ -894,11 +894,11 @@ function roverUpdate(){
   document.getElementById('r-list').innerHTML=h;
   var g=st.g,rk=myRank(),me2=document.getElementById('r-me');
   document.getElementById('r-st').textContent=s.all?'🏁 Yarış bitti!':'Sıralama canlı güncelleniyor';
-  if(g)me2.innerHTML=s.all?'<b>🏁 Yarış bitti!</b><br>Final sıran: <b>'+rk+'.</b> · '+g.score+' puan'+(g.rnew?'<br>🏆 <b>Yeni yarış rekorun!</b>':''):'<b>'+(g.hearts<=0?'💔 Elendin!':'🏁 Oyunu bitirdin!')+'</b> Puanın: <b>'+g.score+'</b><br>'+g.ok+' doğru, '+g.bad+' yanlış<br>⏳ <b>Yarış devam ediyor, bekle…</b><br>Şimdilik sıran: <b>'+rk+'.</b>';
+  if(g)me2.innerHTML=s.all?'<b>🏁 Yarış bitti!</b><br>Final sıran: <b>'+rk+'.</b> · '+g.score+' puan':'<b>'+(g.hearts<=0?'💔 Elendin!':'🏁 Oyunu bitirdin!')+'</b> Puanın: <b>'+g.score+'</b><br>'+g.ok+' doğru, '+g.bad+' yanlış<br>⏳ <b>Yarış devam ediyor, bekle…</b><br>Şimdilik sıran: <b>'+rk+'.</b>';
   var sv=document.getElementById('r-save'),ex=document.getElementById('r-exit');
   if(sv){sv.disabled=!s.all;sv.textContent=s.all?'📷 Fotoğrafı Kaydet / Paylaş':'📷 Yarış bitince paylaşabilirsin'}
   if(ex){ex.disabled=!s.all;ex.textContent=s.all?'🏠 Yarıştan Çık':'⏳ Yarış bitene kadar bekle'}
-  if(s.all&&!RM.fin){RM.fin=true;rhistSave(s);if(myRank()===1)sndWin()}
+  if(s.all&&!RM.fin){RM.fin=true;rhistSave(s);if(myRank()===1)sndWin();if(g&&g.race)raceFinal(g)}
   drawRace(document.getElementById('rcard'),s);
 }
 function drawRace(cv,s){
@@ -951,18 +951,21 @@ function lbSubmit(kind,op,score,cand,nick){
     if(improved||old.nick!==nm)return fb.setDoc(fb.doc(CL.db,col,CL.user.uid),{nick:nm,score:best,ts:Date.now()});
   }).then(function(){return lbTop(fb,col)}).then(function(rows){
     var r=lbRank(rows,best);
-    return {best:best,rank:r.rank,over:r.over,celebrate:improved&&score>=cand,improved:improved,kind:kind,op:op};
+    return {best:best,rank:r.rank,over:r.over,celebrate:improved&&score>=cand,improved:improved,kind:kind,op:op,score:score};
   }).catch(function(){return {err:'Rekor tablosuna bağlanılamadı'}});
 }
 function lbBoxHtml(r){
   if(!r)return '';
   if(r.loading)return '<div class="pbox lbx">🏆 Rekorlar tablosu kontrol ediliyor…</div>';
   if(r.err)return '<div class="pbox lbx">'+esc(r.err)+'</div>';
-  var m,rk=r.over?'50+':r.rank+'.';
-  if(r.celebrate&&r.rank===1)m='🏆 <b>Tebrikler, oyundaki en yüksek puanı aldınız!</b>';
-  else if(r.celebrate&&r.rank<=10)m='🎉 <b>Tebrikler! En yüksek rekorlarda '+r.rank+'. sıradasınız!</b>';
-  else if(r.celebrate)m='Rekorlar listesinde <b>'+rk+'</b> sıradasınız. İlk 10 için biraz daha!';
-  else m='Tablodaki rekorun: <b>'+r.best+'</b> · Sıran: <b>'+rk+'</b>';
+  var m,rk=r.rank?(r.over?'50+':r.rank+'.'):'',tb=r.rank?'<br>Rekorlar tablosundaki sıran: <b>'+rk+'</b>':'';
+  if(r.race){
+    if(r.win&&r.celebrate&&r.rank===1)m='🏆 <b>Tebrikler, yarışı kazandın ve oyundaki en yüksek puanı aldın!</b>';
+    else if(r.win)m='🏆 <b>Tebrikler, yarışı kazandın!</b>'+tb;
+    else m='Puanın: <b>'+r.score+'</b>'+tb;
+  }
+  else if(r.celebrate&&r.rank===1)m='🏆 <b>Tebrikler, oyundaki en yüksek puanı aldınız!</b>';
+  else m='Puanın: <b>'+r.score+'</b>'+tb;
   return '<div class="pbox lbx">'+m+'</div><button class="ghost" onclick="lbOpen(\''+r.kind+'\',\''+r.op+'\')">🏆 Rekorlar Tablosunu Gör</button>';
 }
 function lbShowBox(g){
@@ -970,10 +973,27 @@ function lbShowBox(g){
   if(e&&st.g===g)e.innerHTML=lbBoxHtml(g.lb);
 }
 function lbRun(g,kind,cand,nick){
+  if(kind==='race'){g.lbP=lbSubmit(kind,g.op,g.score,cand,nick);return}
   g.lb={loading:true};lbShowBox(g);
   lbSubmit(kind,g.op,g.score,cand,nick).then(function(res){
-    g.lb=res;lbShowBox(g);
-    if(res&&res.celebrate&&res.rank<=10)confetti(res.rank===1);
+    if(res&&!res.err)res.score=g.score;
+    g.lb=res||{score:g.score,kind:kind,op:g.op};lbShowBox(g);
+    if(res&&res.celebrate&&res.rank===1)confetti(true);
+  });
+}
+/* yarış bitince: sadece birinci olan tebrik + konfeti alır; sıra herkes bitince hesaplanır */
+function raceFinal(g){
+  var win=myRank()===1,op=g.op;
+  g.lb={loading:true};lbShowBox(g);
+  (g.lbP||Promise.resolve(null)).then(function(res){
+    if(!res||res.err)return {race:true,win:win,score:g.score,kind:'race',op:op};
+    return devAuth().then(function(fb){return lbTop(fb,lbCol('race',op))}).then(function(rows){
+      var r=lbRank(rows,res.best);
+      return {race:true,win:win,score:g.score,rank:r.rank,over:r.over,celebrate:res.celebrate,kind:'race',op:op};
+    });
+  }).catch(function(){return {race:true,win:win,score:g.score,kind:'race',op:op}}).then(function(x){
+    g.lb=x;lbShowBox(g);
+    if(x.win&&g.score>0)confetti(true);
   });
 }
 function confetti(big){
@@ -1274,7 +1294,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 17</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 18</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
