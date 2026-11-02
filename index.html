@@ -96,7 +96,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .gd p,.gd li{font-size:16px;line-height:1.55}.gd ul{padding-left:20px;margin:8px 0 0}.gd p{margin:8px 0 0}
 .lnk{font-size:13px;word-break:break-all;color:var(--muted);margin:6px 0}
 details.pbox summary{cursor:pointer;font-size:17px}
-.cdbox{text-align:center;padding-top:25vh;font-size:26px;font-weight:700}
+.cdbox{text-align:center;padding-top:10vh;font-size:26px;font-weight:700}.cdbox #cdn{font-size:64px;line-height:1.2}.zc:empty{display:none}.zc{text-align:center;line-height:1.7;margin-top:18px}.gpop{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:calc(100% - 32px);max-width:440px;background:var(--card);border:2px solid var(--ok);border-radius:14px;padding:10px 12px;text-align:center;font-size:16px;line-height:1.5;z-index:60;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:gpin .25s ease-out}@keyframes gpin{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 #cdn{font-size:140px;font-weight:800;color:var(--accent)}
 .pbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:18px;line-height:1.5;margin:10px 0;text-align:left}
 .pbox ul,.pbox ol{margin:4px 0 8px 20px;padding:0}
@@ -443,6 +443,8 @@ function sndOk(n){sfxPlay(function(t){
 function sndBad(){sfxPlay(function(t){tone(220,t,0.18,'triangle',0.5,AU.sg);tone(165,t+0.14,0.3,'triangle',0.5,AU.sg)})}
 function sndFast(){sfxPlay(function(t){var L=[72,76,79,84],i;for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.06,0.08,'square',0.18,AU.sg)})}
 function sndTick(){sfxPlay(function(t){tone(1000,t,0.03,'square',0.12,AU.sg)})}
+function sndWhistle(){sfxPlay(function(t){var c=AU.ctx,o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),g=c.createGain();o.type='sine';o.frequency.value=2500;l.frequency.value=40;lg.gain.value=140;l.connect(lg);lg.connect(o.frequency);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.02);g.gain.setValueAtTime(0.7,t+0.4);g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);o.connect(g);g.connect(AU.sg);o.start(t);l.start(t);o.stop(t+0.55);l.stop(t+0.55)})}
+function sndClap(big){sfxPlay(function(t){var c=AU.ctx,n=big?46:26,i,s,b,g,at;for(i=0;i<n;i++){at=t+Math.random()*(big?1.9:1.1);s=c.createBufferSource();s.buffer=AU.nb;b=c.createBiquadFilter();b.type='bandpass';b.frequency.value=1200+Math.random()*1800;b.Q.value=0.8;g=c.createGain();g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.5+Math.random()*0.4,at+0.005);g.gain.exponentialRampToValueAtTime(0.0001,at+0.05);s.connect(b);b.connect(g);g.connect(AU.sg);s.start(at)}})}
 function sndWin(){sfxPlay(function(t){var L=[72,76,79,84,79,84],i;for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.12,0.2,'triangle',0.5,AU.sg);tone(mf(88),t+0.72,0.5,'sine',0.3,AU.sg)})}
 function sndEnd(){sfxPlay(function(t){var L=[79,76,72],i;for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.18,0.25,'triangle',0.45,AU.sg)})}
 
@@ -581,7 +583,6 @@ function gPills(){
   document.getElementById('g-bt').textContent=g.race?'#'+myRank():best;
   document.getElementById('g-st').textContent=g.streak;
   document.getElementById('g-hp').textContent='❤️'+g.hearts;
-  gZirveUpdate();
 }
 function gameHtml(){
   var g=st.g,best=Math.max(g.bestOld,g.score);
@@ -590,7 +591,7 @@ function gameHtml(){
     '<div class="pill"><b id="g-bt">'+(g.race?'#'+myRank():best)+'</b>'+(g.race?'Sıra':'Rekor')+'</div>'+
     '<div class="pill"><b id="g-st">'+g.streak+'</b>Seri</div>'+
     '<div class="pill"><b id="g-hp">❤️'+g.hearts+'</b>Can</div></div>'+
-    '<div class="zr" id="g-zr">'+gZirveHtml()+'</div>'+audioBtns()+(g.race?'<div id="g-rank">'+rankHtml()+'</div>':'')+'<div class="tbar"><div id="tfill"></div></div>'+
+    audioBtns()+(g.race?'<div id="g-rank">'+rankHtml()+'</div>':'')+'<div class="tbar"><div id="tfill"></div></div>'+
     '<div class="q" id="gq">'+g.q.txt+' = ?</div>'+
     '<div class="agrid" id="agrid">'+gOptsHtml(g.q)+'</div>'+
     '<div class="msg" id="gmsg"></div>'+
@@ -620,8 +621,8 @@ function gAnswer(i,el){
   if(i===null)sec=g.tm/1000;
   if(right){
     var fr=g.el/g.tm,pt=fr<=0.25?3:(fr<=0.5?2:1);
-    g.score+=pt;g.ok++;g.streak++;if(g.streak>g.bestStreak)g.bestStreak=g.streak;
-    el.classList.add('ok');msg.style.color='var(--ok)';msg.textContent='Doğru! +'+pt+' 🎉';sndOk(pt);
+    var oldSc=g.score;g.score+=pt;g.ok++;g.streak++;if(g.streak>g.bestStreak)g.bestStreak=g.streak;
+    el.classList.add('ok');msg.style.color='var(--ok)';msg.textContent='Doğru! +'+pt+' 🎉';sndOk(pt);gPass(oldSc);
   }else{
     g.bad++;g.streak=0;g.hearts--;
     if(el)el.classList.add('bad');
@@ -634,10 +635,11 @@ function gAnswer(i,el){
   g.to=setTimeout(function(){
     if(st.screen!=='game'||g.done)return;
     if(g.hearts<=0)endGame();else gNext();
-  },right?700:1600);
+  },right?(g.pop?1900:700):1600);
 }
 function gNext(){
   var g=st.g;
+  g.pop=false;gPopHide();
   var old=g.tm;g.tm=gTime(g.log.length,g.lv);g.q=gQ();g.rem=g.tm;g.el=0;g.lock=false;
   document.getElementById('gq').textContent=g.q.txt+' = ?';
   document.getElementById('agrid').innerHTML=gOptsHtml(g.q);
@@ -667,14 +669,21 @@ function gStart(op,lv,tb){
   var mk=gMk(op,lv,tb);
   st.g={op:op,lv:lv,tb:tb,mk:mk,sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:gTime(0,lv),lt:99,rem:gTime(0,lv),el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:bestGet(mk),newBest:false};
   st.g.q=gQ();musTempo(st.g.tm);
-  go('game');
-  gZirveLoad(st.g,'solo');
+  zPre('solo',op,lv,tb);
+  go('gcount');
+  GCD=cdRun(function(){
+    GCD=null;
+    if(st.screen!=='gcount')return;
+    sndWhistle();
+    zApply(st.g,'solo');
+    go('game');
+  });
 }
 function askQuitGame(){modal('Oyunu bitirmek istediğine emin misin?<br>Puanın kaydedilir.','Evet, bitir','Hayır, devam et',endGame,null)}
 function endGame(){
   var g=st.g;
   if(g.done)return;
-  g.done=true;
+  g.done=true;gPopHide();
   if(g.to)clearTimeout(g.to);
   if(gT){clearInterval(gT);gT=null}
   if(g.race){sndEnd();if(g.log.length)gSave();raceSend(true);if(!g.tb)lbRun(g,'race',g.score,RM.nick);go('rover');return}
@@ -866,23 +875,28 @@ function rmLeave(){
   }
   rmLeaveLocal();
 }
-function rmCountdown(){
-  var n=3;
-  go('rcount');
-  RM.cd=setInterval(function(){
+function cdRun(done){
+  var n=3,id=setInterval(function(){
     n--;
-    if(n<=0){clearInterval(RM.cd);RM.cd=null;raceStart();return}
+    if(n<=0){clearInterval(id);done();return}
     var e=document.getElementById('cdn');if(e)e.textContent=n;
     sndPop();
   },1000);
+  return id;
+}
+function rmCountdown(){
+  var rt=(RM.room.tb>=2&&RM.room.tb<=10&&(RM.room.op==='mul'||RM.room.op==='div'))?RM.room.tb|0:0,rl=rt?'k':(RM.room.lv==='o'||RM.room.lv==='z'?RM.room.lv:'k');
+  zPre('race',RM.room.op,rl,rt);
+  go('rcount');
+  RM.cd=cdRun(function(){RM.cd=null;sndWhistle();raceStart()});
 }
 function raceStart(){
   var rl=RM.room.lv==='o'||RM.room.lv==='z'?RM.room.lv:'k',rt=(RM.room.tb>=2&&RM.room.tb<=10&&(RM.room.op==='mul'||RM.room.op==='div'))?RM.room.tb|0:0;
   if(rt)rl='k';
   st.g={op:RM.room.op,lv:rl,tb:rt,mk:gMk(RM.room.op,rl,rt),sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:gTime(0,rl),lt:99,rem:gTime(0,rl),el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:0,newBest:false,race:{code:RM.code,seed:RM.room.seed}};
   st.g.q=gQ();musTempo(st.g.tm);
+  zApply(st.g,'race');
   go('game');
-  gZirveLoad(st.g,'race');
   raceSend(false);
 }
 function raceSend(done){
@@ -979,32 +993,68 @@ function saveRace(){shareCanvas(document.getElementById('rcard'),'matematik-cana
 var LBV={kind:'solo',op:'add',lv:'k',from:'home',seq:0,rows:null,me:'',mine:null};
 function lbCol(kind,op,lv){return (kind==='race'?'lbr_':'lbg_')+op+((lv==='o'||lv==='z')?'_'+lv:'')}
 /* oyun sırasında: zirve (tablodaki en yüksek puan) ve hedef (bir üstteki kişi) */
-function gZirveHtml(){
-  var g=st.g,i,h='',top,others,nxt=null,me;
-  if(!g||g.tb||!g.top)return '';
-  top=g.top;me=g.topMe;
-  if(!top.length)return '<div>👑 Zirve: henüz yok. İlk rekoru sen kır!</div>';
-  h+='<div>👑 Zirve: <b>'+esc(top[0].nick)+'</b> · <b>'+top[0].score+'</b></div>';
-  others=top.filter(function(r){return r.uid!==me});
-  for(i=others.length-1;i>=0;i--){if(others[i].score>=g.score){nxt=others[i];break}}
-  if(nxt)h+='<div>🎯 <b>'+esc(nxt.nick)+'</b> ('+nxt.score+') için <b>'+(nxt.score-g.score+1)+'</b> puan kaldı</div>';
-  else if(g.score>0)h+='<div class="zt">👑 Zirvedesin!</div>';
+var ZP={rows:undefined,me:'',tb:0,tok:0},GCD=null,gpT=null;
+function zPre(kind,op,lv,tb){
+  var tok=++ZP.tok;
+  ZP.rows=undefined;ZP.me='';ZP.tb=tb;
+  if(tb||!navigator.onLine){ZP.rows=null;return}
+  devAuth().then(function(fb){return lbTop(fb,lbCol(kind,op,lv)).then(function(rows){
+    if(ZP.tok!==tok||!CL.user)return;
+    ZP.rows=rows;ZP.me=CL.user.uid;zcFill();
+  })}).catch(function(){if(ZP.tok===tok){ZP.rows=null;zcFill()}});
+}
+function zcHtml(){
+  var r=ZP.rows,i,h='',oth,lo;
+  if(ZP.tb)return '<div>📚 Tablo çalışması</div><div><small>Puanın Rekorlar Tablosuna yazılmaz</small></div>';
+  if(r===null)return '';
+  if(r===undefined)return '<div>⏳ Zirve bilgisi alınıyor…</div>';
+  if(!r.length)return '<div>👑 Henüz zirve yok</div><div><b>İlk rekoru sen kır!</b></div>';
+  h='<div>👑 Zirve: <b>'+esc(r[0].nick)+'</b> · <b>'+r[0].score+'</b></div>';
+  oth=r.filter(function(x){return x.uid!==ZP.me});
+  if(oth.length){lo=oth[oth.length-1];h+='<div>🎯 İlk hedefin: <b>'+esc(lo.nick)+'</b> ('+lo.score+')</div>'}
   return h;
 }
-function gZirveUpdate(){
-  var g=st.g,e=document.getElementById('g-zr');
-  if(!g||!e)return;
-  var was=g.zOn;
-  e.innerHTML=gZirveHtml();
-  g.zOn=/Zirvedesin/.test(e.innerHTML);
-  if(g.zOn&&!was&&g.top&&g.top.length){toast('👑 Zirveye çıktın!')}
+function zcFill(){
+  var e=document.getElementById('zc');
+  if(!e)return;
+  var h=zcHtml();e.innerHTML=h;e.style.display=h?'':'none';
+}
+function zApply(g,kind){
+  if(g.tb||!navigator.onLine)return;
+  if(ZP.rows){g.top=ZP.rows;g.topMe=ZP.me;return}
+  gZirveLoad(g,kind);
 }
 function gZirveLoad(g,kind){
   if(g.tb||!navigator.onLine)return;
   devAuth().then(function(fb){return lbTop(fb,lbCol(kind,g.op,g.lv)).then(function(rows){
     if(st.g!==g||!CL.user)return;
-    g.top=rows;g.topMe=CL.user.uid;gZirveUpdate();
+    g.top=rows;g.topMe=CL.user.uid;
   })}).catch(function(){});
+}
+function gPopHide(){
+  if(gpT){clearTimeout(gpT);gpT=null}
+  var e=document.querySelector('.gpop');if(e&&e.parentNode)e.parentNode.removeChild(e);
+}
+function gPopShow(h){
+  gPopHide();
+  var e=document.createElement('div');e.className='gpop';e.innerHTML=h;document.body.appendChild(e);
+  gpT=setTimeout(gPopHide,1800);
+}
+function gPass(old){
+  var g=st.g,oth,pas,nx=null,i,nm,top,h;
+  if(!g||g.tb||!g.top||!g.top.length)return;
+  oth=g.top.filter(function(r){return r.uid!==g.topMe});
+  pas=oth.filter(function(r){return old<=r.score&&r.score<g.score});
+  if(!pas.length)return;
+  for(i=oth.length-1;i>=0;i--){if(oth[i].score>=g.score){nx=oth[i];break}}
+  top=!nx;
+  nm=pas.slice(0,3).map(function(r){return '<b>'+esc(r.nick)+'</b>'}).join(', ')+(pas.length>3?'…':'');
+  if(top)h='<div>👑 <b>Bravo! Zirveye çıktın!</b></div><div>Geçtin: '+nm+'</div>';
+  else h='<div>🎉 <b>Bravo!</b> '+(pas.length>2?pas.length+' kişiyi geçtin: ':'Geçtin: ')+nm+'</div><div>🎯 Sıradaki: <b>'+esc(nx.nick)+'</b> ('+nx.score+') · '+(nx.score-g.score+1)+' puan kaldı</div>';
+  g.pop=true;
+  gPopShow(h);
+  sndClap(top);
+  if(top)setTimeout(sndWin,300);
 }
 function lbName(s){return String(s||'').trim().slice(0,12)||'Misafir'}
 function lbNick(){return st.profile||ls('mc_gnick','')||'Misafir'}
@@ -1202,8 +1252,8 @@ var GUIDE=[
  {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> Bir takma ad yazıp profil oluşturursun. Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın. İşlemler ve Problemler sonuçların kaydedilmez.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar sadece <b>bu telefonda</b> saklanır. Tarayıcı verisi silinirse kaybolur.</li></ul>'},
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
- {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede istersen <b>tek bir tabloyu</b> (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun sırasında ekranda <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve <b>🎯 hedef</b> (bir üstündeki kişiyi geçmek için kalan puan) görünür. Puanın artınca hedef bir üst kişiye geçer. Zirveyi geçersen "Zirvedesin!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
- {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) ya da çarpma ve bölme için tek bir tabloyu seç.</li><li>Sonra işlemi seç. Oda açılır.</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>3-2-1 sayılır. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
+ {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede istersen <b>tek bir tabloyu</b> (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce <b>3-2-1</b> sayılır ve bir kart çıkar: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
+ {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) ya da çarpma ve bölme için tek bir tabloyu seç.</li><li>Sonra işlemi seç. Oda açılır.</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>3-2-1 sayılır, zirve kartı çıkar ve düdükle yarış başlar. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
  {id:'lb',t:'🏆 Rekorlar Tablosu',h:'<ul><li>Ana menüdeki <b>Rekorlar Tablosu</b>ndan açılır. İnternet gerekir.</li><li>İki sekme var: <b>Akıldan İşlem</b> ve <b>Yarış Odası</b>. İşlem türünü ve seviyeyi (Kolay, Orta, Zor) seçersin. Her seviyenin tablosu ayrıdır.</li><li><b>Tabloyu Paylaş</b> düğmesiyle tablonun fotoğrafını kaydedip gönderebilirsin.</li><li>En yüksek 10 kişi görünür. İlk 10 içinde değilsen kendi sıran altta yazar.</li><li>Her kişinin her işlemde tek satırı vardır. Sadece rekor kırınca yükselir.</li><li>Birinci olursan tebrik ve konfeti çıkar 🎉</li><li>Tabloda <b>adın herkese görünür</b>. Soyadını ya da kişisel bilgini yazma.</li></ul>'},
  {id:'score',t:'📊 Skorlarım ve skor kartı',h:'<ul><li>Profille oynarsan <b>Skorlarım</b> bölümünde son 14 günün skorlarını görürsün.</li><li>Her oturumun sonunda bir <b>skor kartı</b> çıkar.</li><li><b>Fotoğrafı Kaydet / Paylaş</b> ile kartı kaydedip WhatsApp ile öğretmenine gönderebilirsin.</li></ul>'},
  {id:'faq',t:'❓ Sorun çözümü',h:'<ul><li><b>Skorlarım kayboldu:</b> Tarayıcı verisi silinmiş ya da telefon değişmiş olabilir. Skorlar sadece telefonda durur.</li><li><b>Yarışa giremiyorum:</b> İnternetin açık olduğundan, kodu doğru yazdığından ve yarışın başlamadığından emin ol. Oda kodu 24 saat geçerlidir.</li><li><b>"Farklı sürüm" uyarısı:</b> Uygulamayı tamamen kapatıp yeniden aç. Güncellenir.</li><li><b>Rekorlar Tablosu açılmıyor:</b> İnternetini kontrol et, biraz sonra tekrar dene.</li><li><b>Uygulamayı ana ekrana eklemek:</b> Tarayıcı menüsünden "Ana ekrana ekle"ye dokun.</li></ul>'}
@@ -1425,7 +1475,7 @@ function back(){
   if(s==='rcreate')return go('rooms');
   if(s==='rover'){if(!roverState().all){toast('Yarış bitmeden çıkamazsın, bekle');return}return rmLeave()}
   if(s==='lobby')return rmLeave();
-  if(s==='rcount')return;
+  if(s==='rcount'||s==='gcount')return;
   if(s==='game')return askQuitGame();
   if(s==='gover')return go('gmenu');
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
@@ -1440,7 +1490,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 22</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 23</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -1499,8 +1549,10 @@ function render(){
     h+=RM.host?'<button class="next" onclick="rmStart()">▶️ Yarışı Başlat</button><p class="sub center">Herkes katılınca başlat. Başlayınca yeni kişi giremez.</p>':'<p class="sub center">⏳ Kurucunun yarışı başlatması bekleniyor…</p>';
     h+='<div class="pbox" style="text-align:center"><small>Davet linki: arkadaşların tıklayınca direkt bu odaya gelir</small><div class="lnk">'+esc(rmLink())+'</div><button class="ghost" style="margin:6px 0" onclick="rmCopy()">🔗 Linki Kopyala</button><button class="ghost" style="margin:0" onclick="rmShare()">📤 Paylaş (WhatsApp…)</button></div>';
     h+='<button class="ghost" onclick="rmLeave()">Odadan Çık</button>';
+  }else if(s==='gcount'){
+    h='<div class="cdbox">Hazır ol!<div id="cdn">3</div></div><div class="pbox zc" id="zc">'+zcHtml()+'</div>';
   }else if(s==='rcount'){
-    h='<div class="cdbox">Hazır ol!<div id="cdn">3</div></div>';
+    h='<div class="cdbox">Hazır ol!<div id="cdn">3</div></div><div class="pbox zc" id="zc">'+zcHtml()+'</div>';
   }else if(s==='rover'){
     h=topBar('Yarış · '+(RM.code||''))+'<div class="pbox" id="r-me" style="text-align:center"></div><div id="lb-box">'+lbBoxHtml(st.g&&st.g.lb)+'</div><div class="tag" id="r-st"></div><div id="r-list"></div><canvas id="rcard" class="card wide"></canvas><button class="next" id="r-save" onclick="saveRace()">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" id="r-exit" onclick="rmLeave()">🏠 Yarıştan Çık</button>';
   }else if(s==='ops'){
