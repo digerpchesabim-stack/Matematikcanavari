@@ -17,7 +17,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .sub{color:var(--muted);margin:0 0 20px;font-size:15px}
 .center{text-align:center}
 .hero{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:85vh;text-align:center}
-.hero canvas{width:230px;height:230px;animation:bob 2.4s ease-in-out infinite}
+.hero canvas{width:230px;height:230px;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;animation:bob 2.4s ease-in-out infinite}
 .hero h1{font-size:34px;color:var(--accent)}
 .hero .next{max-width:320px;font-size:22px;padding:18px;box-shadow:0 6px 0 rgba(0,0,0,.18)}
 @keyframes bob{50%{transform:translateY(-10px)}}
@@ -445,6 +445,7 @@ function sndFast(){sfxPlay(function(t){var L=[72,76,79,84],i;for(i=0;i<L.length;
 function sndTick(){sfxPlay(function(t){tone(1000,t,0.03,'square',0.12,AU.sg)})}
 function sndWhistle(){sfxPlay(function(t){var c=AU.ctx,o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),g=c.createGain();o.type='sine';o.frequency.value=2500;l.frequency.value=40;lg.gain.value=140;l.connect(lg);lg.connect(o.frequency);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.02);g.gain.setValueAtTime(0.7,t+0.4);g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);o.connect(g);g.connect(AU.sg);o.start(t);l.start(t);o.stop(t+0.55);l.stop(t+0.55)})}
 function sndClap(big){sfxPlay(function(t){var c=AU.ctx,n=big?46:26,i,s,b,g,at;for(i=0;i<n;i++){at=t+Math.random()*(big?1.9:1.1);s=c.createBufferSource();s.buffer=AU.nb;b=c.createBiquadFilter();b.type='bandpass';b.frequency.value=1200+Math.random()*1800;b.Q.value=0.8;g=c.createGain();g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.5+Math.random()*0.4,at+0.005);g.gain.exponentialRampToValueAtTime(0.0001,at+0.05);s.connect(b);b.connect(g);g.connect(AU.sg);s.start(at)}})}
+function sndCrunch(){sfxPlay(function(t){var c=AU.ctx,i,s,b,g,at;for(i=0;i<3;i++){at=t+i*0.035;s=c.createBufferSource();s.buffer=AU.nb;b=c.createBiquadFilter();b.type='bandpass';b.frequency.value=1800+Math.random()*1500;b.Q.value=1.2;g=c.createGain();g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.6,at+0.004);g.gain.exponentialRampToValueAtTime(0.0001,at+0.045);s.connect(b);b.connect(g);g.connect(AU.sg);s.start(at)}})}
 function sndWin(){sfxPlay(function(t){var L=[72,76,79,84,79,84],i;for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.12,0.2,'triangle',0.5,AU.sg);tone(mf(88),t+0.72,0.5,'sine',0.3,AU.sg)})}
 function sndEnd(){sfxPlay(function(t){var L=[79,76,72],i;for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.18,0.25,'triangle',0.45,AU.sg)})}
 
@@ -1274,8 +1275,8 @@ function guideHtml(){
 /* ---------- çizim ---------- */
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 function circ(c,x,y,r,fill){c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fillStyle=fill;c.fill()}
-function drawMonster(c,cx,cy,r){
-  var body='#8b5cf6',dark='#7040e0',i,a;
+function drawMonster(c,cx,cy,r,o){
+  o=o||{};var body='#8b5cf6',dark='#7040e0',i,a,m=o.m||0;
   [-1,1].forEach(function(s){
     c.beginPath();c.ellipse(cx+s*r*0.42,cy+r*0.98,r*0.26,r*0.2,0,0,Math.PI*2);c.fillStyle=dark;c.fill();
     circ(c,cx+s*r*1.02,cy+r*0.25,r*0.21,dark);
@@ -1285,14 +1286,75 @@ function drawMonster(c,cx,cy,r){
   circ(c,cx,cy,r*0.97,body);
   c.beginPath();c.ellipse(cx,cy+r*0.48,r*0.56,r*0.4,0,0,Math.PI*2);c.fillStyle='#ddd6fe';c.fill();
   [-1,1].forEach(function(s){
-    circ(c,cx+s*r*0.33,cy-r*0.18,r*0.23,'#fff');
-    circ(c,cx+s*r*0.33,cy-r*0.15,r*0.11,'#1e1b4b');
-    circ(c,cx+s*r*0.33-r*0.04,cy-r*0.2,r*0.04,'#fff');
+    if(o.happy){
+      c.beginPath();c.arc(cx+s*r*0.33,cy-r*0.12,r*0.14,Math.PI*1.15,Math.PI*1.85);
+      c.strokeStyle='#1e1b4b';c.lineWidth=r*0.06;c.lineCap='round';c.stroke();
+    }else{
+      circ(c,cx+s*r*0.33,cy-r*0.18,r*0.23,'#fff');
+      circ(c,cx+s*r*0.33,cy-r*0.15,r*0.11,'#1e1b4b');
+      circ(c,cx+s*r*0.33-r*0.04,cy-r*0.2,r*0.04,'#fff');
+    }
     circ(c,cx+s*r*0.6,cy+r*0.1,r*0.1,'rgba(255,120,170,.55)');
   });
-  c.beginPath();c.arc(cx,cy+r*0.08,r*0.27,Math.PI*0.12,Math.PI*0.88);
-  c.strokeStyle='#1e1b4b';c.lineWidth=r*0.055;c.lineCap='round';c.stroke();
-  rr(c,cx-r*0.07,cy+r*0.3,r*0.14,r*0.11,r*0.03);c.fillStyle='#fff';c.fill();
+  if(m>0.06){
+    var my=cy+r*0.3,mw=r*0.28,mh=r*0.24*m;
+    c.beginPath();c.ellipse(cx,my,mw,mh,0,0,Math.PI*2);c.fillStyle='#3b0d2e';c.fill();
+    c.save();c.beginPath();c.ellipse(cx,my,mw,mh,0,0,Math.PI*2);c.clip();
+    c.beginPath();c.ellipse(cx,my+mh*0.75,mw*0.65,mh*0.55,0,0,Math.PI*2);c.fillStyle='#f472b6';c.fill();
+    rr(c,cx-r*0.07,my-mh-1,r*0.14,r*0.11,r*0.03);c.fillStyle='#fff';c.fill();
+    c.restore();
+    c.beginPath();c.ellipse(cx,my,mw,mh,0,0,Math.PI*2);c.strokeStyle='#1e1b4b';c.lineWidth=r*0.045;c.stroke();
+  }else{
+    c.beginPath();c.arc(cx,cy+r*0.08,r*0.27,Math.PI*0.12,Math.PI*0.88);
+    c.strokeStyle='#1e1b4b';c.lineWidth=r*0.055;c.lineCap='round';c.stroke();
+    rr(c,cx-r*0.07,cy+r*0.3,r*0.14,r*0.11,r*0.03);c.fillStyle='#fff';c.fill();
+  }
+}
+/* karşılama: canavara dokununca rakam/sembol yer */
+var MON={q:[],cur:null,cr:[],raf:0};
+var MONSYM=['0','1','2','3','4','5','6','7','8','9','+','−','×','÷','='],MONCOL=['#f59e0b','#10b981','#3b82f6','#ef4444','#ec4899','#14b8a6','#f97316'];
+function monTap(){
+  auCtx();
+  if(MON.q.length<5)MON.q.push({ch:MONSYM[Math.floor(Math.random()*MONSYM.length)],col:MONCOL[Math.floor(Math.random()*MONCOL.length)],a:Math.random()*Math.PI*2});
+  if(!MON.raf)MON.raf=requestAnimationFrame(monFrame);
+}
+function monEase(t){return t<0.5?2*t*t:1-Math.pow(-2*t+2,2)/2}
+function monFrame(now){
+  MON.raf=0;
+  var cv=document.getElementById('mon');
+  if(!cv||st.screen!=='welcome'){MON.q=[];MON.cur=null;MON.cr=[];return}
+  var c=cv.getContext('2d'),cx=240,cy=245,r=150,o={},k=MON.cur,t,u,i,p,x,y,sz,mx=cx,my=cy+r*0.3,cl;
+  if(!k&&MON.q.length){k=MON.cur=MON.q.shift();k.t0=now;k.ch1=k.ch2=k.ch3=false}
+  c.clearRect(0,0,480,480);
+  var dy=0,sym=null;
+  if(k){
+    t=now-k.t0;
+    if(t<650){
+      u=monEase(t/650);o.m=Math.min(1,t/350);
+      x=cx+Math.cos(k.a)*215;y=cy+Math.sin(k.a)*215;
+      sym={x:x+(mx-x)*u,y:y+(my-y)*u,sz:80-55*u,rot:(1-u)*0.6};
+    }else if(t<1450){
+      u=(t-650)/800;o.m=Math.abs(Math.cos(u*Math.PI*3))*0.55;
+      cl=Math.floor(u*3+0.5);
+      if(cl>=1&&!k.ch1){k.ch1=true;monChomp()}
+      if(cl>=2&&!k.ch2){k.ch2=true;monChomp()}
+      if(cl>=3&&!k.ch3){k.ch3=true;monChomp()}
+      dy=Math.sin(u*Math.PI*6)*3;
+    }else if(t<1900){
+      u=(t-1450)/450;o.happy=true;dy=-Math.sin(u*Math.PI)*14;
+    }else{MON.cur=null;k=null}
+  }
+  for(i=MON.cr.length-1;i>=0;i--){p=MON.cr[i];p.vy+=0.35;p.x+=p.vx;p.y+=p.vy;p.l--;if(p.l<=0)MON.cr.splice(i,1)}
+  drawMonster(c,cx,cy+dy,r,o);
+  MON.cr.forEach(function(p){c.globalAlpha=Math.min(1,p.l/20);circ(c,p.x,p.y,p.s,p.col);c.globalAlpha=1});
+  if(sym){c.save();c.translate(sym.x,sym.y);c.rotate(sym.rot);c.font='800 '+Math.round(sym.sz)+'px system-ui,sans-serif';c.textAlign='center';c.textBaseline='middle';c.lineWidth=6;c.strokeStyle='#fff';c.strokeText(k.ch,0,0);c.fillStyle=k.col;c.fillText(k.ch,0,0);c.restore()}
+  if(MON.cur||MON.q.length||MON.cr.length)MON.raf=requestAnimationFrame(monFrame);
+  else{c.clearRect(0,0,480,480);drawMonster(c,cx,cy,r)}
+}
+function monChomp(){
+  var k=MON.cur,i;
+  sndCrunch();
+  for(i=0;i<5;i++)MON.cr.push({x:240+(Math.random()-0.5)*60,y:245+150*0.3,vx:(Math.random()-0.5)*5,vy:-Math.random()*4-1,s:4+Math.random()*4,l:28+Math.random()*12,col:k?k.col:'#f59e0b'});
 }
 var FONT='system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
 
@@ -1522,7 +1584,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 27</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 28</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
