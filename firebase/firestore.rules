@@ -3,13 +3,16 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function signedIn() { return request.auth != null; }
+    function lbOk(c) { return c in ['lbg_add','lbg_add_o','lbg_add_z','lbg_sub','lbg_sub_o','lbg_sub_z','lbg_mul','lbg_mul_o','lbg_mul_z','lbg_div','lbg_div_o','lbg_div_z','lbg_rnd','lbg_rnd_o','lbg_rnd_z','lbr_add','lbr_add_o','lbr_add_z','lbr_sub','lbr_sub_o','lbr_sub_z','lbr_mul','lbr_mul_o','lbr_mul_z','lbr_div','lbr_div_o','lbr_div_z','lbr_rnd','lbr_rnd_o','lbr_rnd_z']; }
 
     // Yarış odaları
     match /rooms/{code} {
       allow get: if signedIn();
       allow create: if signedIn()
         && request.resource.data.host == request.auth.uid
-        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv'])
+        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb'])
+        && (!('lv' in request.resource.data) || request.resource.data.lv in ['k', 'o', 'z'])
+        && (!('tb' in request.resource.data) || (request.resource.data.tb is int && request.resource.data.tb >= 0 && request.resource.data.tb <= 10))
         && request.resource.data.status == 'lobby'
         && request.resource.data.op in ['add', 'sub', 'mul', 'div', 'rnd']
         && code.size() >= 3 && code.size() <= 10;
@@ -36,14 +39,14 @@ service cloud.firestore {
 
     // Rekorlar tablosu: her cihaz, her kategori için tek belge; sadece kendi belgesi, puan sadece artabilir
     match /{coll}/{uid} {
-      allow read: if signedIn() && coll in ['lbg_add','lbg_sub','lbg_mul','lbg_div','lbg_rnd','lbr_add','lbr_sub','lbr_mul','lbr_div','lbr_rnd'];
+      allow read: if signedIn() && lbOk(coll);
       allow create: if signedIn() && request.auth.uid == uid
-        && coll in ['lbg_add','lbg_sub','lbg_mul','lbg_div','lbg_rnd','lbr_add','lbr_sub','lbr_mul','lbr_div','lbr_rnd']
+        && lbOk(coll)
         && request.resource.data.keys().hasOnly(['nick', 'score', 'ts'])
         && request.resource.data.nick is string && request.resource.data.nick.size() >= 1 && request.resource.data.nick.size() <= 12
         && request.resource.data.score is int && request.resource.data.score >= 0 && request.resource.data.score <= 5000;
       allow update: if signedIn() && request.auth.uid == uid
-        && coll in ['lbg_add','lbg_sub','lbg_mul','lbg_div','lbg_rnd','lbr_add','lbr_sub','lbr_mul','lbr_div','lbr_rnd']
+        && lbOk(coll)
         && request.resource.data.keys().hasOnly(['nick', 'score', 'ts'])
         && request.resource.data.nick is string && request.resource.data.nick.size() >= 1 && request.resource.data.nick.size() <= 12
         && request.resource.data.score is int && request.resource.data.score >= resource.data.score && request.resource.data.score <= 5000;
