@@ -89,6 +89,10 @@ h1{font-size:28px;margin:8px 0 4px}
 .pod{display:flex;align-items:center;gap:12px;border-radius:16px;padding:14px;margin-bottom:8px;font-size:20px;font-weight:700;background:var(--card);border:1px solid var(--line)}
 .pod.g1{background:#fde047;color:#2a1b6e;font-size:24px}
 .pod .sc{margin-left:auto}
+.tabs{display:flex;gap:8px;margin-bottom:10px}.tabs button{flex:1;border:2px solid var(--accent);background:transparent;color:var(--accent);border-radius:14px;padding:12px 6px;font-size:16px;font-weight:700}.tabs button.on{background:var(--accent);color:var(--accent-t)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:20px;padding:8px 12px;font-size:15px;font-weight:600}.chip.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
+.lbx{text-align:center}
+details.pbox summary{cursor:pointer;font-size:17px}
 .cdbox{text-align:center;padding-top:25vh;font-size:26px;font-weight:700}
 #cdn{font-size:140px;font-weight:800;color:var(--accent)}
 .pbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:18px;line-height:1.5;margin:10px 0;text-align:left}
@@ -619,6 +623,8 @@ function gSave(){
   return done;
 }
 function gStart(op){
+  var ge=document.getElementById('g-name');
+  if(ge&&ge.value.trim())lsSet('mc_gnick',ge.value.trim());
   st.g={op:op,sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:8000,lt:99,rem:8000,el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:bestGet(op),newBest:false};
   st.g.q=gQ();musTempo(8000);
   go('game');
@@ -630,12 +636,13 @@ function endGame(){
   g.done=true;
   if(g.to)clearTimeout(g.to);
   if(gT){clearInterval(gT);gT=null}
-  if(g.race){sndEnd();if(g.log.length)gSave();raceSend(true);go('rover');return}
+  if(g.race){sndEnd();if(g.log.length)gSave();raceSend(true);go('rover');lbRun(g,'race',g.score,RM.nick);return}
   g.newBest=g.score>g.bestOld&&g.score>0;
   if(g.newBest)sndWin();else sndEnd();
   if(g.newBest)bestSet(g.op,g.score);
   if(g.log.length)gSave();
   go('gover');
+  lbRun(g,'solo',Math.max(g.score,bestGet(g.op)),lbNick());
 }
 function drawGame(cv){
   var g=st.g,W=1080,off=g.newBest?110:0,n=g.log.length,sum=0,H=780+off+450+100,c,t0=new Date(g.t);
@@ -853,11 +860,11 @@ function roverUpdate(){
   document.getElementById('r-list').innerHTML=h;
   var g=st.g,rk=myRank(),me2=document.getElementById('r-me');
   document.getElementById('r-st').textContent=s.all?'🏁 Yarış bitti!':'Sıralama canlı güncelleniyor';
-  if(g)me2.innerHTML=s.all?'<b>🏁 Yarış bitti!</b><br>Final sıran: <b>'+rk+'.</b> · '+g.score+' puan':'<b>'+(g.hearts<=0?'💔 Elendin!':'🏁 Oyunu bitirdin!')+'</b> Puanın: <b>'+g.score+'</b><br>'+g.ok+' doğru, '+g.bad+' yanlış<br>⏳ <b>Yarış devam ediyor, bekle…</b><br>Şimdilik sıran: <b>'+rk+'.</b>';
+  if(g)me2.innerHTML=s.all?'<b>🏁 Yarış bitti!</b><br>Final sıran: <b>'+rk+'.</b> · '+g.score+' puan'+(g.rnew?'<br>🏆 <b>Yeni yarış rekorun!</b>':''):'<b>'+(g.hearts<=0?'💔 Elendin!':'🏁 Oyunu bitirdin!')+'</b> Puanın: <b>'+g.score+'</b><br>'+g.ok+' doğru, '+g.bad+' yanlış<br>⏳ <b>Yarış devam ediyor, bekle…</b><br>Şimdilik sıran: <b>'+rk+'.</b>';
   var sv=document.getElementById('r-save'),ex=document.getElementById('r-exit');
   if(sv){sv.disabled=!s.all;sv.textContent=s.all?'📷 Fotoğrafı Kaydet / Paylaş':'📷 Yarış bitince paylaşabilirsin'}
   if(ex){ex.disabled=!s.all;ex.textContent=s.all?'🏠 Yarıştan Çık':'⏳ Yarış bitene kadar bekle'}
-  if(s.all&&!RM.fin){RM.fin=true;if(myRank()===1)sndWin()}
+  if(s.all&&!RM.fin){RM.fin=true;rhistSave(s);if(myRank()===1)sndWin()}
   drawRace(document.getElementById('rcard'),s);
 }
 function drawRace(cv,s){
@@ -882,6 +889,137 @@ function drawRace(cv,s){
   c.textAlign='center';c.fillStyle='#9aa3b5';c.font='400 28px '+FONT;c.fillText('Rapor: '+fmtDate(new Date())+' '+fmtTime(new Date()),W/2,H-30);
 }
 function saveRace(){shareCanvas(document.getElementById('rcard'),'matematik-canavari-yaris.png')}
+
+/* ---------- rekorlar tablosu + yarış geçmişi ---------- */
+var LBV={kind:'solo',op:'add',from:'home',seq:0};
+function lbCol(kind,op){return (kind==='race'?'lbr_':'lbg_')+op}
+function lbName(s){return String(s||'').trim().slice(0,12)||'Misafir'}
+function lbNick(){return st.profile||ls('mc_gnick','')||'Misafir'}
+function lbRank(rows,score){var n=0,i;for(i=0;i<rows.length;i++){if(rows[i].score>score)n++}return {rank:n+1,over:n>=50}}
+function lbTop(fb,col){
+  return fb.getDocs(fb.query(fb.collection(CL.db,col),fb.orderBy('score','desc'),fb.limit(50))).then(function(qs){
+    var rows=[];qs.forEach(function(d){var x=d.data();rows.push({uid:d.id,nick:x.nick,score:x.score})});
+    rows.sort(function(a,b){return b.score-a.score});
+    return rows;
+  });
+}
+function lbSubmit(kind,op,score,cand,nick){
+  if(!(score>0))return Promise.resolve(null);
+  if(!navigator.onLine)return Promise.resolve({err:'İnternet yok: rekor tablosuna yazılamadı'});
+  var col=lbCol(kind,op),nm=lbName(nick),fb,old=null,best,improved;
+  return devAuth().then(function(f){
+    fb=f;if(!CL.user)throw 0;
+    return fb.getDoc(fb.doc(CL.db,col,CL.user.uid));
+  }).then(function(s){
+    old=s.exists()?s.data():null;
+    best=Math.max(cand,old?old.score:0);
+    improved=!old||cand>old.score;
+    if(improved||old.nick!==nm)return fb.setDoc(fb.doc(CL.db,col,CL.user.uid),{nick:nm,score:best,ts:Date.now()});
+  }).then(function(){return lbTop(fb,col)}).then(function(rows){
+    var r=lbRank(rows,best);
+    return {best:best,rank:r.rank,over:r.over,celebrate:improved&&score>=cand,improved:improved,kind:kind,op:op};
+  }).catch(function(){return {err:'Rekor tablosuna bağlanılamadı'}});
+}
+function lbBoxHtml(r){
+  if(!r)return '';
+  if(r.loading)return '<div class="pbox lbx">🏆 Rekorlar tablosu kontrol ediliyor…</div>';
+  if(r.err)return '<div class="pbox lbx">'+esc(r.err)+'</div>';
+  var m,rk=r.over?'50+':r.rank+'.';
+  if(r.celebrate&&r.rank===1)m='🏆 <b>Tebrikler, oyundaki en yüksek puanı aldınız!</b>';
+  else if(r.celebrate&&r.rank<=10)m='🎉 <b>Tebrikler! En yüksek rekorlarda '+r.rank+'. sıradasınız!</b>';
+  else if(r.celebrate)m='Rekorlar listesinde <b>'+rk+'</b> sıradasınız. İlk 10 için biraz daha!';
+  else m='Tablodaki rekorun: <b>'+r.best+'</b> · Sıran: <b>'+rk+'</b>';
+  return '<div class="pbox lbx">'+m+'</div><button class="ghost" onclick="lbOpen(\''+r.kind+'\',\''+r.op+'\')">🏆 Rekorlar Tablosunu Gör</button>';
+}
+function lbShowBox(g){
+  var e=document.getElementById('lb-box');
+  if(e&&st.g===g)e.innerHTML=lbBoxHtml(g.lb);
+}
+function lbRun(g,kind,cand,nick){
+  g.lb={loading:true};lbShowBox(g);
+  lbSubmit(kind,g.op,g.score,cand,nick).then(function(res){
+    g.lb=res;lbShowBox(g);
+    if(res&&res.celebrate&&res.rank<=10)confetti(res.rank===1);
+  });
+}
+function confetti(big){
+  var c=document.createElement('canvas'),W=window.innerWidth,H=window.innerHeight,x,n=big?170:70,P=[],i,t0=Date.now(),cols=['#fde047','#7048e8','#1f9d55','#d64545','#38bdf8','#fb923c'],dur=big?4500:2800;
+  c.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:99';
+  c.width=W;c.height=H;x=c.getContext('2d');
+  if(!x)return;
+  document.body.appendChild(c);
+  for(i=0;i<n;i++)P.push({x:Math.random()*W,y:-20-Math.random()*H*0.6,vx:(Math.random()-0.5)*3,vy:2+Math.random()*4,s:6+Math.random()*8,r:Math.random()*6,vr:(Math.random()-0.5)*0.3,c:cols[i%cols.length]});
+  (function f(){
+    var el=Date.now()-t0;
+    x.clearRect(0,0,W,H);
+    P.forEach(function(p){
+      p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
+      x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/3,p.s,p.s*0.6);x.restore();
+    });
+    if(el<dur)requestAnimationFrame(f);else if(c.parentNode)c.parentNode.removeChild(c);
+  })();
+}
+function lbOpen(kind,op){
+  if(kind)LBV.kind=kind;
+  if(op)LBV.op=op;
+  if(st.screen!=='lb')LBV.from=st.screen;
+  go('lb');
+}
+function lbSet(kind,op){if(kind)LBV.kind=kind;if(op)LBV.op=op;render()}
+function lbTabsHtml(){
+  var h='<div class="tabs"><button class="'+(LBV.kind==='solo'?'on':'')+'" onclick="lbSet(\'solo\')">🧠 Akıldan İşlem</button><button class="'+(LBV.kind==='race'?'on':'')+'" onclick="lbSet(\'race\')">🏁 Yarış Odası</button></div><div class="chips">';
+  ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="chip'+(LBV.op===o?' on':'')+'" onclick="lbSet(null,\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'</button>'});
+  return h+'</div>';
+}
+function lbLoad(){
+  var body=document.getElementById('lb-body'),seq=++LBV.seq,kind=LBV.kind,op=LBV.op,col=lbCol(kind,op),fb,rows;
+  if(!body)return;
+  if(!navigator.onLine){body.innerHTML='<p class="sub center">Rekorlar tablosu için internet gerekir.</p>';return}
+  body.innerHTML='<p class="sub center">Yükleniyor…</p>';
+  devAuth().then(function(f){fb=f;if(!CL.user)throw 0;return lbTop(fb,col)}).then(function(r){
+    rows=r;
+    var me=CL.user.uid,i;
+    for(i=0;i<rows.length;i++){if(rows[i].uid===me)return rows[i].score}
+    return fb.getDoc(fb.doc(CL.db,col,me)).then(function(s){return s.exists()?s.data().score:null});
+  }).then(function(mine){
+    if(seq!==LBV.seq||st.screen!=='lb')return;
+    var me=CL.user.uid,h='',i,med=['🥇','🥈','🥉'],r,shown=false,title=LBV.kind==='race'?'Yarış Odası':'Akıldan İşlem';
+    h+='<div class="tag">'+title+' · '+gLabel(op)+' · en yüksek puanlar</div>';
+    if(!rows.length)h+='<p class="sub center">Henüz kimse yok. İlk rekoru sen kır!</p>';
+    for(i=0;i<rows.length&&i<10;i++){
+      r=rows[i];
+      h+='<div class="rrow'+(r.uid===me?' me':'')+'"><span>'+(i<3?med[i]:(i+1)+'.')+' '+esc(r.nick)+'</span><b>'+r.score+'</b></div>';
+      if(r.uid===me)shown=true;
+    }
+    if(!shown&&mine!==null){
+      var rk=lbRank(rows,mine);
+      h+='<div class="tag">…</div><div class="rrow me"><span>'+(rk.over?'50+':rk.rank+'.')+' Sen</span><b>'+mine+'</b></div>';
+    }else if(mine===null&&rows.length)h+='<p class="sub center">Bu kategoride henüz rekorun yok.</p>';
+    body.innerHTML=h;
+  }).catch(function(){if(seq===LBV.seq&&body)body.innerHTML='<p class="sub center">Tablo yüklenemedi, tekrar dene.</p>'});
+}
+function rhistSave(s){
+  var g=st.g,p=st.profile;
+  if(!p||!g||!RM.room)return;
+  var l=ls('mc_rhist',[]),b=ls('mc_rbest',{}),op=RM.room.op,prev=(b[p]&&b[p][op])||0;
+  l.unshift({p:p,t:Date.now(),code:RM.code,op:op,rank:myRank(),n:s.l.length,score:g.score,top:s.l.slice(0,10).map(function(x){return {n:x.nick,s:x.score}})});
+  lsSet('mc_rhist',l.slice(0,100));
+  g.rnew=g.score>prev&&g.score>0;
+  if(g.rnew){if(!b[p])b[p]={};b[p][op]=g.score;lsSet('mc_rbest',b)}
+}
+function rhistHtml(){
+  var p=st.profile,l=ls('mc_rhist',[]).filter(function(x){return x.p===p}).slice(0,30),b=(ls('mc_rbest',{})[p])||{},h='<div class="tag">Yarış rekorların</div>',any=false,i;
+  ['add','sub','mul','div','rnd'].forEach(function(o){if(b[o]){any=true;h+='<div class="rrow"><span>'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'</span><b>🏆 '+b[o]+'</b></div>'}});
+  if(!any)h+='<p class="sub center">Henüz yarış rekorun yok.</p>';
+  h+='<div class="tag" style="margin-top:14px">Son yarışlar</div>';
+  if(!l.length)h+='<p class="sub center">Henüz yarışa katılmadın.</p>';
+  for(i=0;i<l.length;i++){
+    var x=l[i],d=new Date(x.t),t='';
+    x.top.forEach(function(y,j){t+=(j+1)+'. '+esc(y.n)+' · '+y.s+'<br>'});
+    h+='<details class="pbox"><summary><b>'+x.rank+'. sıra</b> / '+x.n+' kişi · '+x.score+' puan<br><small>'+fmtDate(d)+' '+fmtTime(d)+' · Oda '+esc(x.code)+' · '+gLabel(x.op)+'</small></summary><div style="margin-top:8px;font-size:15px">'+t+'</div></details>';
+  }
+  return h;
+}
 
 /* ---------- çizim ---------- */
 function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
@@ -1081,6 +1219,8 @@ function back(){
   if(s==='mixmenu')return go('pmenu');
   if(s==='gmenu')return go('home');
   if(s==='rooms')return go('home');
+  if(s==='lb')return go(LBV.from||'home');
+  if(s==='rhist')return go('rooms');
   if(s==='rcreate')return go('rooms');
   if(s==='rover'){if(!roverState().all){toast('Yarış bitmeden çıkamazsın, bekle');return}return rmLeave()}
   if(s==='lobby')return rmLeave();
@@ -1099,30 +1239,34 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 15</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 16</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
     h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='home'){
-    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Oda kur ya da koda girerek arkadaşlarınla yarış</small></button></div><div style="height:12px"></div>';
+    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Oda kur ya da koda girerek arkadaşlarınla yarış</small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
   }else if(s==='gmenu'){
-    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru hayvana dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p>'+audioBtns()+'<div class="col">';
+    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru hayvana dokun. Süre her 10 soruda kısalır: 8, 6, 5, 4 saniye. 3 canın var. Rekor kır!</p>'+audioBtns()+(st.profile?'':'<input id="g-name" class="inp" maxlength="12" autocomplete="off" placeholder="Adın (rekor tablosunda görünür)" value="'+esc(ls('mc_gnick',''))+'">')+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){var b=bestGet(o);h+='<button class="btn" onclick="gStart(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>'+(b?'🏆 Rekor: '+b:'Henüz rekor yok')+'</small></button>'});
     h+='</div>'+(st.profile?'':'<p class="sub center">Misafir oturumunda sonuçlar ve rekor kaydedilmez.</p>');
   }else if(s==='game'){
     h=gameHtml();
   }else if(s==='gover'){
-    h=topBar('Oyun bitti')+'<canvas id="gcard" class="card wide"></canvas>'+
+    h=topBar('Oyun bitti')+'<div id="lb-box">'+lbBoxHtml(st.g&&st.g.lb)+'</div><canvas id="gcard" class="card wide"></canvas>'+
       (st.profile?'':'<p class="sub center">Misafir oturumu: bu sonuç kaydedilmedi.</p>')+
       '<button class="next" onclick="saveGame()">📷 Fotoğrafı Kaydet / Paylaş</button>'+
       '<button class="ghost" onclick="gStart(st.g.op)">🔁 Tekrar Oyna</button>'+
       '<button class="ghost" onclick="go(\'gmenu\')">Oyun Menüsüne Dön</button>';
+  }else if(s==='lb'){
+    h=topBar('Rekorlar Tablosu')+lbTabsHtml()+'<div id="lb-body"></div>';
+  }else if(s==='rhist'){
+    h=topBar('Yarış Geçmişim')+rhistHtml();
   }else if(s==='rooms'){
     h=topBar('Yarış Odası')+'<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır. İnternet gerekir.</p>';
     if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
-    h+='<button class="btn" onclick="rcGo()"><span class="big">➕</span>Oyun Odası Kur<small>Kodu sen belirle, arkadaşların o kodla girsin</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button>';
+    h+='<button class="btn" onclick="rcGo()"><span class="big">➕</span>Oyun Odası Kur<small>Kodu sen belirle, arkadaşların o kodla girsin</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
   }else if(s==='rcreate'){
     h=topBar('Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)"><p class="sub center"><b>İşlemi seç, oda kurulsun:</b></p><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="rmCreate(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'</button>'});
@@ -1135,7 +1279,7 @@ function render(){
   }else if(s==='rcount'){
     h='<div class="cdbox">Hazır ol!<div id="cdn">3</div></div>';
   }else if(s==='rover'){
-    h=topBar('Yarış · '+(RM.code||''))+'<div class="pbox" id="r-me" style="text-align:center"></div><div class="tag" id="r-st"></div><div id="r-list"></div><canvas id="rcard" class="card wide"></canvas><button class="next" id="r-save" onclick="saveRace()">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" id="r-exit" onclick="rmLeave()">🏠 Yarıştan Çık</button>';
+    h=topBar('Yarış · '+(RM.code||''))+'<div class="pbox" id="r-me" style="text-align:center"></div><div id="lb-box">'+lbBoxHtml(st.g&&st.g.lb)+'</div><div class="tag" id="r-st"></div><div id="r-list"></div><canvas id="rcard" class="card wide"></canvas><button class="next" id="r-save" onclick="saveRace()">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" id="r-exit" onclick="rmLeave()">🏠 Yarıştan Çık</button>';
   }else if(s==='ops'){
     h=topBar('İşlemler')+'<div class="grid">';
     for(var k in OPS)h+='<button class="btn" onclick="pickOp(\''+k+'\')"><span class="big">'+OPS[k].sym+'</span>'+OPS[k].name+'</button>';
@@ -1187,6 +1331,7 @@ function render(){
   if(s==='gover')drawGame(document.getElementById('gcard'));
   if(s==='game'){gStartTimer();musStart()}
   if(s==='rover'){roverUpdate();if(!RM.chk)RM.chk=setInterval(roverUpdate,5000)}
+  if(s==='lb')lbLoad();
   if(s==='history'){
     drawHistory(document.getElementById('hist'));
     var all=records(),mine=all.filter(function(r){return r.p===st.profile}).length;
