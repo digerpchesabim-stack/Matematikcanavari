@@ -1461,30 +1461,33 @@ function askDelProfile(i){
   });
 }
 var PENDRELOAD=false;
-/* telefonun geri tuşu = uygulamadaki ← ; karşılama ekranında çıkış sorusu */
-var NAV={armed:false,ex:false};
-function navPush(){try{history.pushState({mc:1},'');NAV.armed=true}catch(e){}}
+/* telefonun geri tuşu = uygulamadaki ← ; karşılama ekranında çıkış sorusu.
+   Chrome, dokunuş olmadan eklenen geçmiş kayıtlarını geri tuşunda atlar. Bu yüzden
+   kayıtlar sadece dokunuş (click) anında eklenir ve 10 kayıtlık tampon tutulur. */
+var NAV={d:0,ex:false,skip:false,max:10};
+function navFill(){
+  if(NAV.ex)return;
+  try{while(NAV.d<NAV.max){history.pushState({mc:1},'');NAV.d++}}catch(e){}
+}
 function navInit(){
   if(!window.history||!history.pushState)return;
-  /* Chrome, dokunuşsuz eklenen geçmiş kaydını atlar: ilk dokunuşta kur */
-  document.addEventListener('pointerdown',function(){if(!NAV.armed&&!NAV.ex&&!st.modal)navPush()},true);
+  document.addEventListener('click',navFill,true);
   window.addEventListener('popstate',function(){
-    NAV.armed=false;
-    if(NAV.ex)return;
-    if(!st.modal&&st.screen==='welcome'){askExit();return}
-    navPush();
+    if(NAV.skip){NAV.skip=false;return}
+    if(NAV.d>0)NAV.d--;
     if(st.modal){var n=document.getElementById('mn');if(n)n.click();return}
+    if(st.screen==='welcome'){askExit();return}
     back();
   });
 }
-function askExit(){modal('Uygulamadan çıkmak istiyor musun?','Evet, çık','Hayır, kal',appExit,navPush)}
+function askExit(){modal('Uygulamadan çıkmak istiyor musun?','Evet, çık','Hayır, kal',appExit,null)}
 function appExit(){
   NAV.ex=true;
   try{window.close()}catch(e){}
-  setTimeout(function(){NAV.ex=false;toast('Çıkmak için telefonun geri tuşuna bir kez daha bas')},400);
+  if(NAV.d>0){NAV.skip=true;try{history.go(-NAV.d)}catch(e){}NAV.d=0}
+  setTimeout(function(){toast('Çıkmak için telefonun geri tuşuna bir kez daha bas');NAV.ex=false},500);
 }
 function go(s){
-  if(!NAV.armed&&!NAV.ex&&!st.modal&&window.history&&history.pushState)navPush();
   if(PENDRELOAD&&(s==='home'||s==='welcome'||s==='profiles')){location.reload();return}
   st.screen=s;render();
 }
@@ -1519,7 +1522,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 26</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 27</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
