@@ -1,0 +1,24 @@
+name: Firestore kuralları
+on:
+  push:
+    branches: [main]
+    paths: ['firebase/**', '.github/workflows/firestore-rules.yml']
+  workflow_dispatch:
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Kuralları Firebase'e yükle
+        env:
+          SA: ${{ secrets.FIREBASE_SA }}
+        run: |
+          if [ -z "$SA" ]; then echo "FIREBASE_SA secret tanımlı değil, yükleme atlandı."; exit 0; fi
+          printf '%s' "$SA" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          cd firebase
+          npx -y firebase-tools@13 deploy --only firestore:rules --project matematik-canavari-57e2d --non-interactive
+          rm -f "$RUNNER_TEMP/sa.json"
