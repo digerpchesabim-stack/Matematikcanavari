@@ -92,6 +92,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .tabs{display:flex;gap:8px;margin-bottom:10px}.tabs button{flex:1;border:2px solid var(--accent);background:transparent;color:var(--accent);border-radius:14px;padding:12px 6px;font-size:16px;font-weight:700}.tabs button.on{background:var(--accent);color:var(--accent-t)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:20px;padding:8px 12px;font-size:15px;font-weight:600}.chip.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
 .lbx{text-align:center}
+.lnk{font-size:13px;word-break:break-all;color:var(--muted);margin:6px 0}
 details.pbox summary{cursor:pointer;font-size:17px}
 .cdbox{text-align:center;padding-top:25vh;font-size:26px;font-weight:700}
 #cdn{font-size:140px;font-weight:800;color:var(--accent)}
@@ -735,7 +736,10 @@ function rmCreate(op){
 }
 function rmJoin(){
   if(!rmNick()){toast('Önce adını yaz');return}
-  var code=document.getElementById('r-code').value.trim().toUpperCase(),fb;
+  rmJoinCode(document.getElementById('r-code').value.trim().toUpperCase(),null);
+}
+function rmJoinCode(code,onFail){
+  var fb;
   if(code.length<3){toast('Oda kodunu yaz');return}
   rmFb().then(function(f){fb=f;return fb.getDoc(fb.doc(CL.db,'rooms',code))}).then(function(s){
     if(!s.exists())throw 'Oda bulunamadı';
@@ -743,7 +747,37 @@ function rmJoin(){
     if(room.status!=='lobby')throw 'Yarış başlamış, katılamazsın';
     if(Date.now()-room.created>86400000)throw 'Bu odanın süresi dolmuş';
     return rmEnter(fb,code,room.host===CL.user.uid,room);
-  }).catch(function(e){toast(rmErr(e))});
+  }).then(function(){RJOIN=null}).catch(function(e){toast(rmErr(e));if(onFail)onFail()});
+}
+/* ---------- davet linki ---------- */
+var RJOIN=null;
+(function(){
+  try{
+    var m=/[?&]oda=([^&#]+)/.exec(location.search),c=m?slug(decodeURIComponent(m[1])).toUpperCase():'';
+    if(m&&history.replaceState)history.replaceState(null,'',location.pathname);
+    if(c.length>=3&&c.length<=10){RJOIN=c;st.screen='rjoin'}
+  }catch(e){}
+})();
+function rmLink(){return location.origin+location.pathname+'?oda='+encodeURIComponent(RM.code||'')}
+function rmCopy(){
+  var t=rmLink(),done=function(){toast('Link kopyalandı')},fb=function(){
+    var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();
+    var ok=false;try{ok=document.execCommand('copy')}catch(e){}
+    document.body.removeChild(a);toast(ok?'Link kopyalandı':'Kopyalanamadı, linki elle seç');
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done,fb);else fb();
+}
+function rmShare(){
+  var t=rmLink();
+  if(navigator.share)navigator.share({title:'Matematik Canavarı',text:'Matematik Canavarı yarışına katıl! Oda kodu: '+RM.code,url:t}).catch(function(){});
+  else rmCopy();
+}
+function rjPick(i){st.profile=profiles()[i];rmJoinCode(RJOIN,function(){go('home')})}
+function rjGuest(){
+  var e=document.getElementById('r-name'),v=e?e.value.trim():'';
+  if(!v){toast('Önce adını yaz');return}
+  lsSet('mc_gnick',v);st.profile=null;
+  rmJoinCode(RJOIN,function(){go('home')});
 }
 function rmEnter(fb,code,host,room){
   rmReset();
@@ -1219,6 +1253,7 @@ function back(){
   if(s==='mixmenu')return go('pmenu');
   if(s==='gmenu')return go('home');
   if(s==='rooms')return go('home');
+  if(s==='rjoin'){RJOIN=null;return go('welcome')}
   if(s==='lb')return go(LBV.from||'home');
   if(s==='rhist')return go('rooms');
   if(s==='rcreate')return go('rooms');
@@ -1239,7 +1274,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 16</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><div class="tag" style="margin-top:14px">Sürüm 17</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -1263,6 +1298,10 @@ function render(){
     h=topBar('Rekorlar Tablosu')+lbTabsHtml()+'<div id="lb-body"></div>';
   }else if(s==='rhist'){
     h=topBar('Yarış Geçmişim')+rhistHtml();
+  }else if(s==='rjoin'){
+    h=topBar('Yarışa Katıl')+'<div class="pbox" style="text-align:center"><small>Davet edildiğin oda</small><div class="rcode">'+esc(RJOIN||'')+'</div></div><p class="sub center"><b>Kim olarak katılacaksın?</b></p><div class="col">';
+    profiles().forEach(function(n,i){h+='<button class="btn" onclick="rjPick('+i+')">🙂 '+esc(n)+'</button>'});
+    h+='</div><div style="height:14px"></div><input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Misafir adın" value="'+esc(ls('mc_gnick',''))+'"><button class="next" onclick="rjGuest()">👤 Misafir olarak katıl</button>';
   }else if(s==='rooms'){
     h=topBar('Yarış Odası')+'<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır. İnternet gerekir.</p>';
     if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
@@ -1275,6 +1314,7 @@ function render(){
     var lr=RM.room||{op:'rnd'};
     h=topBar('Yarış Odası')+'<div class="pbox" style="text-align:center"><small>Oda kodu</small><div class="rcode">'+(RM.code||'')+'</div><small>İşlem: '+gLabel(lr.op)+'</small></div><div class="tag">Katılanlar (<span id="lb-n">'+RM.players.length+'</span>)</div><div id="lb-list">'+lobbyList()+'</div>';
     h+=RM.host?'<button class="next" onclick="rmStart()">▶️ Yarışı Başlat</button><p class="sub center">Herkes katılınca başlat. Başlayınca yeni kişi giremez.</p>':'<p class="sub center">⏳ Kurucunun yarışı başlatması bekleniyor…</p>';
+    h+='<div class="pbox" style="text-align:center"><small>Davet linki: arkadaşların tıklayınca direkt bu odaya gelir</small><div class="lnk">'+esc(rmLink())+'</div><button class="ghost" style="margin:6px 0" onclick="rmCopy()">🔗 Linki Kopyala</button><button class="ghost" style="margin:0" onclick="rmShare()">📤 Paylaş (WhatsApp…)</button></div>';
     h+='<button class="ghost" onclick="rmLeave()">Odadan Çık</button>';
   }else if(s==='rcount'){
     h='<div class="cdbox">Hazır ol!<div id="cdn">3</div></div>';
