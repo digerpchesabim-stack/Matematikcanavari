@@ -10,7 +10,9 @@ service cloud.firestore {
       allow get: if signedIn();
       allow create: if signedIn()
         && request.resource.data.host == request.auth.uid
-        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb'])
+        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win'])
+        && (!('mode' in request.resource.data) || request.resource.data.mode == 'duel')
+        && (!('win' in request.resource.data) || request.resource.data.win in [10, 15, 20])
         && (!('lv' in request.resource.data) || request.resource.data.lv in ['k', 'o', 'z'])
         && (!('tb' in request.resource.data) || (request.resource.data.tb is int && request.resource.data.tb >= 0 && request.resource.data.tb <= 10))
         && request.resource.data.status == 'lobby'
@@ -29,10 +31,10 @@ service cloud.firestore {
         // Yeni oyuncu sadece oda "lobby" iken girebilir
         allow create: if signedIn() && request.auth.uid == uid
           && get(/databases/$(database)/documents/rooms/$(code)).data.status == 'lobby'
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid'])
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr'])
           && request.resource.data.nick is string && request.resource.data.nick.size() <= 20;
         allow update: if signedIn() && request.auth.uid == uid
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid']);
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr']);
         allow delete: if signedIn() && request.auth.uid == uid;
       }
     }
