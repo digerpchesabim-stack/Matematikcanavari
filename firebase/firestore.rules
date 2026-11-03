@@ -31,10 +31,10 @@ service cloud.firestore {
         // Yeni oyuncu sadece oda "lobby" iken girebilir
         allow create: if signedIn() && request.auth.uid == uid
           && get(/databases/$(database)/documents/rooms/$(code)).data.status == 'lobby'
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr'])
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid'])
           && request.resource.data.nick is string && request.resource.data.nick.size() <= 20;
         allow update: if signedIn() && request.auth.uid == uid
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr']);
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid']);
         allow delete: if signedIn() && request.auth.uid == uid;
       }
     }
