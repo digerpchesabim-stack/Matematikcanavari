@@ -24,6 +24,14 @@ module.exports=function(opts){
       if(ch.some(k=>k!=='status'))return deny('room update keys '+ch);
       return null;
     }
+    if(seg[0]==='bk'){
+      const old=store[path];
+      if(seg[1].length!==10)return deny('bk code');
+      if(d.u!==uid)return deny('bk owner');
+      if(old&&old.u!==uid)return deny('bk not owner');
+      if(Object.keys(d).some(k=>!['u','d','ts','v'].includes(k))||typeof d.d!=='string'||d.d.length>=900000)return deny('bk shape');
+      return null;
+    }
     if(seg[0]==='rooms'&&seg[2]==='players'){
       if(seg[3]!==uid)return deny('player uid');
       if(Object.keys(d).some(k=>!PLK.includes(k)))return deny('player keys '+Object.keys(d));

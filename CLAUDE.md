@@ -56,7 +56,7 @@ Oda kodu (3–10) ya da davet linki `?oda=KOD`; profil ya da misafir. Seviye ya 
 - Kural: her soruda **önce doğru basan** 1 puan; yanlış basan o soruda kilitlenir. Süre sabit: Kolay/tablo 10, Orta 12, Zor 15 sn (`DLIM`).
 - **Adalet:** hız her telefonda yerel ölçülür (soru ekrana gelince → dokunuş). Rakibin doğru süresi gelince, kendi süren onu geçtiyse kaybedersin.
 - Tur kartı iki telefonda anında: yeşil "🎉 Bu tur senin!" / turuncu "⚡ Ali bildi!". 🔥 MAÇ SAYISI, ⚡ ALTIN SORU, 15/20'lik maçta "Yarı yol".
-- Rövanş (ikisi de basınca), çıkan yenilmiş sayılır, 25 sn ses yoksa "Rakip ayrıldı". Rekor tablosuna gitmez; Yarış Geçmişim → Kapışmalarım.
+- Rövanş (ikisi de basınca), çıkan yenilmiş sayılır, 45 sn ses yoksa "Rakip ayrıldı". Rekor tablosuna gitmez; Yarış Geçmişim → Kapışmalarım.
 - Kod: `DU` durumu, `duStart/duRound/duTick/duAns/duMine/duSync/duResolve/duEnd/duRematch`.
 
 ### 5.5 👾 Canavara Karşı Savaş (S34–35, internetsiz)
@@ -97,9 +97,15 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 32–33: 1'e 1 Kapışma, tur kartları.
 - 34–35: Canavara Karşı Savaş (sadeleştirilmiş).
 
-## 9. Bekleyen / yayınlanmamış
-- Yerelde hazır, onay bekliyor: "Arkadaşın yok mu? Canavarla kapış" → "Tek başına oyna: canavarla kapış" (+ kılavuzda "Tek başına oynamak için").
-
+## 9. Bekleyen / yayınlanmamış (Sürüm 36, yerelde hazır, test edildi, yayın onayı bekliyor)
+- Önce `firebase/firestore.rules` (yeni `bk/{kod}` yedek kuralı) yüklenmeli, sonra uygulama.
+- "Arkadaşın yok mu?" → "Tek başına oyna: canavarla kapış"; kılavuzda "Tek başına oynamak için".
+- Yarış Odası açıklaması ve ana menü kartı 3 modu kapsayacak şekilde güncellendi; Canavara Karşı Savaş Akıldan İşlem menüsünde de var (`botOpen(from)`, geri dönüş geldiği menüye).
+- Okunabilirlik: açıklama/etiket yazıları 15 px, pill 14 px, çip ve ses düğmeleri en az 44–46 px.
+- Kayıtlar: profil başına son 200 (`recTrim`).
+- **Otomatik bulut yedeği:** `bk/{10 karakter kod}` belgesi `{u: uid, d: JSON (mc_* anahtarları; 40'tan eski kayıtların soru listesi atılır), ts, v}`. Oyun kaydından 15 sn sonra, açılışta ve uygulama arka plana geçince (değişiklik varsa). Profil ekranında yedek kodu + paylaş; "♻️ Yedekten Geri Yükle" (`bkr` ekranı). Geri yüklenen telefon yeni kod alır. `navigator.storage.persist()`.
+- **Yarışta bağlantı koptu:** 10 sn'de bir sinyal (`rmBeat`, 5 sn yenileme), sinyal yerel alım zamanıyla izlenir (`RM.seen`); 30 sn sessiz oyuncu "📶 bağlantısı koptu", 45 sn sonra yarış onu beklemeden biter.
+- Kapışmada rakip 45 sn sessizse ayrıldı sayılır (önce 25 sn).
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
 2. mc_records sınırsız büyür (profil başına son 200 öner).
