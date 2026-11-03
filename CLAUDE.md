@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **40**
+Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **41**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -104,12 +104,10 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 38: arkadaşlar + kapışma tur sesi. 1'e 1 / canavar "Bu tur senin!" sesi → `tur.mp3` (6297'nin hızlandırılmış 1 sn sürümü, kullanıcı seçti: D4). **Arkadaşlar (Blaze gerekmez):** her profile kalıcı oyuncu kimliği `mc_pid={profil:{id:7 karakter, k:gizli anahtar}}` (yedeğe dahil). Firestore: `pk/{id}={k,u}` (okunamaz; aynı k ile yeni telefona taşınır), `pl/{id}={nick,seen,v}` (60 sn'de bir çevrim içi sinyali; 150 sn içinde görüldüyse 🟢), `fr/{a_b}={a,b,by,st:'req'|'ok',ts}`, `iv/{alıcı}={from,nick,room,op,lv,win,ts}` (10 dk geçerli; oyun/kapışma sırasında gösterilmez, menüye dönünce modal). Ekranlar: `friends`, `fcall`; ana menüde "👫 Arkadaşlarım" (+ yeni istek sayısı). Çağır → seviye/maç/işlem → kapışma odası kurulur → davet yazılır; kabul edince `rmJoinCode`. Profil silinince "arkadaşlıklar da silinsin mi?" (`frWipe`). Kod: `frEnsure/frStart/frStop/frBeat/frAdd/frAccept/frDel/frCall/frCallGo/frInvSend/frInvCheck`. Uygulama kapalıyken bildirim YOK (ileride Cloudflare Worker + FCM ile ücretsiz yapılabilir).
 - 39: oyun sonunda rakibi arkadaş ekle: oyuncu belgesine `pid` (plx(), rmEnter'da frEnsure), 1'e 1 sonuçta "➕ X arkadaş ekle" / "⏳ istek gönderildi" / "✓ kabul et" (`frBtn(p,true)`), yarış sonucunda arkadaş olmayanların yanında ➕ (`frBtn(p)`); `frAddId(pid)`; misafirlerde yok.
 - 40: **Karşılama:** canavar ekranda rakam/sembolleri kovalar (`CH`, `chStart/chFrame/chTap`, canvas 480×440 mantıksal, 7 sembol, yakınlaşınca kaçarlar, canavar yakalayıp yer; dokunulan sembole koşar). Ekran sade: başlık, Haydi Başlayalım, Kılavuz. **Menü müziği:** `menu.mp3` (kullanıcının seçtiği marimba parçası, 150 sn, mono 64k, ~1,2 MB), `<audio loop>` %35 ses, menülerde çalar; quiz/game/gcount/gover/lobby/rcount/rover/dintro/duel/dover ekranlarında yavaşça kısılıp durur (`MMOFF`, `mmUpdate`). İlk dokunuşta başlar. Sağ üstte sabit 🎵/🔇 düğmesi (`mc_mmus`). **Profil sayfası** ("Kim oynuyor?"): baş harfli renkli yuvarlak + "🟢 N arkadaşın çevrim içi" (`prLoad`, 30 sn önbellek). Yedek kutusu ve geri yükleme buradan kaldırıldı. **Ana menü:** üstte "🟢 Şu an oyunda" panosu (`frLive`, çevrim içi arkadaşlar + ⚔️ Çağır); en altta Kılavuz düğmesi yerine "☁️ Yedek ve geri yükleme" (kod + paylaş + ♻️ Yedekten Geri Yükle). Yeni telefonda: Misafir → ana menü → Yedek. `bkr` geri → home.
+- 41: **Okuma tasarrufu (Spark 50k okuma/gün):** rekor tablosu 2 dk telefonda saklanır (`LBC`, `lbTop`), kendi yazılan puan önbelleğe işlenir (`lbPatch`); bir oyun + tablo ekranı 3 → 1 indirme. Profil rozetleri 2 dk önbellek; ana menüde arkadaş durumu her 2 dakikada bir. **iPhone ses:** sw.js Range isteklerini önbellekten 206 ile cevaplar (`rangeResponse`); internetsiz müzik/ses. **Ana menü 2 sütunlu ızgara** (`.hgrid`), kısa açıklamalar; küçük telefonda tek ekran. Kullanılmayan eski karşılama animasyonu (MON) silindi (MONSYM/MONCOL kaldı), `panel.html` depodan silindi, README yenilendi.
 
-## 9. Bekleyen / yayınlanmamış (Sürüm 41, `surum-41-onay-bekliyor` dalı, test edildi, yayın onayı bekliyor; kural değişikliği yok)
-- **Okuma tasarrufu (Spark 50k okuma/gün):** rekor tablosu 2 dk telefonda saklanır (`LBC`, `lbTop`), kendi yazılan puan önbelleğe işlenir (`lbPatch`); bir oyun + tablo ekranı 3 → 1 indirme. Profil rozetleri 2 dk önbellek; ana menüde arkadaş durumu her 2 dakikada bir.
-- **iPhone ses:** sw.js Range isteklerini önbellekten 206 ile cevaplar (`rangeResponse`); internetsiz müzik/ses.
-- **Ana menü 2 sütunlu ızgara** (`.hgrid`), kısa açıklamalar; küçük telefonda tek ekran.
-- Kullanılmayan eski karşılama animasyonu (MON) silindi (MONSYM/MONCOL kaldı), `panel.html` depodan silindi, README yenilendi.
+## 9. Bekleyen / yayınlanmamış
+- Yok.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
@@ -117,5 +115,5 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 3. Rahat mod (süresiz) ve sesli okuma yok.
 4. Yeni oyun fikirleri (kullanıcı "şimdilik dursun" dedi): Market (para hesabı), Hatalarım, Canavarını Büyüt + rozetler, Doğru mu Yanlış mı, Eksik Sayı, Günün Görevi.
 5. Tek kişilik tabloda "İlk hedefin" zirveyle aynı görünür.
-6. panel.html kalıntı; profil silinince rekor satırı kalır; misafir rekoru kalıcı değil; profil şifresi yok; puan istemci tarafında (hile mümkün).
+6. Profil silinince rekor satırı kalır; misafir rekoru kalıcı değil; profil şifresi yok; puan istemci tarafında (hile mümkün).
 7. Play Store: hazır ad/avatar listesi, gizlilik politikası, "Verilerimi sil", Android paketi (TWA), 12 test kullanıcısı × 14 gün kapalı test.
