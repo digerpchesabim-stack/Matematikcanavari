@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **39**
+Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **40**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -34,7 +34,8 @@ Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **39**
 - **localStorage:** mc_profiles, mc_records (oyun/pratik kayıtları, profil başına son 200), mc_bk/mc_bkh/mc_bkt (yedek kodu, son yedek özeti ve zamanı), mc_best (profil→mod anahtarı rekor), mc_rhist/mc_rbest (yarış geçmişi/rekoru), mc_dhist (kapışma geçmişi, `bot` alanı canavar maçları), mc_gnick (misafir adı), mc_audio, mc_dev (cihaz hesabı), mc_vert (yan yana/alt alta), mc_lbfix1 (S31 bir kerelik rekor kurtarma bayrağı).
 - **Ses:** Web Audio ile kodla üretilir (`auCtx`, `tone`, `sfxPlay`, `AU.sg`, `AU.nb` gürültü tamponu). Efektler: sndPop/Ok/Bad/Fast/Win/End/Tick, sndWhistle (düdük), sndClap (alkış), sndCrunch (çıtırtı), sndSwoosh, sndClang (kılıç). Müzik: musStart/musStop/musTempo (sadece Akıldan İşlem). Hazır ses dosyaları (S37): lose/pass/top/win.mp3; yeni ses dosyası eklenirse sw.js FILES listesine de ekle. Telefonlar dokunuş olmadan ses çalmaz.
 - **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`.
-- **Karşılama canavarı:** canvas `drawMonster(c,cx,cy,r,{m:ağız,happy})`; girişte kendiliğinden 3 sembol yer (`monAuto`), dokununca da yer (`monTap`, en çok 5 sıra).
+- **Karşılama canavarı (S40):** `drawMonster(c,cx,cy,r,{m:ağız,happy})`; kovalamaca sahnesi `CH` (`chStart/chFrame/chTap`). Eski `MON/monAuto/monTap` kodu duruyor ama kullanılmıyor.
+- **Menü müziği (S40):** `menu.mp3`, `MM`/`mmUpdate`/`mmToggle`, `MMOFF` ekranlarında susar; sağ üstte 🎵 (`mc_mmus`).
 
 ## 5. Özellikler
 ### 5.1 Pratik ve Problemler
@@ -102,12 +103,10 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 37: kullanıcının seçtiği hazır ses dosyaları (`smpLoad/smpPlay/smpStop`, sw.js önbelleğinde): `lose.mp3` (1'e 1/canavar kaybı, %70), `pass.mp3` (Akıldan İşlem'de birini geçince, 2 sn), `top.mp3` (oyun sonunda rekor tablosunda 1. olunca, 10 sn, kırpılmadı, fanfarı keser, yeni oyunda durur), `win.mp3` (normal kazanma: yeni kişisel rekor, 1'e 1/canavar zaferi, yarış birinciliği). Düdük aynen kaldı; kapışma zaferindeki alkış kaldırıldı.
 - 38: arkadaşlar + kapışma tur sesi. 1'e 1 / canavar "Bu tur senin!" sesi → `tur.mp3` (6297'nin hızlandırılmış 1 sn sürümü, kullanıcı seçti: D4). **Arkadaşlar (Blaze gerekmez):** her profile kalıcı oyuncu kimliği `mc_pid={profil:{id:7 karakter, k:gizli anahtar}}` (yedeğe dahil). Firestore: `pk/{id}={k,u}` (okunamaz; aynı k ile yeni telefona taşınır), `pl/{id}={nick,seen,v}` (60 sn'de bir çevrim içi sinyali; 150 sn içinde görüldüyse 🟢), `fr/{a_b}={a,b,by,st:'req'|'ok',ts}`, `iv/{alıcı}={from,nick,room,op,lv,win,ts}` (10 dk geçerli; oyun/kapışma sırasında gösterilmez, menüye dönünce modal). Ekranlar: `friends`, `fcall`; ana menüde "👫 Arkadaşlarım" (+ yeni istek sayısı). Çağır → seviye/maç/işlem → kapışma odası kurulur → davet yazılır; kabul edince `rmJoinCode`. Profil silinince "arkadaşlıklar da silinsin mi?" (`frWipe`). Kod: `frEnsure/frStart/frStop/frBeat/frAdd/frAccept/frDel/frCall/frCallGo/frInvSend/frInvCheck`. Uygulama kapalıyken bildirim YOK (ileride Cloudflare Worker + FCM ile ücretsiz yapılabilir).
 - 39: oyun sonunda rakibi arkadaş ekle: oyuncu belgesine `pid` (plx(), rmEnter'da frEnsure), 1'e 1 sonuçta "➕ X arkadaş ekle" / "⏳ istek gönderildi" / "✓ kabul et" (`frBtn(p,true)`), yarış sonucunda arkadaş olmayanların yanında ➕ (`frBtn(p)`); `frAddId(pid)`; misafirlerde yok.
+- 40: **Karşılama:** canavar ekranda rakam/sembolleri kovalar (`CH`, `chStart/chFrame/chTap`, canvas 480×440 mantıksal, 7 sembol, yakınlaşınca kaçarlar, canavar yakalayıp yer; dokunulan sembole koşar). Ekran sade: başlık, Haydi Başlayalım, Kılavuz. **Menü müziği:** `menu.mp3` (kullanıcının seçtiği marimba parçası, 150 sn, mono 64k, ~1,2 MB), `<audio loop>` %35 ses, menülerde çalar; quiz/game/gcount/gover/lobby/rcount/rover/dintro/duel/dover ekranlarında yavaşça kısılıp durur (`MMOFF`, `mmUpdate`). İlk dokunuşta başlar. Sağ üstte sabit 🎵/🔇 düğmesi (`mc_mmus`). **Profil sayfası** ("Kim oynuyor?"): baş harfli renkli yuvarlak + "🟢 N arkadaşın çevrim içi" (`prLoad`, 30 sn önbellek). Yedek kutusu ve geri yükleme buradan kaldırıldı. **Ana menü:** üstte "🟢 Şu an oyunda" panosu (`frLive`, çevrim içi arkadaşlar + ⚔️ Çağır); en altta Kılavuz düğmesi yerine "☁️ Yedek ve geri yükleme" (kod + paylaş + ♻️ Yedekten Geri Yükle). Yeni telefonda: Misafir → ana menü → Yedek. `bkr` geri → home.
 
-## 9. Bekleyen / yayınlanmamış (Sürüm 40, `surum-40-onay-bekliyor` dalı, test edildi, yayın onayı bekliyor; kural değişikliği yok)
-- **Karşılama:** canavar ekranda rakam/sembolleri kovalar (`CH`, `chStart/chFrame/chTap`, canvas 480×440 mantıksal, 7 sembol, yakınlaşınca kaçarlar, canavar yakalayıp yer; dokunulan sembole koşar). Ekran sade: başlık, Haydi Başlayalım, Kılavuz.
-- **Menü müziği:** `menu.mp3` (kullanıcının seçtiği marimba parçası, 150 sn, mono 64k, ~1,2 MB), `<audio loop>` %35 ses, menülerde çalar; quiz/game/gcount/gover/lobby/rcount/rover/dintro/duel/dover ekranlarında yavaşça kısılıp durur (`MMOFF`, `mmUpdate`). İlk dokunuşta başlar. Sağ üstte sabit 🎵/🔇 düğmesi (`mc_mmus`).
-- **Profil sayfası** ("Kim oynuyor?"): baş harfli renkli yuvarlak + "🟢 N arkadaşın çevrim içi" (`prLoad`, 30 sn önbellek). Yedek kutusu ve geri yükleme buradan kaldırıldı.
-- **Ana menü:** üstte "🟢 Şu an oyunda" panosu (`frLive`, çevrim içi arkadaşlar + ⚔️ Çağır); en altta Kılavuz düğmesi yerine "☁️ Yedek ve geri yükleme" (kod + paylaş + ♻️ Yedekten Geri Yükle). Yeni telefonda: Misafir → ana menü → Yedek. `bkr` geri → home.
+## 9. Bekleyen / yayınlanmamış
+- Yok.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
