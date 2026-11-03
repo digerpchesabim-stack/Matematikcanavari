@@ -99,8 +99,11 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 36: otomatik bulut yedeği (`bk/{10 karakter kod}`: `{u, d: mc_* JSON, ts, v}`; oyun kaydından 15 sn sonra, açılışta, arka plana geçince; profil ekranında yedek kodu + paylaş; "♻️ Yedekten Geri Yükle" `bkr`; geri yüklenen telefon yeni kod alır), yarışta "📶 bağlantısı koptu" (10 sn sinyal `rmBeat`, yerel alım zamanı `RM.seen`, 30 sn → koptu, 45 sn → yarış beklemez), profil başına son 200 kayıt (`recTrim`), yazı 15 px / dokunma alanı 44–46 px, Yarış Odası metinleri, Canavar modu Akıldan İşlem menüsünde de (`botOpen(from)`), kapışmada 45 sn.
 - 37: kullanıcının seçtiği hazır ses dosyaları (`smpLoad/smpPlay/smpStop`, sw.js önbelleğinde): `lose.mp3` (1'e 1/canavar kaybı, %70), `pass.mp3` (Akıldan İşlem'de birini geçince, 2 sn), `top.mp3` (oyun sonunda rekor tablosunda 1. olunca, 10 sn, kırpılmadı, fanfarı keser, yeni oyunda durur), `win.mp3` (normal kazanma: yeni kişisel rekor, 1'e 1/canavar zaferi, yarış birinciliği). Düdük aynen kaldı; kapışma zaferindeki alkış kaldırıldı.
 
-## 9. Bekleyen / yayınlanmamış
-- Yok.
+## 9. Bekleyen / yayınlanmamış (Sürüm 38, `surum-38-onay-bekliyor` dalı, test edildi, yayın onayı bekliyor)
+- **Önce kurallar** (pk/pl/fr/iv), sonra uygulama.
+- 1'e 1 / canavar "Bu tur senin!" sesi → `tur.mp3` (6297'nin hızlandırılmış 1 sn sürümü, kullanıcı seçti: D4).
+- **Arkadaşlar (Blaze gerekmez):** her profile kalıcı oyuncu kimliği `mc_pid={profil:{id:7 karakter, k:gizli anahtar}}` (yedeğe dahil). Firestore: `pk/{id}={k,u}` (okunamaz; aynı k ile yeni telefona taşınır), `pl/{id}={nick,seen,v}` (60 sn'de bir çevrim içi sinyali; 150 sn içinde görüldüyse 🟢), `fr/{a_b}={a,b,by,st:'req'|'ok',ts}`, `iv/{alıcı}={from,nick,room,op,lv,win,ts}` (10 dk geçerli; oyun/kapışma sırasında gösterilmez, menüye dönünce modal). Ekranlar: `friends`, `fcall`; ana menüde "👫 Arkadaşlarım" (+ yeni istek sayısı). Çağır → seviye/maç/işlem → kapışma odası kurulur → davet yazılır; kabul edince `rmJoinCode`. Profil silinince "arkadaşlıklar da silinsin mi?" (`frWipe`). Kod: `frEnsure/frStart/frStop/frBeat/frAdd/frAccept/frDel/frCall/frCallGo/frInvSend/frInvCheck`.
+- Uygulama kapalıyken bildirim YOK (ileride Cloudflare Worker + FCM ile ücretsiz yapılabilir).
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
