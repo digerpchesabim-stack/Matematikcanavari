@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **38**
+Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **39**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -75,7 +75,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 ## 6. Firebase veri modeli ve kurallar
 - Kimlik: sessiz e-posta/şifre cihaz hesabı (`devAuth`), Firebase JS SDK 10.12.2 (gstatic, SW önbelleğinde).
 - `rooms/{KOD}`: `{host, hostNick, op, status:'lobby'|'playing', seed, created, qv, lv:'k'|'o'|'z', tb:0–10, mode?:'duel', win?:10|15|20}`. Güncelleme: sadece kurucu, sadece status→playing. 24 saatten eski oda silinebilir.
-- `rooms/{KOD}/players/{uid}`: anahtarlar `nick, score, hearts, ok, bad, n, tt, done, ts, rid, m, r, pr`. Kapışmada `m`=maç no, `r`=[tur sonuçları: >0 doğru ms, <0 yanlış/geç/süre], `pr`=önceki maçın r'si (rövanş geçişi için).
+- `rooms/{KOD}/players/{uid}`: anahtarlar `nick, score, hearts, ok, bad, n, tt, done, ts, rid, m, r, pr, pid`. Kapışmada `m`=maç no, `r`=[tur sonuçları: >0 doğru ms, <0 yanlış/geç/süre], `pr`=önceki maçın r'si (rövanş geçişi için).
 - `QV=3` soru üretim sürümü: oda `qv` > uygulama `QV` ise "farklı sürüm" uyarısı. Kolay yarış qv=1, seviyeli/tablo 2, kapışma 3.
 - Rekor koleksiyonları için kurallar: `lbOk()` listesi (30 koleksiyon), sadece kendi uid belgesi.
 - Arkadaşlar (S38): `pk/{id}` {k,u} okunamaz, aynı k ile sahiplik taşınır; `owns(pid)` = pk.u == auth.uid. `pl/{id}` {nick,seen,v} herkese okunur. `fr/{a_b}` (a<b) {a,b,by,st,ts}: oluşturma 'req' (by sahibi), güncelleme sadece st→'ok' (karşı taraf), silme taraflar. `iv/{alıcı}`: sadece arkadaş yazar, alıcı/gönderen okur/siler.
@@ -101,6 +101,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 36: otomatik bulut yedeği (`bk/{10 karakter kod}`: `{u, d: mc_* JSON, ts, v}`; oyun kaydından 15 sn sonra, açılışta, arka plana geçince; profil ekranında yedek kodu + paylaş; "♻️ Yedekten Geri Yükle" `bkr`; geri yüklenen telefon yeni kod alır), yarışta "📶 bağlantısı koptu" (10 sn sinyal `rmBeat`, yerel alım zamanı `RM.seen`, 30 sn → koptu, 45 sn → yarış beklemez), profil başına son 200 kayıt (`recTrim`), yazı 15 px / dokunma alanı 44–46 px, Yarış Odası metinleri, Canavar modu Akıldan İşlem menüsünde de (`botOpen(from)`), kapışmada 45 sn.
 - 37: kullanıcının seçtiği hazır ses dosyaları (`smpLoad/smpPlay/smpStop`, sw.js önbelleğinde): `lose.mp3` (1'e 1/canavar kaybı, %70), `pass.mp3` (Akıldan İşlem'de birini geçince, 2 sn), `top.mp3` (oyun sonunda rekor tablosunda 1. olunca, 10 sn, kırpılmadı, fanfarı keser, yeni oyunda durur), `win.mp3` (normal kazanma: yeni kişisel rekor, 1'e 1/canavar zaferi, yarış birinciliği). Düdük aynen kaldı; kapışma zaferindeki alkış kaldırıldı.
 - 38: arkadaşlar + kapışma tur sesi. 1'e 1 / canavar "Bu tur senin!" sesi → `tur.mp3` (6297'nin hızlandırılmış 1 sn sürümü, kullanıcı seçti: D4). **Arkadaşlar (Blaze gerekmez):** her profile kalıcı oyuncu kimliği `mc_pid={profil:{id:7 karakter, k:gizli anahtar}}` (yedeğe dahil). Firestore: `pk/{id}={k,u}` (okunamaz; aynı k ile yeni telefona taşınır), `pl/{id}={nick,seen,v}` (60 sn'de bir çevrim içi sinyali; 150 sn içinde görüldüyse 🟢), `fr/{a_b}={a,b,by,st:'req'|'ok',ts}`, `iv/{alıcı}={from,nick,room,op,lv,win,ts}` (10 dk geçerli; oyun/kapışma sırasında gösterilmez, menüye dönünce modal). Ekranlar: `friends`, `fcall`; ana menüde "👫 Arkadaşlarım" (+ yeni istek sayısı). Çağır → seviye/maç/işlem → kapışma odası kurulur → davet yazılır; kabul edince `rmJoinCode`. Profil silinince "arkadaşlıklar da silinsin mi?" (`frWipe`). Kod: `frEnsure/frStart/frStop/frBeat/frAdd/frAccept/frDel/frCall/frCallGo/frInvSend/frInvCheck`. Uygulama kapalıyken bildirim YOK (ileride Cloudflare Worker + FCM ile ücretsiz yapılabilir).
+- 39: oyun sonunda rakibi arkadaş ekle: oyuncu belgesine `pid` (plx(), rmEnter'da frEnsure), 1'e 1 sonuçta "➕ X arkadaş ekle" / "⏳ istek gönderildi" / "✓ kabul et" (`frBtn(p,true)`), yarış sonucunda arkadaş olmayanların yanında ➕ (`frBtn(p)`); `frAddId(pid)`; misafirlerde yok.
 
 ## 9. Bekleyen / yayınlanmamış
 - Yok.

@@ -2,7 +2,7 @@
 const fs=require('fs');
 const mock=fs.readFileSync(__dirname+'/mock2.js','utf8');
 const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win'];
-const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr'];
+const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid'];
 module.exports=function(opts){
   opts=opts||{};
   const store={},subs=[],pages={},log=[];let lag=opts.lag||[30,150];
