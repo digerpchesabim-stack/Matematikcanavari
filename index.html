@@ -96,7 +96,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .gd p,.gd li{font-size:16px;line-height:1.55}.gd ul{padding-left:20px;margin:8px 0 0}.gd p{margin:8px 0 0}
 .lnk{font-size:13px;word-break:break-all;color:var(--muted);margin:6px 0}
 details.pbox summary{cursor:pointer;font-size:17px}
-.cdbox{text-align:center;padding-top:22px;font-size:18px;font-weight:700;color:var(--muted,#667)}.cdbox #cdn{font-size:34px;color:var(--accent);font-weight:800}.zc:empty{display:none}.zc{text-align:center;line-height:1.8;margin-top:8vh;padding:20px 14px;font-size:22px;background:var(--card);border:2px solid var(--accent);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.12)}.zc b{font-size:26px}.gpop{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:calc(100% - 32px);max-width:440px;background:var(--card);border:2px solid var(--ok);border-radius:14px;padding:10px 12px;text-align:center;font-size:16px;line-height:1.5;z-index:60;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:gpin .25s ease-out}@keyframes gpin{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.cdbox{text-align:center;padding-top:22px;font-size:18px;font-weight:700;color:var(--muted,#667)}.cdbox #cdn{font-size:34px;color:var(--accent);font-weight:800}.zc:empty{display:none}.dsc{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px}.dside{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center;min-width:0}.dside.hit{border-color:var(--ok);background:var(--ok-bg);animation:hop .5s}.dnm{font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dpt{font-size:40px;font-weight:800;color:var(--accent);line-height:1.1}.dvs{font-size:26px;text-align:center}.dvs small{display:block;font-size:12px;color:var(--muted)}.dint{text-align:center;padding-top:9vh;overflow:hidden;animation:shk .4s 1.45s}.dn{font-size:36px;font-weight:800;opacity:0;overflow-wrap:anywhere}.dn1{color:var(--accent);animation:dnl .5s ease-out forwards}.dn2{color:#ec4899;animation:dnr .5s ease-out .7s forwards}@keyframes dnl{from{opacity:0;transform:translateX(-120%)}to{opacity:1;transform:none}}@keyframes dnr{from{opacity:0;transform:translateX(120%)}to{opacity:1;transform:none}}.dsw{position:relative;height:120px;margin:14px 0}.dsw span{position:absolute;top:14px;left:50%;font-size:76px;line-height:1;opacity:0}.sw1{margin-left:-62px;animation:sw1 .35s ease-in 1.1s forwards}.sw2{margin-left:-14px;animation:sw2 .35s ease-in 1.1s forwards}@keyframes sw1{from{opacity:1;transform:translateX(-140px) rotate(-70deg)}to{opacity:1;transform:translateX(0) rotate(0)}}@keyframes sw2{from{opacity:1;transform:translateX(140px) scaleX(-1) rotate(-70deg)}to{opacity:1;transform:translateX(0) scaleX(-1) rotate(0)}}.dfl{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px;border-radius:50%;background:#fde047;opacity:0;animation:dfl .55s ease-out 1.45s}@keyframes dfl{0%{opacity:0;transform:scale(.2)}25%{opacity:1;transform:scale(5)}100%{opacity:0;transform:scale(8)}}.dwin{opacity:0;animation:dfi .4s 1.9s forwards;font-size:19px;color:var(--muted);margin-top:14px}@keyframes dfi{to{opacity:1}}.zc{text-align:center;line-height:1.8;margin-top:8vh;padding:20px 14px;font-size:22px;background:var(--card);border:2px solid var(--accent);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.12)}.zc b{font-size:26px}.gpop{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:calc(100% - 32px);max-width:440px;background:var(--card);border:2px solid var(--ok);border-radius:14px;padding:10px 12px;text-align:center;font-size:16px;line-height:1.5;z-index:60;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:gpin .25s ease-out}@keyframes gpin{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 #cdn{font-size:140px;font-weight:800;color:var(--accent)}
 .pbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:18px;line-height:1.5;margin:10px 0;text-align:left}
 .pbox ul,.pbox ol{margin:4px 0 8px 20px;padding:0}
@@ -734,16 +734,16 @@ function saveGame(){shareCanvas(document.getElementById('gcard'),'matematik-cana
 /* ---------- yarış odaları ---------- */
 var RM={nick:'',code:null,host:false,room:null,players:[],unsubs:[],started:false,fb:null,cd:null,chk:null,fin:false};
 var RCH='ABCDEFGHJKLMNPRSTUVYZ23456789';
-var QV=2; /* soru üretimi sürümü: 1=sadece Kolay, 2=seviye ve tablo; oda bu sürümden yüksekse katılınamaz */
+var QV=3; /* 3=1'e 1 kapışma;  soru üretimi sürümü: 1=sadece Kolay, 2=seviye ve tablo; oda bu sürümden yüksekse katılınamaz */
 function rmNick(){
   if(st.profile)return st.profile;
   var e=document.getElementById('r-name'),v=e?e.value.trim():'';
   if(v)lsSet('mc_gnick',v);else v=ls('mc_gnick','')||'';
   return v;
 }
-var RC={lv:'k',tb:0,code:'',op:'mul'};
+var RC={lv:'k',tb:0,code:'',op:'mul',mode:'race',win:10};
 function rcOp(o){var e=document.getElementById('r-new');if(e)RC.code=e.value;if(o==='mul'||o==='div'){var m=slug(RC.code).toUpperCase();if(RC.code.trim()&&(m.length<3||m.length>10)){toast('Oda kodu 3-10 harf/rakam olmalı');return}RC.op=o;go('rctb');return}rmCreate(o,0)}
-function rcGo(){if(!rmNick()){toast('Önce adını yaz');return}go('rcreate')}
+function rcGo(md){if(!rmNick()){toast('Önce adını yaz');return}RC.mode=md==='duel'?'duel':'race';go('rcreate')}
 function rcSet(k,v){var e=document.getElementById('r-new');if(e)RC.code=e.value;RC[k]=v;if(k==='tb'&&v)RC.lv='k';if(k==='lv'&&v!=='k')RC.tb=0;render()}
 function rmFb(){
   if(!navigator.onLine)return Promise.reject('İnternet bağlantısı yok');
@@ -764,6 +764,8 @@ function rmReset(){
   RM.unsubs=[];RM.code=null;RM.host=false;RM.room=null;RM.players=[];RM.started=false;RM.fin=false;
   if(RM.cd){clearInterval(RM.cd);RM.cd=null}
   if(RM.chk){clearInterval(RM.chk);RM.chk=null}
+  RM.ast=false;
+  if(DU){duStop();DU=null}
 }
 function rmCreate(op,tbs){
   var inp=document.getElementById('r-new'),raw=inp?inp.value:RC.code,nick=rmNick(),code,tries=0,fb,mine=slug(raw||'').toUpperCase();
@@ -773,7 +775,7 @@ function rmCreate(op,tbs){
   rmFb().then(function(f){
     fb=f;
     var tb=(op==='mul'||op==='div')?(tbs|0):0,lv=tb?'k':RC.lv,qv=(lv==='k'&&!tb)?1:2;
-    var mk=function(){return {host:CL.user.uid,hostNick:nick,op:op,status:'lobby',seed:Math.floor(Math.random()*1000000)+1,created:Date.now(),qv:qv,lv:lv,tb:tb}};
+    var mk=function(){var d={host:CL.user.uid,hostNick:nick,op:op,status:'lobby',seed:Math.floor(Math.random()*1000000)+1,created:Date.now(),qv:qv,lv:lv,tb:tb};if(RC.mode==='duel'){d.mode='duel';d.win=[10,15,20].indexOf(RC.win)>=0?RC.win:10;d.qv=3}return d};
     var attempt=function(){
       code=mine||rmCode();
       var data=mk();
@@ -800,12 +802,257 @@ function rmJoinCode(code,onFail){
   rmFb().then(function(f){fb=f;return fb.getDoc(fb.doc(CL.db,'rooms',code))}).then(function(s){
     if(!s.exists())throw 'Oda bulunamadı';
     var room=s.data();
-    if(room.status!=='lobby')throw 'Yarış başlamış, katılamazsın';
+    if(room.status!=='lobby')throw room.mode==='duel'?'Kapışma başlamış, katılamazsın':'Yarış başlamış, katılamazsın';
     if((room.qv||1)>QV)throw 'Bu odayı farklı sürümdeki bir telefon kurdu. Uygulamayı kapatıp yeniden aç, sonra tekrar dene';
     if(Date.now()-room.created>86400000)throw 'Bu odanın süresi dolmuş';
-    return rmEnter(fb,code,room.host===CL.user.uid,room);
+    if(room.mode!=='duel')return rmEnter(fb,code,room.host===CL.user.uid,room);
+    return fb.getDocs(fb.collection(CL.db,'rooms',code,'players')).then(function(qs){
+      var n=0;qs.forEach(function(d){var x=d.data();if(x.rid===room.created&&d.id!==CL.user.uid)n++});
+      if(n>=2)throw 'Bu kapışma dolu';
+      return rmEnter(fb,code,room.host===CL.user.uid,room);
+    });
   }).then(function(){RJOIN=null}).catch(function(e){toast(rmErr(e));if(onFail)onFail()});
 }
+/* ---------- 1'e 1 Kapışma ---------- */
+/* Her soruda önce DOĞRU basan puanı alır. Hız, her telefonda sorunun ekrana geldiği andan
+   dokunuşa kadar yerel olarak ölçülür (internet gecikmesi adaleti bozmaz).
+   Oyuncu belgesi: m = maç no, r = [tur sonuçları] (>0: doğru, ms; <0: yanlış/geç/süre), pr = önceki maçın r'si */
+var DLIM={k:10000,o:12000,z:15000};
+var DU=null;
+function duOn(){return !!(RM.room&&RM.room.mode==='duel')}
+function duPlayers(){
+  var l=RM.players.slice().sort(function(a,b){return (a.jt||a.ts)-(b.jt||b.ts)});
+  return l.slice(0,2);
+}
+function duOpp(){
+  var me=CL.user?CL.user.uid:null,l=RM.players,i;
+  for(i=0;i<l.length;i++){if(l[i].uid!==me&&(!DU||!DU.oid||l[i].uid===DU.oid))return l[i]}
+  return null;
+}
+function duOppR(){
+  var o=duOpp();
+  if(!o||!DU)return null;
+  var m=o.m|0;
+  if(m===DU.m)return o.r||[];
+  if(m===DU.m+1)return o.pr||[];
+  return null;
+}
+function duNew(m){
+  var r=RM.room,tb=(r.tb>=2&&r.tb<=10&&(r.op==='mul'||r.op==='div'))?r.tb|0:0,lv=tb?'k':(r.lv==='o'||r.lv==='z'?r.lv:'k');
+  var me=CL.user.uid,o=duPlayers().filter(function(x){return x.uid!==me})[0]||duOpp();
+  DU={m:m,k:-1,qs:[],qg:{op:r.op,lv:lv,tb:tb,lastTxt:'',log:[]},seed:r.seed,win:r.win||10,lim:tb?DLIM.k:DLIM[lv],
+      me:CL.user.uid,oid:o?o.uid:null,onick:o?o.nick:'Rakip',myR:[],prevR:(DU&&DU.m===m-1)?DU.myR:[],ph:'intro',t0:0,el:0,tm:null,to:null,hb:null,
+      seen:Date.now(),over:false,left:false,want:false,sc:[0,0],lt:99,saved:false};
+}
+function duQ(k){
+  var sv=st.g,i,q;
+  while(DU.qs.length<=k){
+    st.g=DU.qg;RNG=mulb(DU.seed*7919+(DU.m*1000+DU.qs.length)*104729+13);
+    try{q=gQ0();DU.qg.lastTxt=q.txt}finally{RNG=null;st.g=sv}
+    DU.qs.push(q);
+  }
+  return DU.qs[k];
+}
+function duScore(){
+  var a=DU.myR,b=duOppR()||[],n=Math.min(a.length,b.length),s=[0,0],i,w;
+  for(i=0;i<n;i++){w=duWho(a[i],b[i]);if(w===1)s[0]++;else if(w===2)s[1]++}
+  return s;
+}
+/* 1: ben, 2: rakip, 0: kimse */
+function duWho(a,b){
+  if(a>0&&(b<=0||a<b))return 1;
+  if(b>0&&(a<=0||b<a))return 2;
+  if(a>0&&b>0&&a===b)return RM.room.host===DU.me?1:2;
+  return 0;
+}
+function duWrite(){
+  if(!DU||!RM.fb||!CL.user||!RM.code)return;
+  RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',CL.user.uid),{nick:RM.nick,score:DU.sc[0],hearts:0,ok:0,bad:0,n:DU.myR.length,tt:0,done:!!DU.quit,ts:Date.now(),rid:RM.room.created,m:DU.want?DU.m+1:DU.m,r:DU.want?[]:DU.myR,pr:DU.want?DU.myR:DU.prevR}).catch(function(){});
+}
+function duStart(m){
+  duNew(m);
+  if(DU.hb)clearInterval(DU.hb);
+  DU.hb=setInterval(duBeat,5000);
+  ZP.rows=null;ZP.tb=0;
+  go('dintro');
+  var c=document.getElementById('dint');
+  sndSwoosh();
+  setTimeout(function(){if(st.screen==='dintro')sndSwoosh()},700);
+  setTimeout(function(){if(st.screen==='dintro')sndClang()},1450);
+  setTimeout(function(){
+    if(st.screen!=='dintro')return;
+    var e=document.getElementById('dcd');if(e)e.style.visibility='visible';
+    RM.cd=cdRun(function(){RM.cd=null;if(st.screen!=='dintro')return;sndWhistle();go('duel');duRound(0)});
+  },2600);
+}
+function duBeat(){
+  if(!DU)return;
+  if(!DU.over)duWrite();
+  var o=duOpp();
+  if(!DU.over&&!DU.left&&(!o||o.done||Date.now()-DU.seen>25000))duLeft();
+}
+function duRound(k){
+  if(!DU||DU.over)return;
+  DU.k=k;DU.ph='q';DU.t0=performance.now();DU.el=0;DU.lt=99;
+  var q=duQ(k),e;
+  e=document.getElementById('dq');if(e)e.textContent=q.txt+' = ?';
+  e=document.getElementById('dgrid');if(e)e.innerHTML=duOptsHtml(q);
+  e=document.getElementById('dmsg');if(e){e.textContent='';e.style.color=''}
+  duScoreUi();
+  if(DU.tm)clearInterval(DU.tm);
+  DU.tm=setInterval(duTick,50);
+}
+function duOptsHtml(q){
+  var h='';
+  q.opts.forEach(function(o,i){h+='<button class="ani" onclick="duAns('+i+',this)"><span class="an">'+o.v+'</span></button>'});
+  return h;
+}
+function duTick(){
+  if(!DU||DU.ph!=='q'||st.screen!=='duel')return;
+  var el=performance.now()-DU.t0,pc=Math.max(0,100-el/DU.lim*100),f=document.getElementById('tfill'),ob=duOppR(),ot=ob?ob[DU.k]:undefined,tk;
+  DU.el=el;
+  if(f){f.style.width=pc+'%';f.style.background=pc>50?'var(--ok)':(pc>25?'#e0a100':'var(--bad)')}
+  tk=Math.ceil((DU.lim-el)/1000);if(DU.lim-el<=3000&&tk>0&&tk!==DU.lt){DU.lt=tk;sndTick()}
+  if(ot>0&&el>=ot){duMine(-Math.max(1,Math.round(el)),'late');return}
+  if(el>=DU.lim)duMine(-DU.lim,'time');
+}
+function duAns(i,el){
+  if(!DU||DU.ph!=='q')return;
+  var q=DU.qs[DU.k],ms=Math.max(1,Math.round(performance.now()-DU.t0)),ok=q.opts[i].v===q.ans,ob=duOppR(),ot=ob?ob[DU.k]:undefined;
+  if(ok&&ot>0&&ms>=ot){duMine(-ms,'late');return}
+  if(el)el.classList.add(ok?'ok':'bad');
+  if(ok)sndOk(3);else sndBad();
+  duMine(ok?ms:-ms,ok?'ok':'bad');
+}
+function duMine(v,why){
+  if(!DU||DU.ph!=='q')return;
+  DU.ph='wait';
+  if(DU.tm){clearInterval(DU.tm);DU.tm=null}
+  DU.myR[DU.k]=v;
+  var m=document.getElementById('dmsg');
+  if(m){
+    if(why==='ok'){m.style.color='var(--ok)';m.textContent='Doğru! ('+duSec(v)+' sn) Rakip bekleniyor…'}
+    else if(why==='bad'){m.style.color='var(--bad)';m.textContent='Yanlış! Bu soruda kilitlendin.'}
+    else if(why==='late'){m.style.color='var(--muted)';m.textContent='⚡ '+DU.onick+' daha hızlıydı!'}
+    else {m.style.color='var(--bad)';m.textContent='Süre doldu!'}
+  }
+  var bs=document.querySelectorAll('#dgrid .ani');for(var i=0;i<bs.length;i++)bs[i].disabled=true;
+  duWrite();
+  duSync();
+}
+function duSec(ms){return (Math.round(Math.abs(ms)/100)/10).toFixed(1).replace('.',',')}
+function duSync(){
+  if(!DU)return;
+  var o=duOpp();
+  if(o&&(o.ts!==DU.ots||o.n!==DU.on||o.m!==DU.om)){DU.ots=o.ts;DU.on=o.n;DU.om=o.m;DU.seen=Date.now()}
+  if(!DU.over&&!DU.left&&o&&o.done){duLeft();return}
+  if(DU.ph==='wait'){var ob=duOppR();if(ob&&ob[DU.k]!==undefined&&ob[DU.k]!==null)duResolve()}
+  if(DU.over)duOverUi();
+}
+function duResolve(){
+  var k=DU.k,a=DU.myR[k],ob=duOppR(),b=ob[k],w=duWho(a,b),q=DU.qs[k],msg=document.getElementById('dmsg'),bs=document.querySelectorAll('#dgrid .ani'),i,h,old=DU.sc.slice();
+  DU.ph='res';
+  DU.sc=duScore();
+  for(i=0;i<bs.length;i++){if(q.opts[i].v===q.ans)bs[i].classList.add('ok')}
+  if(w===1){h='<div>⚡ <b>Sen aldın!</b> ('+duSec(a)+' sn)</div>'+(b>0?'<div><small>'+esc(DU.onick)+': '+duSec(b)+' sn</small></div>':'');sndClap(false)}
+  else if(w===2){h='<div>⚡ <b>'+esc(DU.onick)+'</b> aldı ('+duSec(b)+' sn)</div>'+(a>0?'<div><small>Sen: '+duSec(a)+' sn</small></div>':'')}
+  else h='<div>İkiniz de bilemediniz</div><div>Doğrusu: <b>'+q.ans+'</b></div>';
+  if(msg)msg.textContent='';
+  duScoreUi(w);
+  gPopShow(h);
+  var me=DU.sc[0],op=DU.sc[1],W=DU.win,sp='',wait=2000;
+  if(me>=W||op>=W){DU.to=setTimeout(duEnd,1600);return}
+  if(me===W-1&&op===W-1&&!(old[0]===W-1&&old[1]===W-1))sp='⚡ <b>ALTIN SORU!</b><br>Kim alırsa kazanır!';
+  else if((me===W-1&&old[0]<W-1)||(op===W-1&&old[1]<W-1))sp='🔥 <b>MAÇ SAYISI!</b><br>'+(me===W-1&&op===W-1?'':(me===W-1?'Bir doğru daha, kazanırsın!':esc(DU.onick)+' bir puan uzakta!'));
+  else if(W>=15&&Math.max(me,op)===Math.floor(W/2)&&Math.max(old[0],old[1])<Math.floor(W/2))sp='Yarı yol!<br>Sen '+me+' – '+op+' '+esc(DU.onick);
+  if(sp){DU.to=setTimeout(function(){if(DU&&!DU.over){gPopShow('<div style="font-size:20px">'+sp+'</div>');if(/ALTIN/.test(sp))sndFast();else sndPop()}},1900);wait=3300}
+  DU.to=setTimeout(function(){if(DU&&!DU.over&&st.screen==='duel'){gPopHide();duRound(k+1)}},wait);
+}
+function duScoreUi(w){
+  var e=document.getElementById('dsc');if(!e||!DU)return;
+  e.innerHTML=duScoreHtml(w);
+}
+function duScoreHtml(w){
+  return '<div class="dside'+(w===1?' hit':'')+'"><div class="dnm">'+esc(RM.nick)+'</div><div class="dpt">'+DU.sc[0]+'</div></div><div class="dvs">⚔️<small>'+DU.win+'</small></div><div class="dside'+(w===2?' hit':'')+'"><div class="dnm">'+esc(DU.onick)+'</div><div class="dpt">'+DU.sc[1]+'</div></div>';
+}
+function duEnd(){
+  if(!DU||DU.over)return;
+  DU.over=true;DU.ph='over';gPopHide();
+  if(DU.tm){clearInterval(DU.tm);DU.tm=null}
+  duWrite();
+  var won=DU.left||DU.sc[0]>DU.sc[1];
+  DU.won=won;
+  duSave();
+  go('dover');
+  if(won){sndWin();sndClap(true);confetti(true)}else sndEnd();
+}
+function duLeft(){
+  if(!DU||DU.over)return;
+  DU.left=true;
+  toast('Rakip ayrıldı');
+  duEnd();
+}
+function duSave(){
+  if(!st.profile||DU.saved)return;
+  DU.saved=true;
+  var l=ls('mc_dhist',[]);
+  l.unshift({p:st.profile,t:Date.now(),o:DU.onick,a:DU.sc[0],b:DU.sc[1],w:DU.won?1:0,left:DU.left?1:0,op:DU.qg.op,lv:DU.qg.lv,tb:DU.qg.tb,win:DU.win});
+  lsSet('mc_dhist',l.slice(0,100));
+}
+function duOverHtml(){
+  var t=DU.won?(DU.left?'🏆 Rakip ayrıldı, kazandın!':'🏆 Kazandın!'):'İyi mücadele! 💪';
+  var s=DU.won?'Tebrikler, '+esc(RM.nick)+'!':DU.sc[0]+' puan aldın. Rövanşta sen kazanabilirsin!';
+  return topBar('⚔️ Kapışma bitti')+'<div class="pbox" style="text-align:center"><div style="font-size:28px;font-weight:800;margin-bottom:6px">'+t+'</div><div class="dsc" style="margin:10px 0">'+duScoreHtml()+'</div><div class="sub">'+s+'</div></div>'+
+    '<div id="dre"></div><canvas id="dcard" class="card wide"></canvas><button class="ghost" onclick="shareCanvas(document.getElementById(\'dcard\'),\'matematik-canavari-kapisma.png\')">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" onclick="rmLeave()">🏠 Çık</button>';
+}
+function duOverUi(){
+  var e=document.getElementById('dre');if(!e||!DU)return;
+  var o=duOpp(),ow=o&&!o.done&&(o.m|0)===DU.m+1,h;
+  if(DU.left||!o||o.done)h='<p class="sub center">Rakip ayrıldı.</p>';
+  else if(DU.want)h='<button class="next" disabled>⏳ '+esc(DU.onick)+' bekleniyor…</button>';
+  else h='<button class="next" onclick="duRematch()">🔁 Rövanş'+(ow?' · '+esc(DU.onick)+' hazır!':'')+'</button>';
+  e.innerHTML=h;
+  if(DU.want&&ow&&!DU.go2){DU.go2=true;var nm=DU.m+1;duStop();duStart(nm);duWrite()}
+}
+function duRematch(){
+  if(!DU||!DU.over||DU.want)return;
+  DU.want=true;duWrite();duOverUi();
+}
+function duQuit(){modal('Kapışmadan çıkarsan yenilmiş sayılırsın.<br>Çıkmak istiyor musun?','Evet, çık','Hayır, devam',function(){rmLeave()},null)}
+function duStop(){
+  if(!DU)return;
+  if(DU.tm)clearInterval(DU.tm);if(DU.to)clearTimeout(DU.to);if(DU.hb)clearInterval(DU.hb);
+  gPopHide();
+}
+function drawDuel(cv){
+  var W=1080,H=820,c,won=DU.won,d=new Date();
+  cv.width=W;cv.height=H;c=cv.getContext('2d');
+  c.fillStyle='#f4f1fb';c.fillRect(0,0,W,H);
+  drawMonster(c,W/2,150,85);
+  c.textAlign='center';c.fillStyle='#7048e8';c.font='800 54px system-ui,sans-serif';c.fillText('⚔️ 1’e 1 Kapışma',W/2,320);
+  c.fillStyle='#1d2433';c.font='700 46px system-ui,sans-serif';
+  c.fillText(RM.nick+'   '+DU.sc[0]+' – '+DU.sc[1]+'   '+DU.onick,W/2,440);
+  c.font='700 44px system-ui,sans-serif';c.fillStyle=won?'#1f9d55':'#6b7385';
+  c.fillText(won?'🏆 '+RM.nick+' kazandı!':'🏆 '+DU.onick+' kazandı!',W/2,540);
+  c.font='400 34px system-ui,sans-serif';c.fillStyle='#6b7385';
+  c.fillText(gLabelL(DU.qg.op,DU.qg.lv,DU.qg.tb)+' · '+DU.win+' puanlık maç',W/2,630);
+  c.fillText(fmtDate(d)+' '+fmtTime(d)+' · Matematik Canavarı',W/2,700);
+}
+function dhistHtml(){
+  var p=st.profile,l=ls('mc_dhist',[]).filter(function(x){return x.p===p}),w=0,i,h;
+  l.forEach(function(x){if(x.w)w++});
+  h='<div class="tag" style="margin-top:14px">⚔️ Kapışmalarım</div>';
+  if(!l.length)return h+'<p class="sub center">Henüz kapışmaya katılmadın.</p>';
+  h+='<div class="rrow"><span>Galibiyet</span><b>🏆 '+w+' / '+l.length+'</b></div>';
+  for(i=0;i<Math.min(l.length,30);i++){
+    var x=l[i],d=new Date(x.t);
+    h+='<div class="rrow"><span>'+(x.w?'🏆':'💪')+' '+esc(x.o)+'<br><small>'+fmtDate(d)+' '+fmtTime(d)+' · '+gLabelL(x.op,x.lv,x.tb)+'</small></span><b>'+x.a+' – '+x.b+'</b></div>';
+  }
+  return h;
+}
+function sndSwoosh(){sfxPlay(function(t){var c=AU.ctx,s=c.createBufferSource(),b=c.createBiquadFilter(),g=c.createGain();s.buffer=AU.nb;s.loop=true;b.type='bandpass';b.Q.value=2;b.frequency.setValueAtTime(400,t);b.frequency.exponentialRampToValueAtTime(3200,t+0.35);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.6,t+0.12);g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);s.connect(b);b.connect(g);g.connect(AU.sg);s.start(t);s.stop(t+0.42)})}
+function sndClang(){sfxPlay(function(t){var c=AU.ctx,P=[[620,1,1.2],[1710,0.6,0.9],[3350,0.4,0.6],[5400,0.25,0.4]],i,s,hp,g;for(i=0;i<P.length;i++){tone(P[i][0],t,P[i][2],'sine',0.45*P[i][1],AU.sg);tone(P[i][0]*1.013,t,P[i][2]*0.8,'sine',0.25*P[i][1],AU.sg)}s=c.createBufferSource();s.buffer=AU.nb;hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=2500;g=c.createGain();g.gain.setValueAtTime(0.9,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.06);s.connect(hp);hp.connect(g);g.connect(AU.sg);s.start(t)})}
+
 /* ---------- davet linki ---------- */
 var RJOIN=null;
 (function(){
@@ -846,7 +1093,7 @@ function rmEnter(fb,code,host,room){
       if(RM.code!==code)return;
       if(!s.exists()){toast('Oda kapatıldı');rmLeaveLocal();return}
       RM.room=s.data();
-      if(RM.room.status==='playing'&&!RM.started){RM.started=true;rmCountdown()}
+      if(RM.room.status==='playing'&&!RM.started){RM.started=true;if(RM.room.mode==='duel')duStart(0);else rmCountdown()}
       else if(st.screen==='lobby')render();
     },function(){}));
     RM.unsubs.push(fb.onSnapshot(fb.collection(CL.db,'rooms',code,'players'),function(qs){
@@ -859,7 +1106,7 @@ function rmEnter(fb,code,host,room){
 function rmStart(){
   if(!RM.host||!RM.fb||!RM.room)return;
   var r=RM.room,d={};
-  ['host','hostNick','op','seed','created','qv','lv','tb'].forEach(function(k){if(r[k]!==undefined)d[k]=r[k]});
+  ['host','hostNick','op','seed','created','qv','lv','tb','mode','win'].forEach(function(k){if(r[k]!==undefined)d[k]=r[k]});
   d.status='playing';
   RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code),d).catch(function(e){toast(rmErr(e))});
 }
@@ -870,6 +1117,7 @@ function rmLeaveLocal(){
   go('rooms');
 }
 function rmLeave(){
+  if(DU&&!(RM.room&&RM.room.status==='lobby')){DU.quit=true;duWrite();if(!DU.over&&DU.k>=0){DU.won=false;duSave()}}
   var fb=RM.fb,code=RM.code,lobby=RM.room&&RM.room.status==='lobby';
   if(fb&&code&&CL.user&&lobby){
     if(RM.host)fb.deleteDoc(fb.doc(CL.db,'rooms',code)).catch(function(){});
@@ -943,6 +1191,12 @@ function lobbyList(){
 }
 function rmRefresh(){
   var s=st.screen,e;
+  if(duOn()&&RM.room.status==='lobby'){
+    var two=duPlayers(),me=CL.user?CL.user.uid:null;
+    if(RM.players.length>2&&!two.some(function(x){return x.uid===me})){toast('Bu kapışma dolu');rmLeave();return}
+    if(RM.host&&two.length===2&&!RM.ast){RM.ast=true;rmStart()}
+  }
+  if(DU)duSync();
   if(s==='lobby'){
     e=document.getElementById('lb-list');if(e)e.innerHTML=lobbyList();
     e=document.getElementById('lb-n');if(e)e.textContent=RM.players.length;
@@ -1270,6 +1524,7 @@ var GUIDE=[
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
+ {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
  {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) seç.</li><li>Sonra işlemi seç. Oda açılır. Çarpma ya da bölmeyi seçersen önce sorulur: <b>seviyeye göre</b> mi, yoksa tek bir tabloyla mı (<b>📚 Tablo çalış</b>)?</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>5 saniye sayılır, zirve kartı çıkar ve düdükle yarış başlar. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
  {id:'lb',t:'🏆 Rekorlar Tablosu',h:'<ul><li>Ana menüdeki <b>Rekorlar Tablosu</b>ndan açılır. İnternet gerekir.</li><li>İki sekme var: <b>Akıldan İşlem</b> ve <b>Yarış Odası</b>. İşlem türünü ve seviyeyi (Kolay, Orta, Zor) seçersin. Her seviyenin tablosu ayrıdır.</li><li><b>Tabloyu Paylaş</b> düğmesiyle tablonun fotoğrafını kaydedip gönderebilirsin.</li><li>En yüksek 10 kişi görünür. İlk 10 içinde değilsen kendi sıran altta yazar.</li><li>Her kişinin her işlemde tek satırı vardır. Sadece rekor kırınca yükselir.</li><li>Birinci olursan tebrik ve konfeti çıkar 🎉</li><li>Tabloda <b>adın herkese görünür</b>. Soyadını ya da kişisel bilgini yazma.</li></ul>'},
  {id:'score',t:'📊 Skorlarım ve skor kartı',h:'<ul><li>Profille oynarsan <b>Skorlarım</b> bölümünde son 14 günün skorlarını görürsün.</li><li>Her oturumun sonunda bir <b>skor kartı</b> çıkar.</li><li><b>Fotoğrafı Kaydet / Paylaş</b> ile kartı kaydedip WhatsApp ile öğretmenine gönderebilirsin.</li></ul>'},
@@ -1585,7 +1840,9 @@ function back(){
   if(s==='rctb')return go('rcreate');
   if(s==='rover'){if(!roverState().all){toast('Yarış bitmeden çıkamazsın, bekle');return}return rmLeave()}
   if(s==='lobby')return rmLeave();
-  if(s==='rcount'||s==='gcount')return;
+  if(s==='rcount'||s==='gcount'||s==='dintro')return;
+  if(s==='duel')return duQuit();
+  if(s==='dover')return rmLeave();
   if(s==='game')return askQuitGame();
   if(s==='gover')return go('gmenu');
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
@@ -1600,7 +1857,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 31</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 32</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -1636,7 +1893,7 @@ function render(){
   }else if(s==='lb'){
     h=topBar('Rekorlar Tablosu')+lbTabsHtml()+'<div id="lb-body"></div><button class="next" id="lb-share" style="margin-top:10px" disabled onclick="lbShare()">📷 Tabloyu Paylaş</button>';
   }else if(s==='rhist'){
-    h=topBar('Yarış Geçmişim')+rhistHtml();
+    h=topBar('Yarış Geçmişim')+rhistHtml()+dhistHtml();
   }else if(s==='rjoin'){
     h=topBar('Yarışa Katıl')+'<div class="pbox" style="text-align:center"><small>Davet edildiğin oda</small><div class="rcode">'+esc(RJOIN||'')+'</div></div><p class="sub center"><b>Kim olarak katılacaksın?</b></p><div class="col">';
     profiles().forEach(function(n,i){h+='<button class="btn" onclick="rjPick('+i+')">🙂 '+esc(n)+'</button>'});
@@ -1644,19 +1901,32 @@ function render(){
   }else if(s==='rooms'){
     h=topBar('Yarış Odası')+'<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır. İnternet gerekir.</p>';
     if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
-    h+='<button class="btn" onclick="rcGo()"><span class="big">➕</span>Oyun Odası Kur<small>Kodu sen belirle, arkadaşların o kodla girsin</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
+    h+='<button class="btn" onclick="rcGo(\'race\')"><span class="big">➕</span>Oyun Odası Kur<small>Herkes aynı sorularla, en çok puan toplayan kazanır</small></button><button class="btn" onclick="rcGo(\'duel\')"><span class="big">⚔️</span>1’e 1 Kapışma Kur<small>İki kişi: her soruda önce doğru basan puanı alır</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
   }else if(s==='rcreate'){
-    h=topBar('Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)" value="'+esc(RC.code)+'"><div class="tag">Seviye</div><div class="chips">';
+    h=topBar(RC.mode==='duel'?'⚔️ Kapışma Kur':'Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)" value="'+esc(RC.code)+'"><div class="tag">Seviye</div><div class="chips">';
     ['k','o','z'].forEach(function(l){h+='<button class="chip'+(RC.lv===l?' on':'')+'" onclick="rcSet(\'lv\',\''+l+'\')">'+LVN[l]+'</button>'});
-    h+='</div><p class="sub center"><b>İşlemi seç, oda kurulsun:</b></p><div class="col">';
+    if(RC.mode==='duel'){h+='</div><div class="tag">Maç: kaç puana ulaşan kazansın?</div><div class="chips">';[10,15,20].forEach(function(w){h+='<button class="chip'+(RC.win===w?' on':'')+'" onclick="rcSet(\'win\','+w+')">'+w+' puan</button>'})}
+    h+='</div><p class="sub center"><b>İşlemi seç, '+(RC.mode==='duel'?'kapışma':'oda')+' kurulsun:</b></p><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="rcOp(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+((o==='mul'||o==='div')?'<small>Seviye ya da 📚 Tablo çalış</small>':'')+'</button>'});
     h+='</div>';
   }else if(s==='rctb'){
     var ro=RC.op;
-    h=topBar(OPS[ro].sym+' '+OPS[ro].name+' odası')+'<p class="sub center"><b>Nasıl yarışalım?</b></p><button class="btn" onclick="rmCreate(\''+ro+'\',0)">🎯 Seviyeye göre · '+LVN[RC.lv]+'<small>'+lvDesc(ro,RC.lv)+'</small></button>';
+    var dd=RC.mode==='duel',ds=lvDesc(ro,RC.lv);if(dd)ds=ds.replace(/ · Süre.*$/,'')+' · Her soru '+(DLIM[RC.lv]/1000)+' sn';
+    h=topBar(OPS[ro].sym+' '+OPS[ro].name+(dd?' kapışması':' odası'))+'<p class="sub center"><b>Nasıl yarışalım?</b></p><button class="btn" onclick="rmCreate(\''+ro+'\',0)">🎯 Seviyeye göre · '+LVN[RC.lv]+'<small>'+ds+'</small></button>';
     h+='<div class="tag" style="margin-top:16px"><b>📚 Tablo çalış</b></div><p class="sub center">Bir tablo seç, bütün sorular o tablodan gelir. Puanlar rekorlar tablosuna yazılmaz.</p><div class="chips">';
     for(var rt=2;rt<=9;rt++)h+='<button class="chip" onclick="rmCreate(\''+ro+'\','+rt+')">'+rt+'</button>';
     h+='</div>';
+  }else if(s==='lobby'&&duOn()){
+    var dr=RM.room;
+    h=topBar('⚔️ Kapışma')+'<div class="pbox" style="text-align:center"><small>Kapışma kodu</small><div class="rcode">'+(RM.code||'')+'</div><small>'+gLabelL(dr.op,dr.lv,dr.tb)+' · '+(dr.win||10)+' puana ulaşan kazanır</small></div><div class="tag">Oyuncular (<span id="lb-n">'+RM.players.length+'</span>/2)</div><div id="lb-list">'+lobbyList()+'</div><p class="sub center">⏳ Rakip bekleniyor… İkinci kişi girince kapışma kendiliğinden başlar.</p>';
+    h+='<div class="pbox" style="text-align:center"><small>Davet linki: arkadaşın tıklayınca direkt bu kapışmaya gelir</small><div class="lnk">'+esc(rmLink())+'</div><button class="ghost" style="margin:6px 0" onclick="rmCopy()">🔗 Linki Kopyala</button><button class="ghost" style="margin:0" onclick="rmShare()">📤 Paylaş (WhatsApp…)</button></div><button class="ghost" onclick="rmLeave()">Çık</button>';
+  }else if(s==='dintro'){
+    var on=(DU&&DU.onick)||'Rakip';
+    h='<div class="dint"><div class="dn dn1">🙂 '+esc(RM.nick)+'</div><div class="dsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dn dn2">'+esc(on)+' 🙂</div><div class="dwin">'+(DU?DU.win:10)+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
+  }else if(s==='duel'){
+    h=topBar('⚔️ Kapışma · '+gLabelL(DU.qg.op,DU.qg.lv,DU.qg.tb))+'<div class="dsc" id="dsc">'+duScoreHtml()+'</div><div class="tbar"><div id="tfill"></div></div><div class="q" id="dq"></div><div class="agrid" id="dgrid"></div><div class="msg" id="dmsg"></div><button class="ghost" onclick="duQuit()">🏳️ Kapışmadan Çık</button>';
+  }else if(s==='dover'){
+    h=duOverHtml();
   }else if(s==='lobby'){
     var lr=RM.room||{op:'rnd'};
     h=topBar('Yarış Odası')+'<div class="pbox" style="text-align:center"><small>Oda kodu</small><div class="rcode">'+(RM.code||'')+'</div><small>İşlem: '+gLabelL(lr.op,lr.lv,lr.tb)+'</small></div><div class="tag">Katılanlar (<span id="lb-n">'+RM.players.length+'</span>)</div><div id="lb-list">'+lobbyList()+'</div>';
@@ -1718,6 +1988,7 @@ function render(){
   if(s==='welcome'){drawMonster(document.getElementById('mon').getContext('2d'),240,245,150);clearTimeout(MON.at);MON.at=setTimeout(monAuto,600)}
   if(s==='summary')drawReport(document.getElementById('card'));
   if(s==='gover')drawGame(document.getElementById('gcard'));
+  if(s==='dover'){drawDuel(document.getElementById('dcard'));duOverUi()}
   if(s==='game'){gStartTimer();musStart()}
   if(s==='rover'){roverUpdate();if(!RM.chk)RM.chk=setInterval(roverUpdate,5000)}
   if(s==='lb')lbLoad();
