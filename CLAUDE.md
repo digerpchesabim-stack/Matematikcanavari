@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **35**
+Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **36**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -31,7 +31,7 @@ Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **35**
 ## 4. Mimari (index.html)
 - Vanilla JS, tek `<script>`. Global durum `st` (st.screen, st.profile, st.g …), `go(screen)` → `render()`, `back()` (uygulama içi ← ve telefon geri tuşu aynı fonksiyon), `topBar(title)`, `modal(msg,yes,no,onYes,onNo)`, `toast()`.
 - **Ekranlar:** welcome, profiles, home, ops/mode/digits/quiz/summary/pmenu/mixmenu/history (pratik + problemler), gmenu/gsetup/gcount/game/gover (Akıldan İşlem), rooms/rcreate/rctb/lobby/rcount/rover/rjoin/rhist (yarış), dintro/duel/dover (1'e 1 kapışma), bpick/bset (canavara karşı), lb (rekorlar), guide (kılavuz).
-- **localStorage:** mc_profiles, mc_records (oyun/pratik kayıtları — sınırsız büyüyor, bkz. eksikler), mc_best (profil→mod anahtarı rekor), mc_rhist/mc_rbest (yarış geçmişi/rekoru), mc_dhist (kapışma geçmişi, `bot` alanı canavar maçları), mc_gnick (misafir adı), mc_audio, mc_dev (cihaz hesabı), mc_vert (yan yana/alt alta), mc_lbfix1 (S31 bir kerelik rekor kurtarma bayrağı).
+- **localStorage:** mc_profiles, mc_records (oyun/pratik kayıtları, profil başına son 200), mc_bk/mc_bkh/mc_bkt (yedek kodu, son yedek özeti ve zamanı), mc_best (profil→mod anahtarı rekor), mc_rhist/mc_rbest (yarış geçmişi/rekoru), mc_dhist (kapışma geçmişi, `bot` alanı canavar maçları), mc_gnick (misafir adı), mc_audio, mc_dev (cihaz hesabı), mc_vert (yan yana/alt alta), mc_lbfix1 (S31 bir kerelik rekor kurtarma bayrağı).
 - **Ses:** Web Audio ile kodla üretilir (`auCtx`, `tone`, `sfxPlay`, `AU.sg`, `AU.nb` gürültü tamponu). Efektler: sndPop/Ok/Bad/Fast/Win/End/Tick, sndWhistle (düdük), sndClap (alkış), sndCrunch (çıtırtı), sndSwoosh, sndClang (kılıç). Müzik: musStart/musStop/musTempo (sadece Akıldan İşlem). Telefonlar dokunuş olmadan ses çalmaz.
 - **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`.
 - **Karşılama canavarı:** canvas `drawMonster(c,cx,cy,r,{m:ağız,happy})`; girişte kendiliğinden 3 sembol yer (`monAuto`), dokununca da yer (`monTap`, en çok 5 sıra).
@@ -96,22 +96,16 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 31: yarış puanları rekor tablosuna yazılmıyordu → düzeltme + kurtarma.
 - 32–33: 1'e 1 Kapışma, tur kartları.
 - 34–35: Canavara Karşı Savaş (sadeleştirilmiş).
+- 36: otomatik bulut yedeği (`bk/{10 karakter kod}`: `{u, d: mc_* JSON, ts, v}`; oyun kaydından 15 sn sonra, açılışta, arka plana geçince; profil ekranında yedek kodu + paylaş; "♻️ Yedekten Geri Yükle" `bkr`; geri yüklenen telefon yeni kod alır), yarışta "📶 bağlantısı koptu" (10 sn sinyal `rmBeat`, yerel alım zamanı `RM.seen`, 30 sn → koptu, 45 sn → yarış beklemez), profil başına son 200 kayıt (`recTrim`), yazı 15 px / dokunma alanı 44–46 px, Yarış Odası metinleri, Canavar modu Akıldan İşlem menüsünde de (`botOpen(from)`), kapışmada 45 sn.
 
-## 9. Bekleyen / yayınlanmamış (Sürüm 36, yerelde hazır, test edildi, yayın onayı bekliyor)
-- Önce `firebase/firestore.rules` (yeni `bk/{kod}` yedek kuralı) yüklenmeli, sonra uygulama.
-- "Arkadaşın yok mu?" → "Tek başına oyna: canavarla kapış"; kılavuzda "Tek başına oynamak için".
-- Yarış Odası açıklaması ve ana menü kartı 3 modu kapsayacak şekilde güncellendi; Canavara Karşı Savaş Akıldan İşlem menüsünde de var (`botOpen(from)`, geri dönüş geldiği menüye).
-- Okunabilirlik: açıklama/etiket yazıları 15 px, pill 14 px, çip ve ses düğmeleri en az 44–46 px.
-- Kayıtlar: profil başına son 200 (`recTrim`).
-- **Otomatik bulut yedeği:** `bk/{10 karakter kod}` belgesi `{u: uid, d: JSON (mc_* anahtarları; 40'tan eski kayıtların soru listesi atılır), ts, v}`. Oyun kaydından 15 sn sonra, açılışta ve uygulama arka plana geçince (değişiklik varsa). Profil ekranında yedek kodu + paylaş; "♻️ Yedekten Geri Yükle" (`bkr` ekranı). Geri yüklenen telefon yeni kod alır. `navigator.storage.persist()`.
-- **Yarışta bağlantı koptu:** 10 sn'de bir sinyal (`rmBeat`, 5 sn yenileme), sinyal yerel alım zamanıyla izlenir (`RM.seen`); 30 sn sessiz oyuncu "📶 bağlantısı koptu", 45 sn sonra yarış onu beklemeden biter.
-- Kapışmada rakip 45 sn sessizse ayrıldı sayılır (önce 25 sn).
+## 9. Bekleyen / yayınlanmamış
+- Yok.
+
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
-2. mc_records sınırsız büyür (profil başına son 200 öner).
-3. Yedekle/geri yükle yok.
-4. Yarışta hayalet oyuncu (kopan biri "bitmedi" kalır), yarış ortasında geri dönüş yok.
-5. Küçük yazılar (12–13 px), rahat mod (süresiz), sesli okuma yok.
-6. Tek kişilik tabloda "İlk hedefin" zirveyle aynı görünür.
-7. panel.html kalıntı; profil silinince rekor satırı kalır; misafir rekoru kalıcı değil; profil şifresi yok; puan istemci tarafında (hile mümkün).
-8. Play Store: hazır ad/avatar listesi, gizlilik politikası, "Verilerimi sil", Android paketi (TWA), 12 test kullanıcısı × 14 gün kapalı test.
+2. Yarış ortasında kopan oyuncu geri dönemez.
+3. Rahat mod (süresiz) ve sesli okuma yok.
+4. Yeni oyun fikirleri (kullanıcı "şimdilik dursun" dedi): Market (para hesabı), Hatalarım, Canavarını Büyüt + rozetler, Doğru mu Yanlış mı, Eksik Sayı, Günün Görevi.
+5. Tek kişilik tabloda "İlk hedefin" zirveyle aynı görünür.
+6. panel.html kalıntı; profil silinince rekor satırı kalır; misafir rekoru kalıcı değil; profil şifresi yok; puan istemci tarafında (hile mümkün).
+7. Play Store: hazır ad/avatar listesi, gizlilik politikası, "Verilerimi sil", Android paketi (TWA), 12 test kullanıcısı × 14 gün kapalı test.
