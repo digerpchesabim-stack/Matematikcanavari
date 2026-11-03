@@ -22,6 +22,6 @@
     setDoc:function(r,d){return srv('set',r.path,cur&&cur.uid,d)},
     deleteDoc:function(r){return srv('del',r.path,cur&&cur.uid)},
     getDocs:function(q){return srv('list',q.path,cur&&cur.uid,q).then(colSnap)},
-    onSnapshot:function(r,f){var id=++sn,col=r.path.split('/').length%2===1;subs[id]={f:f,col:col,path:r.path};srv('sub',r.path,cur&&cur.uid,id,col);return function(){delete subs[id];srv('unsub',r.path,null,id)}}
+    onSnapshot:function(r,f){var id=++sn,col=r.path.split('/').length%2===1;subs[id]={f:f,col:col,path:r.path};srv('sub',r.path,cur&&cur.uid,id,col,r.w||null);return function(){delete subs[id];srv('unsub',r.path,null,id)}}
   };
 })();

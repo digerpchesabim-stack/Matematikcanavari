@@ -24,6 +24,26 @@ module.exports=function(opts){
       if(ch.some(k=>k!=='status'))return deny('room update keys '+ch);
       return null;
     }
+    const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);
+    const frId=(x,y)=>x<y?x+'_'+y:y+'_'+x;
+    const only=(o,ks)=>Object.keys(o).every(k=>ks.includes(k));
+    if(seg[0]==='pk'){
+      const old=store[path];
+      if(!only(d,['k','u'])||d.u!==uid)return deny('pk shape');
+      if(!old){if(seg[1].length!==7||typeof d.k!=='string'||d.k.length<16)return deny('pk create');return null}
+      if(d.k!==old.k)return deny('pk key');return null;
+    }
+    if(seg[0]==='pl'){if(!owns(seg[1]))return deny('pl owner');if(!only(d,['nick','seen','v'])||!d.nick||d.nick.length>20||!Number.isInteger(d.seen))return deny('pl shape');return null}
+    if(seg[0]==='fr'){
+      const old=store[path];
+      if(!old){if(!only(d,['a','b','by','st','ts'])||!(d.a<d.b)||seg[1]!==frId(d.a,d.b)||![d.a,d.b].includes(d.by)||d.st!=='req'||!owns(d.by))return deny('fr create');return null}
+      const ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
+      if(old.st!=='req'||d.st!=='ok'||ch.some(k=>!['st','ts'].includes(k))||!owns(old.by===old.a?old.b:old.a))return deny('fr update');return null;
+    }
+    if(seg[0]==='iv'){
+      if(!only(d,['from','nick','room','op','lv','win','ts'])||!owns(d.from))return deny('iv owner');
+      const f=store['fr/'+frId(d.from,seg[1])];if(!f||f.st!=='ok')return deny('iv not friends');return null;
+    }
     if(seg[0]==='bk'){
       const old=store[path];
       if(seg[1].length!==10)return deny('bk code');
@@ -42,7 +62,7 @@ module.exports=function(opts){
   }
   function payload(s){
     if(!s.col)return store[s.path]===undefined?null:store[s.path];
-    return Object.keys(store).filter(k=>parent(k)===s.path).map(k=>[k,store[k]]);
+    return Object.keys(store).filter(k=>parent(k)===s.path&&(!s.w||store[k][s.w.f]===s.w.v)).map(k=>[k,store[k]]);
   }
   function deliver(s){
     const d=lag[0]+Math.random()*(lag[1]-lag[0]);
@@ -50,13 +70,20 @@ module.exports=function(opts){
   }
   function changed(path){subs.forEach(s=>{if(s.path===path||(s.col&&parent(path)===s.path))deliver(s)})}
   async function handle(pid,json){
-    const [op,path,uid,a,b]=JSON.parse(json);
-    if(op==='get')return JSON.stringify(store[path]===undefined?null:store[path]);
+    const [op,path,uid,a,b,c]=JSON.parse(json);
+    if(op==='get'){const seg=path.split('/');if(seg[0]==='pk')return JSON.stringify(deny('pk read'));
+      if(seg[0]==='iv'){const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);const o=store[path];if(!(owns(seg[1])||(o&&owns(o.from))))return JSON.stringify(deny('iv read'))}
+      return JSON.stringify(store[path]===undefined?null:store[path])}
     if(op==='set'){const e=check(path,uid,a);if(e)return JSON.stringify(e);store[path]=JSON.parse(JSON.stringify(a));changed(path);return 'null'}
-    if(op==='del'){delete store[path];changed(path);return 'null'}
+    if(op==='del'){const seg=path.split('/'),old=store[path];const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);
+      if(old&&seg[0]==='fr'&&!(owns(old.a)||owns(old.b)))return JSON.stringify(deny('fr del'));
+      if(old&&seg[0]==='iv'&&!(owns(seg[1])||owns(old.from)))return JSON.stringify(deny('iv del'));
+      if(old&&(seg[0]==='pl')&&!owns(seg[1]))return JSON.stringify(deny('pl del'));
+      if(old&&seg[0]==='pk'&&old.u!==uid)return JSON.stringify(deny('pk del'));
+      delete store[path];changed(path);return 'null'}
     if(op==='list'){let l=Object.keys(store).filter(k=>parent(k)===path).map(k=>[k,store[k]]);const q=a||{};
       if(q.w)l=l.filter(x=>x[1][q.w.f]===q.w.v);if(q.ob)l.sort((x,y)=>q.ob.d==='desc'?y[1][q.ob.f]-x[1][q.ob.f]:x[1][q.ob.f]-y[1][q.ob.f]);if(q.lim)l=l.slice(0,q.lim);return JSON.stringify(l)}
-    if(op==='sub'){const s={pid,id:a,path,col:b};subs.push(s);deliver(s);return 'null'}
+    if(op==='sub'){const s={pid,id:a,path,col:b,w:c};subs.push(s);deliver(s);return 'null'}
     if(op==='unsub'){subs.forEach(s=>{if(s.pid===pid&&s.id===a)s.dead=true});return 'null'}
     return 'null';
   }
