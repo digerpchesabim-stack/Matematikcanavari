@@ -1112,13 +1112,22 @@ function lbShowBox(g){
   if(e&&st.g===g)e.innerHTML=lbBoxHtml(g.lb);
 }
 function lbRun(g,kind,cand,nick){
-  if(kind==='race'){g.lbP=lbSubmit(kind,g.op,g.score,cand,nick);return}
+  if(kind==='race'){g.lbP=lbSubmit(kind,g.op,g.lv,g.score,cand,nick);return}
   g.lb={loading:true};lbShowBox(g);
   lbSubmit(kind,g.op,g.lv,g.score,cand,nick).then(function(res){
     if(res&&!res.err)res.score=g.score;
     g.lb=res||{score:g.score,kind:kind,op:g.op,lv:g.lv};lbShowBox(g);
     if(res&&res.celebrate&&res.rank===1)confetti(true);
   });
+}
+/* Sürüm 21-30 hatası: yarış puanı tabloya yazılmıyordu. Telefonda kayıtlı yarış rekorlarını bir kez tabloya gönder. */
+function lbBackfill(){
+  if(ls('mc_lbfix1',false)||!navigator.onLine)return;
+  var b=ls('mc_rbest',{}),best={},p,mk,v,ks,ok=true,ch=Promise.resolve();
+  for(p in b)for(mk in b[p]){v=b[p][mk];if(!(v>0)||/_t\d/.test(mk))continue;if(!best[mk]||v>best[mk].s)best[mk]={s:v,n:p}}
+  ks=Object.keys(best);
+  ks.forEach(function(k){var m=k.split('_'),lv=m[1]==='o'||m[1]==='z'?m[1]:'k';ch=ch.then(function(){return lbSubmit('race',m[0],lv,best[k].s,best[k].s,best[k].n)}).then(function(r){if(!r||r.err)ok=false})});
+  ch.then(function(){if(ok)lsSet('mc_lbfix1',true)});
 }
 /* yarış bitince: sadece birinci olan tebrik + konfeti alır; sıra herkes bitince hesaplanır */
 function raceFinal(g){
@@ -1591,7 +1600,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 30</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 31</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -1918,6 +1927,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){try{
 st.vert=ls('mc_vert',false);
 render();
 navInit();
+setTimeout(lbBackfill,3000);
 </script>
 </body>
 </html>
