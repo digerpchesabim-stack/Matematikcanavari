@@ -1,0 +1,25 @@
+const {chromium}=require('playwright');const fs=require('fs');const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await chromium.launch({args:['--autoplay-policy=no-user-gesture-required']});const errs=[];
+const ctx=await b.newContext({viewport:{width:390,height:844}});const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message));
+await p.addInitScript(fs.readFileSync(__dirname+'/mockfb.js','utf8'));
+await p.addInitScript(()=>{window.__DB['lbg_add/x']={nick:'Can',score:5,ts:1};window.__DB['lbg_add/y']={nick:'Ece',score:9,ts:1};});
+await p.goto(''+(process.env.MC_URL||'http://localhost:8766/index.html')+'');
+await p.evaluate(()=>navigator.serviceWorker.ready);await sleep(1500);
+console.log('1 SW:',await p.evaluate(async()=>{var k=await caches.keys();return k.join(',')}));
+await ctx.setOffline(true);
+console.log('2 internetsiz Range:',await p.evaluate(async()=>{var r=await fetch('menu.mp3',{headers:{Range:'bytes=100-1099'}});var b=await r.arrayBuffer();return r.status+' '+r.headers.get('Content-Range')+' '+b.byteLength}));
+console.log('3 sonek Range:',await p.evaluate(async()=>{var r=await fetch('win.mp3',{headers:{Range:'bytes=-500'}});return r.status+' '+r.headers.get('Content-Range')}));
+console.log('4 normal istek:',await p.evaluate(async()=>{var r=await fetch('pass.mp3');return r.status+' '+(await r.arrayBuffer()).byteLength}));
+await p.mouse.click(30,30);await sleep(2500);
+console.log('5 internetsiz menü müziği:',await p.evaluate(()=>MM.el?('paused='+MM.el.paused+' t='+MM.el.currentTime.toFixed(1)+' hata='+(MM.el.error&&MM.el.error.code)):'yok'));
+await ctx.setOffline(false);
+// okuma sayısı
+await p.evaluate(()=>{window.__N=0;var g=__MC_FB.getDocs;__MC_FB.getDocs=function(q){__N++;return g(q)};localStorage.setItem('mc_profiles','["Ali"]');pickProfile(0)});
+await p.evaluate(()=>{go('gmenu');gStart('add','k',0)});await sleep(6800);
+await p.evaluate(()=>{var g=st.g;g.score=12;g.hearts=0;g.log=[{q:'1+1',a:2,ok:true,r:1,s:1}];endGame()});await sleep(1200);
+await p.evaluate(()=>lbOpen('solo','add','k'));await sleep(600);
+console.log('6 bir oyun + tablo ekranı getDocs sayısı:',await p.evaluate(()=>__N),' tablo:',await p.evaluate(()=>document.getElementById('lb-body').innerText.replace(/\n/g,' | ')));
+await p.evaluate(()=>{go('gmenu');gStart('add','k',0)});await sleep(6800);console.log('7 ikinci oyun sonrası toplam:',await p.evaluate(()=>__N));
+await p.evaluate(()=>{st.g.done=true;go('home')});await sleep(400);await p.screenshot({path:'g1.png'});
+console.log('8 ana menü yükseklik:',await p.evaluate(()=>document.documentElement.scrollHeight),'/ 844');
+console.log('errs',errs);await b.close()})();
