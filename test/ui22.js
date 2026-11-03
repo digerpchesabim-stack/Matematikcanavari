@@ -1,0 +1,33 @@
+const {chromium}=require('playwright');const fs=require('fs');
+const mock=fs.readFileSync(__dirname+'/mockfb.js','utf8');
+(async()=>{const b=await chromium.launch();const errs=[];
+const p=await (await b.newContext({viewport:{width:390,height:844},hasTouch:true})).newPage();p.on('pageerror',e=>errs.push(e.message));await p.addInitScript(mock);
+await p.goto('about:blank');await p.goto(''+(process.env.MC_URL||'file://'+require('path').resolve(__dirname,'../index.html'))+'');
+const S=()=>p.evaluate(()=>st.screen+(st.modal?' [modal: '+document.querySelector('#ov p').innerText+']':''));
+const bk=async()=>{try{await p.evaluate(()=>history.back())}catch(e){}await p.waitForTimeout(400)};
+await p.click('text=Haydi Başlayalım!');await p.waitForTimeout(200);console.log('1',await S());
+await p.evaluate(()=>{localStorage.setItem('mc_profiles','["Umut"]');st.profile='Umut';go('home')});
+await p.evaluate(()=>go('gmenu'));console.log('2',await S());
+await bk();console.log('3 geri:',await S());
+await bk();console.log('4 geri:',await S());
+await bk();console.log('5 geri:',await S());
+await bk();console.log('6 geri (welcome soru):',await S(),await p.evaluate(()=>location.href.slice(0,20)));
+await bk();console.log('7 geri modalda (çıktı):',await p.evaluate(()=>location.href.slice(0,20)));
+// tekrar: Hayır
+await p.goto(''+(process.env.MC_URL||'file://'+require('path').resolve(__dirname,'../index.html'))+'');await p.mouse.click(200,400);await p.waitForTimeout(100);
+await bk();console.log('8 welcome geri:',await S());
+await p.click('#mn');await p.waitForTimeout(100);console.log('9 Hayır:',await S());
+await bk();console.log('10 tekrar geri:',await S());
+await p.click('#my');await p.waitForTimeout(600);console.log('11 Evet:',await S(),await p.evaluate(()=>document.body.innerText.includes('bir kez daha')));
+await bk();console.log('12 geri -> çıkış:',await p.evaluate(()=>location.href.slice(0,20)));
+// oyun içinde
+await p.goto(''+(process.env.MC_URL||'file://'+require('path').resolve(__dirname,'../index.html'))+'');
+await p.evaluate(()=>{localStorage.setItem('mc_profiles','["Umut"]');st.profile='Umut'});await p.click('text=Haydi Başlayalım!');
+await p.evaluate(()=>{go('home');go('gmenu');gStart('add','k',0)});await p.waitForTimeout(400);
+await bk();console.log('13 sayımda geri:',await S());
+await p.waitForTimeout(5800);console.log('14',await S());
+await bk();console.log('15 oyunda geri:',await S());
+await bk();console.log('16 modalda geri (hayır):',await S(),'g.done=',await p.evaluate(()=>st.g.done));
+await bk();await p.click('#my');await p.waitForTimeout(300);console.log('17 evet bitir:',await S());
+await bk();console.log('18 gover geri:',await S());
+console.log('errs',errs);await b.close()})();

@@ -1,0 +1,13 @@
+const {chromium}=require('playwright');const U=''+(process.env.MC_URL||'file://'+require('path').resolve(__dirname,'../index.html'))+'';const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{const b=await chromium.launch();const S=require(__dirname+'/dsrv.js')();
+const mk=async(pid,name)=>{const ctx=await b.newContext();const p=await S.phone(ctx,pid,U);await p.evaluate(n=>{localStorage.setItem('mc_profiles',JSON.stringify([n]));st.profile=n;go('home');go('rooms')},name);return p};
+const A=await mk('A','Ali'),B=await mk('B','Ayşe');const ev=(p,f,a)=>p.evaluate(f,a);
+await ev(A,()=>{rcGo('race');rcOp('add')});await sleep(700);const code=await ev(A,()=>RM.code);
+await B.fill('#r-code',code);await ev(B,()=>rmJoin());await sleep(700);
+console.log('lobi',await ev(A,()=>RM.players.length),JSON.stringify(S.store['rooms/'+code]));
+await ev(A,()=>rmStart());await sleep(6800);
+console.log('oyun',await ev(A,()=>st.screen+' '+st.g.q.txt),await ev(B,()=>st.screen+' '+st.g.q.txt));
+for(const p of [A,B])await ev(p,()=>{st.g.score=p=Math.floor(Math.random()*50)+10;st.g.hearts=0;st.g.log=[{s:1}];endGame()});
+await sleep(2500);
+console.log('son',await ev(A,()=>st.screen+' | '+document.getElementById('r-me').innerText),Object.keys(S.store).filter(k=>k.startsWith('lbr')));
+console.log('log',S.log);await b.close()})();

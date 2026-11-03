@@ -1,0 +1,22 @@
+const {chromium}=require('playwright');const fs=require('fs');
+const mock=fs.readFileSync(__dirname+'/mockfb.js','utf8');
+const strict=`(function(){var s=__MC_FB.setDoc;__MC_FB.setDoc=function(r,d){if(/^lb[gr]_/.test(r.path)){if(!(Number.isInteger(d.score)&&d.score>=0&&d.score<=5000&&typeof d.nick==='string'&&d.nick.length>=1&&d.nick.length<=12)){window.__rej=(window.__rej||0)+1;var e=new Error('permission-denied');return Promise.reject(e)}}return s(r,d)}})();`;
+(async()=>{const b=await chromium.launch();const errs=[];
+const ctx=await b.newContext({viewport:{width:390,height:844}});
+const p=await ctx.newPage();p.on('pageerror',e=>errs.push(e.message));await p.addInitScript(mock);await p.addInitScript(strict);
+await p.addInitScript(`window.__DB['lbr_add_o/x']={nick:'Umut',score:108,ts:1};`);
+await p.goto(''+(process.env.MC_URL||'file://'+require('path').resolve(__dirname,'../index.html'))+'');
+await p.evaluate(()=>{localStorage.setItem('mc_lbfix1','true');localStorage.setItem('mc_profiles','["Ali"]');st.profile='Ali';RC.lv='o';go('rcreate')});
+await p.evaluate(()=>rmCreate('add',0));await p.waitForTimeout(400);await p.evaluate(()=>rmStart());await p.waitForTimeout(6300);
+console.log('1',await p.evaluate(()=>st.screen+' lv='+st.g.lv));
+await p.evaluate(()=>{st.g.score=312;st.g.hearts=0;st.g.log=[{s:1}];endGame()});await p.waitForTimeout(1200);
+console.log('2 tablo:',await p.evaluate(()=>JSON.stringify(Object.keys(__DB).filter(k=>k.startsWith('lbr')).map(k=>k+'='+__DB[k].nick+':'+__DB[k].score))+' reddedilen='+(window.__rej||0)));
+console.log('  kutu:',await p.evaluate(()=>document.getElementById('lb-box').innerText.replace(/\n/g,' ')));
+await p.evaluate(()=>{rmLeave();lbOpen('race','add','o')});await p.waitForTimeout(300);await p.waitForTimeout(600);
+console.log('3 rekor ekranı:',await p.evaluate(()=>document.body.innerText.replace(/\n+/g,' | ').slice(0,300)));
+// backfill
+const q=await (await b.newContext()).newPage();q.on('pageerror',e=>errs.push(e.message));await q.addInitScript(mock);await q.addInitScript(strict);
+await q.addInitScript(()=>{localStorage.setItem('mc_rbest',JSON.stringify({Can:{add:320,add_o:150,mul_t6:99},Ece:{add:200,rnd_z:44}}))});
+await q.goto(''+(process.env.MC_URL||'file://'+require('path').resolve(__dirname,'../index.html'))+'');await q.waitForTimeout(4500);
+console.log('4 geri yükleme:',await q.evaluate(()=>JSON.stringify(Object.keys(__DB).filter(k=>k.startsWith('lb')).map(k=>k.split('/')[0]+'='+__DB[k].nick+':'+__DB[k].score))+' flag='+localStorage.getItem('mc_lbfix1')+' rej='+(window.__rej||0)));
+console.log('errs',errs);await b.close()})();
