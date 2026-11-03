@@ -39,6 +39,19 @@ service cloud.firestore {
       }
     }
 
+    // Otomatik yedek: belge id = 10 karakterlik gizli yedek kodu; sadece tek belge okunur (liste yok)
+    match /bk/{code} {
+      allow get: if signedIn();
+      allow create: if signedIn() && code.size() == 10
+        && request.resource.data.u == request.auth.uid
+        && request.resource.data.keys().hasOnly(['u', 'd', 'ts', 'v'])
+        && request.resource.data.d is string && request.resource.data.d.size() < 900000;
+      allow update: if signedIn() && resource.data.u == request.auth.uid
+        && request.resource.data.u == request.auth.uid
+        && request.resource.data.keys().hasOnly(['u', 'd', 'ts', 'v'])
+        && request.resource.data.d is string && request.resource.data.d.size() < 900000;
+    }
+
     // Rekorlar tablosu: her cihaz, her kategori için tek belge; sadece kendi belgesi, puan sadece artabilir
     match /{coll}/{uid} {
       allow read: if signedIn() && lbOk(coll);

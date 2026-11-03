@@ -30,14 +30,14 @@ h1{font-size:28px;margin:8px 0 4px}
 .btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:16px;padding:22px 12px;font-size:19px;font-weight:600;text-align:center;width:100%}
 .btn:active{transform:scale(.98)}
 .btn .big{display:block;font-size:34px;margin-bottom:4px;color:var(--accent)}
-.btn small{display:block;font-weight:400;color:var(--muted);font-size:13px;margin-top:2px}
+.btn small{display:block;font-weight:400;color:var(--muted);font-size:15px;margin-top:2px}
 .score{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:8px;margin-bottom:14px}
-.pill{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-align:center;font-size:12px;color:var(--muted)}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 4px;text-align:center;font-size:14px;color:var(--muted)}
 .pill b{display:block;font-size:19px;color:var(--text)}
 .pill.main{background:var(--accent);border-color:var(--accent);color:var(--accent-t)}
 .pill.main b{color:var(--accent-t);font-size:24px}
 .q{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px 12px;text-align:center;font-size:clamp(30px,10vw,44px);font-weight:700;margin-bottom:16px;letter-spacing:1px;overflow-wrap:anywhere}
-.tag{font-size:13px;color:var(--muted);text-align:center;margin-bottom:8px}
+.tag{font-size:15px;color:var(--muted);text-align:center;margin-bottom:8px}
 .opt{font-size:26px;padding:18px 8px}
 .opt.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
 .opt.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
@@ -53,7 +53,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .prow{display:flex;gap:8px}.prow .btn{flex:1}
 .del{border:1px solid var(--bad);color:var(--bad);background:var(--card);border-radius:16px;padding:0 20px;font-size:22px}
 .fmt{text-align:right;margin-bottom:6px}
-.mini{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:8px 12px;font-size:14px;font-weight:600}
+.mini{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:8px 14px;font-size:16px;font-weight:600;min-height:44px}
 #ov{position:fixed;inset:0;background:rgba(10,8,25,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
 #ov.solid{background:var(--bg)}
 #ov[hidden]{display:none}
@@ -90,13 +90,13 @@ h1{font-size:28px;margin:8px 0 4px}
 .pod.g1{background:#fde047;color:#2a1b6e;font-size:24px}
 .pod .sc{margin-left:auto}
 .tabs{display:flex;gap:8px;margin-bottom:10px}.tabs button{flex:1;border:2px solid var(--accent);background:transparent;color:var(--accent);border-radius:14px;padding:12px 6px;font-size:16px;font-weight:700}.tabs button.on{background:var(--accent);color:var(--accent-t)}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:20px;padding:8px 12px;font-size:15px;font-weight:600}.chip.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.chip{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:22px;padding:8px 16px;font-size:17px;font-weight:600;min-height:46px;min-width:46px}.chip.on{background:var(--accent);color:var(--accent-t);border-color:var(--accent)}
 .lbx{text-align:center}
 .zr{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px;font-size:15px;line-height:1.5;text-align:center}.zr:empty{display:none}.zr .zt{color:var(--ok);font-weight:700}
 .gd p,.gd li{font-size:16px;line-height:1.55}.gd ul{padding-left:20px;margin:8px 0 0}.gd p{margin:8px 0 0}
-.lnk{font-size:13px;word-break:break-all;color:var(--muted);margin:6px 0}
+.lnk{font-size:15px;word-break:break-all;color:var(--muted);margin:6px 0}
 details.pbox summary{cursor:pointer;font-size:17px}
-.cdbox{text-align:center;padding-top:22px;font-size:18px;font-weight:700;color:var(--muted,#667)}.cdbox #cdn{font-size:34px;color:var(--accent);font-weight:800}.zc:empty{display:none}.gpop.big{top:34%;bottom:auto;font-size:24px;padding:18px 14px;border-width:3px}.gpop.big small{font-size:16px}.gpop.win{border-color:var(--ok);box-shadow:0 0 0 6px rgba(31,157,85,.25),0 8px 24px rgba(0,0,0,.25)}.gpop.lose{border-color:#f59e0b;box-shadow:0 0 0 6px rgba(245,158,11,.3),0 8px 24px rgba(0,0,0,.25)}.gpop.sp{border-color:var(--accent);box-shadow:0 0 0 6px rgba(112,72,232,.25),0 8px 24px rgba(0,0,0,.25)}.dsc{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px}.dside{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center;min-width:0}.dside.hit{border-color:var(--ok);background:var(--ok-bg);animation:hop .5s}.dnm{font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dpt{font-size:40px;font-weight:800;color:var(--accent);line-height:1.1}.dvs{font-size:26px;text-align:center}.dvs small{display:block;font-size:12px;color:var(--muted)}.dint{text-align:center;padding-top:9vh;overflow:hidden;animation:shk .4s 1.45s}.dn{font-size:36px;font-weight:800;opacity:0;overflow-wrap:anywhere}.dn1{color:var(--accent);animation:dnl .5s ease-out forwards}.dn2{color:#ec4899;animation:dnr .5s ease-out .7s forwards}@keyframes dnl{from{opacity:0;transform:translateX(-120%)}to{opacity:1;transform:none}}@keyframes dnr{from{opacity:0;transform:translateX(120%)}to{opacity:1;transform:none}}.dsw{position:relative;height:120px;margin:14px 0}.dsw span{position:absolute;top:14px;left:50%;font-size:76px;line-height:1;opacity:0}.sw1{margin-left:-62px;animation:sw1 .35s ease-in 1.1s forwards}.sw2{margin-left:-14px;animation:sw2 .35s ease-in 1.1s forwards}@keyframes sw1{from{opacity:1;transform:translateX(-140px) rotate(-70deg)}to{opacity:1;transform:translateX(0) rotate(0)}}@keyframes sw2{from{opacity:1;transform:translateX(140px) scaleX(-1) rotate(-70deg)}to{opacity:1;transform:translateX(0) scaleX(-1) rotate(0)}}.dfl{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px;border-radius:50%;background:#fde047;opacity:0;animation:dfl .55s ease-out 1.45s}@keyframes dfl{0%{opacity:0;transform:scale(.2)}25%{opacity:1;transform:scale(5)}100%{opacity:0;transform:scale(8)}}.dwin{opacity:0;animation:dfi .4s 1.9s forwards;font-size:19px;color:var(--muted);margin-top:14px}@keyframes dfi{to{opacity:1}}.zc{text-align:center;line-height:1.8;margin-top:8vh;padding:20px 14px;font-size:22px;background:var(--card);border:2px solid var(--accent);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.12)}.zc b{font-size:26px}.gpop{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:calc(100% - 32px);max-width:440px;background:var(--card);border:2px solid var(--ok);border-radius:14px;padding:10px 12px;text-align:center;font-size:16px;line-height:1.5;z-index:60;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:gpin .25s ease-out}@keyframes gpin{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.cdbox{text-align:center;padding-top:22px;font-size:18px;font-weight:700;color:var(--muted,#667)}.cdbox #cdn{font-size:34px;color:var(--accent);font-weight:800}.zc:empty{display:none}.gpop.big{top:34%;bottom:auto;font-size:24px;padding:18px 14px;border-width:3px}.gpop.big small{font-size:16px}.gpop.win{border-color:var(--ok);box-shadow:0 0 0 6px rgba(31,157,85,.25),0 8px 24px rgba(0,0,0,.25)}.gpop.lose{border-color:#f59e0b;box-shadow:0 0 0 6px rgba(245,158,11,.3),0 8px 24px rgba(0,0,0,.25)}.gpop.sp{border-color:var(--accent);box-shadow:0 0 0 6px rgba(112,72,232,.25),0 8px 24px rgba(0,0,0,.25)}.dsc{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px}.dside{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px 6px;text-align:center;min-width:0}.dside.hit{border-color:var(--ok);background:var(--ok-bg);animation:hop .5s}.dnm{font-size:15px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dpt{font-size:40px;font-weight:800;color:var(--accent);line-height:1.1}.dvs{font-size:26px;text-align:center}.dvs small{display:block;font-size:14px;color:var(--muted)}.dint{text-align:center;padding-top:9vh;overflow:hidden;animation:shk .4s 1.45s}.dn{font-size:36px;font-weight:800;opacity:0;overflow-wrap:anywhere}.dn1{color:var(--accent);animation:dnl .5s ease-out forwards}.dn2{color:#ec4899;animation:dnr .5s ease-out .7s forwards}@keyframes dnl{from{opacity:0;transform:translateX(-120%)}to{opacity:1;transform:none}}@keyframes dnr{from{opacity:0;transform:translateX(120%)}to{opacity:1;transform:none}}.dsw{position:relative;height:120px;margin:14px 0}.dsw span{position:absolute;top:14px;left:50%;font-size:76px;line-height:1;opacity:0}.sw1{margin-left:-62px;animation:sw1 .35s ease-in 1.1s forwards}.sw2{margin-left:-14px;animation:sw2 .35s ease-in 1.1s forwards}@keyframes sw1{from{opacity:1;transform:translateX(-140px) rotate(-70deg)}to{opacity:1;transform:translateX(0) rotate(0)}}@keyframes sw2{from{opacity:1;transform:translateX(140px) scaleX(-1) rotate(-70deg)}to{opacity:1;transform:translateX(0) scaleX(-1) rotate(0)}}.dfl{position:absolute;left:50%;top:50%;width:24px;height:24px;margin:-12px;border-radius:50%;background:#fde047;opacity:0;animation:dfl .55s ease-out 1.45s}@keyframes dfl{0%{opacity:0;transform:scale(.2)}25%{opacity:1;transform:scale(5)}100%{opacity:0;transform:scale(8)}}.dwin{opacity:0;animation:dfi .4s 1.9s forwards;font-size:19px;color:var(--muted);margin-top:14px}@keyframes dfi{to{opacity:1}}.zc{text-align:center;line-height:1.8;margin-top:8vh;padding:20px 14px;font-size:22px;background:var(--card);border:2px solid var(--accent);border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.12)}.zc b{font-size:26px}.gpop{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);width:calc(100% - 32px);max-width:440px;background:var(--card);border:2px solid var(--ok);border-radius:14px;padding:10px 12px;text-align:center;font-size:16px;line-height:1.5;z-index:60;pointer-events:none;box-shadow:0 6px 20px rgba(0,0,0,.25);animation:gpin .25s ease-out}@keyframes gpin{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 #cdn{font-size:140px;font-weight:800;color:var(--accent)}
 .pbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:18px;line-height:1.5;margin:10px 0;text-align:left}
 .pbox ul,.pbox ol{margin:4px 0 8px 20px;padding:0}
@@ -137,6 +137,8 @@ function ls(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
 function profiles(){return ls('mc_profiles',[])}
 function records(){return ls('mc_records',[])}
+/* profil başına son 200 kayıt */
+function recTrim(l){var c={},i,o=[];for(i=l.length-1;i>=0;i--){var p=l[i].p;c[p]=(c[p]||0)+1;if(c[p]<=200)o.push(l[i])}return o.reverse()}
 function pad(n){return n<10?'0'+n:''+n}
 function fmtDate(d){return pad(d.getDate())+'.'+pad(d.getMonth()+1)+'.'+d.getFullYear()}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
@@ -402,7 +404,61 @@ function devAuth(){
     }).then(function(c){CL.user=c.user;return fb});
   });
 }
-function cloudQueue(){}
+/* ---------- otomatik bulut yedeği ---------- */
+var BKK=['mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_gnick','mc_vert','mc_audio'],BK={busy:false,t:null};
+function cloudQueue(){bkSoon()}
+function bkSoon(){if(BK.t)clearTimeout(BK.t);BK.t=setTimeout(function(){BK.t=null;bkRun()},15000)}
+function bkHash(x){var h=5381,i;for(i=0;i<x.length;i++)h=((h<<5)+h+x.charCodeAt(i))|0;return String(h)+':'+x.length}
+function bkCode(){var c=ls('mc_bk',''),i;if(!c||c.length!==10){c='';for(i=0;i<10;i++)c+=RCH.charAt(Math.floor(Math.random()*RCH.length));lsSet('mc_bk',c)}return c}
+function bkFmt(c){return c.slice(0,4)+'-'+c.slice(4,8)+'-'+c.slice(8)}
+function bkData(){
+  var o={},r,c={},i;
+  BKK.forEach(function(k){var v=localStorage.getItem(k);if(v!==null)o[k]=v});
+  try{r=JSON.parse(o.mc_records||'[]');for(i=r.length-1;i>=0;i--){var p=r[i].p;c[p]=(c[p]||0)+1;if(c[p]>40&&r[i].qs){r[i]=Object.assign({},r[i]);delete r[i].qs}}o.mc_records=JSON.stringify(r)}catch(e){}
+  return JSON.stringify(o);
+}
+function bkRun(force){
+  if(BK.busy||!navigator.onLine||!profiles().length)return Promise.resolve(false);
+  var d=bkData(),h=bkHash(d);
+  if(!force&&h===ls('mc_bkh',''))return Promise.resolve(false);
+  if(d.length>900000)return Promise.resolve(false);
+  BK.busy=true;
+  return devAuth().then(function(fb){
+    if(!CL.user)throw 0;
+    return fb.setDoc(fb.doc(CL.db,'bk',bkCode()),{u:CL.user.uid,d:d,ts:Date.now(),v:1});
+  }).then(function(){lsSet('mc_bkh',h);lsSet('mc_bkt',Date.now());BK.busy=false;var e=document.getElementById('bk-t');if(e)e.textContent=bkWhen();return true},function(e){
+    BK.busy=false;
+    if(e&&String(e.code||'').indexOf('permission')>=0){localStorage.removeItem('mc_bk');localStorage.removeItem('mc_bkh')}
+    return false;
+  });
+}
+function bkWhen(){var t=ls('mc_bkt',0);if(!t)return 'henüz yok';var d=new Date(t);return fmtDate(d)+' '+fmtTime(d)}
+function bkBox(){
+  if(!profiles().length)return '';
+  return '<div class="pbox" style="text-align:center"><b>☁️ Otomatik yedek açık</b><br><small>Son yedek: <span id="bk-t">'+bkWhen()+'</span></small><div style="margin:8px 0 4px">Yedek kodun:</div><div class="rcode" style="font-size:26px;letter-spacing:3px">'+bkFmt(bkCode())+'</div><small>Bu kodu sakla ya da öğretmenine gönder. Telefon değişirse ya da veriler silinirse bu kodla geri yüklersin.</small><button class="ghost" style="margin-top:8px" onclick="bkShare()">📤 Kodu Paylaş / Kopyala</button></div>';
+}
+function bkShare(){
+  var t='Matematik Canavarı yedek kodum: '+bkFmt(bkCode());
+  if(navigator.share)navigator.share({text:t}).catch(function(){});
+  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Kod kopyalandı')},function(){toast(t)});
+  else toast(t);
+}
+function bkRestore(){
+  var e=document.getElementById('bk-in'),c=String(e?e.value:'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(c.length!==10){toast('Yedek kodu 10 harf/rakam olmalı');return}
+  if(!navigator.onLine){toast('İnternet bağlantısı yok');return}
+  toast('Yedek aranıyor…');
+  devAuth().then(function(fb){if(!CL.user)throw 0;return fb.getDoc(fb.doc(CL.db,'bk',c))}).then(function(sn){
+    if(!sn.exists()){toast('Bu koda ait yedek bulunamadı');return}
+    var x=sn.data(),o=JSON.parse(x.d),pr=[];try{pr=JSON.parse(o.mc_profiles||'[]')}catch(er){}
+    modal('Yedek bulundu: <b>'+pr.length+' profil</b> ('+pr.map(esc).join(', ')+')<br><small>'+fmtDate(new Date(x.ts))+' '+fmtTime(new Date(x.ts))+'</small><br>Bu telefondaki veriler yedekle değiştirilecek.','Geri yükle','Vazgeç',function(){
+      BKK.forEach(function(k){if(o[k]!==undefined)localStorage.setItem(k,o[k]);else localStorage.removeItem(k)});
+      localStorage.removeItem('mc_bk');localStorage.removeItem('mc_bkh');
+      toast('Geri yüklendi. Yeni yedek kodun bu ekranda');st.profile=null;
+      bkRun(true);go('profiles');
+    },null);
+  }).catch(function(){toast('Bağlanılamadı, tekrar dene')});
+}
 
 /* ---------- ses ve müzik (Web Audio, dosyasız) ---------- */
 var AU={ctx:null,master:null,sg:null,mg:null,nb:null,sfx:true,mus:true,run:false,timer:null,step:0,next:0,bpm:100};
@@ -656,7 +712,7 @@ function gSave(){
   if(g.race)r.rm=g.race.code;
   for(i=l.length-1;i>=0;i--){if(l[i].id===g.sid){l[i]=r;break}}
   if(i<0)l.push(r);
-  var done=lsSet('mc_records',l);
+  var done=lsSet('mc_records',recTrim(l));
   if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
   else cloudQueue();
   return done;
@@ -732,7 +788,7 @@ function drawGame(cv){
 function saveGame(){shareCanvas(document.getElementById('gcard'),'matematik-canavari-oyun.png')}
 
 /* ---------- yarış odaları ---------- */
-var RM={nick:'',code:null,host:false,room:null,players:[],unsubs:[],started:false,fb:null,cd:null,chk:null,fin:false};
+var RM={nick:'',code:null,host:false,room:null,players:[],unsubs:[],started:false,fb:null,cd:null,chk:null,fin:false,seen:{},sig:{},hb:null,me:null};
 var RCH='ABCDEFGHJKLMNPRSTUVYZ23456789';
 var QV=3; /* 3=1'e 1 kapışma;  soru üretimi sürümü: 1=sadece Kolay, 2=seviye ve tablo; oda bu sürümden yüksekse katılınamaz */
 function rmNick(){
@@ -764,7 +820,8 @@ function rmReset(){
   RM.unsubs=[];RM.code=null;RM.host=false;RM.room=null;RM.players=[];RM.started=false;RM.fin=false;
   if(RM.cd){clearInterval(RM.cd);RM.cd=null}
   if(RM.chk){clearInterval(RM.chk);RM.chk=null}
-  RM.ast=false;BOT.on=false;
+  RM.ast=false;BOT.on=false;RM.seen={};RM.sig={};RM.me=null;
+  if(RM.hb){clearInterval(RM.hb);RM.hb=null}
   if(DU){duStop();DU=null}
 }
 function rmCreate(op,tbs){
@@ -891,7 +948,7 @@ function duBeat(){
   if(!DU)return;
   if(!DU.over)duWrite();
   var o=duOpp();
-  if(!DU.over&&!DU.left&&(!o||o.done||Date.now()-DU.seen>25000))duLeft();
+  if(!DU.over&&!DU.left&&(!o||o.done||Date.now()-DU.seen>45000))duLeft();
 }
 function duRound(k){
   if(!DU||DU.over)return;
@@ -1012,7 +1069,7 @@ function duOverHtml(){
   return topBar('⚔️ Kapışma bitti')+'<div class="pbox" style="text-align:center"><div style="font-size:28px;font-weight:800;margin-bottom:6px">'+t+'</div><div class="dsc" style="margin:10px 0">'+duScoreHtml()+'</div><div class="sub">'+s+'</div></div>'+
     '<div id="dre"></div><canvas id="dcard" class="card wide"></canvas><button class="ghost" onclick="shareCanvas(document.getElementById(\'dcard\'),\'matematik-canavari-kapisma.png\')">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" onclick="duExit()">🏠 Çık</button>';
 }
-function duExit(){if(DU&&DU.bot){duStop();DU=null;BOT.on=false;go('rooms')}else rmLeave()}
+function duExit(){if(DU&&DU.bot){duStop();DU=null;BOT.on=false;go(BOT.from||'rooms')}else rmLeave()}
 function duOverUi(){
   var e=document.getElementById('dre');if(!e||!DU)return;
   if(DU.bot){e.innerHTML='<button class="next" onclick="botAgain()">🔁 Rövanş</button><button class="ghost" onclick="duStop();DU=null;go(\'bpick\')">👾 Başka canavar seç</button>';return}
@@ -1031,7 +1088,8 @@ function duQuit(){modal('Kapışmadan çıkarsan yenilmiş sayılırsın.<br>Ç�
 /* ---------- Canavara Karşı Savaş (internetsiz) ---------- */
 var BOTS={y:{n:'Yavru Canavar',e:'🐣',d:'Kolay',t:[3000,5000],p:0.7},c:{n:'Canavar',e:'👾',d:'Normal',t:[1500,3000],p:0.85},d:{n:'Dev Canavar',e:'🐉',d:'Zor',t:[800,1500],p:0.95}};
 var BLF={k:1,o:1.5,z:2};
-var BOT={on:false,b:'c',lv:'k',win:10,op:'add',tb:0,seed:1};
+var BOT={on:false,b:'c',lv:'k',win:10,op:'add',tb:0,seed:1,from:'rooms'};
+function botOpen(f){BOT.from=f||'rooms';go('bpick')}
 function botPick(b){BOT.b=b;BOT.lv={y:'k',c:'o',d:'z'}[b]||'k';go('bset')}
 function botSet(k,v){BOT[k]=v;render()}
 function botOp(o){botGo(o,0)}
@@ -1129,6 +1187,7 @@ function rmEnter(fb,code,host,room){
   RM.code=code;RM.host=host;RM.room=room;RM.fb=fb;
   RM.nick=rmNick();
   var p={nick:RM.nick,score:0,hearts:GHEARTS,ok:0,bad:0,n:0,tt:0,done:false,ts:Date.now(),rid:room.created};
+  RM.me=p;RM.hb=setInterval(rmBeat,5000);
   return fb.setDoc(fb.doc(CL.db,'rooms',code,'players',CL.user.uid),p).then(function(){
     RM.unsubs.push(fb.onSnapshot(fb.doc(CL.db,'rooms',code),function(s){
       if(RM.code!==code)return;
@@ -1138,7 +1197,7 @@ function rmEnter(fb,code,host,room){
       else if(st.screen==='lobby')render();
     },function(){}));
     RM.unsubs.push(fb.onSnapshot(fb.collection(CL.db,'rooms',code,'players'),function(qs){
-      var l=[];qs.forEach(function(d){var x=d.data();x.uid=d.id;if(RM.room&&x.rid===RM.room.created)l.push(x)});
+      var l=[],now=Date.now();qs.forEach(function(d){var x=d.data();x.uid=d.id;if(RM.room&&x.rid===RM.room.created){l.push(x);var sg=x.ts+'|'+x.n+'|'+x.score+'|'+x.done+'|'+(x.m||0);if(RM.sig[x.uid]!==sg){RM.sig[x.uid]=sg;RM.seen[x.uid]=now}}});
       RM.players=l;rmRefresh();
     },function(){}));
     go('lobby');
@@ -1221,15 +1280,25 @@ function myRank(){
 function rankHtml(){
   var l=raceSorted(),me=CL.user?CL.user.uid:'',h='',i;
   for(i=0;i<l.length;i++){
-    if(i<4||l[i].uid===me)h+='<div class="rrow'+(l[i].uid===me?' me':'')+'"><span>'+(i+1)+'. '+esc(l[i].nick)+'</span><span>'+l[i].score+' · '+(l[i].done?'🏁':'❤️'+l[i].hearts)+'</span></div>';
+    if(i<4||l[i].uid===me)h+='<div class="rrow'+(l[i].uid===me?' me':'')+'"><span>'+(i+1)+'. '+esc(l[i].nick)+'</span><span>'+l[i].score+' · '+(l[i].done?'🏁':(rmLost(l[i])?'📶 koptu':'❤️'+l[i].hearts))+'</span></div>';
   }
   return h;
 }
 function lobbyList(){
   var h='';
-  RM.players.forEach(function(p){h+='<div class="rrow"><span>'+(RM.room&&p.uid===RM.room.host?'👑 ':'🙂 ')+esc(p.nick)+'</span></div>'});
+  RM.players.forEach(function(p){h+='<div class="rrow"><span>'+(RM.room&&p.uid===RM.room.host?'👑 ':'🙂 ')+esc(p.nick)+'</span>'+(rmLost(p)?'<span>📶 bağlantısı koptu</span>':'')+'</div>'});
   return h;
 }
+/* yarışta: 10 sn'de bir "buradayım" sinyali; 30 sn sinyal gelmeyen oyuncu "bağlantısı koptu" */
+function rmBeat(){
+  if(!RM.fb||!RM.code||!CL.user||duOn())return;
+  RM.bt=(RM.bt||0)+1;
+  if(RM.bt%2){rmRefresh();return}
+  if(st.g&&st.g.race&&!st.g.done&&st.screen==='game')raceSend(false);
+  else if(RM.room&&RM.room.status==='lobby'&&RM.me){RM.me.ts=Date.now();RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',CL.user.uid),RM.me).catch(function(){})}
+  rmRefresh();
+}
+function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 function rmRefresh(){
   var s=st.screen,e;
   if(duOn()&&RM.room.status==='lobby'){
@@ -1248,7 +1317,7 @@ function rmRefresh(){
 }
 function roverState(){
   var l=raceSorted(),now=Date.now(),all=true;
-  l.forEach(function(p){if(!p.done&&now-p.ts<90000)all=false});
+  l.forEach(function(p){var me=CL.user&&p.uid===CL.user.uid,seen=RM.seen[p.uid]||now;if(!p.done&&(me||now-seen<45000))all=false});
   return {l:l,all:all};
 }
 function roverUpdate(){
@@ -1256,8 +1325,8 @@ function roverUpdate(){
   var s=roverState(),h='',med=['🥇','🥈','🥉'],i,p,me=CL.user?CL.user.uid:'';
   for(i=0;i<s.l.length;i++){
     p=s.l[i];
-    if(i<3)h+='<div class="pod'+(i===0?' g1':'')+'"><span>'+med[i]+'</span><span>'+esc(p.nick)+'</span><span class="sc">'+p.score+(p.done?'':' ⏳')+'</span></div>';
-    else h+='<div class="rrow'+(p.uid===me?' me':'')+'"><span>'+(i+1)+'. '+esc(p.nick)+'</span><span>'+p.score+(p.done?'':' ⏳')+'</span></div>';
+    if(i<3)h+='<div class="pod'+(i===0?' g1':'')+'"><span>'+med[i]+'</span><span>'+esc(p.nick)+'</span><span class="sc">'+p.score+(p.done?'':(rmLost(p)?' 📶':' ⏳'))+'</span></div>';
+    else h+='<div class="rrow'+(p.uid===me?' me':'')+'"><span>'+(i+1)+'. '+esc(p.nick)+'</span><span>'+p.score+(p.done?'':(rmLost(p)?' 📶 koptu':' ⏳'))+'</span></div>';
   }
   document.getElementById('r-list').innerHTML=h;
   var g=st.g,rk=myRank(),me2=document.getElementById('r-me');
@@ -1561,12 +1630,12 @@ function rhistHtml(){
 var GV={from:'welcome',open:null};
 var GUIDE=[
  {id:'what',t:'🐲 Bu uygulama ne işe yarar?',h:'<p>Matematik Canavarı ile <b>toplama, çıkarma, çarpma ve bölme</b> çalışırsın.</p><p>Ana menüde 4 bölüm var:</p><ul><li><b>İşlemler:</b> Sakin sakin işlem çözersin.</li><li><b>Problemler:</b> Hikâyeli sorular çözersin.</li><li><b>Akıldan İşlem Oyunu:</b> Hızlı cevap verip rekor kırarsın.</li><li><b>Yarış Odası:</b> Arkadaşlarınla aynı sorularla yarışırsın.</li></ul><p>İnternet sadece <b>Yarış Odası</b> ve <b>Rekorlar Tablosu</b> için gerekir. Diğerleri internetsiz çalışır.</p>'},
- {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> Bir takma ad yazıp profil oluşturursun. Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın. İşlemler ve Problemler sonuçların kaydedilmez.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar sadece <b>bu telefonda</b> saklanır. Tarayıcı verisi silinirse kaybolur.</li></ul>'},
+ {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> Bir takma ad yazıp profil oluşturursun. Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın. İşlemler ve Problemler sonuçların kaydedilmez.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar bu telefonda saklanır ve internet varken <b>otomatik olarak buluta yedeklenir</b>.</li><li>Profil ekranında <b>yedek kodun</b> yazar. Bu kodu sakla ya da öğretmenine gönder.</li><li>Telefon değişirse ya da veriler silinirse: Profil ekranı → <b>♻️ Yedekten Geri Yükle</b> → kodu yaz.</li><li>Her profilin son 200 oyunu saklanır.</li></ul>'},
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
- {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Arkadaşın yoksa:</b> Yarış Odası → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (kolay sayılar), 👾 Canavar (orta sayılar) ya da 🐉 Dev Canavar (zor sayılar) seç, sonra işlemi seç. İnternet gerekmez.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
- {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) seç.</li><li>Sonra işlemi seç. Oda açılır. Çarpma ya da bölmeyi seçersen önce sorulur: <b>seviyeye göre</b> mi, yoksa tek bir tabloyla mı (<b>📚 Tablo çalış</b>)?</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>5 saniye sayılır, zirve kartı çıkar ve düdükle yarış başlar. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
+ {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Tek başına oynamak için:</b> Yarış Odası → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (kolay sayılar), 👾 Canavar (orta sayılar) ya da 🐉 Dev Canavar (zor sayılar) seç, sonra işlemi seç. İnternet gerekmez.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
+ {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) seç.</li><li>Sonra işlemi seç. Oda açılır. Çarpma ya da bölmeyi seçersen önce sorulur: <b>seviyeye göre</b> mi, yoksa tek bir tabloyla mı (<b>📚 Tablo çalış</b>)?</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>5 saniye sayılır, zirve kartı çıkar ve düdükle yarış başlar. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün. İnterneti kopan oyuncunun yanında <b>📶 bağlantısı koptu</b> yazar; 45 saniye dönmezse yarış onu beklemeden biter.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
  {id:'lb',t:'🏆 Rekorlar Tablosu',h:'<ul><li>Ana menüdeki <b>Rekorlar Tablosu</b>ndan açılır. İnternet gerekir.</li><li>İki sekme var: <b>Akıldan İşlem</b> ve <b>Yarış Odası</b>. İşlem türünü ve seviyeyi (Kolay, Orta, Zor) seçersin. Her seviyenin tablosu ayrıdır.</li><li><b>Tabloyu Paylaş</b> düğmesiyle tablonun fotoğrafını kaydedip gönderebilirsin.</li><li>En yüksek 10 kişi görünür. İlk 10 içinde değilsen kendi sıran altta yazar.</li><li>Her kişinin her işlemde tek satırı vardır. Sadece rekor kırınca yükselir.</li><li>Birinci olursan tebrik ve konfeti çıkar 🎉</li><li>Tabloda <b>adın herkese görünür</b>. Soyadını ya da kişisel bilgini yazma.</li></ul>'},
  {id:'score',t:'📊 Skorlarım ve skor kartı',h:'<ul><li>Profille oynarsan <b>Skorlarım</b> bölümünde son 14 günün skorlarını görürsün.</li><li>Her oturumun sonunda bir <b>skor kartı</b> çıkar.</li><li><b>Fotoğrafı Kaydet / Paylaş</b> ile kartı kaydedip WhatsApp ile öğretmenine gönderebilirsin.</li></ul>'},
  {id:'faq',t:'❓ Sorun çözümü',h:'<ul><li><b>Skorlarım kayboldu:</b> Tarayıcı verisi silinmiş ya da telefon değişmiş olabilir. Skorlar sadece telefonda durur.</li><li><b>Yarışa giremiyorum:</b> İnternetin açık olduğundan, kodu doğru yazdığından ve yarışın başlamadığından emin ol. Oda kodu 24 saat geçerlidir.</li><li><b>"Farklı sürüm" uyarısı:</b> Uygulamayı tamamen kapatıp yeniden aç. Güncellenir.</li><li><b>Rekorlar Tablosu açılmıyor:</b> İnternetini kontrol et, biraz sonra tekrar dene.</li><li><b>Uygulamayı ana ekrana eklemek:</b> Tarayıcı menüsünden "Ana ekrana ekle"ye dokun.</li></ul>'}
@@ -1877,6 +1946,7 @@ function back(){
   if(s==='rjoin'){RJOIN=null;return go('welcome')}
   if(s==='lb')return go(LBV.from||'home');
   if(s==='rhist')return go('rooms');
+  if(s==='bkr')return go('profiles');
   if(s==='rcreate')return go('rooms');
   if(s==='rctb')return go('rcreate');
   if(s==='rover'){if(!roverState().all){toast('Yarış bitmeden çıkamazsın, bekle');return}return rmLeave()}
@@ -1884,7 +1954,7 @@ function back(){
   if(s==='rcount'||s==='gcount'||s==='dintro')return;
   if(s==='duel')return duQuit();
   if(s==='dover')return duExit();
-  if(s==='bpick')return go('rooms');
+  if(s==='bpick')return go(BOT.from||'rooms');
   if(s==='bset')return go('bpick');
   if(s==='btb')return go('bset');
   if(s==='game')return askQuitGame();
@@ -1901,19 +1971,21 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 35</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 36</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
-    h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+    h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>'+bkBox()+'<button class="ghost" onclick="go(\'bkr\')">♻️ Yedekten Geri Yükle</button>';
+  }else if(s==='bkr'){
+    h=topBar('Yedekten Geri Yükle')+'<p class="sub center">Eski telefonundaki <b>yedek kodunu</b> yaz. Profillerin, rekorların ve geçmişin bu telefona gelir.</p><input id="bk-in" class="inp" maxlength="14" autocapitalize="characters" autocomplete="off" placeholder="ABCD-EFGH-JK"><button class="next" onclick="bkRestore()">♻️ Geri Yükle</button><p class="sub center">İnternet gerekir.</p>';
   }else if(s==='home'){
-    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Oda kur ya da koda girerek arkadaşlarınla yarış</small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
+    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="col"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Toplama, çıkarma, çarpma, bölme</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla, rekor kır</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Arkadaşlarınla yarış, 1’e 1 kapış ya da canavarla savaş</small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
     h+='<div style="height:10px"></div><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button>';
   }else if(s==='gmenu'){
     h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre sınırlı, 3 canın var. Önce işlemi, sonra seviyeni seçersin.</p>'+audioBtns()+(st.profile?'':'<input id="g-name" class="inp" maxlength="12" autocomplete="off" placeholder="Adın (rekor tablosunda görünür)" value="'+esc(ls('mc_gnick',''))+'">')+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'game\')">❓ Nasıl oynanır?</button><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="gPick(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>Seviye seç</small></button>'});
-    h+='</div>'+(st.profile?'':'<p class="sub center">Misafir oturumunda rekor sadece oyun açıkken saklanır.</p>');
+    h+='<button class="btn" onclick="botOpen(\'gmenu\')"><span class="big">👾</span>Canavara Karşı Savaş<small>Tek başına oyna: canavarla kapış. İnternet gerekmez</small></button></div>'+(st.profile?'':'<p class="sub center">Misafir oturumunda rekor sadece oyun açıkken saklanır.</p>');
   }else if(s==='gsetup'){
     var so=GS.op;
     h=topBar(gLabel(so))+'<p class="sub center">Seviyeni seç. Dokununca oyun başlar.</p><div class="col">';
@@ -1943,9 +2015,9 @@ function render(){
     profiles().forEach(function(n,i){h+='<button class="btn" onclick="rjPick('+i+')">🙂 '+esc(n)+'</button>'});
     h+='</div><div style="height:14px"></div><input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Misafir adın" value="'+esc(ls('mc_gnick',''))+'"><button class="next" onclick="rjGuest()">👤 Misafir olarak katıl</button>';
   }else if(s==='rooms'){
-    h=topBar('Yarış Odası')+'<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır. İnternet gerekir.</p>';
+    h=topBar('Yarış Odası')+'<p class="sub center">Arkadaşlarınla yarış, 1’e 1 kapış ya da canavarla savaş! Yarış ve kapışma için internet gerekir.</p>';
     if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
-    h+='<button class="btn" onclick="rcGo(\'race\')"><span class="big">➕</span>Oyun Odası Kur<small>Herkes aynı sorularla, en çok puan toplayan kazanır</small></button><button class="btn" onclick="rcGo(\'duel\')"><span class="big">⚔️</span>1’e 1 Kapışma Kur<small>İki kişi: her soruda önce doğru basan puanı alır</small></button><button class="btn" onclick="go(\'bpick\')"><span class="big">👾</span>Canavara Karşı Savaş<small>Arkadaşın yok mu? Canavarla kapış. İnternet gerekmez</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
+    h+='<button class="btn" onclick="rcGo(\'race\')"><span class="big">➕</span>Oyun Odası Kur<small>Herkes aynı sorularla, en çok puan toplayan kazanır</small></button><button class="btn" onclick="rcGo(\'duel\')"><span class="big">⚔️</span>1’e 1 Kapışma Kur<small>İki kişi: her soruda önce doğru basan puanı alır</small></button><button class="btn" onclick="botOpen(\'rooms\')"><span class="big">👾</span>Canavara Karşı Savaş<small>Tek başına oyna: canavarla kapış. İnternet gerekmez</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
   }else if(s==='rcreate'){
     h=topBar(RC.mode==='duel'?'⚔️ Kapışma Kur':'Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)" value="'+esc(RC.code)+'"><div class="tag">Seviye</div><div class="chips">';
     ['k','o','z'].forEach(function(l){h+='<button class="chip'+(RC.lv===l?' on':'')+'" onclick="rcSet(\'lv\',\''+l+'\')">'+LVN[l]+'</button>'});
@@ -2235,7 +2307,7 @@ function saveProgress(){
   var l=records(),i,r={id:st.sid,p:st.profile,t:st.t,op:st.op,e:st.eldeli,d:st.d,s:st.score,ok:st.ok,bad:st.bad,fix:st.fix,qs:st.log,br:st.breakUsed?1:0,k:st.kind==='p'?'p':undefined,m:st.op==='mix'?st.mix:undefined};
   for(i=l.length-1;i>=0;i--){if(l[i].id===st.sid){l[i]=r;break}}
   if(i<0)l.push(r);
-  var done=lsSet('mc_records',l);
+  var done=lsSet('mc_records',recTrim(l));
   if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
   else cloudQueue();
   return done;
@@ -2260,6 +2332,9 @@ st.vert=ls('mc_vert',false);
 render();
 navInit();
 setTimeout(lbBackfill,3000);
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){})}catch(e){}
+setTimeout(function(){bkRun()},6000);
+document.addEventListener('visibilitychange',function(){if(document.hidden&&BK.t){clearTimeout(BK.t);BK.t=null;bkRun()}});
 </script>
 </body>
 </html>
