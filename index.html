@@ -502,6 +502,24 @@ function sndTick(){sfxPlay(function(t){tone(1000,t,0.03,'square',0.12,AU.sg)})}
 function sndWhistle(){sfxPlay(function(t){var c=AU.ctx,o=c.createOscillator(),l=c.createOscillator(),lg=c.createGain(),g=c.createGain();o.type='sine';o.frequency.value=2500;l.frequency.value=40;lg.gain.value=140;l.connect(lg);lg.connect(o.frequency);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.02);g.gain.setValueAtTime(0.7,t+0.4);g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);o.connect(g);g.connect(AU.sg);o.start(t);l.start(t);o.stop(t+0.55);l.stop(t+0.55)})}
 function sndClap(big){sfxPlay(function(t){var c=AU.ctx,n=big?46:26,i,s,b,g,at;for(i=0;i<n;i++){at=t+Math.random()*(big?1.9:1.1);s=c.createBufferSource();s.buffer=AU.nb;b=c.createBiquadFilter();b.type='bandpass';b.frequency.value=1200+Math.random()*1800;b.Q.value=0.8;g=c.createGain();g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.5+Math.random()*0.4,at+0.005);g.gain.exponentialRampToValueAtTime(0.0001,at+0.05);s.connect(b);b.connect(g);g.connect(AU.sg);s.start(at)}})}
 function sndCrunch(){sfxPlay(function(t){var c=AU.ctx,i,s,b,g,at;for(i=0;i<3;i++){at=t+i*0.035;s=c.createBufferSource();s.buffer=AU.nb;b=c.createBiquadFilter();b.type='bandpass';b.frequency.value=1800+Math.random()*1500;b.Q.value=1.2;g=c.createGain();g.gain.setValueAtTime(0.0001,at);g.gain.exponentialRampToValueAtTime(0.6,at+0.004);g.gain.exponentialRampToValueAtTime(0.0001,at+0.045);s.connect(b);b.connect(g);g.connect(AU.sg);s.start(at)}})}
+/* hazır ses dosyaları (sw.js önbelleğinde) */
+var SMP={};
+function smpLoad(n){
+  if(SMP[n])return SMP[n];
+  var c=auCtx();if(!c||!window.fetch)return Promise.resolve(null);
+  SMP[n]=fetch(n).then(function(r){return r.arrayBuffer()}).then(function(b){return new Promise(function(res){c.decodeAudioData(b,res,function(){res(null)})})}).catch(function(){return null});
+  return SMP[n];
+}
+function smpPlay(n,vol,alt){
+  if(!AU.sfx)return;
+  var c=auCtx();if(!c){if(alt)alt();return}
+  smpLoad(n).then(function(buf){
+    if(!buf){if(alt)alt();return}
+    if(SMP['_'+n]){try{SMP['_'+n].stop()}catch(e){}}
+    var s=c.createBufferSource(),g=c.createGain();g.gain.value=vol||1;s.buffer=buf;s.connect(g);g.connect(AU.sg);s.start();SMP['_'+n]=s;
+  });
+}
+function smpStop(n){var x=SMP['_'+n];if(x){try{x.stop()}catch(e){}SMP['_'+n]=null}}
 function sndWin(){sfxPlay(function(t){var L=[72,76,79,84,79,84],i;for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.12,0.2,'triangle',0.5,AU.sg);tone(mf(88),t+0.72,0.5,'sine',0.3,AU.sg)})}
 function sndEnd(){sfxPlay(function(t){var L=[79,76,72],i;for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.18,0.25,'triangle',0.45,AU.sg)})}
 
@@ -745,7 +763,7 @@ function endGame(){
   if(gT){clearInterval(gT);gT=null}
   if(g.race){sndEnd();if(g.log.length)gSave();raceSend(true);if(!g.tb)lbRun(g,'race',g.score,RM.nick);go('rover');return}
   g.newBest=g.score>g.bestOld&&g.score>0;
-  if(g.newBest)sndWin();else sndEnd();
+  if(g.newBest)smpPlay('win.mp3',0.85,sndWin);else sndEnd();
   if(g.newBest)bestSet(g.mk,g.score);
   if(g.log.length)gSave();
   if(g.tb)g.lb={practice:true};
@@ -931,6 +949,7 @@ function duWrite(){
 }
 function duStart(m){
   duNew(m);
+  smpLoad('lose.mp3');smpLoad('win.mp3');
   if(!DU.bot)DU.hb=setInterval(duBeat,5000);
   ZP.rows=null;ZP.tb=0;
   go('dintro');
@@ -1048,7 +1067,7 @@ function duEnd(){
   DU.won=won;
   duSave();
   go('dover');
-  if(won){sndWin();sndClap(true);confetti(true)}else sndEnd();
+  if(won){smpPlay('win.mp3',0.85,sndWin);confetti(true)}else smpPlay('lose.mp3',0.7,sndEnd);
 }
 function duLeft(){
   if(!DU||DU.over)return;
@@ -1241,6 +1260,7 @@ function cdRun(done){
   return id;
 }
 function rmCountdown(){
+  smpLoad('win.mp3');
   var rt=(RM.room.tb>=2&&RM.room.tb<=10&&(RM.room.op==='mul'||RM.room.op==='div'))?RM.room.tb|0:0,rl=rt?'k':(RM.room.lv==='o'||RM.room.lv==='z'?RM.room.lv:'k');
   zPre('race',RM.room.op,rl,rt);
   go('rcount');
@@ -1335,7 +1355,7 @@ function roverUpdate(){
   var sv=document.getElementById('r-save'),ex=document.getElementById('r-exit');
   if(sv){sv.disabled=!s.all;sv.textContent=s.all?'📷 Fotoğrafı Kaydet / Paylaş':'📷 Yarış bitince paylaşabilirsin'}
   if(ex){ex.disabled=!s.all;ex.textContent=s.all?'🏠 Yarıştan Çık':'⏳ Yarış bitene kadar bekle'}
-  if(s.all&&!RM.fin){RM.fin=true;rhistSave(s);if(myRank()===1)sndWin();if(g&&g.race)raceFinal(g)}
+  if(s.all&&!RM.fin){RM.fin=true;rhistSave(s);if(myRank()===1)smpPlay('win.mp3',0.85,sndWin);if(g&&g.race)raceFinal(g)}
   drawRace(document.getElementById('rcard'),s);
 }
 function drawRace(cv,s){
@@ -1368,6 +1388,8 @@ function lbCol(kind,op,lv){return (kind==='race'?'lbr_':'lbg_')+op+((lv==='o'||l
 var ZP={rows:undefined,me:'',tb:0,tok:0},GCD=null,gpT=null;
 function zPre(kind,op,lv,tb){
   var tok=++ZP.tok;
+  smpStop('top.mp3');smpStop('win.mp3');
+  if(!tb){smpLoad('pass.mp3');if(kind==='solo'){smpLoad('top.mp3');smpLoad('win.mp3')}}
   ZP.rows=undefined;ZP.me='';ZP.tb=tb;
   if(tb||!navigator.onLine){ZP.rows=null;return}
   devAuth().then(function(fb){return lbTop(fb,lbCol(kind,op,lv)).then(function(rows){
@@ -1425,7 +1447,7 @@ function gPass(old){
   else h='<div>🎉 <b>Bravo!</b> '+(pas.length>2?pas.length+' kişiyi geçtin: ':'Geçtin: ')+nm+'</div><div>🎯 Sıradaki: <b>'+esc(nx.nick)+'</b> ('+nx.score+') · '+(nx.score-g.score+1)+' puan kaldı</div>';
   g.pop=true;
   gPopShow(h);
-  sndClap(top);
+  smpPlay('pass.mp3',0.8,function(){sndClap(top)});
   if(top)setTimeout(sndWin,300);
 }
 function lbName(s){return String(s||'').trim().slice(0,12)||'Misafir'}
@@ -1481,7 +1503,7 @@ function lbRun(g,kind,cand,nick){
   lbSubmit(kind,g.op,g.lv,g.score,cand,nick).then(function(res){
     if(res&&!res.err)res.score=g.score;
     g.lb=res||{score:g.score,kind:kind,op:g.op,lv:g.lv};lbShowBox(g);
-    if(res&&res.celebrate&&res.rank===1)confetti(true);
+    if(res&&res.celebrate&&res.rank===1){confetti(true);smpStop('win.mp3');smpPlay('top.mp3',0.9)}
   });
 }
 /* Sürüm 21-30 hatası: yarış puanı tabloya yazılmıyordu. Telefonda kayıtlı yarış rekorlarını bir kez tabloya gönder. */
@@ -1971,7 +1993,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 36</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 37</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
