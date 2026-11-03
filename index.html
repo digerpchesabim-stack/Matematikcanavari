@@ -949,7 +949,7 @@ function duWrite(){
 }
 function duStart(m){
   duNew(m);
-  smpLoad('lose.mp3');smpLoad('win.mp3');
+  smpLoad('lose.mp3');smpLoad('win.mp3');smpLoad('tur.mp3');
   if(!DU.bot)DU.hb=setInterval(duBeat,5000);
   ZP.rows=null;ZP.tb=0;
   go('dintro');
@@ -1037,7 +1037,7 @@ function duResolve(){
   DU.sc=duScore();
   for(i=0;i<bs.length;i++){if(q.opts[i].v===q.ans)bs[i].classList.add('ok')}
   var kd='';
-  if(w===1){kd='win';h='<div>🎉 <b>Bu tur senin!</b></div><div><small>'+duSec(a)+' sn'+(b>0?' · '+esc(DU.onick)+' '+duSec(b)+' sn':'')+'</small></div>';sndClap(false)}
+  if(w===1){kd='win';h='<div>🎉 <b>Bu tur senin!</b></div><div><small>'+duSec(a)+' sn'+(b>0?' · '+esc(DU.onick)+' '+duSec(b)+' sn':'')+'</small></div>';smpPlay('tur.mp3',0.8)}
   else if(w===2){kd='lose';h='<div>⚡ <b>'+esc(DU.onick)+' bildi!</b></div><div><small>'+duSec(b)+' sn'+(a>0?' · Sen '+duSec(a)+' sn, biraz geç kaldın':'')+'</small></div>'}
   else h='<div>İkiniz de bilemediniz</div><div><small>Doğrusu: <b>'+q.ans+'</b></small></div>';
   if(msg)msg.textContent='';
@@ -1993,7 +1993,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 37</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 38</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
