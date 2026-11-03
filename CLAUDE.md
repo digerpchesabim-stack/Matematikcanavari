@@ -98,8 +98,13 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 34–35: Canavara Karşı Savaş (sadeleştirilmiş).
 - 36: otomatik bulut yedeği (`bk/{10 karakter kod}`: `{u, d: mc_* JSON, ts, v}`; oyun kaydından 15 sn sonra, açılışta, arka plana geçince; profil ekranında yedek kodu + paylaş; "♻️ Yedekten Geri Yükle" `bkr`; geri yüklenen telefon yeni kod alır), yarışta "📶 bağlantısı koptu" (10 sn sinyal `rmBeat`, yerel alım zamanı `RM.seen`, 30 sn → koptu, 45 sn → yarış beklemez), profil başına son 200 kayıt (`recTrim`), yazı 15 px / dokunma alanı 44–46 px, Yarış Odası metinleri, Canavar modu Akıldan İşlem menüsünde de (`botOpen(from)`), kapışmada 45 sn.
 
-## 9. Bekleyen / yayınlanmamış
-- Yok.
+## 9. Bekleyen / yayınlanmamış (Sürüm 37, `surum-37-onay-bekliyor` dalında, test edildi, yayın onayı bekliyor)
+- Kullanıcının seçtiği hazır ses dosyaları (Pixabay/Freesound kaynaklı), `smpLoad/smpPlay/smpStop` ile çalınır, sw.js önbelleğinde:
+  - `lose.mp3` (352766, kalabalık "ooohh", sondaki sessizlik kesildi, %70 ses): 1'e 1 ve canavar savaşında kaybedince.
+  - `pass.mp3` (6297, ilk 2 sn): Akıldan İşlem'de sıralamada birini geçince (`gPass`).
+  - `top.mp3` (331233, orkestra, 10 sn, KIRPILMADI): oyun sonunda rekor tablosunda 1. olunca; fanfarı keser; yeni oyunda durur.
+  - `win.mp3` (6185, trompet fanfarı): normal kazanma: yeni kişisel rekor, 1'e 1 / canavar zaferi, yarış odası birinciliği.
+- Kapışma/canavar zaferinde eski alkış kaldırıldı (konfeti duruyor). Düdük aynen kaldı.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
