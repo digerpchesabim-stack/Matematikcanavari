@@ -764,7 +764,7 @@ function rmReset(){
   RM.unsubs=[];RM.code=null;RM.host=false;RM.room=null;RM.players=[];RM.started=false;RM.fin=false;
   if(RM.cd){clearInterval(RM.cd);RM.cd=null}
   if(RM.chk){clearInterval(RM.chk);RM.chk=null}
-  RM.ast=false;
+  RM.ast=false;BOT.on=false;
   if(DU){duStop();DU=null}
 }
 function rmCreate(op,tbs){
@@ -830,6 +830,7 @@ function duOpp(){
   return null;
 }
 function duOppR(){
+  if(DU&&DU.bot)return DU.botR;
   var o=duOpp();
   if(!o||!DU)return null;
   var m=o.m|0;
@@ -838,11 +839,12 @@ function duOppR(){
   return null;
 }
 function duNew(m){
+  if(BOT.on)return botNew(m);
   var r=RM.room,tb=(r.tb>=2&&r.tb<=10&&(r.op==='mul'||r.op==='div'))?r.tb|0:0,lv=tb?'k':(r.lv==='o'||r.lv==='z'?r.lv:'k');
   var me=CL.user.uid,o=duPlayers().filter(function(x){return x.uid!==me})[0]||duOpp();
   DU={m:m,k:-1,qs:[],qg:{op:r.op,lv:lv,tb:tb,lastTxt:'',log:[]},seed:r.seed,win:r.win||10,lim:tb?DLIM.k:DLIM[lv],
       me:CL.user.uid,oid:o?o.uid:null,onick:o?o.nick:'Rakip',myR:[],prevR:(DU&&DU.m===m-1)?DU.myR:[],ph:'intro',t0:0,el:0,tm:null,to:null,hb:null,
-      seen:Date.now(),over:false,left:false,want:false,sc:[0,0],lt:99,saved:false};
+      seen:Date.now(),over:false,left:false,want:false,sc:[0,0],lt:99,saved:false,host:RM.room.host};
 }
 function duQ(k){
   var sv=st.g,i,q;
@@ -862,17 +864,17 @@ function duScore(){
 function duWho(a,b){
   if(a>0&&(b<=0||a<b))return 1;
   if(b>0&&(a<=0||b<a))return 2;
-  if(a>0&&b>0&&a===b)return RM.room.host===DU.me?1:2;
+  if(a>0&&b>0&&a===b)return DU.host===DU.me?1:2;
   return 0;
 }
 function duWrite(){
+  if(DU&&DU.bot)return;
   if(!DU||!RM.fb||!CL.user||!RM.code)return;
   RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',CL.user.uid),{nick:RM.nick,score:DU.sc[0],hearts:0,ok:0,bad:0,n:DU.myR.length,tt:0,done:!!DU.quit,ts:Date.now(),rid:RM.room.created,m:DU.want?DU.m+1:DU.m,r:DU.want?[]:DU.myR,pr:DU.want?DU.myR:DU.prevR}).catch(function(){});
 }
 function duStart(m){
   duNew(m);
-  if(DU.hb)clearInterval(DU.hb);
-  DU.hb=setInterval(duBeat,5000);
+  if(!DU.bot)DU.hb=setInterval(duBeat,5000);
   ZP.rows=null;ZP.tb=0;
   go('dintro');
   var c=document.getElementById('dint');
@@ -894,6 +896,7 @@ function duBeat(){
 function duRound(k){
   if(!DU||DU.over)return;
   DU.k=k;DU.ph='q';DU.t0=performance.now();DU.el=0;DU.lt=99;
+  if(DU.bot)botPlan(k);
   var q=duQ(k),e;
   e=document.getElementById('dq');if(e)e.textContent=q.txt+' = ?';
   e=document.getElementById('dgrid');if(e)e.innerHTML=duOptsHtml(q);
@@ -929,6 +932,7 @@ function duMine(v,why){
   DU.ph='wait';
   if(DU.tm){clearInterval(DU.tm);DU.tm=null}
   DU.myR[DU.k]=v;
+  if(DU.bot&&DU.botR[DU.k]===undefined&&v>0){if(DU.bto)clearTimeout(DU.bto);DU.botR[DU.k]=DU.bp.ok?Math.max(DU.bp.t,v+1):-DU.bp.t}
   var m=document.getElementById('dmsg');
   if(m){
     if(why==='ok'){m.style.color='var(--ok)';m.textContent='✓ Doğru! Sonuç bekleniyor…'}
@@ -944,6 +948,7 @@ function duPop(h,k){gPopShow(h);var e=document.querySelector('.gpop');if(e){e.cl
 function duSec(ms){return (Math.round(Math.abs(ms)/100)/10).toFixed(1).replace('.',',')}
 function duSync(){
   if(!DU)return;
+  if(DU.bot){if(DU.ph==='wait'&&DU.botR[DU.k]!==undefined)duResolve();return}
   var o=duOpp();
   if(o&&(o.ts!==DU.ots||o.n!==DU.on||o.m!==DU.om)){DU.ots=o.ts;DU.on=o.n;DU.om=o.m;DU.seen=Date.now()}
   if(!DU.over&&!DU.left&&o&&o.done){duLeft();return}
@@ -998,17 +1003,19 @@ function duSave(){
   if(!st.profile||DU.saved)return;
   DU.saved=true;
   var l=ls('mc_dhist',[]);
-  l.unshift({p:st.profile,t:Date.now(),o:DU.onick,a:DU.sc[0],b:DU.sc[1],w:DU.won?1:0,left:DU.left?1:0,op:DU.qg.op,lv:DU.qg.lv,tb:DU.qg.tb,win:DU.win});
+  l.unshift({p:st.profile,t:Date.now(),o:DU.onick,a:DU.sc[0],b:DU.sc[1],w:DU.won?1:0,left:DU.left?1:0,op:DU.qg.op,lv:DU.qg.lv,tb:DU.qg.tb,win:DU.win,bot:DU.bot||''});
   lsSet('mc_dhist',l.slice(0,100));
 }
 function duOverHtml(){
   var t=DU.won?(DU.left?'🏆 Rakip ayrıldı, kazandın!':'🏆 Kazandın!'):'İyi mücadele! 💪';
   var s=DU.won?'Tebrikler, '+esc(RM.nick)+'!':DU.sc[0]+' puan aldın. Rövanşta sen kazanabilirsin!';
   return topBar('⚔️ Kapışma bitti')+'<div class="pbox" style="text-align:center"><div style="font-size:28px;font-weight:800;margin-bottom:6px">'+t+'</div><div class="dsc" style="margin:10px 0">'+duScoreHtml()+'</div><div class="sub">'+s+'</div></div>'+
-    '<div id="dre"></div><canvas id="dcard" class="card wide"></canvas><button class="ghost" onclick="shareCanvas(document.getElementById(\'dcard\'),\'matematik-canavari-kapisma.png\')">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" onclick="rmLeave()">🏠 Çık</button>';
+    '<div id="dre"></div><canvas id="dcard" class="card wide"></canvas><button class="ghost" onclick="shareCanvas(document.getElementById(\'dcard\'),\'matematik-canavari-kapisma.png\')">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" onclick="duExit()">🏠 Çık</button>';
 }
+function duExit(){if(DU&&DU.bot){duStop();DU=null;BOT.on=false;go('rooms')}else rmLeave()}
 function duOverUi(){
   var e=document.getElementById('dre');if(!e||!DU)return;
+  if(DU.bot){e.innerHTML='<button class="next" onclick="botAgain()">🔁 Rövanş</button><button class="ghost" onclick="duStop();DU=null;go(\'bpick\')">👾 Başka canavar seç</button>';return}
   var o=duOpp(),ow=o&&!o.done&&(o.m|0)===DU.m+1,h;
   if(DU.left||!o||o.done)h='<p class="sub center">Rakip ayrıldı.</p>';
   else if(DU.want)h='<button class="next" disabled>⏳ '+esc(DU.onick)+' bekleniyor…</button>';
@@ -1020,10 +1027,41 @@ function duRematch(){
   if(!DU||!DU.over||DU.want)return;
   DU.want=true;duWrite();duOverUi();
 }
-function duQuit(){modal('Kapışmadan çıkarsan yenilmiş sayılırsın.<br>Çıkmak istiyor musun?','Evet, çık','Hayır, devam',function(){rmLeave()},null)}
+function duQuit(){modal('Kapışmadan çıkarsan yenilmiş sayılırsın.<br>Çıkmak istiyor musun?','Evet, çık','Hayır, devam',function(){if(DU&&DU.bot){if(!DU.over&&DU.k>=0){DU.won=false;duSave()}duExit()}else rmLeave()},null)}
+/* ---------- Canavara Karşı Savaş (internetsiz) ---------- */
+var BOTS={y:{n:'Yavru Canavar',e:'🐣',d:'Kolay',t:[3000,5000],p:0.7},c:{n:'Canavar',e:'👾',d:'Normal',t:[1500,3000],p:0.85},d:{n:'Dev Canavar',e:'🐉',d:'Zor',t:[800,1500],p:0.95}};
+var BLF={k:1,o:1.5,z:2};
+var BOT={on:false,b:'c',lv:'k',win:10,op:'add',tb:0,seed:1};
+function botPick(b){BOT.b=b;go('bset')}
+function botSet(k,v){BOT[k]=v;render()}
+function botOp(o){if(o==='mul'||o==='div'){BOT.op=o;go('btb');return}botGo(o,0)}
+function botGo(op,tb){
+  BOT.op=op;BOT.tb=(op==='mul'||op==='div')?(tb|0):0;BOT.seed=Math.floor(Math.random()*1000000)+1;BOT.on=true;
+  RM.nick=rmNick()||'Sen';
+  auCtx();duStart(0);
+}
+function botAgain(){if(!DU)return;var m=DU.m+1;duStop();BOT.seed=Math.floor(Math.random()*1000000)+1;duStart(m)}
+function botNew(m){
+  var B=BOTS[BOT.b],tb=BOT.tb,lv=tb?'k':BOT.lv;
+  DU={m:m,k:-1,qs:[],qg:{op:BOT.op,lv:lv,tb:tb,lastTxt:'',log:[]},seed:BOT.seed,win:BOT.win,lim:tb?DLIM.k:DLIM[lv],me:'me',host:'me',
+      bot:BOT.b,botR:[],bp:null,bto:null,oid:'bot',onick:B.n,oemo:B.e,myR:[],prevR:[],ph:'intro',t0:0,el:0,tm:null,to:null,hb:null,
+      seen:Date.now(),over:false,left:false,want:false,sc:[0,0],lt:99,saved:false};
+}
+/* canavarın bu turdaki planı: ne zaman basacak, doğru mu */
+function botPlan(k){
+  var B=BOTS[DU.bot],f=DU.qg.tb?1:BLF[DU.qg.lv],t=Math.round((B.t[0]+Math.random()*(B.t[1]-B.t[0]))*f),ok=Math.random()<B.p;
+  if(t>=DU.lim){t=DU.lim;ok=false}
+  DU.bp={t:t,ok:ok};
+  if(DU.bto)clearTimeout(DU.bto);
+  DU.bto=setTimeout(function(){
+    if(!DU||DU.k!==k||DU.botR[k]!==undefined)return;
+    DU.botR[k]=ok?t:-t;
+    if(DU.ph==='wait')duResolve();
+  },t);
+}
 function duStop(){
   if(!DU)return;
-  if(DU.tm)clearInterval(DU.tm);if(DU.to)clearTimeout(DU.to);if(DU.hb)clearInterval(DU.hb);
+  if(DU.tm)clearInterval(DU.tm);if(DU.to)clearTimeout(DU.to);if(DU.hb)clearInterval(DU.hb);if(DU.bto)clearTimeout(DU.bto);
   gPopHide();
 }
 function drawDuel(cv){
@@ -1045,10 +1083,11 @@ function dhistHtml(){
   l.forEach(function(x){if(x.w)w++});
   h='<div class="tag" style="margin-top:14px">⚔️ Kapışmalarım</div>';
   if(!l.length)return h+'<p class="sub center">Henüz kapışmaya katılmadın.</p>';
-  h+='<div class="rrow"><span>Galibiyet</span><b>🏆 '+w+' / '+l.length+'</b></div>';
+  var fl=l.filter(function(x){return !x.bot});if(fl.length)h+='<div class="rrow"><span>⚔️ Arkadaşlara karşı</span><b>🏆 '+fl.filter(function(x){return x.w}).length+' / '+fl.length+'</b></div>';
+  ['y','c','d'].forEach(function(k){var L=l.filter(function(x){return x.bot===k});if(L.length)h+='<div class="rrow"><span>'+BOTS[k].e+' '+BOTS[k].n+'</span><b>🏆 '+L.filter(function(x){return x.w}).length+' / '+L.length+'</b></div>'});
   for(i=0;i<Math.min(l.length,30);i++){
     var x=l[i],d=new Date(x.t);
-    h+='<div class="rrow"><span>'+(x.w?'🏆':'💪')+' '+esc(x.o)+'<br><small>'+fmtDate(d)+' '+fmtTime(d)+' · '+gLabelL(x.op,x.lv,x.tb)+'</small></span><b>'+x.a+' – '+x.b+'</b></div>';
+    h+='<div class="rrow"><span>'+(x.w?'🏆':'💪')+' '+(x.bot?BOTS[x.bot].e+' ':'')+esc(x.o)+'<br><small>'+fmtDate(d)+' '+fmtTime(d)+' · '+gLabelL(x.op,x.lv,x.tb)+'</small></span><b>'+x.a+' – '+x.b+'</b></div>';
   }
   return h;
 }
@@ -1526,7 +1565,7 @@ var GUIDE=[
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
- {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
+ {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Arkadaşın yoksa:</b> Yarış Odası → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (Kolay), 👾 Canavar (Normal) ya da 🐉 Dev Canavar (Zor) seç. İnternet gerekmez. Sayılar büyüdükçe canavar da daha uzun düşünür.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
  {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) seç.</li><li>Sonra işlemi seç. Oda açılır. Çarpma ya da bölmeyi seçersen önce sorulur: <b>seviyeye göre</b> mi, yoksa tek bir tabloyla mı (<b>📚 Tablo çalış</b>)?</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>5 saniye sayılır, zirve kartı çıkar ve düdükle yarış başlar. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
  {id:'lb',t:'🏆 Rekorlar Tablosu',h:'<ul><li>Ana menüdeki <b>Rekorlar Tablosu</b>ndan açılır. İnternet gerekir.</li><li>İki sekme var: <b>Akıldan İşlem</b> ve <b>Yarış Odası</b>. İşlem türünü ve seviyeyi (Kolay, Orta, Zor) seçersin. Her seviyenin tablosu ayrıdır.</li><li><b>Tabloyu Paylaş</b> düğmesiyle tablonun fotoğrafını kaydedip gönderebilirsin.</li><li>En yüksek 10 kişi görünür. İlk 10 içinde değilsen kendi sıran altta yazar.</li><li>Her kişinin her işlemde tek satırı vardır. Sadece rekor kırınca yükselir.</li><li>Birinci olursan tebrik ve konfeti çıkar 🎉</li><li>Tabloda <b>adın herkese görünür</b>. Soyadını ya da kişisel bilgini yazma.</li></ul>'},
  {id:'score',t:'📊 Skorlarım ve skor kartı',h:'<ul><li>Profille oynarsan <b>Skorlarım</b> bölümünde son 14 günün skorlarını görürsün.</li><li>Her oturumun sonunda bir <b>skor kartı</b> çıkar.</li><li><b>Fotoğrafı Kaydet / Paylaş</b> ile kartı kaydedip WhatsApp ile öğretmenine gönderebilirsin.</li></ul>'},
@@ -1844,7 +1883,10 @@ function back(){
   if(s==='lobby')return rmLeave();
   if(s==='rcount'||s==='gcount'||s==='dintro')return;
   if(s==='duel')return duQuit();
-  if(s==='dover')return rmLeave();
+  if(s==='dover')return duExit();
+  if(s==='bpick')return go('rooms');
+  if(s==='bset')return go('bpick');
+  if(s==='btb')return go('bset');
   if(s==='game')return askQuitGame();
   if(s==='gover')return go('gmenu');
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
@@ -1859,7 +1901,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 33</div></div>';
+    h='<div class="hero"><canvas id="mon" width="480" height="480" onclick="monTap()" aria-label="Canavara dokun, sayı yesin"></canvas><h1>Matematik Canavarı</h1><p class="sub">Her doğru cevap 10 puan!<br>Bildiğin kadar çöz, puanını topla.</p><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:14px">Sürüm 34</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim çalışıyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn" onclick="pickProfile('+i+')">🙂 '+esc(n)+'</button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
@@ -1903,7 +1945,7 @@ function render(){
   }else if(s==='rooms'){
     h=topBar('Yarış Odası')+'<p class="sub center">Aynı sorularla arkadaşlarınla yarış! Herkesin 3 canı var, canı biten çıkar. En çok puan toplayan kazanır. İnternet gerekir.</p>';
     if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
-    h+='<button class="btn" onclick="rcGo(\'race\')"><span class="big">➕</span>Oyun Odası Kur<small>Herkes aynı sorularla, en çok puan toplayan kazanır</small></button><button class="btn" onclick="rcGo(\'duel\')"><span class="big">⚔️</span>1’e 1 Kapışma Kur<small>İki kişi: her soruda önce doğru basan puanı alır</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
+    h+='<button class="btn" onclick="rcGo(\'race\')"><span class="big">➕</span>Oyun Odası Kur<small>Herkes aynı sorularla, en çok puan toplayan kazanır</small></button><button class="btn" onclick="rcGo(\'duel\')"><span class="big">⚔️</span>1’e 1 Kapışma Kur<small>İki kişi: her soruda önce doğru basan puanı alır</small></button><button class="btn" onclick="go(\'bpick\')"><span class="big">👾</span>Canavara Karşı Savaş<small>Arkadaşın yok mu? Canavarla kapış. İnternet gerekmez</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
   }else if(s==='rcreate'){
     h=topBar(RC.mode==='duel'?'⚔️ Kapışma Kur':'Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)" value="'+esc(RC.code)+'"><div class="tag">Seviye</div><div class="chips">';
     ['k','o','z'].forEach(function(l){h+='<button class="chip'+(RC.lv===l?' on':'')+'" onclick="rcSet(\'lv\',\''+l+'\')">'+LVN[l]+'</button>'});
@@ -1924,9 +1966,28 @@ function render(){
     h+='<div class="pbox" style="text-align:center"><small>Davet linki: arkadaşın tıklayınca direkt bu kapışmaya gelir</small><div class="lnk">'+esc(rmLink())+'</div><button class="ghost" style="margin:6px 0" onclick="rmCopy()">🔗 Linki Kopyala</button><button class="ghost" style="margin:0" onclick="rmShare()">📤 Paylaş (WhatsApp…)</button></div><button class="ghost" onclick="rmLeave()">Çık</button>';
   }else if(s==='dintro'){
     var on=(DU&&DU.onick)||'Rakip';
-    h='<div class="dint"><div class="dn dn1">🙂 '+esc(RM.nick)+'</div><div class="dsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dn dn2">'+esc(on)+' 🙂</div><div class="dwin">'+(DU?DU.win:10)+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
+    h='<div class="dint"><div class="dn dn1">🙂 '+esc(RM.nick)+'</div><div class="dsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dn dn2">'+esc(on)+' '+(DU&&DU.oemo?DU.oemo:'🙂')+'</div><div class="dwin">'+(DU?DU.win:10)+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
   }else if(s==='duel'){
     h=topBar('⚔️ Kapışma · '+gLabelL(DU.qg.op,DU.qg.lv,DU.qg.tb))+'<div class="dsc" id="dsc">'+duScoreHtml()+'</div><div class="tbar"><div id="tfill"></div></div><div class="q" id="dq"></div><div class="agrid" id="dgrid"></div><div class="msg" id="dmsg"></div><button class="ghost" onclick="duQuit()">🏳️ Kapışmadan Çık</button>';
+  }else if(s==='bpick'){
+    h=topBar('👾 Canavara Karşı Savaş')+'<p class="sub center"><b>Hangi canavara karşı savaşacaksın?</b></p><div class="col">';
+    ['y','c','d'].forEach(function(k){var B=BOTS[k];h+='<button class="btn" onclick="botPick(\''+k+'\')"><span class="big">'+B.e+'</span>'+B.n+' ('+B.d+')<small>'+(k==='y'?'Yavaş düşünür, sık yanılır':(k==='c'?'Orta hızda düşünür, ara sıra yanılır':'Çok hızlı düşünür, nadiren yanılır'))+'</small></button>'});
+    h+='</div><p class="sub center">Önce doğru basan puanı alır. Sayılar büyüdükçe canavar da daha uzun düşünür.</p>';
+  }else if(s==='bset'){
+    var BB=BOTS[BOT.b];
+    h=topBar(BB.e+' '+BB.n+' ile savaş')+'<div class="tag">Sayılar</div><div class="chips">';
+    ['k','o','z'].forEach(function(l){h+='<button class="chip'+(BOT.lv===l?' on':'')+'" onclick="botSet(\'lv\',\''+l+'\')">'+LVN[l]+'</button>'});
+    h+='</div><div class="tag">Maç: kaç puana ulaşan kazansın?</div><div class="chips">';
+    [10,15,20].forEach(function(w){h+='<button class="chip'+(BOT.win===w?' on':'')+'" onclick="botSet(\'win\','+w+')">'+w+' puan</button>'});
+    h+='</div><p class="sub center"><b>İşlemi seç, savaş başlasın:</b></p><div class="col">';
+    ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="botOp(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+((o==='mul'||o==='div')?'<small>Sayılara göre ya da 📚 Tablo çalış</small>':'<small>'+lvDesc(o,BOT.lv).replace(/ · Süre.*$/,'')+'</small>')+'</button>'});
+    h+='</div>';
+  }else if(s==='btb'){
+    var bo=BOT.op;
+    h=topBar(OPS[bo].sym+' '+OPS[bo].name+' · '+BOTS[BOT.b].e+' '+BOTS[BOT.b].n)+'<p class="sub center"><b>Nasıl savaşalım?</b></p><button class="btn" onclick="botGo(\''+bo+'\',0)">🎯 Sayılara göre · '+LVN[BOT.lv]+'<small>'+lvDesc(bo,BOT.lv).replace(/ · Süre.*$/,'')+' · Her soru '+(DLIM[BOT.lv]/1000)+' sn</small></button>';
+    h+='<div class="tag" style="margin-top:16px"><b>📚 Tablo çalış</b></div><p class="sub center">Bir tablo seç, bütün sorular o tablodan gelir.</p><div class="chips">';
+    for(var bt=2;bt<=9;bt++)h+='<button class="chip" onclick="botGo(\''+bo+'\','+bt+')">'+bt+'</button>';
+    h+='</div>';
   }else if(s==='dover'){
     h=duOverHtml();
   }else if(s==='lobby'){
