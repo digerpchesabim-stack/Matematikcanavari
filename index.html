@@ -1431,7 +1431,7 @@ function chFrame(now){
   CH.raf=requestAnimationFrame(chFrame);
 }
 /* ---------- menü müziği ---------- */
-var MM={el:null,on:ls('mc_mmus',true),fade:null,unlocked:false};
+var MM={el:null,on:ls('mc_mmus',true),fade:null,unlocked:false,tries:0};
 var MMOFF=['quiz','game','gcount','gover','lobby','rcount','rover','dintro','duel','dover'];
 function mmWant(){return MM.on&&!document.hidden&&MMOFF.indexOf(st.screen)<0}
 function mmUpdate(){
@@ -1439,10 +1439,25 @@ function mmUpdate(){
   if(b){b.textContent=MM.on?'🎵':'🔇';b.style.display=MMOFF.indexOf(st.screen)<0?'':'none';b.setAttribute('aria-label',MM.on?'Müziği kapat':'Müziği aç')}
   if(!window.Audio)return;
   if(mmWant()){
-    if(!MM.el){MM.el=new Audio('menu.mp3');MM.el.loop=true;MM.el.preload='auto';MM.el.volume=0}
-    if(MM.el.paused){var pr=MM.el.play();if(pr&&pr.catch)pr.catch(function(){})}
+    /* dosya yüklenemediyse (ör. güncelleme anında) öğeyi at, yeniden oluştur */
+    if(MM.el&&(MM.el.error||MM.el.networkState===3)){try{MM.el.pause()}catch(e){}MM.el=null}
+    if(!MM.el)mmMake();
+    if(MM.el.paused){var pr=MM.el.play();if(pr&&pr.catch)pr.catch(function(e){if(e&&e.name!=='NotAllowedError')mmRetry()})}
     mmFade(0.35);
   }else if(MM.el&&!MM.el.paused)mmFade(0,true);
+}
+function mmMake(){
+  var el=new Audio(MM.tries?'menu.mp3?r='+MM.tries:'menu.mp3');el.loop=true;el.preload='auto';el.volume=0;
+  el.addEventListener('error',function(){if(MM.el===el)mmRetry()});
+  el.addEventListener('playing',function(){MM.tries=0});
+  MM.el=el;
+}
+function mmRetry(){
+  if(MM.tries>=4)return;
+  MM.tries++;
+  if(MM.el){try{MM.el.pause()}catch(e){}}
+  MM.el=null;
+  setTimeout(function(){if(mmWant())mmUpdate()},1500*MM.tries);
 }
 function mmFade(to,stop){
   if(MM.fade)clearInterval(MM.fade);
@@ -1454,7 +1469,7 @@ function mmFade(to,stop){
   },60);
 }
 function mmToggle(){MM.on=!MM.on;lsSet('mc_mmus',MM.on);mmUpdate();if(MM.on)toast('Müzik açık');}
-document.addEventListener('pointerdown',function(){if(!MM.unlocked){MM.unlocked=true;setTimeout(mmUpdate,0)}},true);
+document.addEventListener('pointerdown',function(){MM.unlocked=true;if(mmWant()&&(!MM.el||MM.el.paused))setTimeout(mmUpdate,0)},true);
 document.addEventListener('visibilitychange',function(){mmUpdate()});
 
 /* ---------- profil kartları: çevrim içi arkadaş sayısı ---------- */
@@ -2280,7 +2295,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 41</div></div>';
+    h='<div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 42</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim oynuyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn pcard" onclick="pickProfile('+i+')"><span class="av" style="background:'+avCol(n)+'">'+esc(n.charAt(0).toLocaleUpperCase('tr'))+'</span><span class="pn">'+esc(n)+'<small id="pr-on-'+i+'">'+prOnTxt(n)+'</small></span></button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});

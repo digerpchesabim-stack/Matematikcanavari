@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **41**
+Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **42**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -105,6 +105,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 39: oyun sonunda rakibi arkadaş ekle: oyuncu belgesine `pid` (plx(), rmEnter'da frEnsure), 1'e 1 sonuçta "➕ X arkadaş ekle" / "⏳ istek gönderildi" / "✓ kabul et" (`frBtn(p,true)`), yarış sonucunda arkadaş olmayanların yanında ➕ (`frBtn(p)`); `frAddId(pid)`; misafirlerde yok.
 - 40: **Karşılama:** canavar ekranda rakam/sembolleri kovalar (`CH`, `chStart/chFrame/chTap`, canvas 480×440 mantıksal, 7 sembol, yakınlaşınca kaçarlar, canavar yakalayıp yer; dokunulan sembole koşar). Ekran sade: başlık, Haydi Başlayalım, Kılavuz. **Menü müziği:** `menu.mp3` (kullanıcının seçtiği marimba parçası, 150 sn, mono 64k, ~1,2 MB), `<audio loop>` %35 ses, menülerde çalar; quiz/game/gcount/gover/lobby/rcount/rover/dintro/duel/dover ekranlarında yavaşça kısılıp durur (`MMOFF`, `mmUpdate`). İlk dokunuşta başlar. Sağ üstte sabit 🎵/🔇 düğmesi (`mc_mmus`). **Profil sayfası** ("Kim oynuyor?"): baş harfli renkli yuvarlak + "🟢 N arkadaşın çevrim içi" (`prLoad`, 30 sn önbellek). Yedek kutusu ve geri yükleme buradan kaldırıldı. **Ana menü:** üstte "🟢 Şu an oyunda" panosu (`frLive`, çevrim içi arkadaşlar + ⚔️ Çağır); en altta Kılavuz düğmesi yerine "☁️ Yedek ve geri yükleme" (kod + paylaş + ♻️ Yedekten Geri Yükle). Yeni telefonda: Misafir → ana menü → Yedek. `bkr` geri → home.
 - 41: **Okuma tasarrufu (Spark 50k okuma/gün):** rekor tablosu 2 dk telefonda saklanır (`LBC`, `lbTop`), kendi yazılan puan önbelleğe işlenir (`lbPatch`); bir oyun + tablo ekranı 3 → 1 indirme. Profil rozetleri 2 dk önbellek; ana menüde arkadaş durumu her 2 dakikada bir. **iPhone ses:** sw.js Range isteklerini önbellekten 206 ile cevaplar (`rangeResponse`); internetsiz müzik/ses. **Ana menü 2 sütunlu ızgara** (`.hgrid`), kısa açıklamalar; küçük telefonda tek ekran. Kullanılmayan eski karşılama animasyonu (MON) silindi (MONSYM/MONCOL kaldı), `panel.html` depodan silindi, README yenilendi.
+- 42: menü müziği kendini toparlar: ses öğesi hata verirse/kaynak yoksa atılıp yeniden oluşturulur (`mmMake/mmRetry`, en çok 4 deneme, artan bekleme), her dokunuşta müzik isteniyor ama duruyorsa yeniden başlatılır. (Kullanıcı S41'den sonra telefonunda müziğin gittiğini bildirdi; emülasyonda tekrarlanamadı, güncelleme anında yükleme hatası olası sebep.)
 
 ## 9. Bekleyen / yayınlanmamış
 - Yok.
