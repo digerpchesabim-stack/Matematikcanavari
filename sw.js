@@ -1,4 +1,4 @@
-var CACHE = 'mc-v48';
+var CACHE = 'mc-v49';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3'];
 
 self.addEventListener('install', function (e) {
@@ -59,4 +59,18 @@ self.addEventListener('fetch', function (e) {
       return hit || fetch(e.request).catch(function () { return caches.match('./index.html'); });
     })
   );
+});
+
+/* bildirimler (S49) */
+self.addEventListener('push', function (e) {
+  var d = {};
+  try { d = e.data ? e.data.json() : {}; } catch (x) { d = { t: e.data ? e.data.text() : '' }; }
+  e.waitUntil(self.registration.showNotification(d.t || 'Matematik Canavarı', { body: d.b || '', icon: 'icon-192.png', badge: 'icon-192.png', tag: d.g || 'mc', renotify: true, data: { u: d.u || './' } }));
+});
+self.addEventListener('notificationclick', function (e) {
+  e.notification.close();
+  e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (l) {
+    for (var i = 0; i < l.length; i++) { if ('focus' in l[i]) return l[i].focus(); }
+    return self.clients.openWindow((e.notification.data && e.notification.data.u) || './');
+  }));
 });

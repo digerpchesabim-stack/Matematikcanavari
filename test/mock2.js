@@ -11,8 +11,8 @@
   window.__MC_FB={
     initializeApp:function(c,n){return {n:n||'def'}},getAuth:function(a){return {a:a}},getFirestore:function(){return {}},
     onAuthStateChanged:function(a,f){listeners.push(f);setTimeout(function(){f(cur)},0);return function(){}},
-    signInWithEmailAndPassword:function(a,e,p){return new Promise(function(res,rej){var u=users[e];setTimeout(function(){if(!u||u.pw!==p)rej(err('auth/invalid-credential'));else{cur={uid:u.uid,email:e,delete:function(){return Promise.resolve()}};fire();res({user:cur})}},0)})},
-    createUserWithEmailAndPassword:function(a,e,p){return new Promise(function(res,rej){setTimeout(function(){if(users[e])return rej(err('auth/email-already-in-use'));var uid=PID+'_u'+(++uidn);users[e]={uid:uid,pw:p};cur={uid:uid,email:e,delete:function(){return Promise.resolve()}};fire();res({user:cur})},0)})},
+    signInWithEmailAndPassword:function(a,e,p){return new Promise(function(res,rej){var u=users[e];setTimeout(function(){if(!u||u.pw!==p)rej(err('auth/invalid-credential'));else{cur={uid:u.uid,email:e,delete:function(){return Promise.resolve()},getIdToken:function(){return Promise.resolve('TOK_'+u.uid)}};fire();res({user:cur})}},0)})},
+    createUserWithEmailAndPassword:function(a,e,p){return new Promise(function(res,rej){setTimeout(function(){if(users[e])return rej(err('auth/email-already-in-use'));var uid=PID+'_u'+(++uidn);users[e]={uid:uid,pw:p};cur={uid:uid,email:e,delete:function(){return Promise.resolve()},getIdToken:function(){return Promise.resolve('TOK_'+uid)}};fire();res({user:cur})},0)})},
     signOut:function(){cur=null;fire();return Promise.resolve()},
     doc:function(db){var a=[].slice.call(arguments,1);return {path:a.join('/')}},
     collection:function(db){var a=[].slice.call(arguments,1);return {path:a.join('/')}},
