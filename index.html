@@ -2235,8 +2235,11 @@ function navFill(){
 function navInit(){
   if(!window.history||!history.pushState)return;
   document.addEventListener('click',navFill,true);
+  /* çıkış sırasında kullanıcı yeniden dokunursa uygulamada kalmak istiyordur */
+  document.addEventListener('pointerdown',function(){if(NAV.ex){NAV.ex=false;if(NAV.tt){clearTimeout(NAV.tt);NAV.tt=null}}},true);
   window.addEventListener('popstate',function(){
-    if(NAV.skip){NAV.skip=false;return}
+    /* çıkış onaylandı: uygulamanın tüm geri adımlarını (önceki oturumlardan kalanlar dahil) sarmaya devam et */
+    if(NAV.ex){try{history.back()}catch(e){}return}
     if(NAV.d>0)NAV.d--;
     if(st.modal){var n=document.getElementById('mn');if(n)n.click();return}
     if(st.screen==='welcome'){askExit();return}
@@ -2245,10 +2248,12 @@ function navInit(){
 }
 function askExit(){modal('Uygulamadan çıkmak istiyor musun?','Evet, çık','Hayır, kal',appExit,null)}
 function appExit(){
-  NAV.ex=true;
+  NAV.ex=true;NAV.d=0;
   try{window.close()}catch(e){}
-  if(NAV.d>0){NAV.skip=true;try{history.go(-NAV.d)}catch(e){}NAV.d=0}
-  setTimeout(function(){toast('Çıkmak için telefonun geri tuşuna bir kez daha bas');NAV.ex=false},500);
+  try{history.back()}catch(e){}
+  /* en baştaki sayfaya gelinip hâlâ buradaysak: son bir geri basışı uygulamayı kapatır */
+  if(NAV.tt)clearTimeout(NAV.tt);
+  NAV.tt=setTimeout(function(){NAV.tt=null;if(NAV.ex)toast('Çıkmak için telefonun geri tuşuna bir kez daha bas')},1200);
 }
 function go(s){
   if(FR.inv)setTimeout(frInvCheck,400);
@@ -2295,7 +2300,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 42</div></div>';
+    h='<div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 43</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim oynuyor?')+'<div class="col">';
     profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn pcard" onclick="pickProfile('+i+')"><span class="av" style="background:'+avCol(n)+'">'+esc(n.charAt(0).toLocaleUpperCase('tr'))+'</span><span class="pn">'+esc(n)+'<small id="pr-on-'+i+'">'+prOnTxt(n)+'</small></span></button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
