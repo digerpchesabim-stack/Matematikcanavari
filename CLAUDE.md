@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **49**
+Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **50**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -128,7 +128,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 
 - 48: **🏅 Rütbe ve madalyalar** (tasarım vitrini ve "Rütbe ve Madalya Sistemi" dokümanı artifact olarak paylaşıldı).
   - Puan (sadece insanlı kapışma): 1'e 1 galibiyet K/O/Z = 1/2/3; muharebe 1. = 2/4/6, 2. = 1/2/3. Kayıpta puan gitmez. Tablo modu = Kolay.
-  - Rütbe `RKP=[0,15,60,150,300,600,1000]`, Zor galibiyet şartı `RKZ=[0,0,0,0,25,50,100]`: Filiz, Çırak (kitap +−), Savaşçı (×, kılıçlar), Şövalye (tüy kalemli miğfer), Usta (π'li baykuş), Şampiyon (+ kupa), Efsane (∞, alev). Rütbe düşmez; sınırlar sadece düşürülebilir.
+  - Rütbe `RKP=[0,15,60,150,300,600,1000]`, Zor galibiyet şartı `RKZ=[0,0,0,0,25,50,100]`: Çaylak (S50'de Filiz'in yerine; kanatlarını açmış genç kuş, göğsünde tüy deseni), Çırak (kitap +−), Savaşçı (×, kılıçlar), Şövalye (tüy kalemli miğfer), Usta (π'li baykuş), Şampiyon (+ kupa), Efsane (∞, alev). Rütbe düşmez; sınırlar sadece düşürülebilir.
   - Madalyalar `RKF` (bronz/gümüş/altın): Kılıç 10/30/60 (1'e 1), Kalkan 5/15/30 (muharebe 1.), Seri 3/5/8 (en iyi seri), Canavar Avcısı Yavru/Canavar/Dev 10'ar, Azim 10/40/100 gün (≥20 doğru), Soru Ustası 500/3000/10000 doğru. Gümüş sadece Orta/Zor, altın sadece Zor galibiyet sayar.
   - Adil oyun: aynı rakiple günde 5 maç (`dc`), rakip yarıdan önce çıkarsa sayılmaz, canavar maçı puan vermez, misafir kazanmaz.
   - Yerel `mc_rk` {profil:{p,hz,sw,sh,se,sb,mo,dz,q,m(6 haneli bit maskesi),r,dc,dd,dq,dk,ls,bf}} (yedekte, profRename/silme taşır). İlk açılışta `rkBackfill`: kayıtlardaki doğrular + mc_dhist (yarım puan, sayaçlar tam).
@@ -144,6 +144,8 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - **Bildirimler (Web Push, ücretsiz):** sunucu `worker/index.js` (Cloudflare Worker `mc-push`), `.github/workflows/worker.yml` main'de `worker/**` değişince kurar (secret `CF_API_TOKEN`, `CF_ACCOUNT_ID`; kullanıcı ekledi). VAPID anahtarı CF_API_TOKEN'dan türetilir (`worker/keys.js`; token yenilenirse anahtar değişir, uygulama `mc_push.k` farkını görüp yeniden abone olur). İş akışı sunucu adresini + açık anahtarı `push.json` olarak main'e kendisi yazar; uygulama `push.json`'u okur (`pushCfg`).
   - Akış: Arkadaşlarım → "🔔 Bildirimleri aç" (`pushOn`, izin + `pushManager.subscribe`) → `ps/{pid}` {e,k,a,ts}; frStart'ta `pushSync`. Davet yazılınca `pushSend(to,'iv')`, arkadaşlık isteğinde `pushSend(to,'fr')` → Worker, gönderenin Firebase ID token'ıyla Firestore REST'ten `iv/{to}` (from + 3 dk içinde) ya da `fr/{a_b}` (by, req, 3 dk) doğrular, `ps/{to}` okur, aes128gcm + VAPID ile gönderir. sw.js `push` → bildirim, `notificationclick` → uygulamayı öne getir/aç (davet zaten frInvCheck ile gelir). iPhone: sadece ana ekrana eklenmiş uygulamada (iOS 16.4+), kutuda bilgi yazar.
   - Kurallar: `ps/{pid}` get oturum, yazma owns(pid); pl + 'st' (≤60). Testler: `worker/test.mjs` (şifre çözme + VAPID doğrulama + red durumları), `test/push1.js`, `test/rk2.js` (kart).
+
+- 50: ilk rütbe **Filiz → Çaylak** (kullanıcı Filiz'i beğenmedi; + işaretsiz kuş rozeti `DRAW.kite`). Rütbe sırası aynı, veri değişmedi.
 
 ## 9. Bekleyen / yayınlanmamış
 - Yok. (Bildirimin gerçek telefonda denenmesi kullanıcıda.)
