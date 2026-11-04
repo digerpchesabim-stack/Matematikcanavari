@@ -1,0 +1,51 @@
+name: Bildirim sunucusu
+on:
+  push:
+    branches: [main]
+    paths: ['worker/**', '.github/workflows/worker.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: VAPID anahtarı ve workers.dev alt alanı
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          cd worker && node keys.js
+          API=https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/workers/subdomain
+          SUB=$(curl -s -H "Authorization: Bearer $CF_API_TOKEN" $API | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).result.subdomain||'')}catch(e){console.log('')}})")
+          if [ -z "$SUB" ]; then
+            echo "workers.dev alt alanı yok, oluşturuluyor"
+            curl -s -X PUT -H "Authorization: Bearer $CF_API_TOKEN" -H "Content-Type: application/json" --data '{"subdomain":"matematikcanavari"}' $API | head -c 500; echo
+            SUB=$(curl -s -H "Authorization: Bearer $CF_API_TOKEN" $API | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{try{console.log(JSON.parse(s).result.subdomain||'')}catch(e){console.log('')}})")
+          fi
+          test -n "$SUB" || { echo "workers.dev alt alanı alınamadı"; exit 1; }
+          echo "SUB=$SUB" >> $GITHUB_ENV
+      - name: Sunucuyu kur
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          cd worker
+          PUB=$(node -p "require('./vapid.json').pub"); X=$(node -p "require('./vapid.json').x"); Y=$(node -p "require('./vapid.json').y")
+          npx --yes wrangler@3 deploy index.js --name mc-push --compatibility-date 2024-09-01 --var VAPID_PUB:$PUB --var VAPID_X:$X --var VAPID_Y:$Y
+          cat vapid_d | npx --yes wrangler@3 secret put VAPID_D --name mc-push
+          rm -f vapid_d
+      - name: Dene ve adresi uygulamaya yaz
+        run: |
+          PUB=$(node -p "require('./worker/vapid.json').pub")
+          URL="https://mc-push.$SUB.workers.dev"
+          for i in $(seq 1 18); do K=$(curl -s $URL/key || true); echo "$K" | grep -q "$PUB" && break; sleep 10; done
+          echo "$K" | grep -q "$PUB" || { echo "Sunucu cevap vermedi: $K"; exit 1; }
+          printf '{"u":"%s","k":"%s"}\n' "$URL" "$PUB" > push.json
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add push.json
+          git diff --cached --quiet || { git commit -m "Bildirim sunucusu adresi (otomatik)"; git push; }
