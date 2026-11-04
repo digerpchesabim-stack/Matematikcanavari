@@ -2,7 +2,7 @@
 const fs=require('fs');
 const mock=fs.readFileSync(__dirname+'/mock2.js','utf8');
 const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win'];
-const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt'];
+const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt','rk'];
 module.exports=function(opts){
   opts=opts||{};
   const store={},subs=[],pages={},log=[];let lag=opts.lag||[30,150];
@@ -33,7 +33,7 @@ module.exports=function(opts){
       if(!old){if(seg[1].length!==7||typeof d.k!=='string'||d.k.length<16)return deny('pk create');return null}
       if(d.k!==old.k)return deny('pk key');return null;
     }
-    if(seg[0]==='pl'){if(!owns(seg[1]))return deny('pl owner');if(!only(d,['nick','seen','v'])||!d.nick||d.nick.length>60||!Number.isInteger(d.seen))return deny('pl shape');return null}
+    if(seg[0]==='pl'){if(!owns(seg[1]))return deny('pl owner');if(!only(d,['nick','seen','v','rk','md'])||!d.nick||d.nick.length>60||!Number.isInteger(d.seen)||('rk' in d&&!(Number.isInteger(d.rk)&&d.rk>=0&&d.rk<=6))||('md' in d&&(typeof d.md!=='string'||d.md.length>12)))return deny('pl shape');return null}
     if(seg[0]==='fr'){
       const old=store[path];
       if(!old){if(!only(d,['a','b','by','st','ts'])||!(d.a<d.b)||seg[1]!==frId(d.a,d.b)||![d.a,d.b].includes(d.by)||d.st!=='req'||!owns(d.by))return deny('fr create');return null}
@@ -53,7 +53,7 @@ module.exports=function(opts){
     }
     if(/^lb[gr]_/.test(seg[0])){
       const old=store[path];
-      if(seg[1]!==uid||!only(d,['nick','score','ts','pid'])||('pid' in d&&(typeof d.pid!=='string'||d.pid.length>10))||typeof d.nick!=='string'||d.nick.length<1||d.nick.length>60)return deny('lb shape');
+      if(seg[1]!==uid||!only(d,['nick','score','ts','pid','rk'])||('rk' in d&&!(Number.isInteger(d.rk)&&d.rk>=0&&d.rk<=6))||('pid' in d&&(typeof d.pid!=='string'||d.pid.length>10))||typeof d.nick!=='string'||d.nick.length<1||d.nick.length>60)return deny('lb shape');
       if(old&&d.score<old.score)return deny('lb lower');return null;
     }
     if(seg[0]==='bk'){

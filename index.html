@@ -129,6 +129,7 @@ details.pbox summary{cursor:pointer;font-size:17px}
 .ani.bad .an::after{content:' ✗'}
 @keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}}
 @keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+#ov.rkov{background:rgba(5,6,20,.8);padding:10px}.rkp{position:relative;width:min(94vw,390px);max-height:96vh;border-radius:26px;padding:14px 16px 16px;text-align:center;overflow:hidden;color:#fff;background:radial-gradient(circle at 50% 28%,#4b3a9c 0%,#22195a 55%,#140f38 100%);border:2px solid #ffd23f;box-shadow:0 0 40px rgba(255,210,63,.35);animation:rkin .45s cubic-bezier(.2,1.4,.4,1)}.rkp.fire{border-color:#ff8a3d;background:radial-gradient(circle at 50% 28%,#7a2e5a 0%,#3a1440 55%,#1a0b24 100%)}.rkrays{position:absolute;left:50%;top:150px;width:640px;height:640px;margin:-320px 0 0 -320px;border-radius:50%;background:repeating-conic-gradient(rgba(255,226,120,.2) 0 9deg,transparent 9deg 22.5deg);animation:rkspin 26s linear infinite;-webkit-mask:radial-gradient(circle,#000 0 30%,transparent 65%);mask:radial-gradient(circle,#000 0 30%,transparent 65%)}.rkcf{position:absolute;inset:0;pointer-events:none}.rkcf i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:rkfall linear infinite}.rkp>*:not(.rkrays):not(.rkcf){position:relative}.rkbig{font-weight:900;font-size:27px;letter-spacing:.04em;background:linear-gradient(180deg,#fff,#ffd23f 55%,#ff9f1c);-webkit-background-clip:text;background-clip:text;color:transparent}.rkart svg{width:min(190px,26vh);height:auto}.rkttl{font-weight:800;font-size:22px;line-height:1.2}.rkwhy{color:#d9dcff;font-size:15px;margin:4px 0 10px}.rkpg{background:rgba(0,0,0,.28);border-radius:14px;padding:9px 12px;text-align:left;font-size:14px;color:#d9dcff;display:grid;gap:6px}.rkrow{display:flex;justify-content:space-between;gap:8px}.rkbar{display:block;height:12px;border-radius:8px;background:#0b0d26;overflow:hidden;border:1px solid rgba(255,255,255,.15)}.rkbar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#ff9f1c,#ffd23f)}.rkbar.g i{background:linear-gradient(90deg,#1fb978,#3ddc97)}.rkbt{display:flex;gap:10px;margin-top:12px}.rkb{flex:1;min-height:48px;border-radius:15px;border:0;font-weight:800;font-size:18px;font-family:inherit;margin:0;cursor:pointer}.rkb.y{background:linear-gradient(180deg,#ffe27a,#ffd23f 50%,#f0a500);color:#2a1a00;box-shadow:0 4px 0 #a86b00}.rkb.d{background:#2d3577;color:#fff;box-shadow:0 4px 0 #1a1f4d}.rkmeds{display:flex;flex-wrap:wrap;justify-content:center;gap:2px}.rkmeds svg{width:48px;height:auto}@keyframes rkin{from{transform:scale(.6);opacity:0}}@keyframes rkspin{to{transform:rotate(360deg)}}@keyframes rkfall{to{transform:translateY(780px) rotate(540deg)}}.rkmini{display:inline-block;width:30px;height:30px;vertical-align:middle;flex:none}.rkmini svg{width:100%;height:100%;display:block}.rkme{display:flex;align-items:center;gap:12px;text-align:left}.rkme-e svg{width:96px;height:auto;display:block}.rkme-t{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}.rkme-t b{font-size:24px}.rkme-t small{color:var(--muted)}.rkme .rkbar{background:var(--line);border:0}.rklad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 4px;text-align:center}.rklad svg{width:100%;max-width:64px;height:auto}.rklad b{display:block;font-size:13px;line-height:1.15}.rklad small{font-size:12px;color:var(--muted)}.rklad .cur b{color:var(--accent)}.rkg3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;text-align:center}.rkg3 svg{width:100%;max-width:96px;height:auto}.rkg3 b{display:block;font-size:15px}.rkg3 small{font-size:13px;color:var(--muted)}.locked svg{filter:grayscale(1) brightness(.6);opacity:.5}.rkhelp h3{margin:14px 0 4px;font-size:18px;color:var(--accent)}.rkhelp h3:first-child{margin-top:0}.rkhelp p,.rkhelp li{font-size:16px}.rkchips{display:flex;flex-wrap:wrap;gap:6px}.rkchip{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:2px 10px 2px 3px;font-weight:700;font-size:14px}.rkchip small{color:var(--muted);font-weight:400}.rkhome{display:flex!important;align-items:center;gap:12px;text-align:left}.rkhome .rkmini{width:58px;height:58px}.rkhome small{display:block}.rkpub{display:flex;align-items:center;justify-content:center;gap:6px;margin:2px 0;font-weight:700}.rkpub .rkmini{width:46px;height:46px}.rkmd{display:flex;justify-content:center;flex-wrap:wrap}.rkmd svg{width:40px;height:auto}.dn .rkmini{width:40px;height:40px;margin-right:4px}.rrow .rkmini{width:28px;height:28px;margin:0 2px}@media (prefers-reduced-motion:reduce){.rkrays,.rkcf{display:none}}
 </style>
 </head>
 <body>
@@ -191,7 +192,7 @@ function frProf(o){st.fp=o;go('fprof')}
 function frProfHtml(){
   var o=st.fp,nk=FR.nick[o]||frFmt(o),sp=nkSplit(nk),on=frOnline(o),L=frH2H(o),w=0,i;
   L.forEach(function(x){if(x.w)w++});
-  var h=topBar('👤 Arkadaş')+'<div class="pbox fpro"><span class="av" style="background:'+nkCol(nk)+'">'+sp[0]+'</span><span class="pn">'+esc(sp[1])+'<small>'+(on?'🟢 çevrim içi':'⚪ en son '+frAgo(o))+'</small><small>Oyuncu kodu: '+frFmt(o)+'</small></span></div>';
+  var h=topBar('👤 Arkadaş')+'<div class="pbox fpro"><span class="av" style="background:'+nkCol(nk)+'">'+sp[0]+'</span><span class="pn">'+esc(sp[1])+'<small>'+(on?'🟢 çevrim içi':'⚪ en son '+frAgo(o))+'</small><small>Oyuncu kodu: '+frFmt(o)+'</small></span></div>'+rkPubBox(FR.rk&&FR.rk[o]);
   h+='<div class="pbox h2h"><div class="tag" style="margin-top:0">⚔️ Aranızdaki kapışmalar</div><div class="h2s"><div><b>'+w+'</b><small>Sen</small></div><div class="dvs">⚔️</div><div><b>'+(L.length-w)+'</b><small>'+esc(sp[1])+'</small></div></div><small>'+(L.length?L.length+' maç':'Henüz birlikte kapışmadınız')+'</small></div>';
   h+='<button class="next" onclick="frCall(\''+o+'\')">⚔️ Kapışmaya çağır</button>';
   if(L.length){h+='<div class="tag">Son kapışmalar</div>';for(i=0;i<Math.min(L.length,30);i++){var x=L[i],d=new Date(x.t);h+='<div class="rrow"><span>'+(x.w?'🏆 Sen kazandın':'💪 '+esc(sp[1])+' kazandı')+(x.left?' <small>(ayrıldı)</small>':'')+'<br><small>'+fmtDate(d)+' '+fmtTime(d)+' · '+gLabelL(x.op,x.lv,x.tb)+'</small></span><b>'+x.a+' – '+x.b+'</b></div>'}}
@@ -210,8 +211,9 @@ function lbTap(i){
   else b='<button class="next" id="lt4">➕ Arkadaşlık isteği gönder</button><p class="sub center">Kabul ederse onu kapışmaya çağırabilirsin.</p>';
   st.modal=true;pauseT();
   var ov=document.getElementById('ov');ov.className='';
-  ov.innerHTML='<div class="box"><div style="font-size:60px;line-height:1.2">'+sp[0]+'</div><p><b style="font-size:22px">'+esc(sp[1])+'</b><br>'+(i+1)+'. sıra · '+r.score+' puan</p>'+b+'<button class="ghost" id="mn">Kapat</button></div>';
+  ov.innerHTML='<div class="box"><div style="font-size:60px;line-height:1.2">'+sp[0]+'</div><p><b style="font-size:22px">'+esc(sp[1])+'</b><br>'+(i+1)+'. sıra · '+r.score+' puan</p>'+(r.rk!=null?'<div class="rkpub">'+rkMini(r.rk)+RKA.RANKS[r.rk].n+'</div>':'')+'<div class="rkmd" id="lt-md"></div>'+b+'<button class="ghost" id="mn">Kapat</button></div>';
   ov.hidden=false;
+  rkPubMd(c,'lt-md');
   var on=function(id,f){var e=document.getElementById(id);if(e)e.onclick=function(){closeModal();f()}};
   on('mn',function(){});
   on('lt1',function(){frCall(c)});
@@ -273,7 +275,7 @@ function nmRemote(olds,nn,id){
 function profRename(o,nw,info){
   var l=profiles(),i=l.indexOf(o);if(i<0)return;
   l[i]=nw;lsSet('mc_profiles',l);
-  ['mc_best','mc_rbest','mc_pid'].forEach(function(k){var b=ls(k,{});if(o in b){b[nw]=b[o];delete b[o];lsSet(k,b)}});
+  ['mc_best','mc_rbest','mc_pid','mc_rk'].forEach(function(k){var b=ls(k,{});if(o in b){b[nw]=b[o];delete b[o];lsSet(k,b)}});
   ['mc_records','mc_rhist','mc_dhist'].forEach(function(k){var x=ls(k,[]),ch=false;x.forEach(function(r){if(r&&r.p===o){r.p=nw;ch=true}});if(ch)lsSet(k,x)});
   var nm=nmMap();delete nm[o];nm[nw]=info;lsSet('mc_nm',nm);
   if(PRO.c&&o in PRO.c)PRO.c[nw]=PRO.c[o];
@@ -646,7 +648,7 @@ function devAuth(){
   });
 }
 /* ---------- otomatik bulut yedeği ---------- */
-var BKK=['mc_theme','mc_pid','mc_nm','mc_nmnew','mc_lbpid','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_vert','mc_audio'],BK={busy:false,t:null};
+var BKK=['mc_rk','mc_theme','mc_pid','mc_nm','mc_nmnew','mc_lbpid','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_vert','mc_audio'],BK={busy:false,t:null};
 function cloudQueue(){bkSoon()}
 function bkSoon(){if(BK.t)clearTimeout(BK.t);BK.t=setTimeout(function(){BK.t=null;bkRun()},15000)}
 function bkHash(x){var h=5381,i;for(i=0;i<x.length;i++)h=((h<<5)+h+x.charCodeAt(i))|0;return String(h)+':'+x.length}
@@ -974,6 +976,7 @@ function gSave(){
   var done=lsSet('mc_records',recTrim(l));
   if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
   else cloudQueue();
+  try{rkQ(g.sid,g.ok|0)}catch(e){}
   return done;
 }
 var GS={op:'add'};
@@ -1219,11 +1222,11 @@ function duStart(m){
 function duIntroHtml(){
   if(DU&&DU.ids.length>2){
     var h='<div class="dint"><div class="mmt">⚔️ MEYDAN MUHAREBESİ</div><div class="mmn">';
-    DU.ids.forEach(function(u,i){h+='<div class="dn dn'+(i%2?'2':'1')+'" style="animation-delay:'+(i*0.35)+'s">'+esc(nkShow(DU.nick[u]))+'</div>'});
+    DU.ids.forEach(function(u,i){h+='<div class="dn dn'+(i%2?'2':'1')+'" style="animation-delay:'+(i*0.35)+'s">'+duRkE(u)+esc(nkShow(DU.nick[u]))+'</div>'});
     return h+'</div><div class="dsw mmsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dwin mmw">'+DU.win+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
   }
   var on=(DU&&DU.onick)||'Rakip';
-  return '<div class="dint"><div class="dn dn1">'+esc(nkShow(RM.nick))+'</div><div class="dsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dn dn2">'+(DU&&DU.oemo?esc(on)+' '+DU.oemo:esc(nkShow(on)))+'</div><div class="dwin">'+(DU?DU.win:10)+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
+  return '<div class="dint"><div class="dn dn1">'+(DU?duRkE(DU.me):'')+esc(nkShow(RM.nick))+'</div><div class="dsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dn dn2">'+(DU&&DU.oemo?esc(on)+' '+DU.oemo:(DU?duRkE(DU.oid):'')+esc(nkShow(on)))+'</div><div class="dwin">'+(DU?DU.win:10)+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
 }
 function duBeat(){
   if(!DU)return;
@@ -1365,6 +1368,7 @@ function duSave(){
   if(DU.ids.length>2){x.mm=1;x.rk=DU.rank;x.n=DU.ids.length;x.o=duOpps().map(function(u){return DU.nick[u]}).join(', ');x.qs=duOpps().map(function(u){return DU.pid[u]}).filter(Boolean)}
   l.unshift(x);
   lsSet('mc_dhist',l.slice(0,100));
+  try{rkMatch()}catch(e){}
 }
 function duPodium(){
   var l=DU.ids.slice().sort(function(a,b){return (DU.pts[b]||0)-(DU.pts[a]||0)}),h='',med=['🥇','🥈','🥉','4.'],rk=0,last=-1;
@@ -1553,14 +1557,14 @@ function frStart(p,id){
 }
 function frBeat(){
   if(!FR.pid||document.hidden||!navigator.onLine||!CL.user)return;
-  devAuth().then(function(fb){fb.setDoc(fb.doc(CL.db,'pl',FR.pid),{nick:lbName(FR.prof),seen:Date.now(),v:1}).catch(function(){})});
+  devAuth().then(function(fb){fb.setDoc(fb.doc(CL.db,'pl',FR.pid),(function(){var x=rkRaw(FR.prof);return {nick:lbName(FR.prof),seen:Date.now(),v:1,rk:x.r|0,md:String(x.m||'000000').slice(0,6)}})()).catch(function(){})});
   FR.bn=(FR.bn||0)+1;
   if(st.screen==='friends'||(st.screen==='home'&&FR.bn%2===0))frNicks(null,FR.list.concat(FR.inc,FR.out));
 }
 function frNicks(fb,ids){
   var p=fb?Promise.resolve(fb):devAuth();
   p.then(function(fb){
-    return Promise.all(ids.map(function(o){return fb.getDoc(fb.doc(CL.db,'pl',o)).then(function(s){if(s.exists()){var x=s.data();FR.nick[o]=x.nick;FR.seen[o]=x.seen}else FR.nick[o]=FR.nick[o]||'(silinmiş profil)'},function(){})}));
+    return Promise.all(ids.map(function(o){return fb.getDoc(fb.doc(CL.db,'pl',o)).then(function(s){if(s.exists()){var x=s.data();FR.nick[o]=x.nick;FR.seen[o]=x.seen;FR.rk=FR.rk||{};FR.rk[o]={r:x.rk|0,m:x.md||''}}else FR.nick[o]=FR.nick[o]||'(silinmiş profil)'},function(){})}));
   }).then(function(){frUi()});
 }
 /* oyun sonu: rakibi arkadaş ekle */
@@ -1948,7 +1952,7 @@ function raceStart(){
   go('game');
   raceSend(false);
 }
-function plx(o){if(RM.pid)o.pid=RM.pid;if(RM.jt)o.jt=RM.jt;return o}
+function plx(o){if(st.profile)o.rk=rkMine();if(RM.pid)o.pid=RM.pid;if(RM.jt)o.jt=RM.jt;return o}
 function raceSend(done){
   var g=st.g,tt=0;
   if(!g||!g.race||!RM.fb||!CL.user)return;
@@ -2134,7 +2138,7 @@ function lbTop(fb,col){
   var c=LBC[col];
   if(c&&Date.now()-c.t<120000)return Promise.resolve(c.rows.slice());
   return fb.getDocs(fb.query(fb.collection(CL.db,col),fb.orderBy('score','desc'),fb.limit(50))).then(function(qs){
-    var rows=[];qs.forEach(function(d){var x=d.data();rows.push({uid:d.id,nick:x.nick,score:x.score,pid:x.pid||null})});
+    var rows=[];qs.forEach(function(d){var x=d.data();rows.push({uid:d.id,nick:x.nick,score:x.score,pid:x.pid||null,rk:typeof x.rk==='number'?x.rk:null})});
     rows.sort(function(a,b){return b.score-a.score});
     LBC[col]={t:Date.now(),rows:rows};
     return rows.slice();
@@ -2142,7 +2146,7 @@ function lbTop(fb,col){
 }
 function lbPatch(col,uid,nick,score){
   var c=LBC[col];if(!c)return;
-  var o=c.rows.filter(function(x){return x.uid===uid})[0],r=c.rows.filter(function(x){return x.uid!==uid});r.push({uid:uid,nick:nick,score:score,pid:o?o.pid:null});
+  var o=c.rows.filter(function(x){return x.uid===uid})[0],r=c.rows.filter(function(x){return x.uid!==uid});r.push({uid:uid,nick:nick,score:score,pid:o?o.pid:null,rk:o?o.rk:null});
   r.sort(function(a,b){return b.score-a.score});c.rows=r.slice(0,50);
 }
 function lbSubmit(kind,op,lv,score,cand,nick){
@@ -2156,8 +2160,8 @@ function lbSubmit(kind,op,lv,score,cand,nick){
     old=s.exists()?s.data():null;
     best=Math.max(cand,old?old.score:0);
     improved=!old||cand>old.score;
-    var dd={nick:nm,score:best,ts:Date.now()};if(pid)dd.pid=pid;
-    if(improved||old.nick!==nm||(pid&&old.pid!==pid))return fb.setDoc(fb.doc(CL.db,col,CL.user.uid),dd).then(function(){lbPatch(col,CL.user.uid,nm,best);var c=LBC[col];if(c)c.rows.forEach(function(x){if(x.uid===CL.user.uid)x.pid=pid})});
+    var dd={nick:nm,score:best,ts:Date.now()},rkv=(st.profile&&nick===st.profile)?rkMine():null;if(pid)dd.pid=pid;if(rkv!==null)dd.rk=rkv;
+    if(improved||old.nick!==nm||(pid&&old.pid!==pid)||(rkv!==null&&old.rk!==rkv))return fb.setDoc(fb.doc(CL.db,col,CL.user.uid),dd).then(function(){lbPatch(col,CL.user.uid,nm,best);var c=LBC[col];if(c)c.rows.forEach(function(x){if(x.uid===CL.user.uid)x.pid=pid})});
   }).then(function(){return lbTop(fb,col)}).then(function(rows){
     var r=lbRank(rows,best);
     return {best:best,rank:r.rank,over:r.over,celebrate:improved&&score>=cand,improved:improved,kind:kind,op:op,lv:lv,score:score};
@@ -2269,7 +2273,7 @@ function lbLoad(){
     for(i=0;i<rows.length&&i<10;i++){
       r=rows[i];
       var tp=r.pid&&r.uid!==me;
-      h+='<div class="rrow'+(r.uid===me?' me':'')+(tp?' tap':'')+'"'+(tp?' onclick="lbTap('+i+')"':'')+'><span>'+(i<3?med[i]:(i+1)+'.')+' '+esc(r.nick)+(tp?' <small>›</small>':'')+'</span><b>'+r.score+'</b></div>';
+      h+='<div class="rrow'+(r.uid===me?' me':'')+(tp?' tap':'')+'"'+(tp?' onclick="lbTap('+i+')"':'')+'><span>'+(i<3?med[i]:(i+1)+'.')+' '+(r.rk!=null?rkMini(r.rk):'')+esc(r.nick)+(tp?' <small>›</small>':'')+'</span><b>'+r.score+'</b></div>';
       if(r.uid===me)shown=true;
     }
     if(!shown&&mine!==null){
@@ -2337,6 +2341,332 @@ function rhistHtml(){
 }
 
 
+/* ---------- S48: rütbe ve madalyalar ---------- */
+var RKA=(function(){
+var RKU=0;
+var MET={
+ green:['#eaffd9','#97e36f','#3aa84a','#155d27'], bronze:['#ffe6cc','#e9a066','#b0662e','#5a2d10'],
+ silver:['#ffffff','#dfe6f0','#9aa7bd','#465269'], gold:['#fffbd6','#ffd84a','#e09b12','#7a4b00'],
+ blue:['#effcff','#7fdcff','#2a8fe0','#0c3c7c'], royal:['#fffbd6','#ffd84a','#e09b12','#7a4b00'],
+ fire:['#fff3b8','#ffbe45','#ff5e1f','#7c1004']};
+var FACE={green:['#1f5a3a','#0b2417'],bronze:['#3a2a4a','#150d22'],silver:['#2b3a66','#0e1430'],gold:['#3a2f80','#120d38'],
+ blue:['#1b4c9a','#071a42'],royal:['#5a2a9a','#1f0b45'],fire:['#8a1e3a','#2a0614']};
+function T(s){return 'transform="translate(120 112) scale('+s+') translate(-120 -112)"'}
+function shp(k,a){return k=='shield'?'<path d="M120 36 L180 56 L180 108 Q180 158 120 188 Q60 158 60 108 L60 56 Z" '+a+'/>':'<circle cx="120" cy="112" r="'+(k=='small'?64:70)+'" '+a+'/>'}
+function star4(x,y,s,d,col){return '<g transform="translate('+x+' '+y+') scale('+s+')"><path d="M0-10 2.6-2.6 10 0 2.6 2.6 0 10-2.6 2.6-10 0-2.6-2.6Z" fill="'+(col||'#fff')+'"><animate attributeName="opacity" values="0;1;0" dur="1.8s" begin="'+d+'s" repeatCount="indefinite"/></path></g>'}
+function sword(g,st){return '<g><circle cx="0" cy="0" r="8" fill="url(#'+g+')" stroke="'+st+'" stroke-width="1.5"/><rect x="5" y="-5" width="22" height="10" rx="4" fill="#6b3f1d"/><rect x="25" y="-19" width="8" height="38" rx="4" fill="url(#'+g+')" stroke="'+st+'" stroke-width="1.5"/><path d="M33 -7 L172 -7 L190 0 L172 7 L33 7 Z" fill="url(#'+g+')" stroke="'+st+'" stroke-width="1.5"/><path d="M36 0 L176 0" stroke="#fff" stroke-opacity=".7" stroke-width="2"/></g>'}
+var WING='M72 120 C48 124 20 112 6 86 C22 92 36 92 46 89 C26 80 12 62 8 40 C24 54 40 60 54 63 C40 50 34 34 35 16 C52 36 64 50 80 60 Z';
+function laurel(g,st){var s='';for(var i=0;i<9;i++){var a=(112+i*15)*Math.PI/180,x=120+88*Math.cos(a),y=114+88*Math.sin(a),r=112+i*15;
+  s+='<ellipse cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" rx="6.5" ry="15" transform="rotate('+r+' '+x.toFixed(1)+' '+y.toFixed(1)+')" fill="url(#'+g+')" stroke="'+st+'" stroke-width="1"/>'}
+  return '<g>'+s+'</g><g transform="translate(240 0) scale(-1 1)">'+s+'</g>'}
+function crown(g,st){return '<path d="M90 52 L84 18 L104 34 L120 6 L136 34 L156 18 L150 52 Z" fill="url(#'+g+')" stroke="'+st+'" stroke-width="2" stroke-linejoin="round"/><circle cx="84" cy="18" r="5" fill="#ff4d6d"/><circle cx="120" cy="6" r="6" fill="#4dd2ff"/><circle cx="156" cy="18" r="5" fill="#ff4d6d"/><rect x="92" y="42" width="56" height="8" rx="3" fill="'+st+'" opacity=".5"/>'}
+function rays(id,col,n,len){var s='';for(var i=0;i<n;i++){var a=i*360/n,a1=(a-6)*Math.PI/180,a2=(a+6)*Math.PI/180;
+  s+='<polygon points="120,112 '+(120+len*Math.cos(a1)).toFixed(1)+','+(112+len*Math.sin(a1)).toFixed(1)+' '+(120+len*Math.cos(a2)).toFixed(1)+','+(112+len*Math.sin(a2)).toFixed(1)+'"/>'}
+  return '<g fill="url(#'+id+'r)"><g>'+s+'<animateTransform attributeName="transform" type="rotate" from="0 120 112" to="360 120 112" dur="30s" repeatCount="indefinite"/></g></g>'}
+
+var RANKS=[
+ {n:'Filiz',k:'round',c:'green',s:'+',p:0,ex:'Başlangıç'},
+ {n:'Çırak',k:'round',c:'bronze',s:'+−',d:'book',p:15,ex:'15 puan'},
+ {n:'Savaşçı',k:'shield',c:'silver',s:'×',p:60,ex:'60 puan'},
+ {n:'Şövalye',k:'shield',c:'gold',s:'',d:'helm',p:150,ex:'150 puan'},
+ {n:'Usta',k:'round',c:'blue',s:'π',d:'owl',p:300,ex:'300 puan<br>+ 25 Zor galibiyet'},
+ {n:'Şampiyon',k:'small',c:'royal',s:'+',d:'cup',p:600,ex:'600 puan<br>+ 50 Zor galibiyet'},
+ {n:'Efsane',k:'small',c:'fire',s:'∞',p:1000,ex:'1000 puan<br>+ 100 Zor galibiyet'}];
+
+
+var DRAW={
+ book:function(id,m){var st=m[3];return '<path d="M120 96 C106 86 88 84 74 88 L74 140 C88 136 106 138 120 148 C134 138 152 136 166 140 L166 88 C152 84 134 86 120 96Z" fill="'+st+'" transform="translate(0 5)"/>'
+  +'<path d="M120 96 C106 86 88 84 74 88 L74 140 C88 136 106 138 120 148 Z" fill="url(#'+id+'p)" stroke="'+st+'" stroke-width="2"/>'
+  +'<path d="M120 96 C134 86 152 84 166 88 L166 140 C152 136 134 138 120 148 Z" fill="url(#'+id+'p)" stroke="'+st+'" stroke-width="2"/>'
+  +'<path d="M120 96 V148" stroke="'+st+'" stroke-width="2.5"/>'
+  +'<path d="M86 104 C96 102 106 104 112 107 M86 132 C96 130 106 132 112 135 M128 107 C134 104 144 102 154 104 M128 135 C134 132 144 130 154 132" stroke="'+st+'" stroke-opacity=".35" stroke-width="2" fill="none"/>'
+  +'<path d="M97 109 V129 M87 119 H107" stroke="#1f8a4c" stroke-width="6" stroke-linecap="round"/><path d="M133 119 H153" stroke="#1f5fbf" stroke-width="6" stroke-linecap="round"/>'},
+ helm:function(id,m){return '<g transform="translate(120 74) scale(1.18) translate(-120 -70)">'
+  +'<path d="M125 57 C118 42 124 24 140 13 C150 6 162 3 172 3 C168 9 166 15 162 22 L156 22 L159 26 C155 33 150 39 144 44 L139 43 L141 47 C135 52 130 55 125 57 Z" fill="url(#'+id+'q)" stroke="#6b7488" stroke-width="1.6" stroke-linejoin="round"/>'
+  +'<path d="M120 70 L125 57" stroke="#c9a46a" stroke-width="3" stroke-linecap="round"/>'
+  +'<path d="M125 57 C136 40 152 20 172 3" stroke="#9aa3b5" stroke-width="1.8" fill="none" stroke-linecap="round"/>'
+  +'<path d="M129 50 L122 44 M134 44 L124 36 M139 37 L128 27 M145 30 L134 18 M152 22 L143 11 M158 15 L152 7 M137 47 L143 46 M143 39 L150 36 M150 30 L157 27 M157 21 L163 17" stroke="#8e98ad" stroke-opacity=".6" stroke-width="1.1" fill="none" stroke-linecap="round"/>'
+  +'</g>'
+  +'<path d="M86 136 L86 104 C86 78 100 64 120 64 C140 64 154 78 154 104 L154 136 C154 145 147 152 138 152 L102 152 C93 152 86 145 86 136Z" fill="url(#'+id+'k)" stroke="#2f3a50" stroke-width="2.5"/>'
+  +'<path d="M92 100 C100 92 140 92 148 100 L148 122 C140 128 100 128 92 122Z" fill="#26304a" stroke="#2f3a50" stroke-width="2"/>'
+  +'<rect x="97" y="103" width="46" height="5" rx="2.5" fill="#0b0f1e"/><rect x="99" y="114" width="42" height="5" rx="2.5" fill="#0b0f1e"/>'
+  +'<path d="M100 72 C108 66 120 66 128 68" stroke="#fff" stroke-opacity=".8" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<circle cx="104" cy="138" r="2.6" fill="#2f3a50"/><circle cx="112" cy="140" r="2.6" fill="#2f3a50"/><circle cx="128" cy="140" r="2.6" fill="#2f3a50"/><circle cx="136" cy="138" r="2.6" fill="#2f3a50"/>'
+  +'<rect x="94" y="150" width="52" height="9" rx="4" fill="url(#'+id+'m)" stroke="#2f3a50" stroke-width="1.5"/>'},
+ owl:function(id,m){var st='#5b3416';return '<path d="M94 84 L90 62 L106 76Z M146 84 L150 62 L134 76Z" fill="url(#'+id+'o)" stroke="'+st+'" stroke-width="2" stroke-linejoin="round"/>'
+  +'<path d="M120 72 C142 72 156 88 156 112 C156 140 140 160 120 160 C100 160 84 140 84 112 C84 88 98 72 120 72Z" fill="url(#'+id+'o)" stroke="'+st+'" stroke-width="2.5"/>'
+  +'<path d="M120 116 C136 116 146 128 144 146 C138 156 102 156 96 146 C94 128 104 116 120 116Z" fill="#fff4dc" opacity=".9"/>'
+  +'<circle cx="106" cy="100" r="13" fill="#fff" stroke="'+st+'" stroke-width="3"/><circle cx="134" cy="100" r="13" fill="#fff" stroke="'+st+'" stroke-width="3"/><path d="M119 100 H121" stroke="'+st+'" stroke-width="3"/>'
+  +'<circle cx="108" cy="97" r="5.5" fill="#1a1030"/><circle cx="132" cy="97" r="5.5" fill="#1a1030"/><circle cx="110" cy="95" r="1.8" fill="#fff"/><circle cx="134" cy="95" r="1.8" fill="#fff"/>'
+  +'<path d="M93 84 L114 90 M147 84 L126 90" stroke="'+st+'" stroke-width="4" stroke-linecap="round"/>'
+  +'<path d="M114 110 L126 110 L120 119Z" fill="#ff9f1c" stroke="#9a5a00" stroke-width="1.5" stroke-linejoin="round"/>'
+  +'<text x="120" y="150" text-anchor="middle" font-family="Baloo 2,Arial Rounded MT Bold,DejaVu Sans,sans-serif" font-weight="800" font-size="30" fill="#1b4c9a">π</text>'
+  +'<path d="M84 118 C78 132 82 146 92 154 M156 118 C162 132 158 146 148 154" stroke="'+st+'" stroke-width="3" fill="none" stroke-linecap="round"/>'},
+ cup:function(id,m){var st=m[3];return '<path d="M98 82 C72 76 66 116 98 122" stroke="url(#'+id+'m)" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M142 82 C168 76 174 116 142 122" stroke="url(#'+id+'m)" stroke-width="7" fill="none" stroke-linecap="round"/>'
+  +'<path d="M98 82 C72 76 66 116 98 122 M142 82 C168 76 174 116 142 122" stroke="'+st+'" stroke-width="1.5" fill="none" stroke-opacity=".6"/>'
+  +'<path d="M94 76 H146 C146 112 138 132 120 136 C102 132 94 112 94 76Z" fill="url(#'+id+'m)" stroke="'+st+'" stroke-width="2.5"/>'
+  +'<ellipse cx="120" cy="77" rx="26" ry="5" fill="'+st+'" opacity=".5"/>'
+  +'<path d="M120 92 V114 M109 103 H131" stroke="#5a2a9a" stroke-width="7" stroke-linecap="round"/>'
+  +'<path d="M101 84 C101 104 106 120 114 128" stroke="#fff" stroke-opacity=".7" stroke-width="3" fill="none" stroke-linecap="round"/>'
+  +'<rect x="114" y="135" width="12" height="12" fill="url(#'+id+'m)" stroke="'+st+'" stroke-width="2"/>'
+  +'<path d="M102 160 L138 160 L134 147 L106 147Z" fill="url(#'+id+'m)" stroke="'+st+'" stroke-width="2.5" stroke-linejoin="round"/>'}};
+
+function emblem(i,opt){opt=opt||{};var r=RANKS[i],m=MET[r.c],f=FACE[r.c],id='rke'+(RKU++),k=r.k,o='';
+ var defs='<defs><linearGradient id="'+id+'m" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="'+m[0]+'"/><stop offset=".3" stop-color="'+m[1]+'"/><stop offset=".52" stop-color="'+m[2]+'"/><stop offset=".64" stop-color="'+m[1]+'"/><stop offset="1" stop-color="'+m[3]+'"/></linearGradient>'
+ +'<radialGradient id="'+id+'f" cx=".5" cy=".3" r=".85"><stop offset="0" stop-color="'+f[0]+'"/><stop offset="1" stop-color="'+f[1]+'"/></radialGradient>'
+ +'<linearGradient id="'+id+'t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".45" stop-color="'+m[0]+'"/><stop offset="1" stop-color="'+m[1]+'"/></linearGradient>'
+ +'<linearGradient id="'+id+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+ +'<radialGradient id="'+id+'r"><stop offset=".25" stop-color="'+m[1]+'" stop-opacity=".75"/><stop offset="1" stop-color="'+m[1]+'" stop-opacity="0"/></radialGradient>'
+ +'<linearGradient id="'+id+'x" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#d81e05"/><stop offset=".5" stop-color="#ff7a1a"/><stop offset="1" stop-color="#ffe066"/></linearGradient>'
+ +'<linearGradient id="'+id+'k" x1="0" y1="0" x2=".4" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#d6dde9"/><stop offset=".55" stop-color="#8d99ae"/><stop offset=".7" stop-color="#c9d2e0"/><stop offset="1" stop-color="#4a556b"/></linearGradient>'+'<linearGradient id="'+id+'q" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".6" stop-color="#eef1f7"/><stop offset="1" stop-color="#c9d0de"/></linearGradient>'+'<linearGradient id="'+id+'p" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"/><stop offset="1" stop-color="#efd7a6"/></linearGradient>'+'<linearGradient id="'+id+'o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7e6c4"/><stop offset=".6" stop-color="#d9a96a"/><stop offset="1" stop-color="#9a6534"/></linearGradient>'+'<filter id="'+id+'g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="9"/></filter>'
+ +'<clipPath id="'+id+'c">'+shp(k,'')+'</clipPath></defs>';
+ if(i>=3) o+=rays(id,m[1],i>=5?16:12,i>=5?122:112);
+ if(i>=3) o+='<g filter="url(#'+id+'g)" opacity=".75">'+shp(k,'fill="'+m[1]+'" '+T(1.1))+(i==6?'<animate attributeName="opacity" values=".5;1;.5" dur="2s" repeatCount="indefinite"/>':'')+'</g>';
+ if(i==6) o+='<g filter="url(#'+id+'g)" opacity=".8"><path d="M120 -10 C132 22 150 30 146 58 C160 46 166 26 162 8 C190 38 198 78 178 114 L62 114 C42 78 50 38 78 8 C74 26 80 46 94 58 C90 30 108 22 120 -10Z" fill="#ff5e1f"/></g>'
+   +'<g transform="translate(120 112)"><g><animateTransform attributeName="transform" type="scale" values="1 1;1.05 1.1;1 1" dur="1.1s" repeatCount="indefinite"/><path transform="translate(-120 -112)" d="M120 -8 C132 22 150 30 146 58 C160 46 166 26 162 10 C186 38 194 76 176 112 L64 112 C46 76 54 38 78 10 C74 26 80 46 94 58 C90 30 108 22 120 -8Z" fill="url(#'+id+'x)"/></g></g>';
+ if(i==2) o+='<g transform="translate(36 204) rotate(-52) scale(1.22 1)">'+sword(id+'m',m[3])+'</g><g transform="translate(240 0) scale(-1 1)"><g transform="translate(36 204) rotate(-52) scale(1.22 1)">'+sword(id+'m',m[3])+'</g></g>';
+ if(i==4||i==6){var w='<path d="'+WING+'" fill="url(#'+id+'m)" stroke="'+m[3]+'" stroke-width="2" stroke-linejoin="round"/><path d="M70 112 C50 112 30 100 20 86 M72 96 C54 92 36 80 26 62 M76 80 C62 72 52 58 46 40" fill="none" stroke="'+m[3]+'" stroke-opacity=".55" stroke-width="2"/>';
+   o+='<g transform="translate(0 -4)">'+w+'</g><g transform="translate(240 -4) scale(-1 1)">'+w+'</g>'}
+ if(i==5||i==6) o+=laurel(id+'m',m[3]);
+ o+=shp(k,'fill="url(#'+id+'m)" stroke="'+m[3]+'" stroke-width="2.5"');
+ o+=shp(k,'fill="none" stroke="'+m[0]+'" stroke-opacity=".8" stroke-width="2" '+T(.93));
+ o+=shp(k,'fill="url(#'+id+'f)" stroke="'+m[3]+'" stroke-width="3" '+T(.78));
+ if(i==1){for(var j=0;j<12;j++){var a=j*Math.PI/6;o+='<circle cx="'+(120+62*Math.cos(a)).toFixed(1)+'" cy="'+(112+62*Math.sin(a)).toFixed(1)+'" r="3.3" fill="'+m[0]+'" stroke="'+m[3]+'"/>'}}
+ var fs=r.s.length>1?52:(k=='small'?62:70);
+ if(r.d) o+=DRAW[r.d](id,m); else o+='<text x="120" y="'+(112+fs*0.34)+'" text-anchor="middle" font-family="Baloo 2,Arial Rounded MT Bold,DejaVu Sans,sans-serif" font-weight="800" font-size="'+fs+'" fill="url(#'+id+'t)" stroke="'+m[3]+'" stroke-width="2.5" paint-order="stroke">'+r.s+'</text>';
+ o+='<g clip-path="url(#'+id+'c)"><rect x="-60" y="-20" width="70" height="260" fill="url(#'+id+'s)" transform="rotate(20 120 112)"><animate attributeName="x" values="-120;300;300" keyTimes="0;.45;1" dur="3.4s" begin="'+(i*.4)+'s" repeatCount="indefinite"/></rect></g>';
+ if(i==0) o+='<path d="M120 46 C120 38 120 34 120 28" stroke="#2f8f3e" stroke-width="4" stroke-linecap="round"/><path d="M120 32 C108 18 94 20 86 28 C96 38 110 40 120 32Z" fill="url(#'+id+'m)" stroke="#155d27" stroke-width="1.5"/><path d="M120 30 C132 14 148 16 156 24 C146 36 130 38 120 30Z" fill="url(#'+id+'m)" stroke="#155d27" stroke-width="1.5"/>';
+
+ if(i>=5) o+=crown(id+'m',m[3]);
+ if(!opt.noRibbon){var dk=m[3],md=m[2];
+   o+='<path d="M30 206 H66 V232 H30 L42 219 Z" fill="'+dk+'"/><path d="M210 206 H174 V232 H210 L198 219 Z" fill="'+dk+'"/>'
+   +'<path d="M50 196 Q120 186 190 196 V224 Q120 214 50 224 Z" fill="url(#'+id+'m)" stroke="'+dk+'" stroke-width="2"/>'
+   +'<text x="120" y="215" text-anchor="middle" font-family="Baloo 2,Arial Rounded MT Bold,DejaVu Sans,sans-serif" font-weight="800" font-size="16" letter-spacing="1.5" fill="'+(i==2||i==0?'#1d2440':'#2a1600')+'">'+r.n.toLocaleUpperCase('tr')+'</text>'}
+ if(i>=3){var sp=[[52,48,1],[188,58,.8],[198,150,.7],[40,150,.9],[150,24,.6],[78,182,.6]];sp.slice(0,i>=5?6:3).forEach(function(q,j){o+=star4(q[0],q[1],q[2],j*.45)})}
+ var vb=opt.noRibbon?'0 -14 240 216':'0 -14 240 254';
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+vb+'" role="img" aria-label="'+r.n+' rütbesi">'+defs+o+'</svg>'}
+
+var TIER={b:{c:'bronze',n:'Bronz'},s:{c:'silver',n:'Gümüş'},g:{c:'gold',n:'Altın'}};
+var FAM=[
+ {k:'sword',n:'Kılıç',d:'1\'e 1 Kapışma galibiyeti',col:'#e2463f',v:['10','30','60']},
+ {k:'shield',n:'Kalkan',d:'Meydan Muharebesi 1.\'liği',col:'#3a7bff',v:['5','15','30']},
+ {k:'flame',n:'Seri',d:'Üst üste galibiyet',col:'#ff8a1f',v:['3','5','8']},
+ {k:'mon',n:'Canavar Avcısı',d:'Bronz Yavru · Gümüş Canavar · Altın Dev, 10\'ar kez',col:'#8b5cf6',v:['10','10','10']},
+ {k:'cal',n:'Azim',d:'Oyun oynanan gün (en az 20 doğru)',col:'#22b573',v:['10','40','100']},
+ {k:'bulb',n:'Soru Ustası',d:'Doğru cevap sayısı',col:'#12b5c9',v:['500','3000','10000']}];
+function icon(k,g,st){var a=' fill="url(#'+g+')" stroke="'+st+'" stroke-width="2" stroke-linejoin="round"';
+ if(k=='sword')return '<g transform="rotate(-45) scale(.36) translate(-96 0)">'+sword(g,st)+'</g><g transform="rotate(-135) scale(.36) translate(-96 0)">'+sword(g,st)+'</g>';
+ if(k=='shield')return '<path d="M0 -32 L27 -22 L27 0 Q27 23 0 35 Q-27 23 -27 0 L-27 -22Z"'+a+'/><path d="M0 -17 L4.7 -6.5 L16 -5.3 L7.6 2.4 L9.9 13.6 L0 7.8 L-9.9 13.6 L-7.6 2.4 L-16 -5.3 L-4.7 -6.5Z" fill="'+st+'"/>';
+ if(k=='flame')return '<path d="M0 -36 C9 -18 24 -10 22 8 C22 26 11 35 0 35 C-11 35 -22 26 -22 8 C-22 -5 -13 -11 -9 -20 C-7 -9 -2 -5 3 -7 C7 -16 3 -26 0 -36Z"'+a+'/><path d="M0 0 C6 8 10 14 8 22 C6 28 -6 28 -8 22 C-10 14 -4 8 0 0Z" fill="#fff" opacity=".75"/>';
+ if(k=='mon'){var d=[-15,0,15].map(function(x,j){return 'M'+(x-9)+' '+(j==1?-31:-27)+' C'+(x-2)+' -10 '+(x+3)+' 6 '+(x+5)+' '+(j==1?30:26)}).join(' ');
+   return '<g transform="rotate(-12)"><path d="'+d+'" stroke="#000" stroke-opacity=".5" stroke-width="11" fill="none" stroke-linecap="round" transform="translate(2 3)"/><path d="'+d+'" stroke="'+st+'" stroke-width="10" fill="none" stroke-linecap="round"/><path d="'+d+'" stroke="url(#'+g+')" stroke-width="6.5" fill="none" stroke-linecap="round"/></g>'}
+ if(k=='cal')return '<rect x="-27" y="-24" width="54" height="52" rx="7"'+a+'/><rect x="-27" y="-24" width="54" height="14" rx="7" fill="'+st+'" opacity=".55"/><rect x="-16" y="-32" width="6" height="14" rx="3" fill="'+st+'"/><rect x="10" y="-32" width="6" height="14" rx="3" fill="'+st+'"/><path d="M-13 9 L-3 18 L15 -1" fill="none" stroke="'+st+'" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>';
+ return '<circle cx="0" cy="-8" r="21"'+a+'/><rect x="-10" y="11" width="20" height="9" rx="3"'+a+'/><rect x="-7" y="22" width="14" height="6" rx="3" fill="'+st+'"/><path d="M-6 -12 C-6 -20 6 -20 6 -12 C6 -6 0 -6 0 -1" fill="none" stroke="'+st+'" stroke-width="4" stroke-linecap="round"/><circle cx="0" cy="5" r="2.5" fill="'+st+'"/><path d="M-32 -8 H-27 M27 -8 H32 M-23 -31 L-19 -27 M23 -31 L19 -27 M0 -36 V-32" stroke="'+st+'" stroke-width="3" stroke-linecap="round"/>'}
+function medal(fi,t,opt){opt=opt||{};var F=FAM[fi],TT=TIER[t],m=MET[TT.c],id='rkm'+(RKU++),v=F.v['bsg'.indexOf(t)],o='';
+ var defs='<defs><linearGradient id="'+id+'m" x1="0" y1="0" x2=".35" y2="1"><stop offset="0" stop-color="'+m[0]+'"/><stop offset=".3" stop-color="'+m[1]+'"/><stop offset=".52" stop-color="'+m[2]+'"/><stop offset=".64" stop-color="'+m[1]+'"/><stop offset="1" stop-color="'+m[3]+'"/></linearGradient>'
+ +'<radialGradient id="'+id+'f" cx=".5" cy=".3" r=".85"><stop offset="0" stop-color="#2b3170"/><stop offset="1" stop-color="#0d1030"/></radialGradient>'
+ +'<linearGradient id="'+id+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'
+ +'<radialGradient id="'+id+'r"><stop offset=".3" stop-color="'+m[1]+'" stop-opacity=".7"/><stop offset="1" stop-color="'+m[1]+'" stop-opacity="0"/></radialGradient>'
+ +'<filter id="'+id+'g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="8"/></filter>'
+ +'<clipPath id="'+id+'c"><circle cx="100" cy="150" r="70"/></clipPath></defs>';
+ if(t=='g'){var s='';for(var i=0;i<14;i++){var a=i*360/14,a1=(a-6)*Math.PI/180,a2=(a+6)*Math.PI/180;s+='<polygon points="100,150 '+(100+108*Math.cos(a1)).toFixed(1)+','+(150+108*Math.sin(a1)).toFixed(1)+' '+(100+108*Math.cos(a2)).toFixed(1)+','+(150+108*Math.sin(a2)).toFixed(1)+'"/>'}
+   o+='<g fill="url(#'+id+'r)"><g>'+s+'<animateTransform attributeName="transform" type="rotate" from="0 100 150" to="360 100 150" dur="30s" repeatCount="indefinite"/></g></g><circle cx="100" cy="150" r="74" fill="'+m[1]+'" filter="url(#'+id+'g)" opacity=".7"/>'}
+ o+='<polygon points="52,0 84,0 114,92 86,98" fill="'+F.col+'"/><polygon points="148,0 116,0 86,92 114,98" fill="'+F.col+'" style="filter:brightness(.75)"/><path d="M68 0 L100 95 M132 0 L100 95" stroke="#fff" stroke-opacity=".5" stroke-width="5"/>';
+ var pts='';for(var j=0;j<40;j++){var aa=j*Math.PI/20,rr=j%2?66:71;pts+=(100+rr*Math.cos(aa)).toFixed(1)+','+(150+rr*Math.sin(aa)).toFixed(1)+' '}
+ o+='<polygon points="'+pts+'" fill="url(#'+id+'m)" stroke="'+m[3]+'" stroke-width="2"/>';
+ o+='<circle cx="100" cy="150" r="58" fill="none" stroke="'+m[0]+'" stroke-width="2" stroke-opacity=".9"/><circle cx="100" cy="150" r="52" fill="url(#'+id+'f)" stroke="'+m[3]+'" stroke-width="3"/>';
+ o+='<g transform="translate(100 140) scale(1.05)">'+icon(F.k,id+'m',m[3])+'</g>';
+ var w=Math.max(46,v.length*13+22);
+ o+='<rect x="'+(100-w/2)+'" y="180" width="'+w+'" height="27" rx="13.5" fill="url(#'+id+'m)" stroke="'+m[3]+'" stroke-width="2"/><text x="100" y="200" text-anchor="middle" font-family="Baloo 2,Arial Rounded MT Bold,DejaVu Sans,sans-serif" font-weight="800" font-size="19" fill="'+m[3]+'">'+Number(v).toLocaleString('tr-TR')+'</text>';
+ if(t!='b') o+='<g clip-path="url(#'+id+'c)"><rect x="-60" y="60" width="60" height="200" fill="url(#'+id+'s)" transform="rotate(20 100 150)"><animate attributeName="x" values="-100;260;260" keyTimes="0;.45;1" dur="3.2s" begin="'+((fi*3+'bsg'.indexOf(t))*.3)+'s" repeatCount="indefinite"/></rect></g>';
+ if(t=='g'){[[34,96,.9],[168,104,.7],[176,196,.6],[26,190,.7]].forEach(function(q,j){o+=star4(q[0],q[1],q[2],j*.5)})}
+ return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -4 200 240" role="img" aria-label="'+TT.n+' '+F.n+'">'+defs+o+'</svg>'}
+
+
+return {emblem:emblem,medal:medal,RANKS:RANKS,FAM:FAM,TIER:TIER};
+})();
+/* rütbe eşikleri: puan + Zor galibiyet */
+var RKP=[0,15,60,150,300,600,1000],RKZ=[0,0,0,0,25,50,100];
+var RKF=[{k:'sw',th:[10,30,60]},{k:'sh',th:[5,15,30]},{k:'se',th:[3,5,8]},{k:'mo',th:[10,10,10]},{k:'dz',th:[10,40,100]},{k:'q',th:[500,3000,10000]}];
+var RKW=[
+ ['1\'e 1 kapışmada 10 galibiyet aldın.','Orta ya da Zor seviyede 30 kapışma kazandın.','Zor seviyede 60 kapışma kazandın.'],
+ ['Meydan Muharebesinde 5 kez birinci oldun.','Orta ya da Zor seviyede 15 kez birinci oldun.','Zor seviyede 30 kez birinci oldun.'],
+ ['Üst üste 3 maç kazandın.','Orta ya da Zor seviyede üst üste 5 maç kazandın.','Zor seviyede üst üste 8 maç kazandın.'],
+ ['Yavru Canavarı 10 kez yendin.','Canavarı 10 kez yendin.','Dev Canavarı 10 kez yendin.'],
+ ['10 farklı günde çalıştın.','40 farklı günde çalıştın.','100 farklı günde çalıştın.'],
+ ['500 soruyu doğru cevapladın.','3.000 soruyu doğru cevapladın.','10.000 soruyu doğru cevapladın.']];
+var RKOK=['dover','gover','summary','rover','home','rozet','history','gmenu','rooms','bpick','friends','profiles','fprof','lb'];
+var RK={q:[],to:null};
+function rkNew(){return {p:0,hz:0,sw:[0,0,0],sh:[0,0,0],se:[0,0,0],sb:[0,0,0],mo:[0,0,0],dz:0,q:0,m:'000000',r:0,dc:{d:'',o:{}},dd:'',dq:0,dk:'',ls:{},bf:0}}
+function rkRaw(p){var a=ls('mc_rk',{}),x=a[p]||{},n=rkNew(),k;for(k in n)if(!(k in x))x[k]=n[k];return x}
+function rkPut(p,x){var a=ls('mc_rk',{});a[p]=x;lsSet('mc_rk',a)}
+function rkGet(p){var x=rkRaw(p);if(!x.bf){rkBackfill(p,x);rkPut(p,x)}return x}
+function rkMine(){return st.profile?rkRaw(st.profile).r|0:0}
+function rkDay(t){var d=t?new Date(t):new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
+function rkRank(x){for(var i=6;i>0;i--){if(x.p>=RKP[i]&&x.hz>=RKZ[i])return i}return 0}
+function rkVal(x,fi,t){var k=RKF[fi].k;if(k==='se')return x.sb[t];if(k==='dz')return x.dz;if(k==='q')return x.q;return x[k][t]}
+function rkHas(x,fi,t){return ((+x.m.charAt(fi)||0)>>t)&1}
+function rkAddQ(x,n,t){if(!(n>0))return;var d=rkDay(t);x.q+=n;if(x.dd!==d){x.dd=d;x.dq=0}x.dq+=n;if(x.dq>=20&&x.dk!==d){x.dk=d;x.dz++}}
+/* bir maçın sonucunu sayaçlara işle. mult: puan çarpanı (eski maçlar 0.5); cap: günlük rakip anahtarı */
+function rkApply(x,e,mult,cap){
+  var lv=e.tb?'k':(e.lv||'k'),L=lv==='z'?2:(lv==='o'?1:0),t;
+  if(e.bot){if(e.won){var bi={y:0,c:1,d:2}[e.bot];if(bi!==undefined)x.mo[bi]++}return 'bot'}
+  if(e.left&&(e.my|0)<Math.ceil((e.win||10)/2))return 'half';
+  if(cap){var d=rkDay();if(x.dc.d!==d)x.dc={d:d,o:{}};var c=x.dc.o[cap]|0;if(c>=5)return 'cap';x.dc.o[cap]=c+1}
+  var first=e.mm?e.rk===1:!!e.won,pts=0;
+  if(e.mm){if(e.rk===1)pts=[2,4,6][L];else if(e.rk===2)pts=[1,2,3][L]}
+  else if(e.won)pts=[1,2,3][L];
+  x.p+=pts*mult;
+  if(first){if(L===2)x.hz++;var a=e.mm?x.sh:x.sw;for(t=0;t<=L;t++){a[t]++;x.se[t]++;if(x.se[t]>x.sb[t])x.sb[t]=x.se[t]}}
+  else x.se=[0,0,0];
+  return 'ok';
+}
+/* yeni rütbe / madalya var mı: varsa kutlama sırasına ekle */
+function rkCheck(x,bf){
+  var r=rkRank(x),m='',out=[];
+  RKF.forEach(function(F,fi){var b=0,t,ob=+x.m.charAt(fi)||0;for(t=0;t<3;t++)if(rkVal(x,fi,t)>=F.th[t])b|=1<<t;b|=ob;m+=b;for(t=0;t<3;t++)if((b>>t&1)&&!(ob>>t&1))out.push({t:'med',f:fi,g:t})});
+  var up=r>x.r;if(r>x.r)x.r=r;x.m=m;
+  if(bf){if(x.p>0||out.length||x.q>0)RK.q.push({t:'bf',r:x.r,p:x.p,meds:out,q:x.q})}
+  else{if(up)RK.q.push({t:'rank',r:x.r});out.forEach(function(o){RK.q.push(o)})}
+  return up||out.length>0;
+}
+/* ilk açılışta bu telefondaki eski oyunlar bir kez sayılır (kapışmalar yarım puanla) */
+function rkBackfill(p,x){
+  x.bf=1;
+  var R=records().filter(function(r){return r&&r.p===p}).map(function(r){return {t:Date.parse(r.t)||r.id||0,ok:r.ok|0,id:r.id}}).sort(function(a,b){return a.t-b.t});
+  R.forEach(function(r){rkAddQ(x,r.ok,r.t)});
+  R.slice(-8).forEach(function(r){if(r.id)x.ls[r.id]=r.ok});
+  var D=ls('mc_dhist',[]).filter(function(e){return e&&e.p===p}).sort(function(a,b){return a.t-b.t});
+  D.forEach(function(e){rkApply(x,{bot:e.bot,won:!!e.w,mm:!!e.mm,rk:e.rk,lv:e.lv,tb:e.tb,win:e.win,left:!!e.left,my:e.a},0.5,null)});
+  x.p=Math.floor(x.p);x.dc={d:'',o:{}};
+  rkCheck(x,true);
+}
+/* canlı: oturumdaki doğru cevap sayısı (Pratik, Problemler, Akıldan İşlem, Yarış) */
+function rkQ(sid,ok){
+  if(!st.profile||!sid)return;
+  var p=st.profile,x=rkGet(p),pv=x.ls[sid]||0;
+  if(!(ok>pv))return;
+  rkAddQ(x,ok-pv);x.ls[sid]=ok;
+  var ks=Object.keys(x.ls);if(ks.length>8)ks.sort(function(a,b){return a-b}).slice(0,ks.length-8).forEach(function(k){delete x.ls[k]});
+  var ch=rkCheck(x);rkPut(p,x);if(ch){rkPub();rkSoon()}
+}
+/* canlı: kapışma / muharebe / canavar maçı bitti */
+function rkMatch(){
+  if(!st.profile||!DU)return;
+  var p=st.profile,x=rkGet(p),mm=DU.ids.length>2,cap=null;
+  if(!DU.bot)cap=mm?'m:'+duOpps().map(function(u){return DU.pid[u]||DU.nick[u]}).sort().join(','):'o:'+(DU.opid||DU.onick);
+  DU.rkRes=rkApply(x,{bot:DU.bot,won:!!DU.won,mm:mm,rk:DU.rank,lv:DU.qg.lv,tb:DU.qg.tb,win:DU.win,left:!!DU.left,my:DU.pts[DU.me]||0},1,cap);
+  rkAddQ(x,DU.myR.filter(function(v){return v>0}).length);
+  var ch=rkCheck(x);rkPut(p,x);bkSoon();rkPub();if(ch)rkSoon();
+}
+function rkPub(){try{if(FR.pid&&FR.prof===st.profile)frBeat()}catch(e){}}
+function rkSoon(){if(RK.to)clearTimeout(RK.to);RK.to=setTimeout(rkFlush,1700)}
+function rkFlush(){
+  RK.to=null;
+  if(!RK.q.length)return;
+  if(st.modal||RKOK.indexOf(st.screen)<0){return}
+  rkShow(RK.q.shift());
+}
+function rkStill(s){return s.replace(/<g clip-path="url\(#[^"]+\)"><rect[^>]*><animate[^>]*\/><\/rect><\/g>/g,'').replace(/<animate(Transform)?[^>]*\/>/g,'')}
+function rkMini(i){return '<span class="rkmini">'+rkStill(RKA.emblem(i|0,{noRibbon:1}))+'</span>'}
+function rkMedName(fi,t){return RKA.TIER['bsg'.charAt(t)].n+' '+RKA.FAM[fi].n}
+function rkNext(x){
+  var r=x.r;if(r>=6)return '<div class="rkrow"><span>En yüksek rütbedesin!</span><span>🔥</span></div>';
+  var n=r+1,h='<div class="rkrow"><span>Sıradaki: <b>'+RKA.RANKS[n].n+'</b></span><span>'+Math.min(x.p,RKP[n])+' / '+RKP[n]+' puan</span></div><div class="rkbar"><i style="width:'+Math.min(100,Math.round(x.p*100/RKP[n]))+'%"></i></div>';
+  if(RKZ[n])h+='<div class="rkrow"><span>Zor galibiyet</span><span>'+Math.min(x.hz,RKZ[n])+' / '+RKZ[n]+'</span></div><div class="rkbar g"><i style="width:'+Math.min(100,Math.round(x.hz*100/RKZ[n]))+'%"></i></div>';
+  return h;
+}
+function rkLeft(x){
+  if(x.r>=6)return 'En yüksek rütbe: Efsane!';
+  var n=x.r+1,a=Math.max(0,RKP[n]-x.p),b=Math.max(0,RKZ[n]-x.hz),t=RKA.RANKS[n].n+' için ';
+  if(a&&b)return t+a+' puan ve '+b+' Zor galibiyet kaldı';
+  if(a)return t+a+' puan kaldı';
+  return t+b+' Zor galibiyet kaldı';
+}
+function rkConf(n){var c=['#ffd23f','#ff5e7e','#4dd2ff','#3ddc97','#b388ff','#ff9f1c'],h='',i;for(i=0;i<n;i++)h+='<i style="left:'+(Math.random()*100).toFixed(1)+'%;background:'+c[i%6]+';animation-duration:'+(2.4+Math.random()*2.4).toFixed(2)+'s;animation-delay:-'+(Math.random()*4).toFixed(2)+'s"></i>';return h}
+/* kutlama penceresi */
+function rkShow(it){
+  if(!st.profile)return;
+  var x=rkRaw(st.profile),h,big,art,ttl,why,pg='',fire=false;
+  if(it.t==='rank'){big='TEBRİKLER!';art=RKA.emblem(it.r);ttl='Yeni rütben: '+RKA.RANKS[it.r].n;why=RKP[it.r]+' puana ulaştın'+(RKZ[it.r]?', '+RKZ[it.r]+' Zor galibiyet aldın':'')+'.';pg=rkNext(x);fire=it.r===6}
+  else if(it.t==='med'){
+    big='YENİ MADALYA!';art=RKA.medal(it.f,'bsg'.charAt(it.g));ttl=rkMedName(it.f,it.g);why=RKW[it.f][it.g];
+    var nx=-1,t;for(t=0;t<3;t++)if(!rkHas(x,it.f,t)){nx=t;break}
+    if(nx<0)pg='<div class="rkrow"><span>'+RKA.FAM[it.f].n+' ailesi</span><span>3 / 3 tamam ✔</span></div><div class="rkbar"><i style="width:100%"></i></div>';
+    else{var v=rkVal(x,it.f,nx),th=RKF[it.f].th[nx];pg='<div class="rkrow"><span>Sıradaki: <b>'+rkMedName(it.f,nx)+'</b></span><span>'+Math.min(v,th).toLocaleString('tr-TR')+' / '+th.toLocaleString('tr-TR')+'</span></div><div class="rkbar"><i style="width:'+Math.min(100,Math.round(v*100/th))+'%"></i></div>'}
+  }else{
+    big='GEÇMİŞİN SAYILDI!';art=RKA.emblem(it.r);ttl='Rütben: '+RKA.RANKS[it.r].n;
+    why='Bu telefondaki eski oyunların sayıldı: <b>'+it.p+' puan</b>, '+it.q.toLocaleString('tr-TR')+' doğru cevap.';
+    if(it.meds.length)pg='<div class="rkmeds">'+it.meds.map(function(o){return '<span title="'+rkMedName(o.f,o.g)+'">'+rkStill(RKA.medal(o.f,'bsg'.charAt(o.g)))+'</span>'}).join('')+'</div>';
+    pg+=rkNext(x);fire=it.r===6;
+  }
+  st.modal=true;pauseT();
+  var ov=document.getElementById('ov');ov.className='rkov';
+  ov.innerHTML='<div class="rkp'+(fire?' fire':'')+'"><div class="rkrays"></div><div class="rkcf">'+rkConf(it.t==='med'?20:32)+'</div><div class="rkbig">'+big+'</div><div class="rkart">'+art+'</div><div class="rkttl">'+ttl+'</div><div class="rkwhy">'+why+'</div>'+(pg?'<div class="rkpg">'+pg+'</div>':'')+'<div class="rkbt"><button class="rkb d" id="rksh">📤 Paylaş</button><button class="rkb y" id="mn">Devam</button></div></div>';
+  ov.hidden=false;
+  if(it.t==='med'){smpPlay('win.mp3',0.7,sndWin)}else{smpPlay('win.mp3',0.85,sndWin);confetti(true)}
+  document.getElementById('rksh').onclick=function(){rkShare(it)};
+  document.getElementById('mn').onclick=function(){closeModal();if(RK.q.length)setTimeout(rkFlush,450)};
+}
+/* paylaşım fotoğrafı (1080×1080) */
+function rkShare(it){
+  var svg,line;
+  if(it.t==='med'){svg=RKA.medal(it.f,'bsg'.charAt(it.g));line=rkMedName(it.f,it.g)+' kazandı!'}
+  else{svg=RKA.emblem(it.r);line=RKA.RANKS[it.r].n.toLocaleUpperCase('tr')+' oldu!'}
+  svg=rkStill(svg);
+  var W=1080,cv=document.createElement('canvas');cv.width=W;cv.height=W;
+  var c=cv.getContext('2d'),g=c.createRadialGradient(W/2,W*0.42,40,W/2,W*0.42,W*0.75);
+  g.addColorStop(0,it.r===6&&it.t!=='med'?'#8a2e5a':'#5b45c4');g.addColorStop(0.55,it.r===6&&it.t!=='med'?'#3a1440':'#231a63');g.addColorStop(1,'#100c33');
+  c.fillStyle=g;c.fillRect(0,0,W,W);
+  c.save();c.translate(W/2,W*0.4);for(var i=0;i<16;i++){c.rotate(Math.PI/8);c.beginPath();c.moveTo(0,0);c.lineTo(-60,-W);c.lineTo(60,-W);c.closePath();c.fillStyle='rgba(255,226,120,.13)';c.fill()}c.restore();
+  c.strokeStyle='#ffd23f';c.lineWidth=12;rr(c,6,6,W-12,W-12,60);c.stroke();
+  var img=new Image();
+  img.onload=function(){
+    var s=it.t==='med'?560:600,ih=s*(it.t==='med'?240/200:254/240);
+    c.drawImage(img,(W-s)/2,40,s,ih);
+    c.textAlign='center';c.fillStyle='#fff';c.font='800 62px system-ui,sans-serif';c.fillText(st.profile||'',W/2,W-230);
+    c.fillStyle='#ffd23f';c.font='900 76px system-ui,sans-serif';c.fillText(line,W/2,W-140);
+    var d=new Date();c.fillStyle='#c9ccf5';c.font='600 36px system-ui,sans-serif';c.fillText('Matematik Canavarı · '+fmtDate(d),W/2,W-70);
+    shareCanvas(cv,'matematik-canavari-rozet.png');
+  };
+  img.onerror=function(){toast('Görsel oluşturulamadı')};
+  img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+/* Rozetlerim ekranı */
+function rkHtml(){
+  var h=topBar('🏅 Rozetlerim');
+  if(!st.profile)return h+'<p class="sub center">Rütbe ve madalya kazanmak için bir <b>profil</b> ile gir.</p><button class="ghost" onclick="go(\'rhelp\')">❓ Nasıl kazanırım?</button>';
+  var x=rkGet(st.profile),r=x.r;
+  h+='<div class="pbox rkme"><span class="rkme-e">'+RKA.emblem(r,{noRibbon:1})+'</span><span class="rkme-t"><b>'+RKA.RANKS[r].n+'</b><small>'+esc(st.profile)+' · '+x.p+' puan</small>'+(r<6?'<span class="rkbar"><i style="width:'+Math.min(100,Math.round(x.p*100/RKP[r+1]))+'%"></i></span>':'')+'<small>'+rkLeft(x)+'</small></span></div>';
+  h+='<button class="ghost" onclick="go(\'rhelp\')">❓ Nasıl kazanırım?</button>';
+  h+='<div class="tag">Rütbe merdiveni</div><div class="rklad">';
+  RKA.RANKS.forEach(function(R,i){h+='<div class="'+(i<=r?'':'locked')+(i===r?' cur':'')+'">'+rkStill(RKA.emblem(i,{noRibbon:1}))+'<b>'+R.n+'</b><small>'+RKP[i]+'</small></div>'});
+  h+='</div>';
+  RKA.FAM.forEach(function(F,fi){
+    h+='<div class="tag">'+F.n+' <small>· '+F.d+'</small></div><div class="rkg3">';
+    ['b','s','g'].forEach(function(tc,t){var ok=rkHas(x,fi,t),v=rkVal(x,fi,t),th=RKF[fi].th[t];
+      h+='<div class="'+(ok?'':'locked')+'">'+(ok?RKA.medal(fi,tc):rkStill(RKA.medal(fi,tc)))+'<b>'+RKA.TIER[tc].n+'</b><small>'+(ok?'✔':Math.min(v,th).toLocaleString('tr-TR')+' / '+th.toLocaleString('tr-TR'))+'</small></div>'});
+    h+='</div>';
+  });
+  h+='<p class="sub center">Gri madalyaları henüz almadın. Altındaki sayı ne kadar kaldığını gösterir.</p>';
+  return h;
+}
+function duRkE(u){if(!DU||DU.bot||!u)return '';var v=u===DU.me?(st.profile?rkMine():null):((duP(u)||{}).rk);return typeof v==='number'?rkMini(v):''}
+function rkMdHtml(md){var h='';String(md||'').split('').forEach(function(c,fi){var b=+c||0,t;for(t=2;t>=0;t--){if(b>>t&1&&RKA.FAM[fi]){h+='<span title="'+rkMedName(fi,t)+'">'+rkStill(RKA.medal(fi,'bsg'.charAt(t)))+'</span>';break}}});return h}
+function rkPubBox(o){if(!o)return '';return '<div class="pbox"><div class="rkpub">'+rkMini(o.r)+RKA.RANKS[o.r|0].n+'</div><div class="rkmd">'+rkMdHtml(o.m)+'</div></div>'}
+function rkPubMd(pid,el){if(!pid||!navigator.onLine)return;devAuth().then(function(fb){return fb.getDoc(fb.doc(CL.db,'pl',pid))}).then(function(sn){if(!sn||!sn.exists())return;var x=sn.data(),e=document.getElementById(el);if(e)e.innerHTML=rkMdHtml(x.md)}).catch(function(){})}
+function rkHelpHtml(){
+  var ch=RKA.RANKS.map(function(R,i){return '<span class="rkchip">'+rkMini(i)+R.n+' <small>'+RKP[i]+'</small></span>'}).join('');
+  return topBar('❓ Nasıl kazanırım?')+'<div class="pbox rkhelp">'+
+  '<h3>1. Rütbe nedir?</h3><p>Rütbe senin seviyendir. Puan topladıkça yükselirsin. <b>Rütben hiç düşmez.</b></p>'+
+  '<h3>2. Puanı nasıl alırım?</h3><p>Arkadaşınla kapış ve kazan. <b>Kolay</b> kazanırsan 1 puan, <b>Orta</b> 2 puan, <b>Zor</b> 3 puan. Meydan Muharebesinde birinci olursan iki katı, ikinci olursan bir katı puan alırsın. Kaybedersen puanın gitmez.</p>'+
+  '<h3>3. Rütbeler</h3><div class="rkchips">'+ch+'</div><p>Usta için 25, Şampiyon için 50, Efsane için 100 <b>Zor</b> galibiyet de gerekir.</p>'+
+  '<h3>4. Madalya nedir?</h3><p>Bir başarının ödülüdür. <b>Bronz</b> her seviyede gelir. <b>Gümüş</b> için Orta ya da Zor oyna. <b>Altın</b> sadece Zor seviyede gelir.</p>'+
+  '<h3>5. Hangi madalyalar var?</h3><ul><li><b>Kılıç:</b> 1\'e 1 kapışma kazan (10 · 30 · 60).</li><li><b>Kalkan:</b> Meydan Muharebesinde birinci ol (5 · 15 · 30).</li><li><b>Seri:</b> üst üste kazan (3 · 5 · 8).</li><li><b>Canavar Avcısı:</b> Yavru, Canavar ve Dev Canavarı 10\'ar kez yen.</li><li><b>Azim:</b> en az 20 doğru cevap verdiğin her gün sayılır (10 · 40 · 100 gün).</li><li><b>Soru Ustası:</b> bütün bölümlerdeki doğru cevapların (500 · 3.000 · 10.000).</li></ul>'+
+  '<h3>6. Adil oyun</h3><ul><li>Aynı rakiple günde ilk <b>5 maç</b> sayılır.</li><li>Rakip maçın yarısı oynanmadan çıkarsa maç sayılmaz.</li><li>Canavar maçları rütbe puanı vermez; Canavar Avcısı ve Soru Ustası için sayılır.</li><li>Misafir olarak oynayan rütbe ve madalya kazanmaz.</li></ul>'+
+  '<h3>7. Ne kadar kaldı?</h3><p><b>🏅 Rozetlerim</b> sayfasında rütbenin ilerleme çubuğu ve her madalyanın altında kaç tane kaldığı yazar. Yeni bir şey kazanınca oyun sonunda kutlama penceresi çıkar; <b>📤 Paylaş</b> ile fotoğrafını gönderebilirsin.</p></div>';
+}
+
 /* ---------- uygulama kılavuzu ---------- */
 var GV={from:'welcome',open:null};
 var GUIDE=[
@@ -2349,6 +2679,7 @@ var GUIDE=[
  {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Tek başına oynamak için:</b> Yarış Odası → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (kolay sayılar), 👾 Canavar (orta sayılar) ya da 🐉 Dev Canavar (zor sayılar) seç, sonra işlemi seç. İnternet gerekmez.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
  {id:'mm',t:'🛡️ Meydan Muharebesi',h:'<ul><li>Yarış Odası → <b>Meydan Muharebesi Kur</b>. 3 ya da 4 kişi oynar.</li><li>Seviyeyi, maç puanını (10, 15, 20) ve işlemi seç. Kodu ya da davet linkini gönder; lobide <b>📨 Çağır</b> ile arkadaşlarını da çağırabilirsin.</li><li>En az 3 kişi olunca kurucu <b>Muharebeyi Başlat</b>a basar. Başlayınca yeni kişi giremez.</li><li>Kural 1’e 1 Kapışma ile aynı: her soruda <b>önce doğru basan</b> 1 puan alır, yanlış basan o soruda kilitlenir.</li><li>Seçilen puana ilk ulaşan kazanır. Sonuçta 🥇🥈🥉 sıralaması çıkar.</li><li>Biri ayrılırsa muharebe kalanlarla sürer. Herkes <b>Rövanş</b>a basınca yeniden başlar.</li></ul>'},
  {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) seç.</li><li>Sonra işlemi seç. Oda açılır. Çarpma ya da bölmeyi seçersen önce sorulur: <b>seviyeye göre</b> mi, yoksa tek bir tabloyla mı (<b>📚 Tablo çalış</b>)?</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>5 saniye sayılır, zirve kartı çıkar ve düdükle yarış başlar. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün. İnterneti kopan oyuncunun yanında <b>📶 bağlantısı koptu</b> yazar; 45 saniye dönmezse yarış onu beklemeden biter.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
+ {id:'rank',t:'🏅 Rütbe ve madalyalar',h:'<ul><li>Profille oynarsan <b>rütbe</b> ve <b>madalya</b> kazanırsın. Ana menü → <b>🏅 Rozetlerim</b>.</li><li><b>Puan:</b> 1’e 1 kapışma kazanınca Kolay 1, Orta 2, Zor 3 puan. Meydan Muharebesinde birinciye iki katı, ikinciye bir katı puan. Kaybedince puan gitmez.</li><li><b>Rütbeler:</b> Filiz (0) → Çırak (15) → Savaşçı (60) → Şövalye (150) → Usta (300 + 25 Zor galibiyet) → Şampiyon (600 + 50 Zor galibiyet) → Efsane (1000 + 100 Zor galibiyet). Rütbe hiç düşmez.</li><li><b>Madalyalar:</b> Kılıç, Kalkan, Seri, Canavar Avcısı, Azim ve Soru Ustası. Bronz her seviyede, gümüş Orta ya da Zor, altın sadece Zor seviyede kazanılır.</li><li>Aynı rakiple günde ilk 5 maç sayılır. Rakip maçın yarısı oynanmadan çıkarsa maç sayılmaz. Canavar maçları rütbe puanı vermez.</li><li>Yeni bir şey kazanınca oyun sonunda kutlama penceresi çıkar. <b>📤 Paylaş</b> ile fotoğrafını gönderebilirsin.</li><li>Rütben ve madalyaların herkese görünür: rekorlar tablosunda, arkadaş profilinde ve kapışma girişinde.</li><li>İlk açılışta bu telefondaki eski oyunların bir kez sayılır (eski kapışmalar yarım puanla).</li><li>Ayrıntı: Rozetlerim → <b>❓ Nasıl kazanırım?</b></li></ul>'},
  {id:'lb',t:'🏆 Rekorlar Tablosu',h:'<ul><li>Ana menüdeki <b>Rekorlar Tablosu</b>ndan açılır. İnternet gerekir.</li><li>İki sekme var: <b>Akıldan İşlem</b> ve <b>Yarış Odası</b>. İşlem türünü ve seviyeyi (Kolay, Orta, Zor) seçersin. Her seviyenin tablosu ayrıdır.</li><li><b>Tabloyu Paylaş</b> düğmesiyle tablonun fotoğrafını kaydedip gönderebilirsin.</li><li>En yüksek 10 kişi görünür. İlk 10 içinde değilsen kendi sıran altta yazar.</li><li>Her kişinin her işlemde tek satırı vardır. Sadece rekor kırınca yükselir.</li><li>Birinci olursan tebrik ve konfeti çıkar 🎉</li><li>Tabloda <b>oyun adın</b> herkese görünür (örn. 🦊 Kurnaz Tilki).</li><li>Tablodaki birine dokununca <b>➕ Arkadaşlık isteği</b> gönderebilirsin. Kabul ederse onu kapışmaya çağırabilirsin.</li></ul>'},
  {id:'score',t:'📊 Skorlarım ve skor kartı',h:'<ul><li>Profille oynarsan <b>Skorlarım</b> bölümünde son 14 günün skorlarını görürsün.</li><li>Her oturumun sonunda bir <b>skor kartı</b> çıkar.</li><li><b>Fotoğrafı Kaydet / Paylaş</b> ile kartı kaydedip WhatsApp ile öğretmenine gönderebilirsin.</li></ul>'},
  {id:'faq',t:'❓ Sorun çözümü',h:'<ul><li><b>Skorlarım kayboldu:</b> Tarayıcı verisi silinmiş ya da telefon değişmiş olabilir. Skorlar sadece telefonda durur.</li><li><b>Yarışa giremiyorum:</b> İnternetin açık olduğundan, kodu doğru yazdığından ve yarışın başlamadığından emin ol. Oda kodu 24 saat geçerlidir.</li><li><b>"Farklı sürüm" uyarısı:</b> Uygulamayı tamamen kapatıp yeniden aç. Güncellenir.</li><li><b>Rekorlar Tablosu açılmıyor:</b> İnternetini kontrol et, biraz sonra tekrar dene.</li><li><b>Uygulamayı ana ekrana eklemek:</b> Tarayıcı menüsünden "Ana ekrana ekle"ye dokun.</li></ul>'}
@@ -2561,7 +2892,7 @@ function askDelProfile(i){
   modal('<b>'+esc(n)+'</b> profilini silmek istediğine emin misin?<br>Bu profile ait tüm skorlar da silinir.','Evet, sil','Vazgeç',function(){
     var l=profiles();l.splice(i,1);lsSet('mc_profiles',l);
     lsSet('mc_records',records().filter(function(r){return r.p!==n}));
-    var bb=ls('mc_best',{});delete bb[n];lsSet('mc_best',bb);
+    var bb=ls('mc_best',{});delete bb[n];lsSet('mc_best',bb);var rb=ls('mc_rk',{});delete rb[n];lsSet('mc_rk',rb);
     var nm=nmMap(),om=nm[n];delete nm[n];lsSet('mc_nm',nm);nmRelease(om);nmDone(n);bkSoon();
     if(st.screen==='pedit')st.screen='profiles';
     if(st.profile===n){st.profile=null;frStop()}
@@ -2605,6 +2936,7 @@ function go(s){
   if(FR.inv)setTimeout(frInvCheck,400);
   if(PENDRELOAD&&(s==='home'||s==='welcome'||s==='profiles')){location.reload();return}
   st.screen=s;render();
+  if(RK.q.length)rkSoon();
 }
 function back(){
   var o=OPS[st.op],s=st.screen;
@@ -2621,6 +2953,8 @@ function back(){
   if(s==='rhist')return go('rooms');
   if(s==='bkr')return go('home');
   if(s==='friends')return go('home');
+  if(s==='rozet')return go('home');
+  if(s==='rhelp')return go(st.profile?'rozet':'home');
   if(s==='fprof')return go('friends');
   if(s==='fcall'){FR.call=null;return go('friends')}
   if(s==='rcreate')return go('rooms');
@@ -2648,7 +2982,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 47</div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 48</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim oynuyor?')+'<div class="col">';
     var leg=false;
@@ -2666,6 +3000,7 @@ function render(){
   }else if(s==='home'){
     var lvh=frLive();
     h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="pbox live" id="fr-live"'+(lvh?'':' style="display:none"')+'>'+lvh+'</div><div class="hgrid"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Dört işlem</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Yarış, kapış, savaş</small></button><button class="btn" onclick="frOpen()"><span class="big">👫</span>Arkadaşlarım<small>Kapışmaya çağır<span id="fr-badge">'+(FR.inc.length?' · '+FR.inc.length+' yeni istek':'')+'</span></small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
+    if(st.profile){var rx=rkGet(st.profile);h+='<button class="btn rkhome" onclick="go(\'rozet\')">'+rkMini(rx.r)+'<span>🏅 Rozetlerim<small>'+RKA.RANKS[rx.r].n+' · '+rx.p+' puan</small></span></button>'}
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
     h+='<button class="ghost" onclick="themeOpen()">🎨 Tema</button><div style="height:4px"></div><details class="pbox bkd"><summary>☁️ Yedek ve geri yükleme</summary>'+bkBox()+'<button class="ghost" onclick="go(\'bkr\')">♻️ Yedekten Geri Yükle</button></details>';
   }else if(s==='gmenu'){
@@ -2692,6 +3027,10 @@ function render(){
       '<button class="ghost" onclick="go(\'gmenu\')">Oyun Menüsüne Dön</button>';
   }else if(s==='guide'){
     h=topBar('Uygulama Kılavuzu')+guideHtml();
+  }else if(s==='rozet'){
+    h=rkHtml();
+  }else if(s==='rhelp'){
+    h=rkHelpHtml();
   }else if(s==='lb'){
     h=topBar('Rekorlar Tablosu')+lbTabsHtml()+'<div id="lb-body"></div><button class="next" id="lb-share" style="margin-top:10px" disabled onclick="lbShare()">📷 Tabloyu Paylaş</button>';
   }else if(s==='rhist'){
@@ -3010,6 +3349,7 @@ function saveProgress(){
   var done=lsSet('mc_records',recTrim(l));
   if(!done)toast('Skor kaydedilemedi: tarayıcı depolaması kapalı olabilir');
   else cloudQueue();
+  try{rkQ(st.sid,st.ok|0)}catch(e){}
   return done;
 }
 function finish(){
