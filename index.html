@@ -446,9 +446,9 @@ function bkBox(){
   return '<div class="pbox" style="text-align:center"><b>☁️ Otomatik yedek açık</b><br><small>Son yedek: <span id="bk-t">'+bkWhen()+'</span></small><div style="margin:8px 0 4px">Yedek kodun:</div><div class="rcode" style="font-size:26px;letter-spacing:3px">'+bkFmt(bkCode())+'</div><small>Bu kodu sakla ya da öğretmenine gönder. Telefon değişirse ya da veriler silinirse bu kodla geri yüklersin.</small><button class="ghost" style="margin-top:8px" onclick="bkShare()">📤 Kodu Paylaş / Kopyala</button></div>';
 }
 function bkShare(){
-  var t='Matematik Canavarı yedek kodum: '+bkFmt(bkCode());
+  var t=bkFmt(bkCode());
   if(navigator.share)navigator.share({text:t}).catch(function(){});
-  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Kod kopyalandı')},function(){toast(t)});
+  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Kod kopyalandı: '+t)},function(){toast(t)});
   else toast(t);
 }
 function bkRestore(){
@@ -1296,9 +1296,9 @@ function frCopy(){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(c).then(done,old);else old();
 }
 function frShare(){
-  var t='Matematik Canavarı oyuncu kodum: '+frFmt(FR.pid)+' (beni Arkadaşlarım bölümünden ekle)';
+  var t=frFmt(FR.pid); /* sadece kod: öğrenci kolayca kopyalayıp yapıştırsın */
   if(navigator.share)navigator.share({text:t}).catch(function(){});
-  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Kod kopyalandı')},function(){toast(t)});
+  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Kod kopyalandı: '+t)},function(){toast(t)});
   else toast(t);
 }
 function frAdd(){
