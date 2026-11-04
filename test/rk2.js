@@ -6,7 +6,7 @@ let fail=0;const ok=(c,m)=>{console.log((c?'✓ ':'✗ ')+m);if(!c)fail++};
 (async()=>{
 const b=await chromium.launch();const S=require(__dirname+'/dsrv.js')({lag:[20,80]});
 S.store['lbg_add/zz9']={nick:'🐼 Cesur Panda',score:480,ts:1,pid:'PANDA77',rk:5};
-S.store['pl/PANDA77']={nick:'🐼 Cesur Panda',seen:1,v:1,rk:5,md:'737121'};
+S.store['pl/PANDA77']={nick:'🐼 Cesur Panda',seen:1,v:1,rk:5,md:'737121',st:'640.58.120.31.9.8200.77.25'};
 const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});const p=await S.phone(ctx,'A',U);
 const ev=(f,a)=>p.evaluate(f,a);
 await ev(()=>{localStorage.setItem('mc_profiles',JSON.stringify(['Ali']));NMS.busy=true;st.profile='Ali';go('home')});await sleep(2500);
@@ -23,8 +23,19 @@ await ev(()=>{LBC={};lbOpen('solo','add','k')});await sleep(1500);
 await p.screenshot({path:OUT+'/rk_lb.png'});
 const rows=await ev(()=>document.querySelectorAll('#lb-body .rkmini').length);ok(rows===2,'tabloda 2 mini rozet: '+rows);
 await ev(()=>lbTap(0));await sleep(1200);
-const card=await ev(()=>({t:document.getElementById('ov').innerText.replace(/\n+/g,' | '),m:document.querySelectorAll('#lt-md svg').length}));
-console.log('  kart:',card.t);ok(/Şampiyon/.test(card.t)&&card.m===6,'kartta Şampiyon ve 6 madalya');
-await p.screenshot({path:OUT+'/rk_lbtap.png'});
+const card=await ev(()=>({s:st.screen,t:document.getElementById('app')?document.body.innerText.replace(/\n+/g,' | '):'',m:document.querySelectorAll('.kc-m svg').length,k:document.querySelectorAll('.kc-s div').length}));
+console.log('  kart:',card.s,card.t.slice(0,300));ok(card.s==='kart'&&/Şampiyon/.test(card.t)&&card.m===6&&card.k===6&&/8\.200/.test(card.t),'dokununca karakter kartı: Şampiyon, 6 madalya, 6 istatistik');
+await p.screenshot({path:OUT+'/kc_baskasi.png',fullPage:true});
+await ev(()=>back());await sleep(300);ok(await ev(()=>st.screen)==='lb','geri → rekorlar tablosu');
+// kendi kartı + paylaşım
+await ev(()=>rkMyCard());await sleep(500);ok(await ev(()=>st.screen)==='kart','kendi kartım');
+await p.screenshot({path:OUT+'/kc_kendi.png',fullPage:true});
+await ev(()=>{window.__shot=null;shareCanvas=function(cv){window.__shot=cv.toDataURL('image/png')};rkCardShare()});
+for(let i=0;i<40&&!await ev(()=>!!window.__shot);i++)await sleep(100);
+const png=await ev(()=>window.__shot);ok(!!png,'kart fotoğrafı oluştu');if(png)require('fs').writeFileSync(OUT+'/kc_paylas.png',Buffer.from(png.split(',')[1],'base64'));
+// eski rekor satırına rütbe
+S.store['lbg_sub/'+await ev(()=>CL.user.uid)]={nick:'Ali',score:12,ts:1};
+await ev(()=>{localStorage.removeItem('mc_lbrk');rkLbSync(st.profile)});await sleep(1500);
+const ro=S.store['lbg_sub/'+await ev(()=>CL.user.uid)];ok(ro&&ro.rk===3&&ro.score===12,'eski satıra rütbe yazıldı: '+JSON.stringify(ro));
 console.log('  log:',JSON.stringify(S.log.filter(x=>/DENY|ERR/.test(x)).slice(0,6)));
 await b.close();console.log(fail?'HATA '+fail:'TAMAM');process.exit(fail?1:0)})().catch(e=>{console.error(e);process.exit(1)});
