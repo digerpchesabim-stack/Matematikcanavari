@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **45**
+Son güncelleme: 4 Kasım 2026 · Yayındaki sürüm: **45**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -110,7 +110,15 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 44–45: Arkadaşlarım'da oyuncu kodunun altında 📋 Kopyala + 📤 Paylaş (`frCopy`); oyuncu ve yedek kodları **çizgisiz** gösterilir (`frFmt`, `bkFmt` ham kod; eski çizgili yazımlar da kabul); Paylaş **sadece kodu** gönderir (açıklama metni yok — kullanıcı isteği). **Tema** (`mc_theme`, yedeğe dahil): Otomatik (varsayılan, telefon ayarı) / Açık / Sepya / Gece / Okyanus / Yüksek kontrast; `<html data-theme>` + CSS değişkenleri, başta küçük script ile ilk boyada uygulanır; seçim penceresi `themeOpen` (önizleme kartları); giriş ekranı sol üst 🎨 + ana menüde "🎨 Tema". Paylaşılan görseller tema dışı.
 
 ## 9. Bekleyen / yayınlanmamış
-- Yok.
+- **Sürüm 46 (dal `surum-46-onay-bekliyor`, onay bekliyor):** Öğrenci ad yazamaz; oyun adı hazır karakterden seçilir.
+  - `NMC` 10 kategori, `NME` 220 karakter `[emoji, ad, kategori]` — **sıra değişmez, yeni karakter sadece sona**. Oyundaki canavar simgeleri (🐣 👾 🐉) ve benzerleri (🐲, 🐥) bilerek yok; insan yüzü, bayrak, din, silah, hakaret çağrıştıran hayvan yok.
+  - Ad = `emoji + ' ' + ad` (+ `' #N'`). Karakteri ilk alan numarasız; doluysa 100–999, o da doluysa 1000–9999 (`nmClaim`).
+  - Kayıt: Firestore `nm/{e_n}` {u,t}; oluşturma herkes, güncelleme/silme sahibi, get açık (liste yok). Seçerken tek `getDoc` ile "✨ boş / alınmış" (`peCheck`).
+  - Yerel `mc_nm` {profil:{e,n,c}} (c=bulutta ayrıldı), `mc_nmnew` (ilk girişte "Yeni oyun adın… Beğendin mi?" kartı, `nmAsk`). İkisi yedekte.
+  - `nmSync` (açılıştan 1,5 sn sonra, `online`, profil ekranı): eski düz adlı profillere rastgele karakter verir, `profRename` ile tüm yerel kayıtları taşır, `nmRemote` ile pl nick ve bu cihazın 30 rekor satırını günceller; eski misafir adı (`mc_gnick`) satırları "👤 Misafir" olur.
+  - Ekran `pedit` (`peOpen(i,ret)`): kategori sekmeleri 5×2 + karakter kartları; ✏️ düzenle (profil kartının yanında), silme bu ekranda; eski ad serbest kalır (`nmRelease`).
+  - Misafir: ad kutuları kalktı, `rmNick()`='👤 Misafir', rekor tablosuna yazılmaz (`lbRun` → `{guest:true}`).
+  - Kurallar: nick sınırları 60 (lb, pl, oda oyuncusu) + `nm`. Yayında **önce kurallar**, sonra uygulama. Test: `test/v46.js`.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).

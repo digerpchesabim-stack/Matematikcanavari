@@ -7,7 +7,7 @@ const ev=(p,f,a)=>p.evaluate(f,a);const nmKeys=()=>Object.keys(S.store).filter(k
 const ctx=()=>b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});
 // B telefonu önce "Cesur Panda" adını alır
 const B=await S.phone(await ctx(),'B',U);await sleep(300);
-await ev(B,()=>{peOpen(-1);peSet('e',0);peSet('a',0)});await sleep(900);
+await ev(B,()=>{peOpen(-1);peSet(0)});await sleep(900);
 console.log('1 B durum:',await ev(B,()=>document.getElementById('pe-st').textContent));
 await B.screenshot({path:OUT+'/n_new.png'});
 await ev(B,()=>peSave());await sleep(900);
@@ -36,17 +36,17 @@ console.log('7 kart:',await ev(A,()=>st.modal&&document.querySelector('#ov p').i
 // Değiştir → düzenleme ekranı; B'nin aldığı Cesur Panda → alınmış
 await A.click('#mn');await sleep(500);
 console.log('8 ekran:',await ev(A,()=>st.screen+' ret='+st.pe.ret));
-await ev(A,()=>{peSet('e',0);peSet('a',0)});await sleep(900);
+await ev(A,()=>{peSet(0)});await sleep(900);
 console.log('9 Cesur Panda durumu:',await ev(A,()=>document.getElementById('pe-st').textContent));
 await A.screenshot({path:OUT+'/n_edit_taken.png'});
-await ev(A,()=>{peSet('e',1);peSet('a',1)});await sleep(900);
+await ev(A,()=>{peSet(1)});await sleep(900);
 console.log('10 Kurnaz Tilki durumu:',await ev(A,()=>document.getElementById('pe-st').textContent));
-await A.screenshot({path:OUT+'/n_edit.png',fullPage:true});
+await A.screenshot({path:OUT+'/n_edit.png',fullPage:true});await ev(A,()=>peCat(5));await A.screenshot({path:OUT+'/n_edit_tasit.png'});await ev(A,()=>peCat(0));
 const before=nmKeys();
 await ev(A,()=>peSave());await sleep(1200);
 console.log('11 kaydet:',await ev(A,()=>JSON.stringify([st.screen,st.profile,profiles(),Object.keys(ls('mc_best',{}))])),' nm önce',before,' sonra',nmKeys(),' pl',S.store['pl/'+pidA].nick,' lb',S.store['lbg_add/'+uidA].nick);
 // A ikinci profil: Cesur Panda → numaralı
-await ev(A,()=>{peOpen(-1);peSet('e',0);peSet('a',0)});await sleep(900);await ev(A,()=>peSave());await sleep(1000);
+await ev(A,()=>{peOpen(-1);peSet(0)});await sleep(900);await ev(A,()=>peSave());await sleep(1000);
 console.log('12 numaralı:',await ev(A,()=>st.profile),nmKeys());
 // aynı telefonda aynı ad iki kez olmaz; B'nin tekrar Cesur Panda düzenlemesi "şu anki adın"
 // profil silme → ad serbest

@@ -98,10 +98,10 @@ service cloud.firestore {
         && request.resource.data.d is string && request.resource.data.d.size() < 900000;
     }
 
-    // Oyun adı kaydı (S46): belge id = sıfat_hayvan_numara; aynı adı iki kişi alamaz (var olan belgeye sadece sahibi yazabilir)
+    // Oyun adı kaydı (S46): belge id = karakter_numara; aynı adı iki kişi alamaz (var olan belgeye sadece sahibi yazabilir)
     match /nm/{k} {
       allow get: if signedIn();
-      allow create: if signedIn() && k.matches('^[0-9]{1,2}_[0-9]{1,2}_[0-9]{1,4}$')
+      allow create: if signedIn() && k.matches('^[0-9]{1,3}_[0-9]{1,4}$')
         && request.resource.data.keys().hasOnly(['u', 't'])
         && request.resource.data.u == request.auth.uid && request.resource.data.t is int;
       allow update: if signedIn() && resource.data.u == request.auth.uid

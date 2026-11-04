@@ -46,7 +46,7 @@ module.exports=function(opts){
     }
     if(seg[0]==='nm'){
       const old=store[path];
-      if(!/^[0-9]{1,2}_[0-9]{1,2}_[0-9]{1,4}$/.test(seg[1]))return deny('nm key');
+      if(!/^[0-9]{1,3}_[0-9]{1,4}$/.test(seg[1]))return deny('nm key');
       if(!only(d,['u','t'])||d.u!==uid||!Number.isInteger(d.t))return deny('nm shape');
       if(old&&old.u!==uid)return deny('nm taken');
       return null;
