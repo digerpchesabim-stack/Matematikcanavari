@@ -2,7 +2,7 @@
 const fs=require('fs');
 const mock=fs.readFileSync(__dirname+'/mock2.js','utf8');
 const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win'];
-const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid'];
+const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt'];
 module.exports=function(opts){
   opts=opts||{};
   const store={},subs=[],pages={},log=[];let lag=opts.lag||[30,150];
@@ -15,7 +15,7 @@ module.exports=function(opts){
       if(!old){
         if(Object.keys(d).some(k=>!ROOMK.includes(k)))return deny('room keys '+Object.keys(d));
         if(d.host!==uid||d.status!=='lobby')return deny('room create');
-        if('mode' in d&&d.mode!=='duel')return deny('mode');
+        if('mode' in d&&!['duel','mm'].includes(d.mode))return deny('mode');
         if('win' in d&&![10,15,20].includes(d.win))return deny('win');
         return null;
       }
@@ -41,7 +41,7 @@ module.exports=function(opts){
       if(old.st!=='req'||d.st!=='ok'||ch.some(k=>!['st','ts'].includes(k))||!owns(old.by===old.a?old.b:old.a))return deny('fr update');return null;
     }
     if(seg[0]==='iv'){
-      if(!only(d,['from','nick','room','op','lv','win','ts'])||!owns(d.from))return deny('iv owner');
+      if(!only(d,['from','nick','room','op','lv','win','ts','md'])||!owns(d.from))return deny('iv owner');
       const f=store['fr/'+frId(d.from,seg[1])];if(!f||f.st!=='ok')return deny('iv not friends');return null;
     }
     if(seg[0]==='nm'){
@@ -53,7 +53,7 @@ module.exports=function(opts){
     }
     if(/^lb[gr]_/.test(seg[0])){
       const old=store[path];
-      if(seg[1]!==uid||!only(d,['nick','score','ts'])||typeof d.nick!=='string'||d.nick.length<1||d.nick.length>60)return deny('lb shape');
+      if(seg[1]!==uid||!only(d,['nick','score','ts','pid'])||('pid' in d&&(typeof d.pid!=='string'||d.pid.length>10))||typeof d.nick!=='string'||d.nick.length<1||d.nick.length>60)return deny('lb shape');
       if(old&&d.score<old.score)return deny('lb lower');return null;
     }
     if(seg[0]==='bk'){

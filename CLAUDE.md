@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **46**
+Son güncelleme: 4 Kasım 2026 · Yayındaki sürüm: **47**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -30,7 +30,7 @@ Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **46**
 
 ## 4. Mimari (index.html)
 - Vanilla JS, tek `<script>`. Global durum `st` (st.screen, st.profile, st.g …), `go(screen)` → `render()`, `back()` (uygulama içi ← ve telefon geri tuşu aynı fonksiyon), `topBar(title)`, `modal(msg,yes,no,onYes,onNo)`, `toast()`.
-- **Ekranlar:** welcome, profiles, home, ops/mode/digits/quiz/summary/pmenu/mixmenu/history (pratik + problemler), gmenu/gsetup/gcount/game/gover (Akıldan İşlem), rooms/rcreate/rctb/lobby/rcount/rover/rjoin/rhist (yarış), dintro/duel/dover (1'e 1 kapışma), bpick/bset (canavara karşı), lb (rekorlar), guide (kılavuz).
+- **Ekranlar:** welcome, profiles, pedit (S46), fprof (S47), home, ops/mode/digits/quiz/summary/pmenu/mixmenu/history (pratik + problemler), gmenu/gsetup/gcount/game/gover (Akıldan İşlem), rooms/rcreate/rctb/lobby/rcount/rover/rjoin/rhist (yarış), dintro/duel/dover (1'e 1 kapışma), bpick/bset (canavara karşı), lb (rekorlar), guide (kılavuz).
 - **localStorage:** mc_profiles, mc_records (oyun/pratik kayıtları, profil başına son 200), mc_bk/mc_bkh/mc_bkt (yedek kodu, son yedek özeti ve zamanı), mc_best (profil→mod anahtarı rekor), mc_rhist/mc_rbest (yarış geçmişi/rekoru), mc_dhist (kapışma geçmişi, `bot` alanı canavar maçları), mc_nm/mc_nmnew (oyun adları, S46; mc_gnick S46'da kaldırıldı), mc_audio, mc_dev (cihaz hesabı), mc_vert (yan yana/alt alta), mc_lbfix1 (S31 bir kerelik rekor kurtarma bayrağı).
 - **Ses:** Web Audio ile kodla üretilir (`auCtx`, `tone`, `sfxPlay`, `AU.sg`, `AU.nb` gürültü tamponu). Efektler: sndPop/Ok/Bad/Fast/Win/End/Tick, sndWhistle (düdük), sndClap (alkış), sndCrunch (çıtırtı), sndSwoosh, sndClang (kılıç). Müzik: musStart/musStop/musTempo (sadece Akıldan İşlem). Hazır ses dosyaları (S37): lose/pass/top/win.mp3; yeni ses dosyası eklenirse sw.js FILES listesine de ekle. Telefonlar dokunuş olmadan ses çalmaz.
 - **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`. Çıkış onaylanınca (S43) tüm geçmiş sarılır.
@@ -117,6 +117,14 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Ekran `pedit` (`peOpen(i,ret)`): kategori sekmeleri 5×2 + karakter kartları; ✏️ düzenle (profil kartının yanında), silme bu ekranda; eski ad serbest kalır (`nmRelease`).
   - Misafir: ad kutuları kalktı, `rmNick()`='👤 Misafir', rekor tablosuna yazılmaz (`lbRun` → `{guest:true}`).
   - Kurallar: nick sınırları 60 (lb, pl, oda oyuncusu) + `nm`. Yayında **önce kurallar**, sonra uygulama. Test: `test/v46.js`.
+
+- 47: **🛡️ Meydan Muharebesi (3–4 kişi)**, arkadaş profili, rekor tablosundan arkadaşlık isteği.
+  - Oda `mode:'mm'`, `qv:4` (`QV=4`; eski sürüm katılamaz). Kurucu en az 3 kişide "▶️ Muharebeyi Başlat"; en çok 4 (`duCap`). Oyuncu belgesinde `jt` (giriş zamanı, sıralama sabit kalsın; `plx` ekler). Lobide `mmInvHtml` ile arkadaş çağırma (`iv.md='mm'`).
+  - Kapışma motoru N kişiye genelleşti: `DU.ids/nick/pid/gone/pts/wk`; `duR(uid)`, `duBest(k)` (rakiplerin en hızlı doğrusu → "geç kaldın"), `duWinner(k)` (en kısa doğru süre; eşitlikte kurucu), `duReady(k)` (ayrılanlar hariç herkesin sonucu), `duPts()`. Ayrılan (done ya da 45 sn ses yok) `duGone`; herkes ayrılırsa kalan kazanır. Rövanş: hayatta kalan herkes basınca. 1'e 1 ve canavar aynı motoru kullanır (`DU.sc=[ben, en iyi rakip]`).
+  - Ekranlar: `duIntroHtml` (MEYDAN MUHAREBESİ + 4 isim), `.dsc4` puan çipleri (emoji), `duPodium` 🥇🥈🥉 + ➕, `drawDuel` çok kişili kart. Geçmişte `mm:1, rk, n, o (adlar), qs (pid'ler)`; 1'e 1 kayıtlarında rakip kimliği `q`.
+  - Arkadaş profili `fprof` (`frProf`, `frProfHtml`, `frH2H`: `q` ile, eski kayıtlarda şimdiki adla eşleşir): aranızdaki skor, son 30 kapışma, çağır, arkadaşlıktan çıkar.
+  - Rekor satırı `{nick,score,ts,pid?}`: `lbSubmit` profil pid'ini yazar; `lbPidFix` her profil için bir kez kendi satırlarına ekler (`mc_lbpid`). Satıra dokununca `lbTap` kartı: ➕ istek / ⚔️ çağır / 👤 profil.
+  - Kurallar: rooms mode ['duel','mm'], players keys + 'jt', lb keys + 'pid' (≤10), iv keys + 'md'. Test: `test/mm1.js` (4 telefon, kopma, rövanş, çıkış, 1'e 1 pid, arkadaş profili, rekor tablosu isteği).
 
 ## 9. Bekleyen / yayınlanmamış
 - Yok.
