@@ -53,11 +53,12 @@ service cloud.firestore {
         && request.resource.data.u == request.auth.uid;
       allow delete: if signedIn() && resource.data.u == request.auth.uid;
     }
-    // pl/{id}: herkese açık oyuncu kartı (takma ad + en son görülme + rütbe rk + madalyalar md, S48)
+    // pl/{id}: herkese açık oyuncu kartı (takma ad + en son görülme + rütbe rk + madalyalar md (S48) + istatistik st (S49))
     match /pl/{pid} {
       allow read: if signedIn();
       allow create, update: if owns(pid)
-        && request.resource.data.keys().hasOnly(['nick', 'seen', 'v', 'rk', 'md'])
+        && request.resource.data.keys().hasOnly(['nick', 'seen', 'v', 'rk', 'md', 'st'])
+        && (!('st' in request.resource.data) || (request.resource.data.st is string && request.resource.data.st.size() <= 60))
         && (!('rk' in request.resource.data) || (request.resource.data.rk is int && request.resource.data.rk >= 0 && request.resource.data.rk <= 6))
         && (!('md' in request.resource.data) || (request.resource.data.md is string && request.resource.data.md.size() <= 12))
         && request.resource.data.nick is string && request.resource.data.nick.size() >= 1 && request.resource.data.nick.size() <= 60
@@ -85,6 +86,18 @@ service cloud.firestore {
         && owns(request.resource.data.from)
         && get(/databases/$(database)/documents/fr/$(frId(request.resource.data.from, to))).data.st == 'ok';
       allow delete: if owns(to) || owns(resource.data.from);
+    }
+
+    // ps/{id}: bildirim adresi (S49). Okumak için oturum yeter (adres tek başına bildirim göndermeye yetmez, sunucunun VAPID anahtarı gerekir)
+    match /ps/{pid} {
+      allow get: if signedIn();
+      allow create, update: if owns(pid)
+        && request.resource.data.keys().hasOnly(['e', 'k', 'a', 'ts'])
+        && request.resource.data.e is string && request.resource.data.e.size() < 800 && request.resource.data.e.matches('^https://.*')
+        && request.resource.data.k is string && request.resource.data.k.size() < 200
+        && request.resource.data.a is string && request.resource.data.a.size() < 100
+        && request.resource.data.ts is int;
+      allow delete: if owns(pid);
     }
 
     // Otomatik yedek: belge id = 10 karakterlik gizli yedek kodu; sadece tek belge okunur (liste yok)
