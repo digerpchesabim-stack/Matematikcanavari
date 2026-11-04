@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 4 Kasım 2026 · Yayındaki sürüm: **47**
+Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **48**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -126,7 +126,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Rekor satırı `{nick,score,ts,pid?}`: `lbSubmit` profil pid'ini yazar; `lbPidFix` her profil için bir kez kendi satırlarına ekler (`mc_lbpid`). Satıra dokununca `lbTap` kartı: ➕ istek / ⚔️ çağır / 👤 profil.
   - Kurallar: rooms mode ['duel','mm'], players keys + 'jt', lb keys + 'pid' (≤10), iv keys + 'md'. Test: `test/mm1.js` (4 telefon, kopma, rövanş, çıkış, 1'e 1 pid, arkadaş profili, rekor tablosu isteği).
 
-- 48: **🏅 Rütbe ve madalyalar** (yerelde hazır, kullanıcı onayı bekliyor; tasarım vitrini ve "Rütbe ve Madalya Sistemi" dokümanı artifact olarak paylaşıldı).
+- 48: **🏅 Rütbe ve madalyalar** (tasarım vitrini ve "Rütbe ve Madalya Sistemi" dokümanı artifact olarak paylaşıldı).
   - Puan (sadece insanlı kapışma): 1'e 1 galibiyet K/O/Z = 1/2/3; muharebe 1. = 2/4/6, 2. = 1/2/3. Kayıpta puan gitmez. Tablo modu = Kolay.
   - Rütbe `RKP=[0,15,60,150,300,600,1000]`, Zor galibiyet şartı `RKZ=[0,0,0,0,25,50,100]`: Filiz, Çırak (kitap +−), Savaşçı (×, kılıçlar), Şövalye (tüy kalemli miğfer), Usta (π'li baykuş), Şampiyon (+ kupa), Efsane (∞, alev). Rütbe düşmez; sınırlar sadece düşürülebilir.
   - Madalyalar `RKF` (bronz/gümüş/altın): Kılıç 10/30/60 (1'e 1), Kalkan 5/15/30 (muharebe 1.), Seri 3/5/8 (en iyi seri), Canavar Avcısı Yavru/Canavar/Dev 10'ar, Azim 10/40/100 gün (≥20 doğru), Soru Ustası 500/3000/10000 doğru. Gümüş sadece Orta/Zor, altın sadece Zor galibiyet sayar.
@@ -138,7 +138,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Kurallar: players keys + rk; pl keys + rk(int 0–6), md(string ≤12); lb keys + rk. Test: `test/rk1.js`.
 
 ## 9. Bekleyen / yayınlanmamış
-- Sürüm 48 (rütbe/madalya) `s48` dalında hazır, yayınlanmadı. Yayında önce kurallar, sonra uygulama.
+- Yok. (Sırada konuşulan: uygulama kapalıyken kapışma bildirimi — Cloudflare Worker + Web Push; kullanıcının Cloudflare hesabı açması gerekiyor.)
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
