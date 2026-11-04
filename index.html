@@ -59,6 +59,10 @@ h1{font-size:28px;margin:8px 0 4px}
 .timer{text-align:center;font-weight:700;font-size:18px;color:var(--accent);margin-bottom:8px}
 .ghost:disabled,.next:disabled{opacity:.5}
 .prow{display:flex;gap:8px}.prow .btn{flex:1}
+.del.ed{border-color:var(--line);color:var(--text)}.av.em{font-size:30px}.delw{color:var(--bad);border-color:var(--bad)}
+.nmtab{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:6px 0 12px}.nmtab button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:60px;padding:4px 2px;border:2px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;font-size:12px;font-weight:600;line-height:1.15}.nmtab button span{font-size:24px;line-height:1}.nmtab button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-t)}
+.emg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 16px}.emg button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:92px;border:2px solid var(--line);background:var(--card);color:var(--text);border-radius:14px;padding:8px 4px;font-size:14px;font-weight:600;line-height:1.2}.emg button span{font-size:34px;line-height:1}.emg button.on{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent)}
+.nmprev{display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:2}.nmprev .av{width:64px;height:64px;border-radius:50%;font-size:38px;display:flex;align-items:center;justify-content:center;flex:none}.nmprev .pn{display:flex;flex-direction:column;font-size:22px;font-weight:800}.nmprev .pn small{font-size:15px;font-weight:500;color:var(--muted);margin-top:3px}
 .del{border:1px solid var(--bad);color:var(--bad);background:var(--card);border-radius:16px;padding:0 20px;font-size:22px}
 .fmt{text-align:right;margin-bottom:6px}
 .mini{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:8px 14px;font-size:16px;font-weight:600;min-height:44px}
@@ -145,6 +149,171 @@ function ls(k,def){try{var v=localStorage.getItem(k);return v?JSON.parse(v):def}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
 function profiles(){return ls('mc_profiles',[])}
 function records(){return ls('mc_records',[])}
+
+/* ---------- oyun adları (S46): 10 kategoride hazır karakterler; karakteri ilk alan numarasız, sonrakiler numaralı.
+   NME SIRASI DEĞİŞTİRİLMEZ (kayıt anahtarı sıra numarasıdır); yeni karakter SADECE SONA eklenir: [emoji, ad, kategori].
+   Oyundaki canavarların simgeleri (🐣 👾 🐉) ve onlara benzeyenler bilerek yok.
+   mc_nm = {profilAdı:{e,n,c}}  e=karakter, n=numara(0=numarasız), c=bulutta ayrıldı mı
+   nm/{e_n} = {u,t}  (ad kaydı: aynı adı iki kişi alamaz) */
+var NMC=["🐾 Hayvanlar", "🍓 Meyve-Sebze", "🍕 Yiyecek-Tatlı", "🌈 Doğa-Uzay", "🌸 Bitki-Çiçek", "🚗 Taşıtlar", "⚽ Spor", "🎵 Müzik-Sanat", "👽 Uzay-Robot", "🏰 Yerler"];
+var NME=[['🐼','Cesur Panda',0],['🦊','Kurnaz Tilki',0],['🦘','Zıpzıp Kanguru',0],['🐯','Güçlü Kaplan',0],['🦁','Kral Aslan',0],['🐻','Tonton Ayıcık',0],['🐨','Sevimli Koala',0],['🐰','Hızlı Tavşan',0],['🐱','Meraklı Kedi',0],['🐧','Neşeli Penguen',0],['🦉','Bilge Baykuş',0],['🦅','Keskin Kartal',0],['🐬','Akıllı Yunus',0],['🦒','Şık Zürafa',0],['🦓','Çizgili Zebra',0],['🦄','Sihirli Tekboynuz',0],['🦖','Kükreyen Dinozor',0],['🐙','Becerikli Ahtapot',0],['🦋','Renkli Kelebek',0],['🐝','Çalışkan Arı',0],['🐞','Şanslı Uğurböceği',0],['🦜','Konuşkan Papağan',0],['🐿️','Çevik Sincap',0],['🦔','Minik Kirpi',0],['🐺','Yiğit Kurt',0],['🦌','Zarif Geyik',0],['🐴','Asil At',0],['🦈','Korkusuz Köpekbalığı',0],['🐊','Yaman Timsah',0],['🦩','Pembe Flamingo',0],['🐹','Tatlı Hamster',0],['🐸','Yeşil Kurbağa',0],['🐠','Tropik Balık',0],['🐆','Şimşek Çita',0],['🦚','Renkli Tavuskuşu',0],['🦦','Oyuncu Susamuru',0],['🦀','Yanyan Yengeç',0],['🍎','Kırmızı Elma',1],['🍊','Vitaminli Portakal',1],['🍋','Sarı Limon',1],['🍉','Serin Karpuz',1],['🍇','Mor Üzüm',1],['🍓','Tatlı Çilek',1],['🍒','Dallı Kiraz',1],['🥭','Sarı Mango',1],['🍍','Taçlı Ananas',1],['🥥','Tropik Hindistancevizi',1],['🥝','Yeşil Kivi',1],['🍈','Bal Kavun',1],['🍅','Al Domates',1],['🥑','Kremalı Avokado',1],['🥦','Sağlıklı Brokoli',1],['🥬','Taze Marul',1],['🌶️','Acı Biber',1],['🌽','Altın Mısır',1],['🥕','Turuncu Havuç',1],['🧄','Şifalı Sarımsak',1],['🧅','Halka Soğan',1],['🥔','Fırın Patates',1],['🌰','Közlenmiş Kestane',1],['🍕','Sıcak Pizza',2],['🍔','Lezzetli Hamburger',2],['🍟','Çıtır Kızartma',2],['🍿','Patpat Mısır',2],['🧁','Kabarık Kek',2],['🍰','Çilekli Pasta',2],['🎂','Mumlu Pasta',2],['🍩','Şekerli Donut',2],['🍪','Çikolatalı Kurabiye',2],['🍫','Sütlü Çikolata',2],['🍬','Renkli Şeker',2],['🍭','Rengârenk Lolipop',2],['🍦','Külah Dondurma',2],['🥞','Ballı Pankek',2],['🧇','Kare Waffle',2],['🥐','Tereyağlı Kruvasan',2],['🧀','Köy Peyniri',2],['🍯','Süzme Bal',2],['🥛','Taze Süt',2],['🍞','Fırından Ekmek',2],['🥪','Doyurucu Sandviç',2],['🍝','Kıvırcık Makarna',2],['🍜','Buharlı Çorba',2],['🥗','Yeşil Salata',2],['🧃','Kutulu Meyve Suyu',2],['🥧','Elmalı Turta',2],['⭐','Parlak Yıldız',3],['🌟','Işıltılı Yıldız',3],['🌠','Kayan Yıldız',3],['🌙','Gümüş Ay',3],['☀️','Sıcak Güneş',3],['🌈','Renkli Gökkuşağı',3],['⚡','Hızlı Şimşek',3],['❄️','Beyaz Kartanesi',3],['🌋','Coşkun Yanardağ',3],['🌊','Dalgalı Deniz',3],['🔥','Parlayan Alev',3],['🌪️','Güçlü Kasırga',3],['🌍','Güzel Dünya',3],['🪐','Halkalı Satürn',3],['☄️','Uçan Kuyrukluyıldız',3],['💎','Parıltılı Elmas',3],['☁️','Pamuk Bulut',3],['⛄','Neşeli Kardan Adam',3],['🏔️','Karlı Dağ',3],['🌸','Bahar Çiçeği',4],['🌻','Güler Ayçiçeği',4],['🌷','Narin Lale',4],['🌹','Kırmızı Gül',4],['🌺','Egzotik Çiçek',4],['🌼','Sarı Papatya',4],['💐','Mis Kokulu Buket',4],['🌵','Çöl Kaktüsü',4],['🌳','Koca Çınar',4],['🌲','Ulu Çam',4],['🌴','Tatil Palmiyesi',4],['🍀','Dört Yapraklı Yonca',4],['🍁','Sonbahar Yaprağı',4],['🌱','Yeni Filiz',4],['🌾','Bereketli Başak',4],['🌿','Mis Nane',4],['🚀','Uçan Roket',5],['🚗','Yarışçı Araba',5],['🏎️','Süratli Yarış Arabası',5],['🚂','Çufçuf Tren',5],['🚄','Yıldırım Tren',5],['✈️','Yüksek Uçak',5],['🚁','Pırpır Helikopter',5],['🚲','Pedallı Bisiklet',5],['⛵','Rüzgârlı Yelkenli',5],['🚢','Büyük Gemi',5],['🚒','Kırmızı İtfaiye',5],['🚑','Yardımsever Ambulans',5],['🚓','Nöbetçi Polis Arabası',5],['🚌','Sarı Otobüs',5],['🚜','Tarlacı Traktör',5],['🛵','Vızvız Mobilet',5],['🛴','Gezgin Scooter',5],['🚤','Mavi Tekne',5],['🚠','Yükselen Teleferik',5],['🚛','Uzun Yol Tırı',5],['🏍️','Gürleyen Motosiklet',5],['🛶','Kürekçi Kano',5],['⚽','Golcü Futbol',6],['🏀','Zıplayan Basketbol',6],['🏈','Atak Ragbi',6],['🏐','Smaççı Voleybol',6],['🎾','Fileci Tenis',6],['⚾','Vuruşçu Beyzbol',6],['🏓','Seri Pinpon',6],['🏸','Süzülen Badminton',6],['🥋','Siyah Kuşak',6],['⛸️','Kayan Paten',6],['🛹','Havalı Kaykay',6],['🎳','Devirici Bowling',6],['⛳','İsabetli Golf',6],['🎯','Tam Hedef',6],['🏆','Şampiyon Kupa',6],['🥇','Parlayan Madalya',6],['🎿','Beyaz Kayak',6],['🏒','Çevik Hokey',6],['🤿','Dalgıç Maskesi',6],['🎸','Rockçı Gitar',7],['🎹','Melodili Piyano',7],['🎺','Coşkulu Trompet',7],['🎻','Narin Keman',7],['🥁','Ritimli Davul',7],['🎷','Cazcı Saksafon',7],['🎤','Sahneci Mikrofon',7],['🎧','Müzikçi Kulaklık',7],['🎨','Sanatçı Palet',7],['🖌️','Usta Fırça',7],['🎭','Tiyatrocu Maske',7],['🎬','Yönetmen Klaket',7],['📷','Klik Kamera',7],['🎵','Uçuşan Nota',7],['🖍️','Canlı Pastel',7],['👽','Sevimli Uzaylı',8],['🛸','Gizemli Ufo',8],['🤖','Süper Robot',8],['👻','Şakacı Hayalet',8],['🛰️','Gezgin Uydu',8],['🔭','Uzak Gören Teleskop',8],['🌌','Sonsuz Galaksi',8],['⚙️','Tıkır Çark',8],['🔋','Enerjik Pil',8],['📡','Sinyalci Anten',8],['💫','Büyülü Yıldız Tozu',8],['🧲','Güçlü Mıknatıs',8],['💡','Fikirli Ampul',8],['🏰','Görkemli Şato',9],['🏯','Uzakdoğu Kalesi',9],['🗼','Işıklı Kule',9],['🎡','Neşeli Dönme Dolap',9],['🎢','Heyecanlı Hız Treni',9],['🎠','Masalsı Atlıkarınca',9],['⛺','Maceracı Çadır',9],['🏝️','Güneşli Ada',9],['🏖️','Kumlu Plaj',9],['🏕️','Kampçı Orman',9],['🏟️','Kalabalık Stadyum',9],['🏠','Sıcak Yuva',9],['🏡','Bahçeli Ev',9],['🌉','Uzun Köprü',9],['⛲','Fışkıran Fıskiye',9],['🏫','Neşeli Okul',9],['🏛️','Antik Müze',9],['🗺️','Hazine Haritası',9],['🏜️','Altın Çöl',9]];
+var GUESTN='👤 Misafir';
+function nmMake(e,n){return NME[e][0]+' '+NME[e][1]+(n?' #'+n:'')}
+function nmMap(){return ls('mc_nm',{})}
+function nmInfo(p){var m=nmMap()[p];return m&&NME[m.e]?m:null}
+function nmEmo(p){var m=nmInfo(p);return m?NME[m.e][0]:'🙂'}
+function nmRest(p){var m=nmInfo(p);return m?NME[m.e][1]+(m.n?' #'+m.n:''):p}
+function nmCol(e){return AVC[e%AVC.length]}
+function nmKey(e,n){return e+'_'+n}
+function nmRnd(a,b){return a+Math.floor(Math.random()*(b-a+1))}
+/* eski sürümlerden kalan düz yazılmış adların önüne 🙂 koy; emoji ile başlayan ada dokunma */
+function nkShow(n){n=String(n||'');return /^[0-9A-Za-zÇĞİÖŞÜÂÎÛçğıöşüâîû]/.test(n)?'🙂 '+n:n}
+/* adı ayır: önce numarasız (ya da istenen numara), doluysa 3 basamaklı, o da doluysa 4 basamaklı */
+function nmClaim(e,want,self){
+  var loc=profiles().filter(function(x){return x!==self}),c=[want||0],i;
+  for(i=0;i<6;i++)c.push(nmRnd(100,999));
+  for(i=0;i<6;i++)c.push(nmRnd(1000,9999));
+  c=c.filter(function(n,j){return c.indexOf(n)===j&&loc.indexOf(nmMake(e,n))<0});
+  var off=function(){return {e:e,n:want||c.filter(function(n){return n>=1000})[0]||nmRnd(1000,9999),c:false}};
+  if(!navigator.onLine)return Promise.resolve(off());
+  return devAuth().then(function(fb){
+    if(!CL.user)throw 0;
+    var k=0,step=function(){
+      if(k>=c.length)throw 0;
+      var n=c[k++];
+      return fb.setDoc(fb.doc(CL.db,'nm',nmKey(e,n)),{u:CL.user.uid,t:Date.now()}).then(function(){return {e:e,n:n,c:true}},function(er){if(er&&er.code==='permission-denied')return step();throw er});
+    };
+    return step();
+  }).catch(off);
+}
+function nmRelease(m){
+  if(!m||!m.c||!navigator.onLine)return;
+  devAuth().then(function(fb){if(CL.user)return fb.deleteDoc(fb.doc(CL.db,'nm',nmKey(m.e,m.n)))}).catch(function(){});
+}
+var LBALL=[];['lbg_','lbr_'].forEach(function(k){['add','sub','mul','div','rnd'].forEach(function(o){['','_o','_z'].forEach(function(v){LBALL.push(k+o+v)})})});
+/* buluttaki eski adı yenisiyle değiştir: oyuncu kartı (arkadaşlar) ve bu telefonun rekor satırları */
+function nmRemote(olds,nn,id){
+  if(!navigator.onLine)return Promise.resolve();
+  return devAuth().then(function(fb){
+    if(!CL.user)throw 0;
+    var ps=[];
+    if(id)ps.push(fb.getDoc(fb.doc(CL.db,'pl',id)).then(function(s){var d=s.exists()?s.data():null;return fb.setDoc(fb.doc(CL.db,'pl',id),{nick:lbName(nn),seen:(d&&d.seen)||Date.now(),v:1})}).catch(function(){}));
+    LBALL.forEach(function(col){ps.push(fb.getDoc(fb.doc(CL.db,col,CL.user.uid)).then(function(s){
+      var d=s.exists()?s.data():null;
+      if(d&&olds.indexOf(d.nick)>=0)return fb.setDoc(fb.doc(CL.db,col,CL.user.uid),{nick:lbName(nn),score:d.score,ts:d.ts||Date.now()}).then(function(){lbPatch(col,CL.user.uid,lbName(nn),d.score)});
+    }).catch(function(){}))});
+    return Promise.all(ps);
+  }).catch(function(){});
+}
+/* profili yeniden adlandır: telefondaki tüm kayıtlar yeni ada taşınır */
+function profRename(o,nw,info){
+  var l=profiles(),i=l.indexOf(o);if(i<0)return;
+  l[i]=nw;lsSet('mc_profiles',l);
+  ['mc_best','mc_rbest','mc_pid'].forEach(function(k){var b=ls(k,{});if(o in b){b[nw]=b[o];delete b[o];lsSet(k,b)}});
+  ['mc_records','mc_rhist','mc_dhist'].forEach(function(k){var x=ls(k,[]),ch=false;x.forEach(function(r){if(r&&r.p===o){r.p=nw;ch=true}});if(ch)lsSet(k,x)});
+  var nm=nmMap();delete nm[o];nm[nw]=info;lsSet('mc_nm',nm);
+  if(PRO.c&&o in PRO.c)PRO.c[nw]=PRO.c[o];
+  if(st.profile===o)st.profile=nw;
+  if(FR.prof===o)FR.prof=nw;
+  bkSoon();
+  nmRemote([o,o.trim().slice(0,12),o.trim().slice(0,20)],nw,(frIds()[nw]||{}).id);
+}
+/* eski profillere kendiliğinden oyun adı ver; internetsiz açılmış profillerin adını buluta kaydet */
+var NMS={busy:false};
+function nmSync(){
+  if(NMS.busy||!navigator.onLine)return;
+  var nm=nmMap(),todo=profiles().filter(function(p){var m=nm[p];return !m||!m.c}),gn=ls('mc_gnick','');
+  if(!todo.length&&!gn)return;
+  NMS.busy=true;
+  var ch=Promise.resolve();
+  todo.forEach(function(p){ch=ch.then(function(){
+    if(profiles().indexOf(p)<0)return;
+    var m=nmMap()[p],e=m?m.e:nmRnd(0,NME.length-1);
+    return nmClaim(e,m?m.n:0,p).then(function(r){
+      if(!r.c)throw 0;
+      var nw=nmMake(r.e,r.n);
+      if(nw===p){var x=nmMap();x[p]=r;lsSet('mc_nm',x);bkSoon();return}
+      profRename(p,nw,r);
+      var q=ls('mc_nmnew',[]).filter(function(x){return x!==p&&x!==nw});q.push(nw);lsSet('mc_nmnew',q);
+      if(st.profile===nw){if(st.screen==='home')render();nmAsk(nw)}
+    });
+  })});
+  /* eski sürümde misafirin yazdığı ad rekor tablosunda "👤 Misafir" olur */
+  if(gn)ch=ch.then(function(){return nmRemote([gn.trim().slice(0,12)],GUESTN,null)}).then(function(){try{localStorage.removeItem('mc_gnick')}catch(e){}});
+  ch.catch(function(){}).then(function(){NMS.busy=false;if(st.screen==='profiles')render()});
+}
+function nmAsk(p){
+  if(ls('mc_nmnew',[]).indexOf(p)<0)return;
+  setTimeout(function(){
+    if(st.profile!==p||st.modal||st.screen!=='home')return;
+    modal('<span style="font-size:60px;line-height:1.2">'+nmEmo(p)+'</span><br>Yeni oyun adın:<br><b style="font-size:22px">'+esc(nmRest(p))+'</b><br>Beğendin mi?','👍 Tamam','✏️ Değiştir',function(){nmDone(p)},function(){nmDone(p);peOpen(profiles().indexOf(p),'home')});
+  },450);
+}
+function nmDone(p){lsSet('mc_nmnew',ls('mc_nmnew',[]).filter(function(x){return x!==p}));if(FR.inv)setTimeout(frInvCheck,400)}
+/* profil oluşturma / düzenleme ekranı: kategori sekmeleri + karakter kartları */
+function peOpen(i,ret){
+  var p=i>=0?profiles()[i]:null,m=p?nmInfo(p):null,e=m?m.e:nmRnd(0,NME.length-1);
+  st.pe={i:i,e:e,cat:NME[e][2],ret:ret||'profiles',busy:false};
+  go('pedit');peCheck();
+}
+function peGrid(){
+  var P=st.pe,h='';
+  NME.forEach(function(x,j){if(x[2]===P.cat)h+='<button class="'+(j===P.e?'on':'')+'" data-e="'+j+'" onclick="peSet('+j+')"><span>'+x[0]+'</span>'+esc(x[1])+'</button>'});
+  return h;
+}
+function peTabs(){var P=st.pe;return NMC.map(function(c,j){var k=c.indexOf(' ');return '<button class="'+(j===P.cat?'on':'')+'" onclick="peCat('+j+')"><span>'+c.slice(0,k)+'</span>'+esc(c.slice(k+1))+'</button>'}).join('')}
+function peCat(c){
+  var P=st.pe;if(!P||P.busy)return;P.cat=c;
+  var t=document.getElementById('pe-tab');if(t)t.innerHTML=peTabs();
+  var g=document.getElementById('pe-em');if(g)g.innerHTML=peGrid();
+}
+function peSet(v){
+  var P=st.pe;if(!P||P.busy)return;P.e=v;
+  var g=document.getElementById('pe-em');
+  if(g)[].forEach.call(g.children,function(b){b.className=+b.getAttribute('data-e')===v?'on':''});
+  var pv=document.getElementById('pe-pv');if(pv)pv.innerHTML=pePrev();
+  peCheck();
+}
+function pePrev(){var P=st.pe;return '<span class="av em" style="background:'+nmCol(P.e)+'">'+NME[P.e][0]+'</span><span class="pn">'+esc(NME[P.e][1])+'<small id="pe-st">'+peStTxt()+'</small></span>'}
+function peStTxt(){
+  var P=st.pe,p=P.i>=0?profiles()[P.i]:null,m=p?nmInfo(p):null;
+  if(m&&m.e===P.e)return 'Şu anki adın';
+  if(P.free===undefined||P.fk!==P.e)return navigator.onLine?'Bakılıyor…':'İnternet yok: numara sonra verilir';
+  return P.free?'✨ Bu karakter boş, numarasız senin olur':'Bu karakter alınmış, yanına numara eklenecek';
+}
+function peCheck(){
+  var P=st.pe;if(!P)return;
+  var k=P.e,mine=nmMake(P.e,0);
+  clearTimeout(P.tm);P.free=undefined;P.fk=k;
+  var up=function(){var e=document.getElementById('pe-st');if(e)e.textContent=peStTxt()};
+  if(profiles().indexOf(mine)>=0&&profiles()[P.i]!==mine){P.free=false;up();return}
+  up();if(!navigator.onLine)return;
+  P.tm=setTimeout(function(){
+    devAuth().then(function(fb){if(!CL.user)throw 0;return fb.getDoc(fb.doc(CL.db,'nm',nmKey(P.e,0)))}).then(function(s){
+      if(st.pe!==P||P.fk!==k)return;
+      P.free=!s.exists()||(CL.user&&s.data().u===CL.user.uid&&profiles().indexOf(mine)<0);up();
+    }).catch(function(){});
+  },350);
+}
+function peSave(){
+  var P=st.pe,b=document.getElementById('pe-go');if(!P||P.busy)return;
+  var old=P.i>=0?profiles()[P.i]:null,om=old?nmInfo(old):null;
+  if(old&&om&&om.e===P.e){go(P.ret);return}
+  P.busy=true;if(b){b.disabled=true;b.textContent='⏳ Ad ayrılıyor…'}
+  nmClaim(P.e,0,old).then(function(r){
+    P.busy=false;
+    var nw=nmMake(r.e,r.n);
+    if(old){
+      profRename(old,nw,r);nmRelease(om);nmDone(old);
+      toast('Yeni adın: '+nw);go(P.ret);
+    }else{
+      var l=profiles();l.push(nw);
+      if(!lsSet('mc_profiles',l)){toast('Kayıt yapılamadı: tarayıcı depolaması kapalı olabilir');return}
+      var x=nmMap();x[nw]=r;lsSet('mc_nm',x);bkSoon();
+      st.profile=nw;go('home');frEnsure();toast('Hoş geldin, '+nw);
+    }
+  });
+}
 /* profil başına son 200 kayıt */
 function recTrim(l){var c={},i,o=[];for(i=l.length-1;i>=0;i--){var p=l[i].p;c[p]=(c[p]||0)+1;if(c[p]<=200)o.push(l[i])}return o.reverse()}
 function pad(n){return n<10?'0'+n:''+n}
@@ -413,7 +582,7 @@ function devAuth(){
   });
 }
 /* ---------- otomatik bulut yedeği ---------- */
-var BKK=['mc_theme','mc_pid','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_gnick','mc_vert','mc_audio'],BK={busy:false,t:null};
+var BKK=['mc_theme','mc_pid','mc_nm','mc_nmnew','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_vert','mc_audio'],BK={busy:false,t:null};
 function cloudQueue(){bkSoon()}
 function bkSoon(){if(BK.t)clearTimeout(BK.t);BK.t=setTimeout(function(){BK.t=null;bkRun()},15000)}
 function bkHash(x){var h=5381,i;for(i=0;i<x.length;i++)h=((h<<5)+h+x.charCodeAt(i))|0;return String(h)+':'+x.length}
@@ -746,8 +915,6 @@ function gSave(){
 var GS={op:'add'};
 function gPick(op){GS.op=op;go('gsetup')}
 function gStart(op,lv,tb){
-  var ge=document.getElementById('g-name');
-  if(ge&&ge.value.trim())lsSet('mc_gnick',ge.value.trim());
   lv=lv||'k';tb=tb||0;if(op!=='mul'&&op!=='div')tb=0;if(tb)lv='k';
   var mk=gMk(op,lv,tb);
   st.g={op:op,lv:lv,tb:tb,mk:mk,sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:gTime(0,lv),lt:99,rem:gTime(0,lv),el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:bestGet(mk),newBest:false};
@@ -818,10 +985,7 @@ var RM={nick:'',code:null,host:false,room:null,players:[],unsubs:[],started:fals
 var RCH='ABCDEFGHJKLMNPRSTUVYZ23456789';
 var QV=3; /* 3=1'e 1 kapışma;  soru üretimi sürümü: 1=sadece Kolay, 2=seviye ve tablo; oda bu sürümden yüksekse katılınamaz */
 function rmNick(){
-  if(st.profile)return st.profile;
-  var e=document.getElementById('r-name'),v=e?e.value.trim():'';
-  if(v)lsSet('mc_gnick',v);else v=ls('mc_gnick','')||'';
-  return v;
+  return st.profile||GUESTN;
 }
 var RC={lv:'k',tb:0,code:'',op:'mul',mode:'race',win:10};
 function rcOp(o){var e=document.getElementById('r-new');if(e)RC.code=e.value;if(o==='mul'||o==='div'){var m=slug(RC.code).toUpperCase();if(RC.code.trim()&&(m.length<3||m.length>10)){toast('Oda kodu 3-10 harf/rakam olmalı');return}RC.op=o;go('rctb');return}rmCreate(o,0)}
@@ -1213,7 +1377,7 @@ function frEnsure(){
     return claim();
   }).then(function(m){
     all=frIds();all[p]=m;lsSet('mc_pid',all);bkSoon();
-    return fb.setDoc(fb.doc(CL.db,'pl',m.id),{nick:String(p).slice(0,20),seen:Date.now(),v:1}).then(function(){return m});
+    return fb.setDoc(fb.doc(CL.db,'pl',m.id),{nick:lbName(p),seen:Date.now(),v:1}).then(function(){return m});
   }).then(function(m){
     FR.busy=false;
     if(st.profile!==p)return null;
@@ -1248,7 +1412,7 @@ function frStart(p,id){
 }
 function frBeat(){
   if(!FR.pid||document.hidden||!navigator.onLine||!CL.user)return;
-  devAuth().then(function(fb){fb.setDoc(fb.doc(CL.db,'pl',FR.pid),{nick:String(FR.prof).slice(0,20),seen:Date.now(),v:1}).catch(function(){})});
+  devAuth().then(function(fb){fb.setDoc(fb.doc(CL.db,'pl',FR.pid),{nick:lbName(FR.prof),seen:Date.now(),v:1}).catch(function(){})});
   FR.bn=(FR.bn||0)+1;
   if(st.screen==='friends'||(st.screen==='home'&&FR.bn%2===0))frNicks(null,FR.list.concat(FR.inc,FR.out));
 }
@@ -1278,7 +1442,7 @@ function frBody(){
   if(!FR.ready)return '<p class="sub center">⏳ Hazırlanıyor…</p>';
   var h='<div class="pbox" style="text-align:center"><small>Senin oyuncu kodun</small><div class="rcode" style="font-size:30px;letter-spacing:3px">'+frFmt(FR.pid)+'</div><small>Bu kodu arkadaşına ver. O seni eklesin, sen kabul et.</small><div class="cbtn"><button class="next" onclick="frCopy()">📋 Kopyala</button><button class="ghost" onclick="frShare()">📤 Paylaş</button></div></div>';
   h+='<input id="fr-code" class="inp" maxlength="9" autocapitalize="characters" autocomplete="off" placeholder="Arkadaşının kodu (ör. ABCDEFG)"><button class="next" onclick="frAdd()">➕ Arkadaş Ekle</button>';
-  if(FR.inc.length){h+='<div class="tag" style="margin-top:14px">📩 Gelen istekler</div>';FR.inc.forEach(function(o){h+='<div class="rrow"><span>🙂 '+esc(FR.nick[o]||frFmt(o))+'</span><span><button class="mini" onclick="frAccept(\''+o+'\')">✓ Kabul</button> <button class="mini" onclick="frDel(\''+o+'\',0)">✕</button></span></div>'})}
+  if(FR.inc.length){h+='<div class="tag" style="margin-top:14px">📩 Gelen istekler</div>';FR.inc.forEach(function(o){h+='<div class="rrow"><span>'+esc(nkShow(FR.nick[o]||frFmt(o)))+'</span><span><button class="mini" onclick="frAccept(\''+o+'\')">✓ Kabul</button> <button class="mini" onclick="frDel(\''+o+'\',0)">✕</button></span></div>'})}
   h+='<div class="tag" style="margin-top:14px">👫 Arkadaşların ('+FR.list.length+')</div>';
   if(!FR.list.length)h+='<p class="sub center">Henüz arkadaşın yok. Arkadaşının kodunu yazıp ekle.</p>';
   FR.list.slice().sort(function(a,b){return (frOnline(b)?1:0)-(frOnline(a)?1:0)||String(FR.nick[a]).localeCompare(String(FR.nick[b]),'tr')}).forEach(function(o){
@@ -1338,7 +1502,7 @@ function frCallGo(op){
 function frInvSend(){
   var c=FR.call;if(!c||!RM.room||!RM.code||!FR.pid)return;
   FR.call=null;
-  var r=RM.room,d={from:FR.pid,nick:String(FR.prof).slice(0,20),room:RM.code,op:r.op,lv:r.lv||'k',win:r.win||10,ts:Date.now()};
+  var r=RM.room,d={from:FR.pid,nick:lbName(FR.prof),room:RM.code,op:r.op,lv:r.lv||'k',win:r.win||10,ts:Date.now()};
   RM.inv={to:c.to,nick:c.nick};
   devAuth().then(function(fb){return fb.setDoc(fb.doc(CL.db,'iv',c.to),d)}).then(function(){toast(c.nick+' davet edildi')}).catch(function(){toast('Davet gönderilemedi')});
   if(st.screen==='lobby')render();
@@ -1560,9 +1724,7 @@ function rmShare(){
 }
 function rjPick(i){st.profile=profiles()[i];rmJoinCode(RJOIN,function(){go('home')})}
 function rjGuest(){
-  var e=document.getElementById('r-name'),v=e?e.value.trim():'';
-  if(!v){toast('Önce adını yaz');return}
-  lsSet('mc_gnick',v);st.profile=null;
+  st.profile=null;frStop();
   rmJoinCode(RJOIN,function(){go('home')});
 }
 function rmEnter(fb,code,host,room){
@@ -1675,7 +1837,7 @@ function rankHtml(){
 }
 function lobbyList(){
   var h='';
-  RM.players.forEach(function(p){h+='<div class="rrow"><span>'+(RM.room&&p.uid===RM.room.host?'👑 ':'🙂 ')+esc(p.nick)+'</span>'+(rmLost(p)?'<span>📶 bağlantısı koptu</span>':'')+'</div>'});
+  RM.players.forEach(function(p){h+='<div class="rrow"><span>'+(RM.room&&p.uid===RM.room.host?'👑 ':'')+esc(nkShow(p.nick))+'</span>'+(rmLost(p)?'<span>📶 bağlantısı koptu</span>':'')+'</div>'});
   return h;
 }
 /* yarışta: 10 sn'de bir "buradayım" sinyali; 30 sn sinyal gelmeyen oyuncu "bağlantısı koptu" */
@@ -1819,8 +1981,8 @@ function gPass(old){
   smpPlay('pass.mp3',0.8,function(){sndClap(top)});
   if(top)setTimeout(sndWin,300);
 }
-function lbName(s){return String(s||'').trim().slice(0,12)||'Misafir'}
-function lbNick(){return st.profile||ls('mc_gnick','')||'Misafir'}
+function lbName(s){return String(s||'').trim().slice(0,40)||GUESTN}
+function lbNick(){return st.profile||''}
 function lbRank(rows,score){var n=0,i;for(i=0;i<rows.length;i++){if(rows[i].score>score)n++}return {rank:n+1,over:n>=50}}
 /* tablo 2 dk telefonda saklanır (Firebase günlük okuma sınırını korumak için) */
 var LBC={};
@@ -1858,6 +2020,7 @@ function lbSubmit(kind,op,lv,score,cand,nick){
 }
 function lbBoxHtml(r){
   if(!r)return '';
+  if(r.guest)return '<div class="pbox lbx">👤 Misafir puanları rekorlar tablosuna yazılmaz. Profil açarsan puanın tabloya girer.</div>';
   if(r.practice)return '<div class="pbox lbx">📘 Tablo çalışması: puanın rekorlar tablosuna yazılmaz.</div>';
   if(r.loading)return '<div class="pbox lbx">🏆 Rekorlar tablosu kontrol ediliyor…</div>';
   if(r.err)return '<div class="pbox lbx">'+esc(r.err)+'</div>';
@@ -1877,6 +2040,7 @@ function lbShowBox(g){
   if(e&&st.g===g)e.innerHTML=lbBoxHtml(g.lb);
 }
 function lbRun(g,kind,cand,nick){
+  if(!nick||nick===GUESTN){if(kind==='race')g.lbP=Promise.resolve(null);else{g.lb={guest:true};lbShowBox(g)}return}
   if(kind==='race'){g.lbP=lbSubmit(kind,g.op,g.lv,g.score,cand,nick);return}
   g.lb={loading:true};lbShowBox(g);
   lbSubmit(kind,g.op,g.lv,g.score,cand,nick).then(function(res){
@@ -2031,7 +2195,7 @@ function rhistHtml(){
 var GV={from:'welcome',open:null};
 var GUIDE=[
  {id:'what',t:'🐲 Bu uygulama ne işe yarar?',h:'<p>Matematik Canavarı ile <b>toplama, çıkarma, çarpma ve bölme</b> çalışırsın.</p><p>Ana menüde 4 bölüm var:</p><ul><li><b>İşlemler:</b> Sakin sakin işlem çözersin.</li><li><b>Problemler:</b> Hikâyeli sorular çözersin.</li><li><b>Akıldan İşlem Oyunu:</b> Hızlı cevap verip rekor kırarsın.</li><li><b>Yarış Odası:</b> Arkadaşlarınla aynı sorularla yarışırsın.</li></ul><p>İnternet sadece <b>Yarış Odası</b> ve <b>Rekorlar Tablosu</b> için gerekir. Diğerleri internetsiz çalışır.</p>'},
- {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> Bir takma ad yazıp profil oluşturursun. Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın. İşlemler ve Problemler sonuçların kaydedilmez.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar bu telefonda saklanır ve internet varken <b>otomatik olarak buluta yedeklenir</b>.</li><li>Ana menünün en altındaki <b>☁️ Yedek</b> bölümünde <b>yedek kodun</b> yazar. Bu kodu sakla ya da öğretmenine gönder.</li><li>Telefon değişirse ya da veriler silinirse: <b>Misafir olarak devam et</b> → ana menünün en altı → <b>☁️ Yedek</b> → <b>♻️ Yedekten Geri Yükle</b> → kodu yaz.</li><li>Her profilin son 200 oyunu saklanır.</li><li><b>🎨 Tema:</b> Giriş ekranının sol üstündeki ya da ana menüdeki 🎨 düğmesinden renk teması seçilir: Otomatik, Açık, Sepya, Gece, Okyanus, Yüksek kontrast.</li></ul>'},
+ {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> <b>➕ Yeni Profil Oluştur</b> → 10 kategoriden (hayvanlar, meyve-sebze, taşıtlar, spor…) bir karakter seçersin; oyun adın olur (örn. 🐼 Cesur Panda). Ad yazılmaz, hazır karakterlerden seçilir.</li><li>Bir karakteri <b>ilk alan numarasız</b> alır. Aynı adı başkası daha önce aldıysa yanına numara eklenir (örn. 🐼 Cesur Panda #482). Böylece herkesin adı farklıdır.</li><li>Adını değiştirmek için profil sayfasında <b>✏️</b> düğmesine dokun. Profili silmek de buradan yapılır.</li><li>Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın, <b>👤 Misafir</b> olarak görünürsün. Sonuçların kaydedilmez, rekorlar tablosuna yazılmaz.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar bu telefonda saklanır ve internet varken <b>otomatik olarak buluta yedeklenir</b>.</li><li>Ana menünün en altındaki <b>☁️ Yedek</b> bölümünde <b>yedek kodun</b> yazar. Bu kodu sakla ya da öğretmenine gönder.</li><li>Telefon değişirse ya da veriler silinirse: <b>Misafir olarak devam et</b> → ana menünün en altı → <b>☁️ Yedek</b> → <b>♻️ Yedekten Geri Yükle</b> → kodu yaz.</li><li>Her profilin son 200 oyunu saklanır.</li><li><b>🎨 Tema:</b> Giriş ekranının sol üstündeki ya da ana menüdeki 🎨 düğmesinden renk teması seçilir: Otomatik, Açık, Sepya, Gece, Okyanus, Yüksek kontrast.</li></ul>'},
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
@@ -2251,9 +2415,11 @@ function askDelProfile(i){
     var l=profiles();l.splice(i,1);lsSet('mc_profiles',l);
     lsSet('mc_records',records().filter(function(r){return r.p!==n}));
     var bb=ls('mc_best',{});delete bb[n];lsSet('mc_best',bb);
+    var nm=nmMap(),om=nm[n];delete nm[n];lsSet('mc_nm',nm);nmRelease(om);nmDone(n);bkSoon();
+    if(st.screen==='pedit')st.screen='profiles';
     if(st.profile===n){st.profile=null;frStop()}
     toast('Profil silindi');render();
-    if(frIds()[n])setTimeout(function(){modal('<b>'+esc(n)+'</b> profilinin <b>arkadaşlıkları</b> da silinsin mi?<br><small>Silinmezse aynı adla yeniden profil açınca arkadaşların geri gelir.</small>','Evet, sil','Hayır, sakla',function(){frWipe(n).then(function(){toast('Arkadaşlıklar silindi')})},null)},350);
+    if(frIds()[n])setTimeout(function(){modal('<b>'+esc(n)+'</b> profilinin <b>arkadaşlıkları</b> da silinsin mi?<br><small>Silinmezse aynı adı yeniden alırsan arkadaşların geri gelir.</small>','Evet, sil','Hayır, sakla',function(){frWipe(n).then(function(){toast('Arkadaşlıklar silindi')})},null)},350);
   });
 }
 var PENDRELOAD=false;
@@ -2324,6 +2490,7 @@ function back(){
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
   if(s==='home')return go('profiles');
   if(s==='profiles')return go('welcome');
+  if(s==='pedit')return go(st.pe&&st.pe.ret==='home'?'home':'profiles');
 }
 function topBar(t){return '<div class="top"><button class="back" onclick="back()">←</button><div class="title">'+t+'</div></div>'}
 
@@ -2333,11 +2500,19 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 45</div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag" style="margin-top:10px">Sürüm 46</div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim oynuyor?')+'<div class="col">';
-    profiles().forEach(function(n,i){h+='<div class="prow"><button class="btn pcard" onclick="pickProfile('+i+')"><span class="av" style="background:'+avCol(n)+'">'+esc(n.charAt(0).toLocaleUpperCase('tr'))+'</span><span class="pn">'+esc(n)+'<small id="pr-on-'+i+'">'+prOnTxt(n)+'</small></span></button><button class="del" aria-label="Profili sil" onclick="askDelProfile('+i+')">🗑</button></div>'});
-    h+='</div><div style="height:16px"></div><input id="np" class="inp" maxlength="20" placeholder="Yeni profil için takma ad"><button class="next" onclick="createProfile()">➕ Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
+    var leg=false;
+    profiles().forEach(function(n,i){var m=nmInfo(n);if(!m)leg=true;h+='<div class="prow"><button class="btn pcard" onclick="pickProfile('+i+')"><span class="av'+(m?' em':'')+'" style="background:'+(m?nmCol(m.e):avCol(n))+'">'+(m?NME[m.e][0]:esc(n.charAt(0).toLocaleUpperCase('tr')))+'</span><span class="pn">'+esc(nmRest(n))+'<small id="pr-on-'+i+'">'+prOnTxt(n)+'</small></span></button><button class="del ed" aria-label="Profili düzenle" onclick="peOpen('+i+')">✏️</button></div>'});
+    h+='</div>'+(leg?'<p class="sub center">İnternete bağlanınca eski profillere kendiliğinden oyun adı verilir.</p>':'')+'<div style="height:16px"></div><button class="next" onclick="peOpen(-1)">➕ Yeni Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez, rekorlar tablosuna yazılmaz.</p>';
+  }else if(s==='pedit'){
+    var P=st.pe,ed=P.i>=0;
+    h=topBar(ed?'✏️ Profili Düzenle':'➕ Yeni Profil')+'<div class="pbox nmprev" id="pe-pv">'+pePrev()+'</div>';
+    h+='<div class="tag">Karakterini seç</div><div class="nmtab" id="pe-tab">'+peTabs()+'</div><div class="emg" id="pe-em">'+peGrid()+'</div>';
+    h+='<button class="next" id="pe-go" onclick="peSave()">'+(ed?'💾 Kaydet':'✅ Profili Oluştur')+'</button>';
+    if(ed)h+='<button class="ghost delw" onclick="askDelProfile('+P.i+')">🗑 Profili Sil</button>';
+    h+='<p class="sub center">Adını hazır karakterlerden seçersin, yazmazsın. Bir karakteri ilk alan numarasız alır; daha önce başkası aldıysa yanına numara eklenir (örn. #482).</p>';
   }else if(s==='bkr'){
     h=topBar('Yedekten Geri Yükle')+'<p class="sub center">Eski telefonundaki <b>yedek kodunu</b> yaz. Profillerin, rekorların ve geçmişin bu telefona gelir.</p><input id="bk-in" class="inp" maxlength="14" autocapitalize="characters" autocomplete="off" placeholder="ör. ABCDEFGHJK"><button class="next" onclick="bkRestore()">♻️ Geri Yükle</button><p class="sub center">İnternet gerekir.</p>';
   }else if(s==='home'){
@@ -2346,7 +2521,7 @@ function render(){
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
     h+='<button class="ghost" onclick="themeOpen()">🎨 Tema</button><div style="height:4px"></div><details class="pbox bkd"><summary>☁️ Yedek ve geri yükleme</summary>'+bkBox()+'<button class="ghost" onclick="go(\'bkr\')">♻️ Yedekten Geri Yükle</button></details>';
   }else if(s==='gmenu'){
-    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre sınırlı, 3 canın var. Önce işlemi, sonra seviyeni seçersin.</p>'+audioBtns()+(st.profile?'':'<input id="g-name" class="inp" maxlength="12" autocomplete="off" placeholder="Adın (rekor tablosunda görünür)" value="'+esc(ls('mc_gnick',''))+'">')+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'game\')">❓ Nasıl oynanır?</button><div class="col">';
+    h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre sınırlı, 3 canın var. Önce işlemi, sonra seviyeni seçersin.</p>'+audioBtns()+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'game\')">❓ Nasıl oynanır?</button><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="gPick(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>Seviye seç</small></button>'});
     h+='<button class="btn" onclick="botOpen(\'gmenu\')"><span class="big">👾</span>Canavara Karşı Savaş<small>Tek başına oyna: canavarla kapış. İnternet gerekmez</small></button></div>'+(st.profile?'':'<p class="sub center">Misafir oturumunda rekor sadece oyun açıkken saklanır.</p>');
   }else if(s==='gsetup'){
@@ -2375,11 +2550,11 @@ function render(){
     h=topBar('Yarış Geçmişim')+rhistHtml()+dhistHtml();
   }else if(s==='rjoin'){
     h=topBar('Yarışa Katıl')+'<div class="pbox" style="text-align:center"><small>Davet edildiğin oda</small><div class="rcode">'+esc(RJOIN||'')+'</div></div><p class="sub center"><b>Kim olarak katılacaksın?</b></p><div class="col">';
-    profiles().forEach(function(n,i){h+='<button class="btn" onclick="rjPick('+i+')">🙂 '+esc(n)+'</button>'});
-    h+='</div><div style="height:14px"></div><input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Misafir adın" value="'+esc(ls('mc_gnick',''))+'"><button class="next" onclick="rjGuest()">👤 Misafir olarak katıl</button>';
+    profiles().forEach(function(n,i){h+='<button class="btn" onclick="rjPick('+i+')">'+esc(nkShow(n))+'</button>'});
+    h+='</div><div style="height:14px"></div><button class="next" onclick="rjGuest()">👤 Misafir olarak katıl</button>';
   }else if(s==='rooms'){
     h=topBar('Yarış Odası')+'<p class="sub center">Arkadaşlarınla yarış, 1’e 1 kapış ya da canavarla savaş! Yarış ve kapışma için internet gerekir.</p>';
-    if(!st.profile)h+='<input id="r-name" class="inp" maxlength="20" autocomplete="off" placeholder="Adın" value="'+esc(ls('mc_gnick',''))+'">';
+    if(!st.profile)h+='<p class="sub center">Misafir olarak <b>👤 Misafir</b> adıyla görünürsün.</p>';
     h+='<button class="btn" onclick="rcGo(\'race\')"><span class="big">➕</span>Oyun Odası Kur<small>Herkes aynı sorularla, en çok puan toplayan kazanır</small></button><button class="btn" onclick="rcGo(\'duel\')"><span class="big">⚔️</span>1’e 1 Kapışma Kur<small>İki kişi: her soruda önce doğru basan puanı alır</small></button><button class="btn" onclick="botOpen(\'rooms\')"><span class="big">👾</span>Canavara Karşı Savaş<small>Tek başına oyna: canavarla kapış. İnternet gerekmez</small></button><div style="height:14px"></div><input id="r-code" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu"><button class="next" onclick="rmJoin()">🔑 Odaya Gir</button><button class="ghost" onclick="lbOpen(\'race\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'race\')">❓ Nasıl yarışılır?</button>'+(st.profile?'<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button>':'');
   }else if(s==='rcreate'){
     h=topBar(RC.mode==='duel'?'⚔️ Kapışma Kur':'Oda Kur')+'<p class="sub center">Oda kodunu sen belirle (3-10 harf/rakam, örn. ZIHIN11B). Boş bırakırsan rastgele verilir. Arkadaşların bu kodu yazıp girer.</p><input id="r-new" class="inp" maxlength="10" autocapitalize="characters" autocomplete="off" placeholder="Oda kodu (isteğe bağlı)" value="'+esc(RC.code)+'"><div class="tag">Seviye</div><div class="chips">';
@@ -2401,7 +2576,7 @@ function render(){
     h+='<div class="pbox" style="text-align:center"><small>Davet linki: arkadaşın tıklayınca direkt bu kapışmaya gelir</small><div class="lnk">'+esc(rmLink())+'</div><button class="ghost" style="margin:6px 0" onclick="rmCopy()">🔗 Linki Kopyala</button><button class="ghost" style="margin:0" onclick="rmShare()">📤 Paylaş (WhatsApp…)</button></div><button class="ghost" onclick="rmLeave()">Çık</button>';
   }else if(s==='dintro'){
     var on=(DU&&DU.onick)||'Rakip';
-    h='<div class="dint"><div class="dn dn1">🙂 '+esc(RM.nick)+'</div><div class="dsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dn dn2">'+esc(on)+' '+(DU&&DU.oemo?DU.oemo:'🙂')+'</div><div class="dwin">'+(DU?DU.win:10)+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
+    h='<div class="dint"><div class="dn dn1">'+esc(nkShow(RM.nick))+'</div><div class="dsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dn dn2">'+(DU&&DU.oemo?esc(on)+' '+DU.oemo:esc(nkShow(on)))+'</div><div class="dwin">'+(DU?DU.win:10)+' puana ulaşan kazanır</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
   }else if(s==='duel'){
     h=topBar('⚔️ Kapışma · '+gLabelL(DU.qg.op,DU.qg.lv,DU.qg.tb))+'<div class="dsc" id="dsc">'+duScoreHtml()+'</div><div class="tbar"><div id="tfill"></div></div><div class="q" id="dq"></div><div class="agrid" id="dgrid"></div><div class="msg" id="dmsg"></div><button class="ghost" onclick="duQuit()">🏳️ Kapışmadan Çık</button>';
   }else if(s==='friends'){
@@ -2493,7 +2668,7 @@ function render(){
   app.innerHTML=h;
   window.scrollTo(0,0);
   if(s==='welcome')chStart();
-  if(s==='profiles')prLoad();
+  if(s==='profiles'){prLoad();nmSync()}
   if(!document.getElementById('mm-btn')){var mb=document.createElement('button');mb.id='mm-btn';mb.className='mmbtn';mb.onclick=mmToggle;document.body.appendChild(mb)}
   mmUpdate();
   if(s==='summary')drawReport(document.getElementById('card'));
@@ -2509,15 +2684,8 @@ function render(){
   }
 }
 
-function pickProfile(i){st.profile=profiles()[i];go('home');frEnsure()}
+function pickProfile(i){var p=profiles()[i];st.profile=p;go('home');frEnsure();nmAsk(p)}
 function guest(){st.profile=null;frStop();go('home')}
-function createProfile(){
-  var v=document.getElementById('np').value.trim();
-  if(!v){toast('Bir takma ad yaz');return}
-  var l=profiles();
-  if(l.indexOf(v)<0){l.push(v);if(!lsSet('mc_profiles',l))toast('Kayıt yapılamadı: tarayıcı depolaması kapalı olabilir')}
-  st.profile=v;go('home');frEnsure();
-}
 function pickPOp(k){st.kind='p';st.op=k;st.mix=null;st.eldeli=null;go('digits')}
 function pickMix(m){st.kind='p';st.op='mix';st.mix=m;st.eldeli=null;go('digits')}
 function pickOp(k){st.kind='o';st.mix=null;st.op=k;st.eldeli=null;go(OPS[k].mode?'mode':'digits')}
@@ -2709,6 +2877,8 @@ st.vert=ls('mc_vert',false);
 render();
 navInit();
 setTimeout(lbBackfill,3000);
+setTimeout(nmSync,1500);
+window.addEventListener('online',function(){setTimeout(nmSync,1000)});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){})}catch(e){}
 setTimeout(function(){bkRun()},6000);
 document.addEventListener('visibilitychange',function(){if(document.hidden&&BK.t){clearTimeout(BK.t);BK.t=null;bkRun()}if(!document.hidden)frBeat()});

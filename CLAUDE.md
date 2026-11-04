@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **45**
+Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **46**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -108,6 +108,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 42: menü müziği kendini toparlar: ses öğesi hata verirse/kaynak yoksa atılıp yeniden oluşturulur (`mmMake/mmRetry`, en çok 4 deneme, artan bekleme), her dokunuşta müzik isteniyor ama duruyorsa yeniden başlatılır. (Kullanıcı S41'den sonra telefonunda müziğin gittiğini bildirdi; emülasyonda tekrarlanamadı, güncelleme anında yükleme hatası olası sebep.)
 - 43: çıkış döngüsü düzeltmesi: uygulama güncellenip yenilenince önceki oturumların geri adımları geçmişte kalıyordu, "Evet, çık" sadece o oturumun adımlarını sarıyordu → soru tekrar tekrar geliyordu. Şimdi `appExit` `NAV.ex` açıkken her popstate'te `history.back()` ile tüm uygulama adımlarını sarar; dokunuş çıkışı iptal eder. Test: `test/exit2.js`.
 - 44–45: Arkadaşlarım'da oyuncu kodunun altında 📋 Kopyala + 📤 Paylaş (`frCopy`); oyuncu ve yedek kodları **çizgisiz** gösterilir (`frFmt`, `bkFmt` ham kod; eski çizgili yazımlar da kabul); Paylaş **sadece kodu** gönderir (açıklama metni yok — kullanıcı isteği). **Tema** (`mc_theme`, yedeğe dahil): Otomatik (varsayılan, telefon ayarı) / Açık / Sepya / Gece / Okyanus / Yüksek kontrast; `<html data-theme>` + CSS değişkenleri, başta küçük script ile ilk boyada uygulanır; seçim penceresi `themeOpen` (önizleme kartları); giriş ekranı sol üst 🎨 + ana menüde "🎨 Tema". Paylaşılan görseller tema dışı.
+- Yok.
 
 ## 9. Bekleyen / yayınlanmamış
 - Yok.

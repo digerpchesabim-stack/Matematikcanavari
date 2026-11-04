@@ -1,4 +1,4 @@
-var CACHE = 'mc-v45';
+var CACHE = 'mc-v46';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3'];
 
 self.addEventListener('install', function (e) {
