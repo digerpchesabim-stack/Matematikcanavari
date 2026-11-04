@@ -126,8 +126,19 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Rekor satırı `{nick,score,ts,pid?}`: `lbSubmit` profil pid'ini yazar; `lbPidFix` her profil için bir kez kendi satırlarına ekler (`mc_lbpid`). Satıra dokununca `lbTap` kartı: ➕ istek / ⚔️ çağır / 👤 profil.
   - Kurallar: rooms mode ['duel','mm'], players keys + 'jt', lb keys + 'pid' (≤10), iv keys + 'md'. Test: `test/mm1.js` (4 telefon, kopma, rövanş, çıkış, 1'e 1 pid, arkadaş profili, rekor tablosu isteği).
 
+- 48: **🏅 Rütbe ve madalyalar** (yerelde hazır, kullanıcı onayı bekliyor; tasarım vitrini ve "Rütbe ve Madalya Sistemi" dokümanı artifact olarak paylaşıldı).
+  - Puan (sadece insanlı kapışma): 1'e 1 galibiyet K/O/Z = 1/2/3; muharebe 1. = 2/4/6, 2. = 1/2/3. Kayıpta puan gitmez. Tablo modu = Kolay.
+  - Rütbe `RKP=[0,15,60,150,300,600,1000]`, Zor galibiyet şartı `RKZ=[0,0,0,0,25,50,100]`: Filiz, Çırak (kitap +−), Savaşçı (×, kılıçlar), Şövalye (tüy kalemli miğfer), Usta (π'li baykuş), Şampiyon (+ kupa), Efsane (∞, alev). Rütbe düşmez; sınırlar sadece düşürülebilir.
+  - Madalyalar `RKF` (bronz/gümüş/altın): Kılıç 10/30/60 (1'e 1), Kalkan 5/15/30 (muharebe 1.), Seri 3/5/8 (en iyi seri), Canavar Avcısı Yavru/Canavar/Dev 10'ar, Azim 10/40/100 gün (≥20 doğru), Soru Ustası 500/3000/10000 doğru. Gümüş sadece Orta/Zor, altın sadece Zor galibiyet sayar.
+  - Adil oyun: aynı rakiple günde 5 maç (`dc`), rakip yarıdan önce çıkarsa sayılmaz, canavar maçı puan vermez, misafir kazanmaz.
+  - Yerel `mc_rk` {profil:{p,hz,sw,sh,se,sb,mo,dz,q,m(6 haneli bit maskesi),r,dc,dd,dq,dk,ls,bf}} (yedekte, profRename/silme taşır). İlk açılışta `rkBackfill`: kayıtlardaki doğrular + mc_dhist (yarım puan, sayaçlar tam).
+  - Kancalar: `gSave`/`saveProgress` → `rkQ(sid,ok)` (fark sayılır), `duSave` → `rkMatch()`. Kutlama sırası `RK.q`, `rkFlush` sadece `RKOK` ekranlarında; pencere `#ov.rkov` (`rkShow`), 📤 `rkShare` 1080×1080 PNG.
+  - Herkese açık: `pl` {+rk,md}, oda oyuncusu {+rk} (maç başındaki rütbe), lb satırı {+rk}. Rekor tablosu satırında mini rozet, `lbTap` kartında rütbe + madalyalar (pl okunur), arkadaş profili, kapışma girişi (`duRkE`).
+  - Ekranlar `rozet` (Rozetlerim, ana menüde düğme), `rhelp` (Nasıl kazanırım?), kılavuzda `rank`. Çizim `RKA.emblem/medal` (SVG + SMIL, `rkStill` animasyonsuz).
+  - Kurallar: players keys + rk; pl keys + rk(int 0–6), md(string ≤12); lb keys + rk. Test: `test/rk1.js`.
+
 ## 9. Bekleyen / yayınlanmamış
-- Yok.
+- Sürüm 48 (rütbe/madalya) `s48` dalında hazır, yayınlanmadı. Yayında önce kurallar, sonra uygulama.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
