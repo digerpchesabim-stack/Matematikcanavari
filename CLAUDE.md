@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **42**
+Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **43**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -33,7 +33,7 @@ Son güncelleme: 3 Kasım 2026 · Yayındaki sürüm: **42**
 - **Ekranlar:** welcome, profiles, home, ops/mode/digits/quiz/summary/pmenu/mixmenu/history (pratik + problemler), gmenu/gsetup/gcount/game/gover (Akıldan İşlem), rooms/rcreate/rctb/lobby/rcount/rover/rjoin/rhist (yarış), dintro/duel/dover (1'e 1 kapışma), bpick/bset (canavara karşı), lb (rekorlar), guide (kılavuz).
 - **localStorage:** mc_profiles, mc_records (oyun/pratik kayıtları, profil başına son 200), mc_bk/mc_bkh/mc_bkt (yedek kodu, son yedek özeti ve zamanı), mc_best (profil→mod anahtarı rekor), mc_rhist/mc_rbest (yarış geçmişi/rekoru), mc_dhist (kapışma geçmişi, `bot` alanı canavar maçları), mc_gnick (misafir adı), mc_audio, mc_dev (cihaz hesabı), mc_vert (yan yana/alt alta), mc_lbfix1 (S31 bir kerelik rekor kurtarma bayrağı).
 - **Ses:** Web Audio ile kodla üretilir (`auCtx`, `tone`, `sfxPlay`, `AU.sg`, `AU.nb` gürültü tamponu). Efektler: sndPop/Ok/Bad/Fast/Win/End/Tick, sndWhistle (düdük), sndClap (alkış), sndCrunch (çıtırtı), sndSwoosh, sndClang (kılıç). Müzik: musStart/musStop/musTempo (sadece Akıldan İşlem). Hazır ses dosyaları (S37): lose/pass/top/win.mp3; yeni ses dosyası eklenirse sw.js FILES listesine de ekle. Telefonlar dokunuş olmadan ses çalmaz.
-- **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`.
+- **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`. Çıkış onaylanınca (S43) tüm geçmiş sarılır.
 - **Karşılama canavarı (S40):** `drawMonster(c,cx,cy,r,{m:ağız,happy})`; kovalamaca sahnesi `CH` (`chStart/chFrame/chTap`).
 - **Menü müziği (S40):** `menu.mp3`, `MM`/`mmUpdate`/`mmToggle`, `MMOFF` ekranlarında susar; sağ üstte 🎵 (`mc_mmus`).
 
@@ -106,6 +106,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - 40: **Karşılama:** canavar ekranda rakam/sembolleri kovalar (`CH`, `chStart/chFrame/chTap`, canvas 480×440 mantıksal, 7 sembol, yakınlaşınca kaçarlar, canavar yakalayıp yer; dokunulan sembole koşar). Ekran sade: başlık, Haydi Başlayalım, Kılavuz. **Menü müziği:** `menu.mp3` (kullanıcının seçtiği marimba parçası, 150 sn, mono 64k, ~1,2 MB), `<audio loop>` %35 ses, menülerde çalar; quiz/game/gcount/gover/lobby/rcount/rover/dintro/duel/dover ekranlarında yavaşça kısılıp durur (`MMOFF`, `mmUpdate`). İlk dokunuşta başlar. Sağ üstte sabit 🎵/🔇 düğmesi (`mc_mmus`). **Profil sayfası** ("Kim oynuyor?"): baş harfli renkli yuvarlak + "🟢 N arkadaşın çevrim içi" (`prLoad`, 30 sn önbellek). Yedek kutusu ve geri yükleme buradan kaldırıldı. **Ana menü:** üstte "🟢 Şu an oyunda" panosu (`frLive`, çevrim içi arkadaşlar + ⚔️ Çağır); en altta Kılavuz düğmesi yerine "☁️ Yedek ve geri yükleme" (kod + paylaş + ♻️ Yedekten Geri Yükle). Yeni telefonda: Misafir → ana menü → Yedek. `bkr` geri → home.
 - 41: **Okuma tasarrufu (Spark 50k okuma/gün):** rekor tablosu 2 dk telefonda saklanır (`LBC`, `lbTop`), kendi yazılan puan önbelleğe işlenir (`lbPatch`); bir oyun + tablo ekranı 3 → 1 indirme. Profil rozetleri 2 dk önbellek; ana menüde arkadaş durumu her 2 dakikada bir. **iPhone ses:** sw.js Range isteklerini önbellekten 206 ile cevaplar (`rangeResponse`); internetsiz müzik/ses. **Ana menü 2 sütunlu ızgara** (`.hgrid`), kısa açıklamalar; küçük telefonda tek ekran. Kullanılmayan eski karşılama animasyonu (MON) silindi (MONSYM/MONCOL kaldı), `panel.html` depodan silindi, README yenilendi.
 - 42: menü müziği kendini toparlar: ses öğesi hata verirse/kaynak yoksa atılıp yeniden oluşturulur (`mmMake/mmRetry`, en çok 4 deneme, artan bekleme), her dokunuşta müzik isteniyor ama duruyorsa yeniden başlatılır. (Kullanıcı S41'den sonra telefonunda müziğin gittiğini bildirdi; emülasyonda tekrarlanamadı, güncelleme anında yükleme hatası olası sebep.)
+- 43: çıkış döngüsü düzeltmesi: uygulama güncellenip yenilenince önceki oturumların geri adımları geçmişte kalıyordu, "Evet, çık" sadece o oturumun adımlarını sarıyordu → soru tekrar tekrar geliyordu. Şimdi `appExit` `NAV.ex` açıkken her popstate'te `history.back()` ile tüm uygulama adımlarını sarar; dokunuş çıkışı iptal eder. Test: `test/exit2.js`.
 
 ## 9. Bekleyen / yayınlanmamış
 - Yok.
