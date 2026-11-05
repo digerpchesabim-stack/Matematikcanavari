@@ -65,15 +65,16 @@ export async function handle(req, env) {
     if (!iv || iv.from !== from || !fresh(iv.ts)) return json({ err: 'davet yok' }, 403);
     msg = iv.md === 'mm' ? { t: '🛡️ ' + iv.nick + ' seni Meydan Muharebesine çağırıyor!', b: 'Dokun, muharebeye katıl.', g: 'iv' }
                         : { t: '⚔️ ' + iv.nick + ' seni kapışmaya çağırıyor!', b: 'Dokun, maça katıl.', g: 'iv' };
+    msg.u = SUB + '?kap=' + encodeURIComponent(String(iv.room || '')) + '&to=' + to;
   } else if (b.k === 'fr') {
     const fr = await doc('fr/' + (from < to ? from + '_' + to : to + '_' + from), tok);
     if (!fr || fr.by !== from || fr.st !== 'req' || !fresh(fr.ts)) return json({ err: 'istek yok' }, 403);
     const pl = await doc('pl/' + from, tok);
-    msg = { t: '👫 ' + ((pl && pl.nick) || 'Bir oyuncu') + ' arkadaşlık isteği gönderdi', b: 'Kabul etmek için dokun.', g: 'fr' };
+    msg = { t: '👫 ' + ((pl && pl.nick) || 'Bir oyuncu') + ' arkadaşlık isteği gönderdi', b: 'Kabul etmek için dokun.', g: 'fr', u: SUB + '?fr=1&to=' + to };
   } else return json({ err: 'tür' }, 400);
   const ps = await doc('ps/' + to, tok);
   if (!ps || !ps.e || !ps.k || !ps.a) return json({ ok: false, why: 'kapali' });
-  msg.u = SUB;
+  msg.u = msg.u || SUB;
   const body = await encrypt(ps, JSON.stringify(msg));
   const r = await fetch(ps.e, { method: 'POST', body, headers: { Authorization: await vapid(env, ps.e), 'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: '900', Urgency: 'high' } });
   return json({ ok: r.ok, s: r.status });

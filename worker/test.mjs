@@ -9,7 +9,7 @@ const env = { VAPID_D: u(v.getPrivateKey()), VAPID_X: u(vp.subarray(1, 33)), VAP
 const ua = crypto.createECDH('prime256v1'); ua.generateKeys(); const auth = crypto.randomBytes(16);
 const now = Date.now();
 const db = {
-  'iv/BBBBBBB': { from: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', ts: now, md: 'mm' },
+  'iv/BBBBBBB': { from: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', ts: now, md: 'mm', room: 'K7XQ2' },
   'fr/AAAAAAA_BBBBBBB': { a: 'AAAAAAA', b: 'BBBBBBB', by: 'AAAAAAA', st: 'req', ts: now },
   'pl/AAAAAAA': { nick: '🦊 Kurnaz Tilki' },
   'ps/BBBBBBB': { e: 'https://fcm.googleapis.com/fcm/send/xyz', k: u(ua.getPublicKey()), a: u(auth), ts: now }
@@ -48,6 +48,7 @@ const call = b => handle(new Request('https://w/push', { method: 'POST', body: J
 let [s, j] = await call({ t: 'TOK', k: 'iv', from: 'AAAAAAA', to: 'BBBBBBB' });
 ok(s === 200 && j.ok, 'davet bildirimi gönderildi ' + JSON.stringify(j));
 const m1 = decrypt(sent.o.body); ok(/Meydan Muharebesine/.test(m1.t) && /Kurnaz Tilki/.test(m1.t), 'şifre çözüldü: ' + m1.t);
+ok(/\?kap=.*&to=BBBBBBB$/.test(m1.u), 'bildirim adresi odaya götürür: ' + m1.u);
 ok(checkVapid(sent.o.headers.Authorization), 'VAPID imzası geçerli');
 ok(sent.o.headers['Content-Encoding'] === 'aes128gcm', 'aes128gcm');
 sent = null;[s, j] = await call({ t: 'TOK', k: 'fr', from: 'AAAAAAA', to: 'BBBBBBB' });
