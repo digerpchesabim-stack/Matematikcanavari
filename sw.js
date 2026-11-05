@@ -1,4 +1,4 @@
-var CACHE = 'mc-v51';
+var CACHE = 'mc-v52';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3'];
 
 self.addEventListener('install', function (e) {
@@ -69,8 +69,9 @@ self.addEventListener('push', function (e) {
 });
 self.addEventListener('notificationclick', function (e) {
   e.notification.close();
+  var u = (e.notification.data && e.notification.data.u) || './';
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (l) {
-    for (var i = 0; i < l.length; i++) { if ('focus' in l[i]) return l[i].focus(); }
-    return self.clients.openWindow((e.notification.data && e.notification.data.u) || './');
+    for (var i = 0; i < l.length; i++) { if ('focus' in l[i]) { try { l[i].postMessage({ mc: 'open', u: u }); } catch (x) {} return l[i].focus(); } }
+    return self.clients.openWindow(u);
   }));
 });
