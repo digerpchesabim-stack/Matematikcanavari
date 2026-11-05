@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **52**
+Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **53**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -151,7 +151,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 
 - 52: **Bildirimden doğrudan kapışma + Uygulamayı Paylaş.** Worker bildirim adresine `?kap=ODA&to=OYUNCU` (arkadaşlık isteğinde `?fr=1&to=`) ekler; sw.js `notificationclick` açık pencereye `postMessage({mc:'open',u})` gönderir, yoksa adresi açar. Uygulama `deepParse/deepRun`: `to` ile eşleşen profili seçer (yoksa tek profil/aktif profil), `frEnsure` → `rmJoinCode` (davet kutusu `DEEPJ` ile bastırılır, davet silinir); oyun sırasındaysa "Önce bu oyunu bitir". `devAuth` eşzamanlı girişleri tek söze bağlar (`CL.ap`). "📲 Uygulamayı Paylaş" (`appShare`, Web Share; yoksa wa.me) ana menüde ve giriş ekranında; metinde link + "Ana ekrana ekle" açıklaması. Test: `test/deep1.js`.
 
-- 53 (**yerelde hazır, yayınlanmadı**; dal `s53`): **Her cihazda tek karakter + hesap kodu ile cihazlar arası eşitleme + Hesabım + sesli okuma + yazı boyutu.**
+- 53 (5 Kasım 2026 yayında): **Her cihazda tek karakter + hesap kodu ile cihazlar arası eşitleme + Hesabım + sesli okuma + yazı boyutu.**
   - Tek karakter, kalıcı (değiştirilemez; kullanıcı kararı: "dikkatsizliğe yapacak bir şey yok"). Seçimde onay ("hep senin, değiştiremezsin"). Sadece `nmSync`'in otomatik verdiği ad (`mc_nmnew`) bir kez değiştirilebilir. "Kim oynuyor?" kalktı: Haydi Başlayalım → `startGo()` (0 karakter: `profiles` giriş ekranı, 1: ana menü, >1: `mig`). Misafir kaldı (puan/rütbe/rekor yok). `go()` korur: >1 karakterde profiles/home(karakterle) → mig.
   - Göç (`mig`, `migPick`, `migRun`): kartlarda rütbe/puan/oyun sayısı, iki onay, internet şart. Önce **geçiş yedeği** `bk/{yeni kod}` (v:1, bütün karakterler, mc_dev yok; kod `mc_mgk`, Hesabım altında küçük yazılı; kurtarma = o kodla "Hesabım var" → eski yedek yolu). Sonra silinenlerin `frWipe(n,id)` (pk/pl/fr/iv/ps), `nmRelease`, `profPurge`; `lbReset(keep,true)`.
   - Hesap = `mc_bk` kodu (kalıcı, artık geri yüklemede değişmez). `bk/{kod}` {u,d,ts,v:2}, d içinde **mc_dev de var** → hesabı açan cihaz aynı Firebase hesabıyla girer (aynı uid: rekor satırı, pk, nm, bk sahipliği ortak). `ac/{kod}` {u,ts,dv,ln,lnd,del,v} küçük özet.
@@ -163,7 +163,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - `modal(...,no=null)` tek düğmeli; `ovBusy`. Kurallar: `ac` (yeni), bk delete (sahibi), lb delete (kendi satırı). **Yayında önce kurallar.** Test: `test/acc1.js` (3 karakterli göç, iki cihaz, eşitleme, eski kod, yeni kullanıcı, sesli okuma, yazı boyutu, silme, satır temizliği); test sunucusunda giriş hesapları artık ortak (`dsrv` users).
 
 ## 9. Bekleyen / yayınlanmamış
-- Sürüm 53 (yukarıda) yerelde, `s53` dalında. Kullanıcı "yükle" deyince: kurallar → uygulama.
+- Yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme.)
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
