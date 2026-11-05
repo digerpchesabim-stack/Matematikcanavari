@@ -6,7 +6,7 @@ const OUT=process.env.OUT||'.';const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const b=await chromium.launch();const S=require(__dirname+'/dsrv.js')({lag:[40,250]});
 const ev=(p,f,a)=>p.evaluate(f,a);const txt=p=>ev(p,()=>document.body.innerText.replace(/\n+/g,' | '));
 const mk=async(pid,e)=>{const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});const p=await S.phone(ctx,pid,U);
-  await sleep(300);await ev(p,e=>{peOpen(-1);peSet(e)},e);await sleep(500);await ev(p,()=>peSave());await sleep(900);await ev(p,()=>go('rooms'));return p};
+  await sleep(300);await ev(p,e=>{peOpen(-1);peSet(e)},e);await sleep(500);await ev(p,()=>peSave());await sleep(300);await p.click('#my');await sleep(900);await ev(p,()=>go('rooms'));return p};
 const A=await mk('A',1),B=await mk('B',0),C=await mk('C',3),D=await mk('D',2);
 const P=[A,B,C,D];
 console.log('0 adlar:',await Promise.all(P.map(p=>ev(p,()=>st.profile))));
