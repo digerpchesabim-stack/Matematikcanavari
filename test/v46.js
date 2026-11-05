@@ -31,9 +31,9 @@ console.log('4 dönüşüm:',JSON.stringify(st1));
 console.log('5 bulut: pl',S.store['pl/'+pidA].nick,' lb_add',S.store['lbg_add/'+uidA].nick,S.store['lbg_add/'+uidA].score,' lb_sub',S.store['lbg_sub/'+uidA].nick,' nm',nmKeys());
 await ev(A,()=>go('profiles'));await sleep(300);await A.screenshot({path:OUT+'/n_profiles.png'});
 console.log('6 profil ekranı:',await ev(A,()=>document.body.innerText.replace(/\n+/g,' | ').slice(0,260)));
-await ev(A,()=>pickProfile(0));await sleep(800);
+// S53: birden çok karakter → seçim ekranı; seçilen karakterin otomatik verilen adı bir kez değiştirilebilir
+await ev(A,()=>migRun(profiles()[0]));for(let i=0;i<60&&!(await ev(A,()=>st.screen==='home'&&st.modal));i++)await sleep(100);
 console.log('7 kart:',await ev(A,()=>st.modal&&document.querySelector('#ov p').innerText.replace(/\n+/g,' ')));await A.screenshot({path:OUT+'/n_card.png'});
-// Değiştir → düzenleme ekranı; B'nin aldığı Cesur Panda → alınmış
 await A.click('#mn');await sleep(500);
 console.log('8 ekran:',await ev(A,()=>st.screen+' ret='+st.pe.ret));
 await ev(A,()=>{peSet(0)});await sleep(900);
@@ -41,19 +41,12 @@ console.log('9 Cesur Panda durumu:',await ev(A,()=>document.getElementById('pe-s
 await A.screenshot({path:OUT+'/n_edit_taken.png'});
 await ev(A,()=>{peSet(1)});await sleep(900);
 console.log('10 Kurnaz Tilki durumu:',await ev(A,()=>document.getElementById('pe-st').textContent));
-await A.screenshot({path:OUT+'/n_edit.png',fullPage:true});await ev(A,()=>peCat(5));await A.screenshot({path:OUT+'/n_edit_tasit.png'});await ev(A,()=>peCat(0));
 const before=nmKeys();
-await ev(A,()=>peSave());await sleep(1200);
-console.log('11 kaydet:',await ev(A,()=>JSON.stringify([st.screen,st.profile,profiles(),Object.keys(ls('mc_best',{}))])),' nm önce',before,' sonra',nmKeys(),' pl',S.store['pl/'+pidA].nick,' lb',S.store['lbg_add/'+uidA].nick);
-// A ikinci profil: Cesur Panda → numaralı
-await ev(A,()=>{peOpen(-1);peSet(0)});await sleep(900);await ev(A,()=>peSave());await sleep(1000);
-console.log('12 numaralı:',await ev(A,()=>st.profile),nmKeys());
-// aynı telefonda aynı ad iki kez olmaz; B'nin tekrar Cesur Panda düzenlemesi "şu anki adın"
-// profil silme → ad serbest
-const del=await ev(A,()=>st.profile);
-await ev(A,()=>{go('profiles');peOpen(profiles().indexOf(st.profile))});await sleep(300);await A.click('.delw');await sleep(200);await A.click('#my');await sleep(900);
-console.log('13 silme:',await ev(A,()=>JSON.stringify([st.screen,profiles()])),nmKeys());
-if(await ev(A,()=>st.modal))await A.click('#mn');
+await ev(A,()=>peSave());await sleep(300);await A.click('#my');await sleep(1500);
+console.log('11 kaydet:',await ev(A,()=>JSON.stringify([st.screen,st.profile,profiles(),Object.keys(ls('mc_best',{})),ls('mc_nmnew',[])])),' nm önce',before,' sonra',nmKeys(),' pl',S.store['pl/'+pidA]&&S.store['pl/'+pidA].nick,' lb',S.store['lbg_add/'+uidA]&&S.store['lbg_add/'+uidA].nick);
+await ev(A,()=>{peOpen(-1);peSet(0);peSave()});await sleep(500);
+console.log('12 ikinci karakter:',await ev(A,()=>JSON.stringify([profiles(),st.screen,document.getElementById('toast').textContent])));
+await ev(A,()=>{nmAsk(st.profile)});await sleep(700);console.log('13 tekrar değiştirme kartı (çıkmamalı):',await ev(A,()=>st.modal));
 // misafir
 await ev(A,()=>{guest();var g={op:'add',lv:'k',score:15};lbRun(g,'solo',15,lbNick());window.__g=g});await sleep(500);
 console.log('14 misafir:',await ev(A,()=>JSON.stringify([rmNick(),window.__g.lb])),' lb_add hâlâ',S.store['lbg_add/'+uidA].nick,S.store['lbg_add/'+uidA].score);

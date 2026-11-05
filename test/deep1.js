@@ -18,6 +18,7 @@ const code=await ev(A,()=>RM.code);ok(!!S.store['iv/'+pb],'davet yazıldı, oda 
 // bildirime dokundu: uygulama kapışma adresiyle açılır (S53: tek karakter)
 await B.goto(U+'?kap='+code+'&to='+pb);
 for(let i=0;i<80&&(await ev(A,()=>st.screen))!=='dintro'&&(await ev(A,()=>st.screen))!=='duel';i++)await sleep(150);
+for(let i=0;i<60&&!['dintro','duel'].includes(await ev(B,()=>st.screen));i++)await sleep(150);
 const sB=await ev(B,()=>({t:(document.getElementById('toast')||{}).textContent,rm:RM.code,s:st.screen,p:st.profile,q:location.search,m:st.modal,ids:DU&&DU.ids.length}));
 console.log('  B:',JSON.stringify(sB));
 ok((sB.s==='dintro'||sB.s==='duel')&&sB.p==='Ayşe'&&sB.ids===2&&sB.q==='','B doğrudan kapışmaya girdi (Ayşe profiliyle, iki oyuncu)');

@@ -904,7 +904,7 @@ function migRun(keep){
     lsSet('mc_profiles',[keep]);st.profile=keep;
     return Promise.all(ps).then(function(){return lbReset(keep,true)}).catch(nop0);
   }).then(function(){
-    closeModal();go(RJOIN?'rjoin':'home');frEnsure();setTimeout(function(){bkRun(true)},1500);
+    closeModal();go(RJOIN?'rjoin':'home');frEnsure();nmAsk(keep);setTimeout(function(){bkRun(true)},1500);
     toast('Hazır! Artık tek karakterin var');
   },function(){closeModal();toast('Bağlanılamadı. İnterneti kontrol edip tekrar dene')});
 }
