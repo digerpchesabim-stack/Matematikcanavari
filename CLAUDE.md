@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **50**
+Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **51**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -21,7 +21,7 @@ Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **50**
 
 ## 3. Yayın hattı
 - **Dosyalar:** `index.html` (tüm uygulama), `sw.js` (önbellek), `manifest.json`, `icon-192.png`, `icon-512.png`. Ayrıca `firebase/` (kurallar) ve `.github/workflows/firestore-rules.yml`.
-- **Her sürümde:** `index.html` içinde karşılama ekranındaki `Sürüm N` yazısını ve `sw.js` içindeki `var CACHE = 'mc-vN'` değerini artır. Service worker cache-first çalışır; yeni sürümde sayfa kendini yeniler (`controllerchange`/`PENDRELOAD`). Telefonda eski sürüm görünüyorsa uygulama kapatılıp açılır.
+- **Her sürümde:** `index.html` içinde `var APPV=N` (karşılama ekranındaki `Sürüm N` buradan gelir, S51) ve `sw.js` içindeki `var CACHE = 'mc-vN'` değerini artır. Service worker cache-first çalışır; yeni sürümde sayfa kendini yeniler (`controllerchange`/`PENDRELOAD`). Telefonda eski sürüm görünüyorsa uygulama kapatılıp açılır.
 - **GitHub Pages:** main'e push → "pages build and deployment" çalışır. Kontrol: `gh run list --limit 3`. (Canlı siteye WebFetch izinli değil.)
 - **Firestore kuralları:** `firebase/firestore.rules` değişip push edilince Actions kuralları otomatik yükler (secret `FIREBASE_SA`, servis hesabında "Firebase Rules Admin" rolü). Elle tetikleme: `gh api -X POST repos/digerpchesabim-stack/Matematikcanavari/actions/workflows/firestore-rules.yml/dispatches -f ref=main` (GraphQL engelli, `gh workflow run` çalışmaz).
 - **Sıra:** Kural değişikliği gerekiyorsa önce kurallar (geriye uyumlu/ek), sonra uygulama.
@@ -146,6 +146,8 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Kurallar: `ps/{pid}` get oturum, yazma owns(pid); pl + 'st' (≤60). Testler: `worker/test.mjs` (şifre çözme + VAPID doğrulama + red durumları), `test/push1.js`, `test/rk2.js` (kart).
 
 - 50: ilk rütbe **Filiz → Çaylak** (kullanıcı Filiz'i beğenmedi; + işaretsiz kuş rozeti `DRAW.kite`). Rütbe sırası aynı, veri değişmedi.
+
+- 51: **Kapışma başlama yarışı düzeltildi** (kullanıcı: davetle girilen 1'e 1'de iki telefon da kendini kazanmış gösterdi). Sebep: katılan telefona oda "playing" bildirimi, rakibin oyuncu belgesinden önce gelince `duNew` rakipsiz `DU.ids=[ben]` kuruyordu → tek başına oynuyordu. Çözüm: `rmGo()` (oda snapshot + `rmRefresh`) rakip belgeleri gelene kadar bekler (1'e 1 ≥1 rakip, muharebe 6 sn ≥2, 20 sn hiç yoksa çıkar); `duSync` maç içinde geç gelen oyuncuyu ekler. Sürüm uyumu: oyuncu belgesinde `pv` (kapışma protokolü, `PV=2`); eski sürümlü rakip varsa maç başlamaz, lobide uyarı (`duPvOld/duPvHtml`, `#du-pv`). Giriş ekranında "Sürüm N 🔄 Güncelle" (`APPV`, `appUpd`: sw.js'teki mc-vN ile karşılaştırır, `reg.update()` → controllerchange → yenile; 8 sn sonra eski önbellekleri silip yeniler). **Her sürümde `APPV` de artırılır.** Kurallar: players + 'pv'. Testler: `test/du2.js`, `test/du3.js` (davetle, 10/10), `test/pv1.js`.
 
 ## 9. Bekleyen / yayınlanmamış
 - Yok. (Bildirimin gerçek telefonda denenmesi kullanıcıda.)
