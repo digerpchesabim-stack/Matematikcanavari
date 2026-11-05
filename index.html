@@ -627,11 +627,13 @@ function devAuth(){
     var d=ls('mc_dev',null);
     if(!d||!d.id){d={id:rid(14),pw:rid(24)};lsSet('mc_dev',d)}
     var email='d'+d.id+'@canavari.example.com',pw='mc'+d.pw;
-    return fb.signInWithEmailAndPassword(CL.auth,email,pw).catch(function(e){
+    if(CL.ap)return CL.ap;
+    CL.ap=fb.signInWithEmailAndPassword(CL.auth,email,pw).catch(function(e){
       var code=e&&e.code||'';
       if(code==='auth/network-request-failed'||code==='auth/too-many-requests')throw e;
       return fb.createUserWithEmailAndPassword(CL.auth,email,pw);
-    }).then(function(c){CL.user=c.user;return fb});
+    }).then(function(c){CL.user=c.user;CL.ap=null;return fb},function(e){CL.ap=null;throw e});
+    return CL.ap;
   });
 }
 /* ---------- otomatik bulut yedeği ---------- */
@@ -1648,6 +1650,7 @@ var FRBUSY=['game','gcount','duel','dintro','dover','rcount','rover','lobby','qu
 function frInvCheck(){
   var v=FR.inv;
   if(!v||!st.profile||st.modal)return;
+  if(DEEPJ&&v.room===DEEPJ){FR.invSeen[v.ts]=1;frInvClear();return}
   if(Date.now()-v.ts>600000||FR.invSeen[v.ts])return;
   if(FRBUSY.indexOf(st.screen)>=0)return;
   FR.invSeen[v.ts]=1;
@@ -1844,6 +1847,32 @@ var RJOIN=null;
     if(c.length>=3&&c.length<=10){RJOIN=c;st.screen='rjoin'}
   }catch(e){}
 })();
+/* S52: bildirime dokununca doğrudan kapışma (?kap=KOD&to=OYUNCU), arkadaşlık isteğinde ?fr=1 */
+var DEEP=null,DEEPJ='';
+function deepParse(q){var m=/[?&]kap=([^&#]+)/.exec(q),t=/[?&]to=([^&#]+)/.exec(q),f=/[?&]fr=1/.test(q);if(!m&&!f)return null;return {kap:m?slug(decodeURIComponent(m[1])).toUpperCase():'',to:t?decodeURIComponent(t[1]):'',fr:f}}
+(function(){try{DEEP=deepParse(location.search);if(DEEP&&history.replaceState)history.replaceState(null,'',location.pathname)}catch(e){}})();
+function deepRun(){
+  var d=DEEP;if(!d)return;DEEP=null;
+  if(['game','gcount','duel','dintro','rcount','quiz'].indexOf(st.screen)>=0){toast('Önce bu oyunu bitir');return}
+  var ps=profiles(),ids=frIds(),p=null;
+  ps.forEach(function(x){if(d.to&&ids[x]&&ids[x].id===d.to)p=x});
+  if(!p&&ps.length===1)p=ps[0];
+  if(!p&&st.profile)p=st.profile;
+  if(!p){toast('Önce profilini seç');go('profiles');return}
+  if(st.modal)closeModal();
+  if(st.profile!==p){st.profile=p;frEnsure()}
+  if(d.fr||!d.kap){frOpen();return}
+  if(RM.code===d.kap&&['lobby','dover'].indexOf(st.screen)>=0)return;
+  if(RM.code)rmReset();
+  DEEPJ=d.kap;go('home');toast('Kapışmaya bağlanılıyor…');
+  frEnsure().catch(function(){}).then(function(){rmJoinCode(d.kap,function(){go('home')});setTimeout(frInvClear,2500)});
+}
+try{if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){var x=e.data;if(x&&x.mc==='open'&&x.u){try{DEEP=deepParse(new URL(x.u,location.href).search)}catch(er){DEEP=null}if(DEEP)deepRun()}})}catch(e){}
+function appShare(){
+  var url=location.origin+location.pathname,t='🐲 Matematik Canavarı: 4 işlem oyunu! Benimle kapışmak için aç:\n'+url+'\n\nTelefonuna yüklemek için: bağlantıyı aç, tarayıcı menüsünden "Ana ekrana ekle"ye dokun.';
+  var wa=function(){try{window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}catch(e){location.href='https://wa.me/?text='+encodeURIComponent(t)}};
+  if(navigator.share)navigator.share({title:'Matematik Canavarı',text:t}).catch(function(e){if(!e||e.name!=='AbortError')wa()});else wa();
+}
 function rmLink(){return location.origin+location.pathname+'?oda='+encodeURIComponent(RM.code||'')}
 function rmCopy(){
   var t=rmLink(),done=function(){toast('Link kopyalandı')},fb=function(){
@@ -1989,7 +2018,7 @@ function rmBeat(){
 }
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
-var PV=2,APPV=51;
+var PV=2,APPV=52;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
@@ -2823,12 +2852,12 @@ function pushBox(){
 /* ---------- uygulama kılavuzu ---------- */
 var GV={from:'welcome',open:null};
 var GUIDE=[
- {id:'what',t:'🐲 Bu uygulama ne işe yarar?',h:'<p>Matematik Canavarı ile <b>toplama, çıkarma, çarpma ve bölme</b> çalışırsın.</p><p>Ana menüde 4 bölüm var:</p><ul><li><b>İşlemler:</b> Sakin sakin işlem çözersin.</li><li><b>Problemler:</b> Hikâyeli sorular çözersin.</li><li><b>Akıldan İşlem Oyunu:</b> Hızlı cevap verip rekor kırarsın.</li><li><b>Yarış Odası:</b> Arkadaşlarınla aynı sorularla yarışırsın.</li></ul><p>İnternet sadece <b>Yarış Odası</b> ve <b>Rekorlar Tablosu</b> için gerekir. Diğerleri internetsiz çalışır.</p>'},
+ {id:'what',t:'🐲 Bu uygulama ne işe yarar?',h:'<p>Matematik Canavarı ile <b>toplama, çıkarma, çarpma ve bölme</b> çalışırsın.</p><p>Ana menüde 4 bölüm var:</p><ul><li><b>İşlemler:</b> Sakin sakin işlem çözersin.</li><li><b>Problemler:</b> Hikâyeli sorular çözersin.</li><li><b>Akıldan İşlem Oyunu:</b> Hızlı cevap verip rekor kırarsın.</li><li><b>Yarış Odası:</b> Arkadaşlarınla aynı sorularla yarışırsın.</li></ul><p>İnternet sadece <b>Yarış Odası</b> ve <b>Rekorlar Tablosu</b> için gerekir. Diğerleri internetsiz çalışır.</p><p>Arkadaşına uygulamayı göndermek için ana menüde ya da giriş ekranında <b>📲 Uygulamayı Paylaş</b>a dokun, WhatsApp’ı seç.</p>'},
  {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> <b>➕ Yeni Profil Oluştur</b> → 10 kategoriden (hayvanlar, meyve-sebze, taşıtlar, spor…) bir karakter seçersin; oyun adın olur (örn. 🐼 Cesur Panda). Ad yazılmaz, hazır karakterlerden seçilir.</li><li>Bir karakteri <b>ilk alan numarasız</b> alır. Aynı adı başkası daha önce aldıysa yanına numara eklenir (örn. 🐼 Cesur Panda #482). Böylece herkesin adı farklıdır.</li><li>Adını değiştirmek için profil sayfasında <b>✏️</b> düğmesine dokun. Profili silmek de buradan yapılır.</li><li>Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın, <b>👤 Misafir</b> olarak görünürsün. Sonuçların kaydedilmez, rekorlar tablosuna yazılmaz.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar bu telefonda saklanır ve internet varken <b>otomatik olarak buluta yedeklenir</b>.</li><li>Ana menünün en altındaki <b>☁️ Yedek</b> bölümünde <b>yedek kodun</b> yazar. Bu kodu sakla ya da öğretmenine gönder.</li><li>Telefon değişirse ya da veriler silinirse: <b>Misafir olarak devam et</b> → ana menünün en altı → <b>☁️ Yedek</b> → <b>♻️ Yedekten Geri Yükle</b> → kodu yaz.</li><li>Her profilin son 200 oyunu saklanır.</li><li><b>🎨 Tema:</b> Giriş ekranının sol üstündeki ya da ana menüdeki 🎨 düğmesinden renk teması seçilir: Otomatik, Açık, Sepya, Gece, Okyanus, Yüksek kontrast.</li></ul>'},
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
- {id:'friends',t:'👫 Arkadaşlarım',h:'<ul><li>Ana menü → <b>Arkadaşlarım</b>. Profil ile girmen ve internet gerekir.</li><li>Her profilin bir <b>oyuncu kodu</b> var (örn. ABCDEFG). Kodunu arkadaşına ver.</li><li>Arkadaşının kodunu yazıp <b>Arkadaş Ekle</b>ye bas. O kabul edince arkadaş olursunuz.</li><li>Listede 🟢 olanlar şu an uygulamada. ⚪ olanların en son ne zaman girdiği yazar.</li><li>Bir arkadaşının adına dokununca <b>karakter kartı</b> açılır. Karttaki <b>Aranızdaki kapışmalar</b> düğmesi skorunuzu ve son maçlarınızı gösterir.</li><li><b>⚔️ Çağır</b>: seviye, maç puanı ve işlemi seç. Arkadaşın uygulamadaysa davet hemen ekranına gelir; kabul edince 1’e 1 kapışma başlar. Uygulaması kapalıysa davet 10 dakika bekler; davet linkini WhatsApp\'tan da gönderebilirsin.</li><li>Kod ya da linkle oynadığın biri arkadaşın değilse, oyun bitince sonuç ekranında <b>➕ arkadaş ekle</b> düğmesi çıkar.</li><li><b>🔔 Bildirimler:</b> Arkadaşlarım sayfasındaki <b>Bildirimleri aç</b> düğmesine bas, izin ver. Uygulama kapalıyken bir arkadaşın seni kapışmaya ya da muharebeye çağırınca, ya da arkadaşlık isteği gönderince telefonuna bildirim gelir. Bildirime dokununca uygulama açılır. iPhone’da önce uygulamayı <b>ana ekrana eklemen</b> gerekir.</li><li>Arkadaşlıkların otomatik yedeğe dahildir. Telefon değişirse yedek koduyla geri gelir.</li></ul>'},
+ {id:'friends',t:'👫 Arkadaşlarım',h:'<ul><li>Ana menü → <b>Arkadaşlarım</b>. Profil ile girmen ve internet gerekir.</li><li>Her profilin bir <b>oyuncu kodu</b> var (örn. ABCDEFG). Kodunu arkadaşına ver.</li><li>Arkadaşının kodunu yazıp <b>Arkadaş Ekle</b>ye bas. O kabul edince arkadaş olursunuz.</li><li>Listede 🟢 olanlar şu an uygulamada. ⚪ olanların en son ne zaman girdiği yazar.</li><li>Bir arkadaşının adına dokununca <b>karakter kartı</b> açılır. Karttaki <b>Aranızdaki kapışmalar</b> düğmesi skorunuzu ve son maçlarınızı gösterir.</li><li><b>⚔️ Çağır</b>: seviye, maç puanı ve işlemi seç. Arkadaşın uygulamadaysa davet hemen ekranına gelir; kabul edince 1’e 1 kapışma başlar. Uygulaması kapalıysa davet 10 dakika bekler; davet linkini WhatsApp\'tan da gönderebilirsin.</li><li>Kod ya da linkle oynadığın biri arkadaşın değilse, oyun bitince sonuç ekranında <b>➕ arkadaş ekle</b> düğmesi çıkar.</li><li><b>🔔 Bildirimler:</b> Arkadaşlarım sayfasındaki <b>Bildirimleri aç</b> düğmesine bas, izin ver. Uygulama kapalıyken bir arkadaşın seni kapışmaya ya da muharebeye çağırınca, ya da arkadaşlık isteği gönderince telefonuna bildirim gelir. Bildirime dokununca uygulama açılır ve <b>doğrudan kapışmaya girersin</b>. iPhone’da önce uygulamayı <b>ana ekrana eklemen</b> gerekir.</li><li>Arkadaşlıkların otomatik yedeğe dahildir. Telefon değişirse yedek koduyla geri gelir.</li></ul>'},
  {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Tek başına oynamak için:</b> Yarış Odası → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (kolay sayılar), 👾 Canavar (orta sayılar) ya da 🐉 Dev Canavar (zor sayılar) seç, sonra işlemi seç. İnternet gerekmez.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
  {id:'mm',t:'🛡️ Meydan Muharebesi',h:'<ul><li>Yarış Odası → <b>Meydan Muharebesi Kur</b>. 3 ya da 4 kişi oynar.</li><li>Seviyeyi, maç puanını (10, 15, 20) ve işlemi seç. Kodu ya da davet linkini gönder; lobide <b>📨 Çağır</b> ile arkadaşlarını da çağırabilirsin.</li><li>En az 3 kişi olunca kurucu <b>Muharebeyi Başlat</b>a basar. Başlayınca yeni kişi giremez.</li><li>Kural 1’e 1 Kapışma ile aynı: her soruda <b>önce doğru basan</b> 1 puan alır, yanlış basan o soruda kilitlenir.</li><li>Seçilen puana ilk ulaşan kazanır. Sonuçta 🥇🥈🥉 sıralaması çıkar.</li><li>Biri ayrılırsa muharebe kalanlarla sürer. Herkes <b>Rövanş</b>a basınca yeniden başlar.</li></ul>'},
  {id:'race',t:'🏁 Yarış Odası',h:'<p><b>Oda kurmak için:</b></p><ul><li>Yarış Odası → Oyun Odası Kur.</li><li>İstersen bir <b>oda kodu</b> yaz (3-10 harf ya da rakam). Yazmazsan kod kendiliğinden verilir.</li><li>Seviyeyi (Kolay, Orta, Zor) seç.</li><li>Sonra işlemi seç. Oda açılır. Çarpma ya da bölmeyi seçersen önce sorulur: <b>seviyeye göre</b> mi, yoksa tek bir tabloyla mı (<b>📚 Tablo çalış</b>)?</li><li>Odada çıkan <b>davet linkini</b> kopyalayıp ya da paylaşıp arkadaşlarına gönder.</li><li>Herkes gelince <b>Yarışı Başlat</b> düğmesine bas. Başlayınca yeni kişi giremez.</li></ul><p><b>Odaya girmek için:</b></p><ul><li>Gönderilen linke dokun, <b>kim olarak</b> gireceğini seç (profilin ya da misafir).</li><li>Ya da Yarış Odası → oda kodunu yaz → Odaya Gir.</li></ul><p><b>Yarışta:</b></p><ul><li>5 saniye sayılır, zirve kartı çıkar ve düdükle yarış başlar. Herkes <b>aynı sorularla</b> başlar.</li><li>Herkesin 3 canı var. Canı biten yarıştan çıkar ve diğerlerini bekler.</li><li>Sıralamayı canlı görürsün. İnterneti kopan oyuncunun yanında <b>📶 bağlantısı koptu</b> yazar; 45 saniye dönmezse yarış onu beklemeden biter.</li><li>Herkes bitince sonuç çıkar. Birinci olan tebrik alır. Sonuç kartının fotoğrafını kaydedebilirsin.</li><li>Yarış bitmeden çıkış kilitlidir.</li></ul><p>İnternet gerekir.</p>'},
@@ -3135,7 +3164,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button></div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button></div></div>';
   }else if(s==='profiles'){
     h=topBar('Kim oynuyor?')+'<div class="col">';
     var leg=false;
@@ -3155,7 +3184,7 @@ function render(){
     h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="pbox live" id="fr-live"'+(lvh?'':' style="display:none"')+'>'+lvh+'</div><div class="hgrid"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Dört işlem</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Yarış, kapış, savaş</small></button><button class="btn" onclick="frOpen()"><span class="big">👫</span>Arkadaşlarım<small>Kapışmaya çağır<span id="fr-badge">'+(FR.inc.length?' · '+FR.inc.length+' yeni istek':'')+'</span></small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
     if(st.profile){var rx=rkGet(st.profile);h+='<button class="btn rkhome" onclick="rkMyCard()">'+rkMini(rx.r)+'<span>🪪 Karakter Kartım<small>'+RKA.RANKS[rx.r].n+' · '+rx.p+' puan</small></span></button>'}
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
-    h+='<button class="ghost" onclick="themeOpen()">🎨 Tema</button><div style="height:4px"></div><details class="pbox bkd"><summary>☁️ Yedek ve geri yükleme</summary>'+bkBox()+'<button class="ghost" onclick="go(\'bkr\')">♻️ Yedekten Geri Yükle</button></details>';
+    h+='<button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><button class="ghost" onclick="themeOpen()">🎨 Tema</button><div style="height:4px"></div><details class="pbox bkd"><summary>☁️ Yedek ve geri yükleme</summary>'+bkBox()+'<button class="ghost" onclick="go(\'bkr\')">♻️ Yedekten Geri Yükle</button></details>';
   }else if(s==='gmenu'){
     h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre sınırlı, 3 canın var. Önce işlemi, sonra seviyeni seçersin.</p>'+audioBtns()+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'game\')">❓ Nasıl oynanır?</button><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="gPick(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>Seviye seç</small></button>'});
@@ -3524,6 +3553,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){try{
 }catch(e){}})}
 st.vert=ls('mc_vert',false);
 render();
+if(DEEP)setTimeout(deepRun,400);
 navInit();
 setTimeout(lbBackfill,3000);
 setTimeout(nmSync,1500);
