@@ -111,6 +111,22 @@ service cloud.firestore {
         && request.resource.data.u == request.auth.uid
         && request.resource.data.keys().hasOnly(['u', 'd', 'ts', 'v'])
         && request.resource.data.d is string && request.resource.data.d.size() < 900000;
+      // S53: "Verilerimi sil"
+      allow delete: if signedIn() && resource.data.u == request.auth.uid;
+    }
+
+    // S53: hesap özeti (eşitleme): belge id = hesap kodu (bk ile aynı). Küçük belge; açılışta sadece bu okunur.
+    // ts: son yazılan yedeğin zamanı, dv: yazan cihaz, ln/lnd: hesabın en son açıldığı zaman ve cihaz, del: hesap silindi
+    match /ac/{code} {
+      allow get: if signedIn();
+      allow create: if signedIn() && code.size() == 10
+        && request.resource.data.u == request.auth.uid
+        && request.resource.data.keys().hasOnly(['u', 'ts', 'dv', 'ln', 'lnd', 'del', 'v'])
+        && request.resource.data.ts is int;
+      allow update: if signedIn() && resource.data.u == request.auth.uid
+        && request.resource.data.u == request.auth.uid
+        && request.resource.data.keys().hasOnly(['u', 'ts', 'dv', 'ln', 'lnd', 'del', 'v'])
+        && request.resource.data.ts is int;
     }
 
     // Oyun adı kaydı (S46): belge id = karakter_numara; aynı adı iki kişi alamaz (var olan belgeye sadece sahibi yazabilir)
@@ -125,7 +141,7 @@ service cloud.firestore {
       allow delete: if signedIn() && resource.data.u == request.auth.uid;
     }
 
-    // Rekorlar tablosu: her cihaz, her kategori için tek belge; sadece kendi belgesi, puan sadece artabilir
+    // Rekorlar tablosu: her hesap (S53'ten beri hesap = karakter), her kategori için tek belge; sadece kendi belgesi, puan sadece artabilir
     match /{coll}/{uid} {
       allow read: if signedIn() && lbOk(coll);
       allow create: if signedIn() && request.auth.uid == uid
@@ -142,7 +158,8 @@ service cloud.firestore {
         && (!('rk' in request.resource.data) || (request.resource.data.rk is int && request.resource.data.rk >= 0 && request.resource.data.rk <= 6))
         && request.resource.data.nick is string && request.resource.data.nick.size() >= 1 && request.resource.data.nick.size() <= 60
         && request.resource.data.score is int && request.resource.data.score >= resource.data.score && request.resource.data.score <= 5000;
-      // Silme yok: uygunsuz adı Firebase konsolundan elle sil.
+      // S53: kendi satırını silebilir (tek karaktere geçişte eski satır temizliği, "Verilerimi sil")
+      allow delete: if signedIn() && request.auth.uid == uid && lbOk(coll);
     }
   }
 }

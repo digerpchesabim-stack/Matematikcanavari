@@ -5,7 +5,7 @@ const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mo
 const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt','rk','pv'];
 module.exports=function(opts){
   opts=opts||{};
-  const store={},subs=[],pages={},log=[];let lag=opts.lag||[30,150];
+  const store={},subs=[],pages={},log=[],users={};let uidn=0;let lag=opts.lag||[30,150];
   const parent=p=>p.split('/').slice(0,-1).join('/');
   const deny=(m)=>{log.push('DENY '+m);return {__err:'permission-denied'}};
   function check(path,uid,d){
@@ -65,6 +65,13 @@ module.exports=function(opts){
       if(Object.keys(d).some(k=>!['u','d','ts','v'].includes(k))||typeof d.d!=='string'||d.d.length>=900000)return deny('bk shape');
       return null;
     }
+    if(seg[0]==='ac'){
+      const old=store[path];
+      if(seg[1].length!==10)return deny('ac code');
+      if(d.u!==uid||(old&&old.u!==uid))return deny('ac owner');
+      if(Object.keys(d).some(k=>!['u','ts','dv','ln','lnd','del','v'].includes(k))||!Number.isInteger(d.ts))return deny('ac shape');
+      return null;
+    }
     if(seg[0]==='rooms'&&seg[2]==='players'){
       if(seg[3]!==uid)return deny('player uid');
       if(Object.keys(d).some(k=>!PLK.includes(k)))return deny('player keys '+Object.keys(d));
@@ -94,9 +101,16 @@ module.exports=function(opts){
       if(old&&(seg[0]==='pl')&&!owns(seg[1]))return JSON.stringify(deny('pl del'));
       if(old&&seg[0]==='nm'&&old.u!==uid)return JSON.stringify(deny('nm del'));
       if(old&&seg[0]==='pk'&&old.u!==uid)return JSON.stringify(deny('pk del'));
+      if(old&&seg[0]==='bk'&&old.u!==uid)return JSON.stringify(deny('bk del'));
+      if(seg[0]==='ac')return JSON.stringify(deny('ac del'));
+      if(/^lb[gr]_/.test(seg[0])&&seg[1]!==uid)return JSON.stringify(deny('lb del'));
+      if(seg[0]==='rooms'&&seg.length===4&&seg[3]!==uid)return JSON.stringify(deny('player del'));
       delete store[path];changed(path);return 'null'}
     if(op==='list'){let l=Object.keys(store).filter(k=>parent(k)===path).map(k=>[k,store[k]]);const q=a||{};
       if(q.w)l=l.filter(x=>x[1][q.w.f]===q.w.v);if(q.ob)l.sort((x,y)=>q.ob.d==='desc'?y[1][q.ob.f]-x[1][q.ob.f]:x[1][q.ob.f]-y[1][q.ob.f]);if(q.lim)l=l.slice(0,q.lim);return JSON.stringify(l)}
+    if(op==='auth'){const u=users[path];if(a==='in'){if(!u||u.pw!==b)return JSON.stringify({__err:'auth/invalid-credential'});return JSON.stringify(u.uid)}
+      if(a==='up'){if(u)return JSON.stringify({__err:'auth/email-already-in-use'});const id=pid+'_u'+(++uidn);users[path]={uid:id,pw:b};return JSON.stringify(id)}
+      if(a==='del'){delete users[path];return 'null'}}
     if(op==='sub'){const s={pid,id:a,path,col:b,w:c};subs.push(s);deliver(s);return 'null'}
     if(op==='unsub'){subs.forEach(s=>{if(s.pid===pid&&s.id===a)s.dead=true});return 'null'}
     return 'null';
@@ -111,5 +125,5 @@ module.exports=function(opts){
     await p.goto(url);
     return p;
   }
-  return {store,log,phone,setLag:x=>{lag=x},pages};
+  return {store,log,phone,setLag:x=>{lag=x},pages,users};
 };

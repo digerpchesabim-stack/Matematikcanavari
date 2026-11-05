@@ -7,7 +7,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <title>Matematik Canavarı</title>
-<script>try{var T0=JSON.parse(localStorage.getItem('mc_theme'));if(T0&&T0!=='auto')document.documentElement.setAttribute('data-theme',T0)}catch(e){}</script>
+<script>try{var T0=JSON.parse(localStorage.getItem('mc_theme'));if(T0&&T0!=='auto')document.documentElement.setAttribute('data-theme',T0)}catch(e){}try{var F0=JSON.parse(localStorage.getItem('mc_fs'));if(F0===1||F0===2)document.documentElement.setAttribute('data-fs',F0)}catch(e){}</script>
 <style>
 :root{--bg:#f4f1fb;--card:#fff;--text:#1d2433;--muted:#6b7385;--accent:#7048e8;--accent-t:#fff;--ok:#1f9d55;--ok-bg:#d9f3e3;--bad:#d64545;--bad-bg:#fbe0e0;--line:#e0daf0}
 @media (prefers-color-scheme:dark){:root:not([data-theme]){color-scheme:dark;--bg:#141122;--card:#1e1a30;--text:#eef1f7;--muted:#a49fbb;--accent:#a78bfa;--accent-t:#140f2a;--ok:#4cc784;--ok-bg:#163a27;--bad:#ff7b7b;--bad-bg:#44201f;--line:#2e2847}}
@@ -132,6 +132,13 @@ details.pbox summary{cursor:pointer;font-size:17px}
 #ov.rkov{background:rgba(5,6,20,.8);padding:10px}.rkp{position:relative;width:min(94vw,390px);max-height:96vh;border-radius:26px;padding:14px 16px 16px;text-align:center;overflow:hidden;color:#fff;background:radial-gradient(circle at 50% 28%,#4b3a9c 0%,#22195a 55%,#140f38 100%);border:2px solid #ffd23f;box-shadow:0 0 40px rgba(255,210,63,.35);animation:rkin .45s cubic-bezier(.2,1.4,.4,1)}.rkp.fire{border-color:#ff8a3d;background:radial-gradient(circle at 50% 28%,#7a2e5a 0%,#3a1440 55%,#1a0b24 100%)}.rkrays{position:absolute;left:50%;top:150px;width:640px;height:640px;margin:-320px 0 0 -320px;border-radius:50%;background:repeating-conic-gradient(rgba(255,226,120,.2) 0 9deg,transparent 9deg 22.5deg);animation:rkspin 26s linear infinite;-webkit-mask:radial-gradient(circle,#000 0 30%,transparent 65%);mask:radial-gradient(circle,#000 0 30%,transparent 65%)}.rkcf{position:absolute;inset:0;pointer-events:none}.rkcf i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:rkfall linear infinite}.rkp>*:not(.rkrays):not(.rkcf){position:relative}.rkbig{font-weight:900;font-size:27px;letter-spacing:.04em;background:linear-gradient(180deg,#fff,#ffd23f 55%,#ff9f1c);-webkit-background-clip:text;background-clip:text;color:transparent}.rkart svg{width:min(190px,26vh);height:auto}.rkttl{font-weight:800;font-size:22px;line-height:1.2}.rkwhy{color:#d9dcff;font-size:15px;margin:4px 0 10px}.rkpg{background:rgba(0,0,0,.28);border-radius:14px;padding:9px 12px;text-align:left;font-size:14px;color:#d9dcff;display:grid;gap:6px}.rkrow{display:flex;justify-content:space-between;gap:8px}.rkbar{display:block;height:12px;border-radius:8px;background:#0b0d26;overflow:hidden;border:1px solid rgba(255,255,255,.15)}.rkbar i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#ff9f1c,#ffd23f)}.rkbar.g i{background:linear-gradient(90deg,#1fb978,#3ddc97)}.rkbt{display:flex;gap:10px;margin-top:12px}.rkb{flex:1;min-height:48px;border-radius:15px;border:0;font-weight:800;font-size:18px;font-family:inherit;margin:0;cursor:pointer}.rkb.y{background:linear-gradient(180deg,#ffe27a,#ffd23f 50%,#f0a500);color:#2a1a00;box-shadow:0 4px 0 #a86b00}.rkb.d{background:#2d3577;color:#fff;box-shadow:0 4px 0 #1a1f4d}.rkmeds{display:flex;flex-wrap:wrap;justify-content:center;gap:2px}.rkmeds svg{width:48px;height:auto}@keyframes rkin{from{transform:scale(.6);opacity:0}}@keyframes rkspin{to{transform:rotate(360deg)}}@keyframes rkfall{to{transform:translateY(780px) rotate(540deg)}}.rkmini{display:inline-block;width:30px;height:30px;vertical-align:middle;flex:none}.rkmini svg{width:100%;height:100%;display:block}.rkme{display:flex;align-items:center;gap:12px;text-align:left}.rkme-e svg{width:96px;height:auto;display:block}.rkme-t{display:flex;flex-direction:column;gap:4px;flex:1;min-width:0}.rkme-t b{font-size:24px}.rkme-t small{color:var(--muted)}.rkme .rkbar{background:var(--line);border:0}.rklad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px 4px;text-align:center}.rklad svg{width:100%;max-width:64px;height:auto}.rklad b{display:block;font-size:13px;line-height:1.15}.rklad small{font-size:12px;color:var(--muted)}.rklad .cur b{color:var(--accent)}.rkg3{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;text-align:center}.rkg3 svg{width:100%;max-width:96px;height:auto}.rkg3 b{display:block;font-size:15px}.rkg3 small{font-size:13px;color:var(--muted)}.locked svg{filter:grayscale(1) brightness(.6);opacity:.5}.rkhelp h3{margin:14px 0 4px;font-size:18px;color:var(--accent)}.rkhelp h3:first-child{margin-top:0}.rkhelp p,.rkhelp li{font-size:16px}.rkchips{display:flex;flex-wrap:wrap;gap:6px}.rkchip{display:inline-flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:2px 10px 2px 3px;font-weight:700;font-size:14px}.rkchip small{color:var(--muted);font-weight:400}.rkhome{display:flex!important;align-items:center;gap:12px;text-align:left}.rkhome .rkmini{width:58px;height:58px}.rkhome small{display:block}.rkpub{display:flex;align-items:center;justify-content:center;gap:6px;margin:2px 0;font-weight:700}.rkpub .rkmini{width:46px;height:46px}.rkmd{display:flex;justify-content:center;flex-wrap:wrap}.rkmd svg{width:40px;height:auto}.dn .rkmini{width:40px;height:40px;margin-right:4px}.rrow .rkmini{width:28px;height:28px;margin:0 2px}@media (prefers-reduced-motion:reduce){.rkrays,.rkcf{display:none}}
 .kcard{position:relative;overflow:hidden;border-radius:26px;padding:12px 14px 14px;margin-bottom:12px;text-align:center;color:#fff;background:radial-gradient(circle at 50% 22%,#5b45c4 0%,#231a63 55%,#100c33 100%);border:3px solid #ffd23f;box-shadow:0 6px 24px rgba(0,0,0,.25)}.kcard.fire{border-color:#ff8a3d;background:radial-gradient(circle at 50% 22%,#8a2e5a 0%,#3a1440 55%,#1a0b24 100%)}.kc-rays{position:absolute;left:50%;top:120px;width:620px;height:620px;margin:-310px 0 0 -310px;border-radius:50%;background:repeating-conic-gradient(rgba(255,226,120,.16) 0 9deg,transparent 9deg 22.5deg);animation:rkspin 30s linear infinite;-webkit-mask:radial-gradient(circle,#000 0 30%,transparent 65%);mask:radial-gradient(circle,#000 0 30%,transparent 65%)}.kcard>*:not(.kc-rays){position:relative}.kc-e svg{width:min(210px,55vw);height:auto}.kc-n{font-size:24px;font-weight:800;line-height:1.15}.kc-r{font-size:19px;font-weight:800;color:#ffd23f;margin-bottom:6px}.kc-pg{display:grid;gap:4px;margin:0 6px 6px}.kc-pg small{color:#d9dcff}.kc-t{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#c9ccf5;margin-top:4px}.kc-m{display:flex;flex-wrap:wrap;justify-content:center;min-height:40px;align-items:center}.kc-m svg{width:52px;height:auto}.kc-m small{color:#c9ccf5}.kc-s{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}.kc-s div{background:rgba(0,0,0,.28);border-radius:14px;padding:8px 4px}.kc-s b{display:block;font-size:22px;font-variant-numeric:tabular-nums}.kc-s small{display:block;font-size:12px;line-height:1.2;color:#d9dcff}.kc-c{margin-top:8px;font-size:13px;color:#c9ccf5}.kc-old{font-size:14px;color:#d9dcff;margin:8px 0 0}@media (prefers-reduced-motion:reduce){.kc-rays{animation:none}}
 .pushb{font-size:15px;line-height:1.4}.pushb small{color:var(--muted)}
+:root[data-fs="1"] body{zoom:1.15}:root[data-fs="2"] body{zoom:1.3}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-t)}
+.qw{position:relative;margin-top:26px}.ttsb{position:absolute;top:-24px;right:8px;display:flex;gap:8px;z-index:2}.ttsb button{width:48px;height:48px;min-height:0;border-radius:50%;border:2px solid var(--accent);background:var(--card);color:var(--text);font-size:23px;line-height:1;padding:0;margin:0;box-shadow:0 2px 8px rgba(0,0,0,.18);cursor:pointer}
+.hsk{text-align:center}.hsk .rcode{font-size:26px;letter-spacing:3px;margin:6px 0}.hsk small{display:block;color:var(--muted);margin-top:6px}
+.tgl{text-align:left}.tgl small{display:block}
+.mgc .pn small .rkmini{width:22px;height:22px}
+.welg{margin-top:4px;font-size:15px}
 .vtag{display:flex;align-items:center;justify-content:center;gap:8px}.vupd{width:auto;min-height:34px;margin:0;padding:4px 12px;border-radius:17px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:14px;font-weight:700}.pvw{border-color:#f59e0b;font-size:15px}
 </style>
 </head>
@@ -299,7 +306,7 @@ function nmAsk(p){
   if(ls('mc_nmnew',[]).indexOf(p)<0)return;
   setTimeout(function(){
     if(st.profile!==p||st.modal||st.screen!=='home')return;
-    modal('<span style="font-size:60px;line-height:1.2">'+nmEmo(p)+'</span><br>Yeni oyun adın:<br><b style="font-size:22px">'+esc(nmRest(p))+'</b><br>Beğendin mi?','👍 Tamam','✏️ Değiştir',function(){nmDone(p)},function(){nmDone(p);peOpen(profiles().indexOf(p),'home')});
+    modal('<span style="font-size:60px;line-height:1.2">'+nmEmo(p)+'</span><br>Yeni oyun adın:<br><b style="font-size:22px">'+esc(nmRest(p))+'</b><br>Beğendin mi?<br><small>Beğenmezsen şimdi <b>bir kez</b> değiştirebilirsin.</small>','👍 Tamam','✏️ Değiştir',function(){nmDone(p)},function(){nmDone(p);peOpen(profiles().indexOf(p),'home')});
   },450);
 }
 function nmDone(p){lsSet('mc_nmnew',ls('mc_nmnew',[]).filter(function(x){return x!==p}));if(FR.inv)setTimeout(frInvCheck,400)}
@@ -349,9 +356,15 @@ function peCheck(){
   },350);
 }
 function peSave(){
+  var P=st.pe;if(!P||P.busy)return;
+  var old=P.i>=0?profiles()[P.i]:null,om=old?nmInfo(old):null;
+  if(old&&om&&om.e===P.e){nmDone(old);go(P.ret);return}
+  if(!old&&profiles().length){toast('Bu cihazda zaten bir karakterin var');go('home');return}
+  modal('<span style="font-size:60px;line-height:1.2">'+NME[P.e][0]+'</span><br><b style="font-size:20px">'+esc(NME[P.e][1])+'</b><br>Bu karakter <b>hep senin</b> olacak.<br><small>Sonra değiştiremezsin.</small><br>Emin misin?','✅ Evet, benim','Başka seç',peSaveGo,null);
+}
+function peSaveGo(){
   var P=st.pe,b=document.getElementById('pe-go');if(!P||P.busy)return;
   var old=P.i>=0?profiles()[P.i]:null,om=old?nmInfo(old):null;
-  if(old&&om&&om.e===P.e){go(P.ret);return}
   P.busy=true;if(b){b.disabled=true;b.textContent='⏳ Ad ayrılıyor…'}
   nmClaim(P.e,0,old).then(function(r){
     P.busy=false;
@@ -363,7 +376,7 @@ function peSave(){
       var l=profiles();l.push(nw);
       if(!lsSet('mc_profiles',l)){toast('Kayıt yapılamadı: tarayıcı depolaması kapalı olabilir');return}
       var x=nmMap();x[nw]=r;lsSet('mc_nm',x);bkSoon();
-      st.profile=nw;go('home');frEnsure();toast('Hoş geldin, '+nw);
+      st.profile=nw;go(RJOIN?'rjoin':'home');frEnsure();toast('Hoş geldin, '+nw);
     }
   });
 }
@@ -636,61 +649,389 @@ function devAuth(){
     return CL.ap;
   });
 }
-/* ---------- otomatik bulut yedeği ---------- */
-var BKK=['mc_rk','mc_theme','mc_pid','mc_nm','mc_nmnew','mc_lbpid','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_vert','mc_audio'],BK={busy:false,t:null};
+/* ---------- S53: hesap (her cihazda tek karakter) + cihazlar arası eşitleme ----------
+   Hesap kodu = mc_bk (10 karakter, kalıcı; eski "yedek kodu"). bk/{kod} = tam veri (d), ac/{kod} = küçük özet {u,ts,dv,ln,lnd,del,v}.
+   Aynı hesabı açan cihazlar aynı Firebase hesabıyla girer (mc_dev veride) → rekor satırı, oyuncu kimliği ve ad kaydı ortaktır.
+   mc_acc (cihaza özel, eşitlenmez) = {dv: cihaz kimliği, st: bu cihazın bildiği son bulut sürümü (ac.ts), ln: bilinen son "hesap açıldı" zamanı}
+   Eşitleme: açılışta / internete dönünce / öne gelince ac okunur; başka cihaz daha yeni yazdıysa bk indirilip birleştirilir.
+   Birleştirme: kayıtlar birleşir, rekorlar ve rütbe sayaçları büyük olan (geri gitmez), ayarlar son yazan cihazınki. */
+var BKK=['mc_rk','mc_theme','mc_pid','mc_nm','mc_nmnew','mc_lbpid','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_vert','mc_audio','mc_fs','mc_tts','mc_mgk','mc_dev'],BK={busy:false,t:null};
+var ACLWW=['mc_theme','mc_vert','mc_audio','mc_fs','mc_tts'],AC={t:0,busy:false,gone:false},HS={show:false};
+var ACBUSY=['game','gcount','duel','dintro','rcount','quiz','mig','hgir'];
 function cloudQueue(){bkSoon()}
 function bkSoon(){if(BK.t)clearTimeout(BK.t);BK.t=setTimeout(function(){BK.t=null;bkRun()},15000)}
 function bkHash(x){var h=5381,i;for(i=0;i<x.length;i++)h=((h<<5)+h+x.charCodeAt(i))|0;return String(h)+':'+x.length}
-function bkCode(){var c=ls('mc_bk',''),i;if(!c||c.length!==10){c='';for(i=0;i<10;i++)c+=RCH.charAt(Math.floor(Math.random()*RCH.length));lsSet('mc_bk',c)}return c}
+function bkNewCode(){var c='',i;for(i=0;i<10;i++)c+=RCH.charAt(Math.floor(Math.random()*RCH.length));return c}
+function bkCode(){var c=ls('mc_bk','');if(!c||c.length!==10){c=bkNewCode();lsSet('mc_bk',c)}return c}
 function bkFmt(c){return c||''}
-function bkData(){
+function acc(){var a=ls('mc_acc',null);if(!a||!a.dv){a={dv:rid(12),st:0,ln:0};lsSet('mc_acc',a)}return a}
+function accSet(o){var a=acc(),k;for(k in o)a[k]=o[k];lsSet('mc_acc',a);return a}
+function bkData(all){
   var o={},r,c={},i;
   BKK.forEach(function(k){var v=localStorage.getItem(k);if(v!==null)o[k]=v});
-  try{r=JSON.parse(o.mc_records||'[]');for(i=r.length-1;i>=0;i--){var p=r[i].p;c[p]=(c[p]||0)+1;if(c[p]>40&&r[i].qs){r[i]=Object.assign({},r[i]);delete r[i].qs}}o.mc_records=JSON.stringify(r)}catch(e){}
+  try{r=JSON.parse(o.mc_records||'[]');for(i=r.length-1;i>=0;i--){var p=r[i].p;c[p]=(c[p]||0)+1;if((all||c[p]>40)&&r[i].qs){r[i]=Object.assign({},r[i]);delete r[i].qs}}o.mc_records=JSON.stringify(r)}catch(e){}
   return JSON.stringify(o);
 }
+/* buluta yaz (önce başka cihaz daha yeni yazdıysa onu birleştir) */
 function bkRun(force){
-  if(BK.busy||!navigator.onLine||!profiles().length)return Promise.resolve(false);
-  var d=bkData(),h=bkHash(d);
-  if(!force&&h===ls('mc_bkh',''))return Promise.resolve(false);
-  if(d.length>900000)return Promise.resolve(false);
+  if(BK.busy||AC.busy||!navigator.onLine||profiles().length!==1)return Promise.resolve(false);
   BK.busy=true;
-  return devAuth().then(function(fb){
-    if(!CL.user)throw 0;
-    return fb.setDoc(fb.doc(CL.db,'bk',bkCode()),{u:CL.user.uid,d:d,ts:Date.now(),v:1});
-  }).then(function(){lsSet('mc_bkh',h);lsSet('mc_bkt',Date.now());BK.busy=false;var e=document.getElementById('bk-t');if(e)e.textContent=bkWhen();return true},function(e){
+  var fb,code=bkCode(),a=acc(),ac=null;
+  return devAuth().then(function(f){
+    fb=f;if(!CL.user)throw 0;
+    return fb.getDoc(fb.doc(CL.db,'ac',code));
+  }).then(function(s){
+    ac=s.exists()?s.data():null;
+    if(ac&&ac.del)throw 'gone';
+    if(ac&&ac.u!==CL.user.uid)throw {code:'permission-denied'};
+    if(ac&&ac.ts>(a.st||0)&&ac.dv!==a.dv)return acPullDoc(fb,code,ac);
+  }).then(function(){
+    var d=bkData(),h=bkHash(d),now=Date.now();
+    if(!force&&ac&&h===ls('mc_bkh','')&&ac.ts===acc().st)return false;
+    if(d.length>=900000)d=bkData(true);
+    if(d.length>=900000)return false;
+    return fb.setDoc(fb.doc(CL.db,'bk',code),{u:CL.user.uid,d:d,ts:now,v:2}).then(function(){
+      var o={u:CL.user.uid,ts:now,dv:a.dv,v:2};if(ac&&ac.ln){o.ln=ac.ln;o.lnd=ac.lnd||''}
+      return fb.setDoc(fb.doc(CL.db,'ac',code),o);
+    }).then(function(){lsSet('mc_bkh',h);lsSet('mc_bkt',now);accSet({st:now});return true});
+  }).then(function(r){BK.busy=false;var e=document.getElementById('bk-t');if(e)e.textContent=bkWhen();return r},function(e){
     BK.busy=false;
-    if(e&&String(e.code||'').indexOf('permission')>=0){localStorage.removeItem('mc_bk');localStorage.removeItem('mc_bkh')}
+    if(e==='gone'){acGone();return false}
+    /* kod başka bir hesaba ait (eski sürümden kalma kopya): bu cihaz yeni kod alır */
+    if(e&&String(e.code||'').indexOf('permission')>=0){localStorage.removeItem('mc_bk');localStorage.removeItem('mc_bkh');accSet({st:0,ln:0})}
     return false;
   });
 }
-function bkWhen(){var t=ls('mc_bkt',0);if(!t)return 'henüz yok';var d=new Date(t);return fmtDate(d)+' '+fmtTime(d)}
-function bkBox(){
-  if(!profiles().length)return '';
-  return '<div class="pbox" style="text-align:center"><b>☁️ Otomatik yedek açık</b><br><small>Son yedek: <span id="bk-t">'+bkWhen()+'</span></small><div style="margin:8px 0 4px">Yedek kodun:</div><div class="rcode" style="font-size:26px;letter-spacing:3px">'+bkFmt(bkCode())+'</div><small>Bu kodu sakla ya da öğretmenine gönder. Telefon değişirse ya da veriler silinirse bu kodla geri yüklersin.</small><button class="ghost" style="margin-top:8px" onclick="bkShare()">📤 Kodu Paylaş / Kopyala</button></div>';
+/* buluttan oku: başka cihaz daha yeni yazdıysa birleştir */
+function acPull(force){
+  if(AC.busy||BK.busy||!navigator.onLine||profiles().length!==1||!ls('mc_bk',''))return Promise.resolve(false);
+  if(ACBUSY.indexOf(st.screen)>=0)return Promise.resolve(false);
+  if(!force&&Date.now()-AC.t<60000)return Promise.resolve(false);
+  AC.busy=true;AC.t=Date.now();
+  var fb,code=bkCode(),a=acc();
+  return devAuth().then(function(f){fb=f;if(!CL.user)throw 0;return fb.getDoc(fb.doc(CL.db,'ac',code))}).then(function(s){
+    if(!s.exists())return false;
+    var ac=s.data();
+    if(ac.del){acGone();return false}
+    if(ac.u!==CL.user.uid)return false;
+    if(ac.ln&&ac.ln>(a.ln||0)){accSet({ln:ac.ln});if(ac.lnd&&ac.lnd!==a.dv)acLinkWarn(ac.ln)}
+    if(ac.ts>(a.st||0)&&ac.dv!==a.dv)return acPullDoc(fb,code,ac);
+    return false;
+  }).then(function(r){AC.busy=false;return r},function(){AC.busy=false;return false});
 }
-function bkShare(){
-  var t=bkFmt(bkCode());
-  if(navigator.share)navigator.share({text:t}).catch(function(){});
-  else if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast('Kod kopyalandı: '+t)},function(){toast(t)});
-  else toast(t);
+function acPullDoc(fb,code,ac){
+  return fb.getDoc(fb.doc(CL.db,'bk',code)).then(function(s){
+    if(!s.exists())return false;
+    var x=s.data(),R;try{R=JSON.parse(x.d)}catch(e){return false}
+    var dirty=bkHash(bkData())!==ls('mc_bkh',''),ch=acMerge(R,dirty);
+    if(!dirty)lsSet('mc_bkh',bkHash(bkData()));
+    accSet({st:ac.ts});
+    if(ch)acAfter();
+    return ch;
+  });
 }
-function bkRestore(){
-  var e=document.getElementById('bk-in'),c=String(e?e.value:'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if(c.length!==10){toast('Yedek kodu 10 harf/rakam olmalı');return}
+/* iki cihazın verisini birleştir. dirty: bu cihazda henüz buluta gitmemiş değişiklik var */
+function acMerge(R,dirty){
+  var J=function(k,d){if(R[k]===undefined)return d;try{var v=JSON.parse(R[k]);return v==null?d:v}catch(e){return d}};
+  var rp=J('mc_profiles',[]),lp=profiles(),before={},ch=false,p;
+  if(rp.length!==1||lp.length!==1)return false;
+  BKK.forEach(function(k){before[k]=localStorage.getItem(k)});
+  if(rp[0]!==lp[0]){
+    /* karakter adı farklı (ör. öbür cihazda tek seferlik ad değişikliği): değişiklik bekleyen yoksa bulutunkini al */
+    if(dirty)return false;
+    BKK.forEach(function(k){if(k==='mc_dev')return;if(R[k]!==undefined)localStorage.setItem(k,R[k]);else localStorage.removeItem(k)});
+    st.profile=rp[0];
+  }else{
+    var m={},key=function(r){return r.id?'i'+r.id:'t'+r.t+'|'+r.op+'|'+r.s},sc=function(r){return (r.ok|0)+(r.bad|0)+(r.fix|0)+(r.qs?0.5:0)};
+    records().concat(J('mc_records',[])).forEach(function(r){if(!r||typeof r!=='object')return;var k=key(r),e=m[k];if(!e||sc(r)>sc(e))m[k]=r});
+    lsSet('mc_records',recTrim(Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return (a.id||Date.parse(a.t)||0)-(b.id||Date.parse(b.t)||0)})));
+    ['mc_dhist','mc_rhist'].forEach(function(k){var u={};ls(k,[]).concat(J(k,[])).forEach(function(x){if(x&&x.t){var z=x.t+'|'+x.p;if(!u[z])u[z]=x}});lsSet(k,Object.keys(u).map(function(z){return u[z]}).sort(function(a,b){return b.t-a.t}).slice(0,100))});
+    ['mc_best','mc_rbest'].forEach(function(k){var A=ls(k,{}),B=J(k,{}),q;for(p in B){if(!A[p])A[p]={};for(q in B[p])if(!(A[p][q]>=B[p][q]))A[p][q]=B[p][q]}lsSet(k,A)});
+    var RA=ls('mc_rk',{}),RB=J('mc_rk',{});for(p in RB)RA[p]=RA[p]?rkMerge1(RA[p],RB[p]):RB[p];lsSet('mc_rk',RA);
+    var LA=ls('mc_lbpid',{}),LB=J('mc_lbpid',{});for(p in LB)LA[p]=LA[p]||LB[p];lsSet('mc_lbpid',LA);
+    var NB=J('mc_nmnew',[]);lsSet('mc_nmnew',ls('mc_nmnew',[]).filter(function(x){return NB.indexOf(x)>=0}));
+    ['mc_nm','mc_pid'].forEach(function(k){var A=ls(k,{}),B=J(k,{});for(p in B)if(!A[p]||!dirty)A[p]=B[p];lsSet(k,A)});
+    if(!ls('mc_mgk','')&&R.mc_mgk)localStorage.setItem('mc_mgk',R.mc_mgk);
+    if(!dirty)ACLWW.forEach(function(k){if(R[k]!==undefined)localStorage.setItem(k,R[k])});
+  }
+  BKK.forEach(function(k){if(localStorage.getItem(k)!==before[k])ch=true});
+  return ch;
+}
+/* rütbe sayaçları: büyük olan alınır (rütbe ve madalya geri gitmez) */
+function rkMerge1(a,b){
+  var n=rkNew(),o={},k,i,t=rkDay();a=a||{};b=b||{};
+  for(k in n){
+    var x=a[k],y=b[k];
+    if(x===undefined||x===null){o[k]=(y===undefined||y===null)?n[k]:y;continue}
+    if(y===undefined||y===null){o[k]=x;continue}
+    if(typeof n[k]==='number')o[k]=Math.max(+x||0,+y||0);
+    else if(Array.isArray(n[k]))o[k]=n[k].map(function(_,j){return Math.max(+x[j]||0,+y[j]||0)});
+    else if(k==='m'){var s2='';for(i=0;i<Math.max(x.length,y.length);i++)s2+=((+x.charAt(i)||0)|(+y.charAt(i)||0));o[k]=s2}
+    else if(k==='ls'){o[k]=Object.assign({},y);for(i in x)o[k][i]=Math.max(x[i]|0,o[k][i]|0)}
+    else if(k==='dc'){if(x.d===y.d){var oo=Object.assign({},y.o);for(i in x.o)oo[i]=Math.max(x.o[i]|0,oo[i]|0);o[k]={d:x.d,o:oo}}else o[k]=y.d===t?y:x}
+    else o[k]=x;
+  }
+  if(a.dd===b.dd)o.dq=Math.max(a.dq|0,b.dq|0);else if(b.dd===t){o.dd=b.dd;o.dq=b.dq|0}else{o.dd=a.dd||b.dd||'';o.dq=(a.dd?a.dq:b.dq)|0}
+  o.dk=(a.dk===t||b.dk===t)?t:(a.dk||b.dk||'');
+  return o;
+}
+function acAfter(){
+  themeApply(themeGet());fsApply();st.vert=ls('mc_vert',false);
+  try{var o=ls('mc_audio',{});AU.sfx=o.sfx!==false;AU.mus=o.mus!==false}catch(e){}
+  if(['home','kart','history','hesap','rhist','friends','gmenu','gsetup','welcome','lb'].indexOf(st.screen)>=0&&!st.modal)render();
+  try{rkPub()}catch(e){}
+}
+/* hesap başka cihazda "Verilerimi sil" ile silindi */
+function acGone(){
+  if(AC.gone)return;AC.gone=true;
+  acLocalWipe();st.profile=null;frStop();
+  cloudInit().then(function(fb){return fb.signOut(CL.auth)}).catch(nop0).then(function(){CL.user=null;CL.ap=null;AC.gone=false});
+  if(st.modal)closeModal();
+  go('welcome');
+  setTimeout(function(){modal('Bu hesap <b>silindi</b>.<br><small>Yeni bir karakter seçerek baştan başlayabilirsin.</small>','Tamam',null,nop0,null)},300);
+}
+/* bu cihazdaki kişisel verileri sil (cihaz ayarları kalır) */
+function acLocalWipe(){
+  var keep=['mc_theme','mc_fs','mc_mmus','mc_audio','mc_vert','mc_tts'],ks=[],i;
+  for(i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));
+  ks.forEach(function(k){if(k&&k.indexOf('mc_')===0&&keep.indexOf(k)<0)localStorage.removeItem(k)});
+  LBC={};PRO.t=0;
+}
+function acLinkWarn(t){
+  var d=new Date(t),n=0,f=function(){
+    if(st.modal||ACBUSY.indexOf(st.screen)>=0||FRBUSY.indexOf(st.screen)>=0){if(++n<120)setTimeout(f,5000);return}
+    sndPop();
+    modal('🔔 Hesabın <b>başka bir cihazda</b> açıldı.<br><small>'+fmtDate(d)+' '+fmtTime(d)+'</small><br><small>Bu sendin ise sorun yok. Sen değilsen öğretmenine haber ver.</small>','Tamam',null,nop0,null);
+  };
+  setTimeout(f,800);
+}
+/* ---------- hesabı başka cihazda açma (?hesap=KOD bağlantısı ya da kodu yazarak) ---------- */
+var HSP='';
+(function(){try{var m=/[?&]hesap=([A-Za-z0-9-]+)/.exec(location.search);if(m){HSP=m[1].toUpperCase().replace(/[^A-Z0-9]/g,'');if(history.replaceState)history.replaceState(null,'',location.pathname);if(HSP.length===10)st.screen='hgir';else HSP=''}}catch(e){}})();
+function acLinkStart(c){
+  if(c===undefined){var e=document.getElementById('hs-in');c=e?e.value:''}
+  c=String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');HSP='';
+  if(c.length!==10){toast('Hesap kodu 10 harf/rakam olmalı');return}
   if(!navigator.onLine){toast('İnternet bağlantısı yok');return}
-  toast('Yedek aranıyor…');
+  if(profiles().length===1&&c===ls('mc_bk','')){toast('Bu hesap zaten bu cihazda açık');go('home');return}
+  toast('Hesap aranıyor…');
   devAuth().then(function(fb){if(!CL.user)throw 0;return fb.getDoc(fb.doc(CL.db,'bk',c))}).then(function(sn){
-    if(!sn.exists()){toast('Bu koda ait yedek bulunamadı');return}
-    var x=sn.data(),o=JSON.parse(x.d),pr=[];try{pr=JSON.parse(o.mc_profiles||'[]')}catch(er){}
-    modal('Yedek bulundu: <b>'+pr.length+' profil</b> ('+pr.map(esc).join(', ')+')<br><small>'+fmtDate(new Date(x.ts))+' '+fmtTime(new Date(x.ts))+'</small><br>Bu telefondaki veriler yedekle değiştirilecek.','Geri yükle','Vazgeç',function(){
-      BKK.forEach(function(k){if(o[k]!==undefined)localStorage.setItem(k,o[k]);else localStorage.removeItem(k)});
-      localStorage.removeItem('mc_bk');localStorage.removeItem('mc_bkh');
-      themeApply(themeGet());toast('Geri yüklendi. Yeni yedek kodun ana menünün en altında');st.profile=null;frStop();PRO.t=0;
-      bkRun(true);go('profiles');
-    },null);
+    if(!sn.exists()){toast('Bu koda ait hesap bulunamadı');return}
+    var x=sn.data(),o,pr=[],rk={};
+    try{o=JSON.parse(x.d)}catch(er){toast('Hesap okunamadı');return}
+    try{pr=JSON.parse(o.mc_profiles||'[]')}catch(er){}
+    try{rk=JSON.parse(o.mc_rk||'{}')}catch(er){}
+    if(!pr.length){toast('Bu hesapta karakter yok');return}
+    var head;
+    if(pr.length===1){var sp=nkSplit(pr[0]),rr=rk[pr[0]]||{};head='<span style="font-size:60px;line-height:1.2">'+sp[0]+'</span><br><b style="font-size:20px">'+esc(sp[1])+'</b><br><small>'+RKA.RANKS[Math.min(6,rr.r|0)].n+' · '+(rr.p|0)+' puan</small>'}
+    else head='<b>'+pr.length+' karakterli eski yedek</b><br><small>'+pr.map(esc).join(', ')+'</small>';
+    var cur=profiles(),warn=cur.length?'<br><small>Bu cihazdaki <b>'+cur.map(esc).join(', ')+'</b> bu cihazdan kaldırılacak.</small>':'';
+    if(!o.mc_dev){
+      modal(head+'<br><br>Bu kod <b>eski sürümden</b> kalma.<br><small>Önce eski cihazında uygulamayı açıp güncelle (Sürüm 53 ya da üstü), sonra tekrar dene. Böylece iki cihaz birlikte çalışır. Eski cihazın yoksa yine de yükleyebilirsin.</small>'+warn,'Yine de yükle','Vazgeç',function(){acApply(c,o,x,false)},null);
+      return;
+    }
+    modal(head+'<br><br>Bu hesabı bu cihazda açayım mı?'+warn,'🔓 Evet, aç','Vazgeç',function(){acApply(c,o,x,true)},null);
   }).catch(function(){toast('Bağlanılamadı, tekrar dene')});
 }
+/* shared: aynı hesap (aynı Firebase hesabıyla gir); değilse eski yedek → bu cihaz yeni hesap ve kod alır */
+function acApply(c,o,x,shared){
+  ovBusy('⏳ Hesabın açılıyor…');
+  var pre=profiles().length===1?bkRun(true).catch(nop0):Promise.resolve();
+  pre.then(function(){
+    return cloudInit().then(function(fb){return fb.signOut(CL.auth)}).catch(nop0);
+  }).then(function(){
+    CL.user=null;CL.ap=null;frStop();st.profile=null;PRO.t=0;LBC={};
+    var ks=[],i;for(i=0;i<localStorage.length;i++)ks.push(localStorage.key(i));
+    ks.forEach(function(k){if(k&&k.indexOf('mc_')===0&&['mc_mmus','mc_acc'].indexOf(k)<0)localStorage.removeItem(k)});
+    BKK.forEach(function(k){if(k!=='mc_dev'&&o[k]!==undefined)localStorage.setItem(k,o[k])});
+    if(shared){localStorage.setItem('mc_dev',o.mc_dev);lsSet('mc_bk',c)}
+    accSet({st:shared?(x.ts||0):0,ln:0});
+    themeApply(themeGet());fsApply();st.vert=ls('mc_vert',false);
+    return devAuth();
+  }).then(function(fb){
+    if(!shared||!CL.user)return;
+    var now=Date.now();accSet({ln:now});
+    return fb.getDoc(fb.doc(CL.db,'ac',c)).then(function(s){
+      var a=s.exists()?s.data():null;if(a&&a.u!==CL.user.uid)return;
+      if(a&&a.ts)accSet({st:a.ts});
+      return fb.setDoc(fb.doc(CL.db,'ac',c),{u:CL.user.uid,ts:a?a.ts:(x.ts||now),dv:a?a.dv:acc().dv,ln:now,lnd:acc().dv,v:2});
+    }).catch(nop0);
+  }).then(function(){
+    closeModal();
+    var ps=profiles();
+    if(ps.length>1){go('mig');return}
+    st.profile=ps[0]||null;
+    if(!shared)setTimeout(function(){bkRun(true)},500);
+    go(st.profile?'home':'profiles');
+    if(st.profile){frEnsure();toast('Hesabın açıldı: '+st.profile)}
+  }).catch(function(){closeModal();toast('Bağlanılamadı, tekrar dene')});
+}
+/* ---------- eski sürümden: birden çok karakter → biri seçilir, diğerleri silinir ---------- */
+function migHtml(){
+  var on=navigator.onLine,h=topBar('🐾 Karakterini Seç')+'<p class="sub center">Artık her telefonda <b>tek karakter</b> var. Hangisiyle devam edeceksin?<br>Diğerleri ve puanları <b>silinecek</b>.</p>';
+  if(!on)h+='<div class="pbox pvw" style="text-align:center">📶 Bunun için internet gerekli. İnternete bağlanınca seç.</div>';
+  h+='<div class="col">';
+  var q0=RK.q.length;
+  profiles().forEach(function(n,i){
+    var m=nmInfo(n),x=rkGet(n),R=records().filter(function(r){return r&&r.p===n}),lr=R.length?R[R.length-1]:null,lt=lr?(Date.parse(lr.t)||lr.id||0):0;
+    h+='<button class="btn pcard mgc"'+(on?'':' disabled')+' onclick="migPick('+i+')"><span class="av'+(m?' em':'')+'" style="background:'+(m?nmCol(m.e):avCol(n))+'">'+(m?NME[m.e][0]:esc(n.charAt(0).toLocaleUpperCase('tr')))+'</span><span class="pn">'+esc(nmRest(n))+'<small>'+rkMini(x.r)+' '+RKA.RANKS[x.r].n+' · '+x.p+' puan</small><small>'+R.length+' oyun'+(lt?' · son: '+fmtDate(new Date(lt)):'')+'</small></span></button>';
+  });
+  RK.q.length=q0;
+  h+='</div><div style="height:12px"></div><button class="ghost" onclick="guest()">👤 Şimdilik misafir oyna</button>';
+  return h;
+}
+function migPick(i){
+  var keep=profiles()[i];if(!keep)return;
+  var others=profiles().filter(function(x){return x!==keep});
+  if(!navigator.onLine){toast('İnternet bağlantısı gerekli');render();return}
+  modal('<span style="font-size:60px;line-height:1.2">'+nmEmo(keep)+'</span><br><b style="font-size:20px">'+esc(nmRest(keep))+'</b> ile devam edeceksin.<br>Doğru mu?','Evet','Geri',function(){
+    setTimeout(function(){modal('Şu karakterler <b>silinecek</b>:<br><b>'+others.map(esc).join('<br>')+'</b><br><small>Puanları, rütbeleri ve arkadaşlıkları da gider. Bu geri alınamaz.</small><br>Emin misin?','Evet, sil','Vazgeç',function(){migRun(keep)},null)},200);
+  },null);
+}
+function migRun(keep){
+  if(!navigator.onLine){toast('İnternet bağlantısı gerekli');return}
+  ovBusy('⏳ Hazırlanıyor…<br><small>Lütfen bekle, uygulamayı kapatma.</small>');
+  var fb,mk=bkNewCode(),o=JSON.parse(bkData());delete o.mc_dev;var d=JSON.stringify(o);
+  if(d.length>=900000){o=JSON.parse(bkData(true));delete o.mc_dev;d=JSON.stringify(o)}
+  devAuth().then(function(f){
+    fb=f;if(!CL.user||d.length>=900000)throw 0;
+    /* silmeden önce görünmez geçiş yedeği (bütün karakterler) */
+    return fb.setDoc(fb.doc(CL.db,'bk',mk),{u:CL.user.uid,d:d,ts:Date.now(),v:1});
+  }).then(function(){
+    lsSet('mc_mgk',mk);
+    var others=profiles().filter(function(x){return x!==keep}),nm=nmMap(),ids=frIds(),ps=[];
+    others.forEach(function(n){ps.push(frWipe(n,ids[n]));nmRelease(nm[n]);profPurge(n)});
+    lsSet('mc_profiles',[keep]);st.profile=keep;
+    return Promise.all(ps).then(function(){return lbReset(keep,true)}).catch(nop0);
+  }).then(function(){
+    closeModal();go(RJOIN?'rjoin':'home');frEnsure();setTimeout(function(){bkRun(true)},1500);
+    toast('Hazır! Artık tek karakterin var');
+  },function(){closeModal();toast('Bağlanılamadı. İnterneti kontrol edip tekrar dene')});
+}
+/* bir karakterin bu cihazdaki bütün izleri */
+function profPurge(n){
+  ['mc_records','mc_rhist','mc_dhist'].forEach(function(k){lsSet(k,ls(k,[]).filter(function(r){return !r||r.p!==n}))});
+  ['mc_best','mc_rbest','mc_rk','mc_nm','mc_pid','mc_lbpid','mc_lbrk'].forEach(function(k){var b=ls(k,{});if(b&&n in b){delete b[n];lsSet(k,b)}});
+  lsSet('mc_nmnew',ls('mc_nmnew',[]).filter(function(x){return x!==n}));
+}
+/* rekor satırlarını tek karaktere göre düzelt. strict: puan da bu karakterin kendi rekoruna eşit olmalı (geçişte) */
+function lbReset(p,strict){
+  var nmv=lbName(p),pid=(frIds()[p]||{}).id||null,rk=rkRaw(p).r|0,want={},mk,m;
+  var b=(ls('mc_best',{})[p])||{},rb=(ls('mc_rbest',{})[p])||{};
+  for(mk in b){m=/^(add|sub|mul|div|rnd)(?:_([oz]))?$/.exec(mk);if(m&&b[mk]>0)want[lbCol('solo',m[1],m[2]||'k')]=b[mk]}
+  for(mk in rb){m=/^(add|sub|mul|div|rnd)(?:_([oz]))?$/.exec(mk);if(m&&rb[mk]>0)want[lbCol('race',m[1],m[2]||'k')]=rb[mk]}
+  return devAuth().then(function(fb){
+    if(!CL.user)throw 0;var uid=CL.user.uid;
+    return Promise.all(LBALL.map(function(col){return fb.getDoc(fb.doc(CL.db,col,uid)).then(function(s){
+      var d=s.exists()?s.data():null,w=Math.min(5000,want[col]|0);
+      if(d&&d.nick===nmv&&(!strict||d.score===w))return;
+      if(!d&&!w)return;
+      return (d?fb.deleteDoc(fb.doc(CL.db,col,uid)):Promise.resolve()).then(function(){
+        if(!(w>0))return;
+        var o={nick:nmv,score:w,ts:Date.now(),rk:rk};if(pid)o.pid=pid;
+        return fb.setDoc(fb.doc(CL.db,col,uid),o);
+      });
+    })}));
+  }).then(function(){lsSet('mc_lbcl',1);LBC={}});
+}
+function lbFixOnce(){if(!ls('mc_lbcl',0)&&profiles().length===1&&navigator.onLine)lbReset(profiles()[0],false).catch(nop0)}
+/* ---------- giriş: karakter seç / hesabım var / misafir ---------- */
+function startHtml(){
+  return topBar('Hoş geldin!')+'<div class="pbox" style="text-align:center"><span style="font-size:54px;line-height:1.2">🐾</span><br><b style="font-size:19px">Karakterini seç, oyuna başla!</b><br><small>Karakterin senin adın olur ve <b>sonradan değişmez</b>. Rütben, madalyaların ve rekorların ona yazılır.</small></div><button class="next" onclick="peOpen(-1)">🐾 Karakterimi Seç</button><button class="ghost" onclick="go(\'hgir\')">🔑 Hesabım var (kodla gir)</button><button class="ghost" onclick="guest()">👤 Misafir olarak dene</button><p class="sub center">Misafir oturumunda puan, rütbe ve rekor kaydedilmez.</p>';
+}
+/* ---------- Hesabım ve ayarlar ---------- */
+var PRIV='<ul><li>Uygulama <b>gerçek adını, telefon numaranı, e-postanı ya da konumunu sormaz</b>. Adın, seçtiğin hazır karakterdir.</li><li><b>Bulutta saklananlar</b> (Google Firebase, Avrupa sunucusu): karakter adın, rütben, madalyaların, rekor puanların, arkadaşlıkların ve skor geçmişinin yedeği.</li><li><b>Herkese açık olanlar:</b> rekorlar tablosundaki adın, puanın ve rütben; karakter kartın.</li><li>Bildirimleri açarsan telefonunun bildirim adresi saklanır. Bildirimler Cloudflare üzerinden gönderilir.</li><li>Bu bilgiler sadece oyunu çalıştırmak için kullanılır. Reklam yoktur, kimseye satılmaz.</li><li><b>Hesap kodunu</b> bilen kişi hesabını açabilir. Kodu sadece kendi cihazlarında kullan.</li><li><b>🗑 Verilerimi sil</b> ile her şeyi her yerden silebilirsin.</li></ul>';
+function hesapHtml(){
+  var p=st.profile,h=topBar(p?'👤 Hesabım':'⚙️ Ayarlar');
+  if(p){
+    var sp=nkSplit(p),x=rkGet(p),c=bkCode();
+    h+='<div class="pbox fpro"><span class="av" style="background:'+nkCol(p)+'">'+sp[0]+'</span><span class="pn">'+esc(sp[1])+'<small>'+RKA.RANKS[x.r].n+' · '+x.p+' puan</small></span></div>';
+    h+='<div class="pbox hsk"><b>🔑 Hesap kodun</b><div class="rcode" id="hs-code">'+(HS.show?c:'••••••••••')+'</div><div class="cbtn"><button class="ghost" onclick="hsShow()">'+(HS.show?'🙈 Gizle':'👁 Göster')+'</button><button class="ghost" onclick="hsCopy()">📋 Kopyala</button></div><small>Bu kod <b>kimlik numaran</b> gibidir. Kodu bilen hesabını açabilir. Sadece kendi cihazlarında kullan.</small></div>';
+    h+='<button class="next" onclick="hsSend()">💻 Bilgisayara / başka cihaza aktar</button><p class="sub center">Bağlantıyı kendine gönder, öbür cihazda aç. Karakterin, rütben ve skorların orada da açılır. İki cihaz kendiliğinden eşitlenir.</p>';
+    h+='<div class="pbox"><div class="rrow"><span>☁️ Son eşitleme<br><small id="bk-t">'+bkWhen()+'</small></span><button class="mini" onclick="hsSync()">🔄 Şimdi eşitle</button></div></div>';
+  }else{
+    h+='<div class="pbox" style="text-align:center">👤 Misafir oturumundasın.<br><small>Karakter seçersen puanların, rütben ve rekorların kaydedilir.</small></div>';
+    if(!profiles().length)h+='<button class="next" onclick="peOpen(-1)">🐾 Karakterimi Seç</button><button class="ghost" onclick="go(\'hgir\')">🔑 Hesabım var (kodla gir)</button>';
+  }
+  var fs=fsGet(),tc=ttsCfg();
+  h+='<div class="tag">🔠 Yazı boyutu</div><div class="chips">'+[['Normal',0],['Büyük',1],['Çok büyük',2]].map(function(o){return '<button class="chip'+(fs===o[1]?' on':'')+'" onclick="fsSet('+o[1]+')">'+o[0]+'</button>'}).join('')+'</div>';
+  h+='<div class="tag">🔊 Sesli okuma</div><button class="btn tgl" onclick="ttsAuto()">'+(tc.a?'✅':'⬜')+' Problemi kendiliğinden oku<small>Problemlerde her soru açılınca sesli okunur. Sorunun köşesindeki 🔊 düğmesi her zaman çalışır.</small></button><button class="ghost" onclick="ttsTest()">▶️ Sesi dene</button>';
+  h+='<button class="ghost" onclick="themeOpen()">🎨 Tema</button>';
+  h+='<details class="pbox gd"><summary><b>🔒 Gizlilik</b></summary>'+PRIV+'</details>';
+  if(p)h+='<button class="ghost delw" onclick="acWipeAsk()">🗑 Verilerimi sil</button>';
+  var mg=ls('mc_mgk','');if(mg)h+='<p class="sub center" style="font-size:12px;opacity:.65">Geçiş yedeği: '+mg+'</p>';
+  return h;
+}
+function hsShow(){HS.show=!HS.show;render()}
+function copyTxt(t,msg){
+  var fb=function(){var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(a);toast(ok?msg:t)};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast(msg)},fb);else fb();
+}
+function hsCopy(){copyTxt(bkCode(),'Hesap kodun kopyalandı')}
+function hsLink(){return location.origin+location.pathname+'?hesap='+bkCode()}
+function hsSend(){
+  var u=hsLink(),t='🔑 Matematik Canavarı hesabım. Bu bağlantıyı bilgisayarda ya da öbür cihazımda açacağım:\n'+u+'\n\nBu bağlantıyı başkasıyla paylaşma.';
+  bkRun(true);
+  if(navigator.share)navigator.share({text:t}).catch(function(e){if(!e||e.name!=='AbortError')copyTxt(u,'Bağlantı kopyalandı')});else copyTxt(u,'Bağlantı kopyalandı');
+}
+function hsSync(){
+  if(!navigator.onLine){toast('İnternet bağlantısı yok');return}
+  toast('Eşitleniyor…');AC.t=0;
+  acPull(true).then(function(){return bkRun(true)}).then(function(r){toast(r?'Eşitlendi ✓':'Eşitlenemedi, biraz sonra tekrar dene');if(st.screen==='hesap'&&!st.modal)render()});
+}
+function acWipeAsk(){
+  modal('🗑 <b>Verilerimi sil</b><br>Karakterin, rütben, madalyaların, skorların, rekorların ve arkadaşlıkların <b>her yerden</b> silinecek.<br><small>Hesabın açık olduğu öbür cihazlardan da silinir. Bu geri alınamaz.</small>','Devam et','Vazgeç',function(){
+    setTimeout(function(){modal('Son kez soruyorum:<br><b>Her şey silinsin mi?</b>','Evet, her şeyi sil','Vazgeç',acWipe,null)},200);
+  },null);
+}
+function acWipe(){
+  if(!navigator.onLine){toast('İnternet bağlantısı gerekli');return}
+  var p=st.profile,code=ls('mc_bk',''),mg=ls('mc_mgk',''),nm=nmMap()[p],fb;
+  ovBusy('⏳ Siliniyor…');
+  devAuth().then(function(f){
+    fb=f;if(!CL.user)throw 0;var uid=CL.user.uid,ps=[];
+    ps.push(frWipe(p));
+    if(nm&&nm.c)ps.push(fb.deleteDoc(fb.doc(CL.db,'nm',nmKey(nm.e,nm.n))).catch(nop0));
+    LBALL.forEach(function(col){ps.push(fb.deleteDoc(fb.doc(CL.db,col,uid)).catch(nop0))});
+    if(mg)ps.push(fb.deleteDoc(fb.doc(CL.db,'bk',mg)).catch(nop0));
+    return Promise.all(ps).then(function(){
+      if(!code)return;
+      return fb.deleteDoc(fb.doc(CL.db,'bk',code)).catch(nop0).then(function(){return fb.setDoc(fb.doc(CL.db,'ac',code),{u:uid,ts:Date.now(),dv:acc().dv,del:true,v:2}).catch(nop0)});
+    });
+  }).then(function(){
+    var u=CL.user;
+    acLocalWipe();st.profile=null;
+    return (u&&u.delete?u.delete().catch(nop0):Promise.resolve()).then(function(){return fb.signOut(CL.auth)}).catch(nop0);
+  }).then(function(){CL.user=null;CL.ap=null;closeModal();go('welcome');toast('Verilerin silindi')},function(){closeModal();toast('Silinemedi. İnterneti kontrol edip tekrar dene')});
+}
+/* ---------- yazı boyutu ---------- */
+function fsGet(){var v=ls('mc_fs',0);return v===1||v===2?v:0}
+function fsApply(){var v=fsGet(),r=document.documentElement;if(v)r.setAttribute('data-fs',v);else r.removeAttribute('data-fs')}
+function fsSet(v){lsSet('mc_fs',v);fsApply();bkSoon();render()}
+/* ---------- sesli okuma (telefonun kendi Türkçe sesi, internetsiz) ---------- */
+var TTS={on:false,w:-1,u:null};
+function ttsCfg(){return ls('mc_tts',{})||{}}
+function ttsAuto(){var c=ttsCfg();c.a=c.a?0:1;lsSet('mc_tts',c);bkSoon();render()}
+function ttsOk(){try{return 'speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined'}catch(e){return false}}
+function ttsVoice(){var v=[];try{v=speechSynthesis.getVoices()||[]}catch(e){}var t=v.filter(function(x){return /^tr([-_]|$)/i.test(x.lang||'')});return {any:v.length>0,tr:t.filter(function(x){return x.localService})[0]||t[0]||null}}
+function ttsClean(s){return String(s||'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu,'').replace(/\s+/g,' ').trim()}
+function ttsSay(txt,w){
+  if(!ttsOk()){toast('Bu cihaz sesli okumayı desteklemiyor');return}
+  var was=TTS.on&&TTS.w===w;ttsStop();if(was)return;
+  var V=ttsVoice();
+  if(V.any&&!V.tr){toast('Bu cihazda Türkçe ses yok. Telefon ayarlarından (Metin okuma) Türkçe ses eklenebilir.');return}
+  var u=new SpeechSynthesisUtterance(ttsClean(txt));u.lang='tr-TR';try{if(V.tr)u.voice=V.tr}catch(e){}u.rate=w===1?0.6:0.9;
+  u.onend=function(){if(TTS.u===u){TTS.on=false;TTS.u=null;ttsUi()}};
+  u.onerror=function(e){if(TTS.u!==u)return;TTS.on=false;TTS.u=null;ttsUi();var c=e&&e.error;if(c&&c!=='interrupted'&&c!=='canceled')toast('Sesli okuma çalışmadı')};
+  TTS.on=true;TTS.w=w;TTS.u=u;ttsUi();
+  try{speechSynthesis.speak(u)}catch(e){TTS.on=false;TTS.u=null;ttsUi();toast('Sesli okuma çalışmadı')}
+}
+function ttsStop(){TTS.u=null;TTS.on=false;try{if(ttsOk())speechSynthesis.cancel()}catch(e){}ttsUi()}
+function ttsUi(){var a=document.getElementById('tts-n'),b=document.getElementById('tts-s');if(a)a.textContent=TTS.on&&TTS.w===0?'⏹':'🔊';if(b)b.textContent=TTS.on&&TTS.w===1?'⏹':'🐢'}
+function ttsQ(w){if(st.q&&st.q.text)ttsSay(st.q.text,w)}
+function ttsTest(){ttsSay('Merhaba! Ben Matematik Canavarı. Ali’nin 5 kalemi var. Annesi 3 kalem daha aldı.',0)}
+try{if(ttsOk())speechSynthesis.getVoices()}catch(e){}
+function bkWhen(){var t=ls('mc_bkt',0);if(!t)return 'henüz yok';var d=new Date(t);return fmtDate(d)+' '+fmtTime(d)}
 
 /* ---------- ses ve müzik (Web Audio, dosyasız) ---------- */
 var AU={ctx:null,master:null,sg:null,mg:null,nb:null,sfx:true,mus:true,run:false,timer:null,step:0,next:0,bpm:100};
@@ -1646,7 +1987,7 @@ function frInvSend(){
   if(st.screen==='lobby')render();
 }
 /* gelen davet: oyun/yarış sırasında rahatsız etme, menüye dönünce göster */
-var FRBUSY=['game','gcount','duel','dintro','dover','rcount','rover','lobby','quiz','summary','bkr'];
+var FRBUSY=['game','gcount','duel','dintro','dover','rcount','rover','lobby','quiz','summary','hgir','mig'];
 function frInvCheck(){
   var v=FR.inv;
   if(!v||!st.profile||st.modal)return;
@@ -1661,15 +2002,15 @@ function frInvCheck(){
 }
 function frInvClear(){if(!FR.pid)return;devAuth().then(function(fb){return fb.deleteDoc(fb.doc(CL.db,'iv',FR.pid))}).catch(function(){})}
 /* profil silinince: kimliği ve arkadaşlıkları sil */
-function frWipe(p){
-  var all=frIds(),me=all[p];if(!me)return Promise.resolve();
+function frWipe(p,mx){
+  var all=frIds(),me=mx||all[p];if(!me)return Promise.resolve();
   delete all[p];lsSet('mc_pid',all);
   if(FR.prof===p)frStop();
   if(!navigator.onLine)return Promise.resolve();
   var fb;
   return devAuth().then(function(f){fb=f;
     return Promise.all(['a','b'].map(function(k){return fb.getDocs(fb.query(fb.collection(CL.db,'fr'),fb.where(k,'==',me.id))).then(function(qs){var ps=[];qs.forEach(function(d){ps.push(fb.deleteDoc(fb.doc(CL.db,'fr',d.id)))});return Promise.all(ps)})}));
-  }).then(function(){return fb.deleteDoc(fb.doc(CL.db,'iv',me.id)).catch(function(){})}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pl',me.id))}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pk',me.id))}).catch(function(){});
+  }).then(function(){return fb.deleteDoc(fb.doc(CL.db,'iv',me.id)).catch(function(){})}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'ps',me.id)).catch(function(){})}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pl',me.id))}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pk',me.id))}).catch(function(){});
 }
 
 /* ---------- karşılama: canavar rakam ve sembolleri kovalar ---------- */
@@ -1857,8 +2198,9 @@ function deepRun(){
   var ps=profiles(),ids=frIds(),p=null;
   ps.forEach(function(x){if(d.to&&ids[x]&&ids[x].id===d.to)p=x});
   if(!p&&ps.length===1)p=ps[0];
+  if(ps.length>1){toast('Önce karakterini seç');go('mig');return}
   if(!p&&st.profile)p=st.profile;
-  if(!p){toast('Önce profilini seç');go('profiles');return}
+  if(!p){toast('Önce karakterini seç');go('profiles');return}
   if(st.modal)closeModal();
   if(st.profile!==p){st.profile=p;frEnsure()}
   if(d.fr||!d.kap){frOpen();return}
@@ -2018,7 +2360,7 @@ function rmBeat(){
 }
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
-var PV=2,APPV=52;
+var PV=2,APPV=53;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
@@ -2853,9 +3195,9 @@ function pushBox(){
 var GV={from:'welcome',open:null};
 var GUIDE=[
  {id:'what',t:'🐲 Bu uygulama ne işe yarar?',h:'<p>Matematik Canavarı ile <b>toplama, çıkarma, çarpma ve bölme</b> çalışırsın.</p><p>Ana menüde 4 bölüm var:</p><ul><li><b>İşlemler:</b> Sakin sakin işlem çözersin.</li><li><b>Problemler:</b> Hikâyeli sorular çözersin.</li><li><b>Akıldan İşlem Oyunu:</b> Hızlı cevap verip rekor kırarsın.</li><li><b>Yarış Odası:</b> Arkadaşlarınla aynı sorularla yarışırsın.</li></ul><p>İnternet sadece <b>Yarış Odası</b> ve <b>Rekorlar Tablosu</b> için gerekir. Diğerleri internetsiz çalışır.</p><p>Arkadaşına uygulamayı göndermek için ana menüde ya da giriş ekranında <b>📲 Uygulamayı Paylaş</b>a dokun, WhatsApp’ı seç.</p>'},
- {id:'profile',t:'🙂 Profil ve misafir',h:'<ul><li><b>Profil:</b> <b>➕ Yeni Profil Oluştur</b> → 10 kategoriden (hayvanlar, meyve-sebze, taşıtlar, spor…) bir karakter seçersin; oyun adın olur (örn. 🐼 Cesur Panda). Ad yazılmaz, hazır karakterlerden seçilir.</li><li>Bir karakteri <b>ilk alan numarasız</b> alır. Aynı adı başkası daha önce aldıysa yanına numara eklenir (örn. 🐼 Cesur Panda #482). Böylece herkesin adı farklıdır.</li><li>Adını değiştirmek için profil sayfasında <b>✏️</b> düğmesine dokun. Profili silmek de buradan yapılır.</li><li>Skorların bu telefonda senin profilinde saklanır.</li><li><b>Misafir:</b> Profil açmadan oynarsın, <b>👤 Misafir</b> olarak görünürsün. Sonuçların kaydedilmez, rekorlar tablosuna yazılmaz.</li><li>Profili silersen o profilin skorları da silinir.</li><li>Skorlar bu telefonda saklanır ve internet varken <b>otomatik olarak buluta yedeklenir</b>.</li><li>Ana menünün en altındaki <b>☁️ Yedek</b> bölümünde <b>yedek kodun</b> yazar. Bu kodu sakla ya da öğretmenine gönder.</li><li>Telefon değişirse ya da veriler silinirse: <b>Misafir olarak devam et</b> → ana menünün en altı → <b>☁️ Yedek</b> → <b>♻️ Yedekten Geri Yükle</b> → kodu yaz.</li><li>Her profilin son 200 oyunu saklanır.</li><li><b>🎨 Tema:</b> Giriş ekranının sol üstündeki ya da ana menüdeki 🎨 düğmesinden renk teması seçilir: Otomatik, Açık, Sepya, Gece, Okyanus, Yüksek kontrast.</li></ul>'},
+ {id:'profile',t:'🙂 Karakterin, hesabın ve misafir',h:'<ul><li><b>Karakter:</b> İlk girişte <b>🐾 Karakterimi Seç</b> → 10 kategoriden (hayvanlar, meyve-sebze, taşıtlar, spor…) bir karakter seçersin; oyun adın olur (örn. 🐼 Cesur Panda). Ad yazılmaz, hazır karakterlerden seçilir.</li><li><b>Her cihazda tek karakter</b> vardır ve <b>sonradan değişmez</b>. Seçmeden önce iyi düşün.</li><li>Bir karakteri <b>ilk alan numarasız</b> alır. Başkası daha önce aldıysa yanına numara eklenir (örn. 🐼 Cesur Panda #482). Böylece herkesin adı farklıdır.</li><li><b>👤 Hesabım:</b> Ana menünün altında. Burada <b>hesap kodun</b> var. Bu kod kimlik numaran gibidir: kodu bilen hesabını açabilir. Kimseyle paylaşma.</li><li><b>Bilgisayarda ya da başka cihazda oynamak:</b> Hesabım → <b>💻 Bilgisayara aktar</b> → bağlantıyı kendine gönder, öbür cihazda aç. Ya da öbür cihazda <b>🔑 Hesabım var</b> → hesap kodunu yaz.</li><li>İki cihaz <b>kendiliğinden eşitlenir</b>: hangisinde oynarsan oyna rütben, madalyaların ve skorların ikisinde de görünür. İnternet gerekir. Aynı anda iki cihazda oynama.</li><li>Hesabın başka bir cihazda açılınca sana haber verilir. Sen değilsen öğretmenine söyle.</li><li><b>Telefon değişirse:</b> Yeni telefonda <b>🔑 Hesabım var</b> → hesap kodunu yaz.</li><li><b>Misafir:</b> Karakter seçmeden oynarsın, <b>👤 Misafir</b> olarak görünürsün. Puan, rütbe ve rekor kaydedilmez.</li><li><b>Ayarlar</b> (Hesabım sayfasında): <b>🔠 yazı boyutu</b> (Normal, Büyük, Çok büyük), <b>🔊 sesli okuma</b>, <b>🎨 tema</b>.</li><li><b>🗑 Verilerimi sil:</b> Hesabım sayfasının en altında. Her şeyi her yerden siler, geri alınamaz.</li><li>Her karakterin son 200 oyunu saklanır.</li></ul>'},
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
- {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li></ul>'},
+ {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li><li><b>🔊 Sesli okuma:</b> Sorunun köşesindeki <b>🔊</b> düğmesi problemi sesli okur, <b>🐢</b> yavaş okur. Tekrar dokununca durur. <b>👤 Hesabım → Sesli okuma</b>dan her soruyu kendiliğinden okutabilirsin.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
  {id:'friends',t:'👫 Arkadaşlarım',h:'<ul><li>Ana menü → <b>Arkadaşlarım</b>. Profil ile girmen ve internet gerekir.</li><li>Her profilin bir <b>oyuncu kodu</b> var (örn. ABCDEFG). Kodunu arkadaşına ver.</li><li>Arkadaşının kodunu yazıp <b>Arkadaş Ekle</b>ye bas. O kabul edince arkadaş olursunuz.</li><li>Listede 🟢 olanlar şu an uygulamada. ⚪ olanların en son ne zaman girdiği yazar.</li><li>Bir arkadaşının adına dokununca <b>karakter kartı</b> açılır. Karttaki <b>Aranızdaki kapışmalar</b> düğmesi skorunuzu ve son maçlarınızı gösterir.</li><li><b>⚔️ Çağır</b>: seviye, maç puanı ve işlemi seç. Arkadaşın uygulamadaysa davet hemen ekranına gelir; kabul edince 1’e 1 kapışma başlar. Uygulaması kapalıysa davet 10 dakika bekler; davet linkini WhatsApp\'tan da gönderebilirsin.</li><li>Kod ya da linkle oynadığın biri arkadaşın değilse, oyun bitince sonuç ekranında <b>➕ arkadaş ekle</b> düğmesi çıkar.</li><li><b>🔔 Bildirimler:</b> Arkadaşlarım sayfasındaki <b>Bildirimleri aç</b> düğmesine bas, izin ver. Uygulama kapalıyken bir arkadaşın seni kapışmaya ya da muharebeye çağırınca, ya da arkadaşlık isteği gönderince telefonuna bildirim gelir. Bildirime dokununca uygulama açılır ve <b>doğrudan kapışmaya girersin</b>. iPhone’da önce uygulamayı <b>ana ekrana eklemen</b> gerekir.</li><li>Arkadaşlıkların otomatik yedeğe dahildir. Telefon değişirse yedek koduyla geri gelir.</li></ul>'},
  {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Tek başına oynamak için:</b> Yarış Odası → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (kolay sayılar), 👾 Canavar (orta sayılar) ya da 🐉 Dev Canavar (zor sayılar) seç, sonra işlemi seç. İnternet gerekmez.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
@@ -2864,7 +3206,7 @@ var GUIDE=[
  {id:'rank',t:'🏅 Rütbe ve madalyalar',h:'<ul><li>Profille oynarsan <b>rütbe</b> ve <b>madalya</b> kazanırsın. Ana menü → <b>🪪 Karakter Kartım</b>: rozetin, madalyaların ve istatistiklerin burada. <b>📤 Kartımı Paylaş</b> ile kartının fotoğrafını gönderebilirsin.</li><li>Rekorlar tablosunda ya da Arkadaşlarım listesinde birine dokununca <b>onun karakter kartı</b> açılır.</li><li><b>Puan:</b> 1’e 1 kapışma kazanınca Kolay 1, Orta 2, Zor 3 puan. Meydan Muharebesinde birinciye iki katı, ikinciye bir katı puan. Kaybedince puan gitmez.</li><li><b>Rütbeler:</b> Çaylak (0) → Çırak (15) → Savaşçı (60) → Şövalye (150) → Usta (300 + 25 Zor galibiyet) → Şampiyon (600 + 50 Zor galibiyet) → Efsane (1000 + 100 Zor galibiyet). Rütbe hiç düşmez.</li><li><b>Madalyalar:</b> Kılıç, Kalkan, Seri, Canavar Avcısı, Azim ve Soru Ustası. Bronz her seviyede, gümüş Orta ya da Zor, altın sadece Zor seviyede kazanılır.</li><li>Aynı rakiple günde ilk 5 maç sayılır. Rakip maçın yarısı oynanmadan çıkarsa maç sayılmaz. Canavar maçları rütbe puanı vermez.</li><li>Yeni bir şey kazanınca oyun sonunda kutlama penceresi çıkar. <b>📤 Paylaş</b> ile fotoğrafını gönderebilirsin.</li><li>Rütben ve madalyaların herkese görünür: rekorlar tablosunda, arkadaş profilinde ve kapışma girişinde.</li><li>İlk açılışta bu telefondaki eski oyunların bir kez sayılır (eski kapışmalar yarım puanla).</li><li>Ayrıntı: Karakter Kartım → <b>❓ Nasıl kazanırım?</b></li></ul>'},
  {id:'lb',t:'🏆 Rekorlar Tablosu',h:'<ul><li>Ana menüdeki <b>Rekorlar Tablosu</b>ndan açılır. İnternet gerekir.</li><li>İki sekme var: <b>Akıldan İşlem</b> ve <b>Yarış Odası</b>. İşlem türünü ve seviyeyi (Kolay, Orta, Zor) seçersin. Her seviyenin tablosu ayrıdır.</li><li><b>Tabloyu Paylaş</b> düğmesiyle tablonun fotoğrafını kaydedip gönderebilirsin.</li><li>En yüksek 10 kişi görünür. İlk 10 içinde değilsen kendi sıran altta yazar.</li><li>Her kişinin her işlemde tek satırı vardır. Sadece rekor kırınca yükselir.</li><li>Birinci olursan tebrik ve konfeti çıkar 🎉</li><li>Tabloda <b>oyun adın</b> herkese görünür (örn. 🦊 Kurnaz Tilki).</li><li>Tablodaki birine dokununca <b>karakter kartı</b> açılır: rozeti, madalyaları ve istatistikleri. Oradan <b>➕ Arkadaşlık isteği</b> gönderebilirsin.</li></ul>'},
  {id:'score',t:'📊 Skorlarım ve skor kartı',h:'<ul><li>Profille oynarsan <b>Skorlarım</b> bölümünde son 14 günün skorlarını görürsün.</li><li>Her oturumun sonunda bir <b>skor kartı</b> çıkar.</li><li><b>Fotoğrafı Kaydet / Paylaş</b> ile kartı kaydedip WhatsApp ile öğretmenine gönderebilirsin.</li></ul>'},
- {id:'faq',t:'❓ Sorun çözümü',h:'<ul><li><b>Skorlarım kayboldu:</b> Tarayıcı verisi silinmiş ya da telefon değişmiş olabilir. Skorlar sadece telefonda durur.</li><li><b>Yarışa giremiyorum:</b> İnternetin açık olduğundan, kodu doğru yazdığından ve yarışın başlamadığından emin ol. Oda kodu 24 saat geçerlidir.</li><li><b>"Farklı sürüm" uyarısı:</b> Uygulamayı tamamen kapatıp yeniden aç. Güncellenir.</li><li><b>Rekorlar Tablosu açılmıyor:</b> İnternetini kontrol et, biraz sonra tekrar dene.</li><li><b>Uygulamayı ana ekrana eklemek:</b> Tarayıcı menüsünden "Ana ekrana ekle"ye dokun.</li></ul>'}
+ {id:'faq',t:'❓ Sorun çözümü',h:'<ul><li><b>Skorlarım kayboldu / telefon değişti:</b> Uygulamayı aç → <b>Haydi Başlayalım</b> → <b>🔑 Hesabım var</b> → hesap kodunu yaz. Kodun eski cihazında <b>👤 Hesabım</b> sayfasında yazar.</li><li><b>Sesli okuma çalışmıyor:</b> Telefonda Türkçe ses yüklü olmalı (telefon ayarları → Metin okuma). Telefonun sesini aç.</li><li><b>Yarışa giremiyorum:</b> İnternetin açık olduğundan, kodu doğru yazdığından ve yarışın başlamadığından emin ol. Oda kodu 24 saat geçerlidir.</li><li><b>"Farklı sürüm" uyarısı:</b> Uygulamayı tamamen kapatıp yeniden aç. Güncellenir.</li><li><b>Rekorlar Tablosu açılmıyor:</b> İnternetini kontrol et, biraz sonra tekrar dene.</li><li><b>Uygulamayı ana ekrana eklemek:</b> Tarayıcı menüsünden "Ana ekrana ekle"ye dokun.</li></ul>'}
 ];
 function guideOpen(sec){if(st.screen!=='guide')GV.from=st.screen;GV.open=sec||null;go('guide')}
 function guideHtml(){
@@ -3049,11 +3391,13 @@ function modal(msg,yes,no,onYes,onNo){
   st.modal=true;pauseT();
   var ov=document.getElementById('ov');
   ov.className='';
-  ov.innerHTML='<div class="box"><p>'+msg+'</p><button class="next" id="my">'+yes+'</button><button class="ghost" id="mn">'+no+'</button></div>';
+  ov.innerHTML='<div class="box"><p>'+msg+'</p><button class="next" id="my">'+yes+'</button><button class="ghost" id="mn"'+(no===null?' style="display:none"':'')+'>'+(no||'')+'</button></div>';
   ov.hidden=false;
   document.getElementById('my').onclick=function(){closeModal();onYes()};
   document.getElementById('mn').onclick=function(){closeModal();if(onNo)onNo()};
 }
+function ovBusy(m){st.modal=true;var ov=document.getElementById('ov');ov.className='';ov.innerHTML='<div class="box"><p>'+m+'</p></div>';ov.hidden=false}
+function nop0(){}
 function closeModal(){var ov=document.getElementById('ov');ov.hidden=true;ov.className='';ov.innerHTML='';st.modal=false}
 function askFinish(){modal('Bitirmek istediğine emin misin?<br>Skor kartına geçilecek.','Evet, bitir','Hayır, devam et',finish,resumeT)}
 function askBreak(){
@@ -3117,6 +3461,10 @@ function appExit(){
 function go(s){
   if(FR.inv)setTimeout(frInvCheck,400);
   if(PENDRELOAD&&(s==='home'||s==='welcome'||s==='profiles')){location.reload();return}
+  if(s==='bkr')s='hgir';
+  var np=profiles().length;
+  if(np>1&&(s==='profiles'||(s==='home'&&st.profile)))s='mig';
+  if(np===1&&s==='profiles'){if(!st.profile){st.profile=profiles()[0];setTimeout(frEnsure,0)}s='home'}
   st.screen=s;render();
   if(RK.q.length)rkSoon();
 }
@@ -3133,7 +3481,9 @@ function back(){
   if(s==='rjoin'){RJOIN=null;return go('welcome')}
   if(s==='lb')return go(LBV.from||'home');
   if(s==='rhist')return go('rooms');
-  if(s==='bkr')return go('home');
+  if(s==='hesap')return go('home');
+  if(s==='hgir')return go(st.profile?'hesap':(profiles().length?'welcome':'profiles'));
+  if(s==='mig')return go(RJOIN?'rjoin':'welcome');
   if(s==='friends')return go('home');
   if(s==='kart'||s==='rozet'){var kf=st.kcFrom||'home';st.kc=null;st.kcFrom=null;return go(kf==='kart'||kf==='rhelp'?'home':kf)}
   if(s==='rhelp')return go(st.profile?'kart':'home');
@@ -3152,39 +3502,41 @@ function back(){
   if(s==='game')return askQuitGame();
   if(s==='gover')return go('gmenu');
   if(s==='ops'||s==='pmenu'||s==='history')return go('home');
-  if(s==='home')return go('profiles');
+  if(s==='home')return go('welcome');
   if(s==='profiles')return go('welcome');
   if(s==='pedit')return go(st.pe&&st.pe.ret==='home'?'home':'profiles');
 }
 function topBar(t){return '<div class="top"><button class="back" onclick="back()">←</button><div class="title">'+t+'</div></div>'}
 
 function render(){
+  if(TTS.on)ttsStop();
   if(tmr){clearInterval(tmr);tmr=null}
   if(gT){clearInterval(gT);gT=null}
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="go(\'profiles\')">Haydi Başlayalım!</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button></div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><h1>Matematik Canavarı</h1><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button></div></div>';
   }else if(s==='profiles'){
-    h=topBar('Kim oynuyor?')+'<div class="col">';
-    var leg=false;
-    profiles().forEach(function(n,i){var m=nmInfo(n);if(!m)leg=true;h+='<div class="prow"><button class="btn pcard" onclick="pickProfile('+i+')"><span class="av'+(m?' em':'')+'" style="background:'+(m?nmCol(m.e):avCol(n))+'">'+(m?NME[m.e][0]:esc(n.charAt(0).toLocaleUpperCase('tr')))+'</span><span class="pn">'+esc(nmRest(n))+'<small id="pr-on-'+i+'">'+prOnTxt(n)+'</small></span></button><button class="del ed" aria-label="Profili düzenle" onclick="peOpen('+i+')">✏️</button></div>'});
-    h+='</div>'+(leg?'<p class="sub center">İnternete bağlanınca eski profillere kendiliğinden oyun adı verilir.</p>':'')+'<div style="height:16px"></div><button class="next" onclick="peOpen(-1)">➕ Yeni Profil Oluştur</button><button class="ghost" onclick="guest()">👤 Misafir olarak devam et</button><p class="sub center">Misafir oturumunda sonuçlar kaydedilmez, rekorlar tablosuna yazılmaz.</p>';
+    h=startHtml();
+  }else if(s==='mig'){
+    h=migHtml();
+  }else if(s==='hesap'){
+    h=hesapHtml();
+  }else if(s==='hgir'){
+    h=topBar('🔑 Hesabımı Aç')+'<p class="sub center">Hesap kodunu yaz. Karakterin, rütben ve skorların bu cihaza gelir.</p><input id="hs-in" class="inp" maxlength="14" autocapitalize="characters" autocomplete="off" placeholder="ör. ABCDEFGHJK" value="'+esc(HSP||'')+'"><button class="next" onclick="acLinkStart()">🔓 Hesabı Aç</button><p class="sub center">İnternet gerekir. Kodunu bilmiyorsan eski cihazında <b>👤 Hesabım</b> sayfasına bak.</p>';
   }else if(s==='pedit'){
     var P=st.pe,ed=P.i>=0;
-    h=topBar(ed?'✏️ Profili Düzenle':'➕ Yeni Profil')+'<div class="pbox nmprev" id="pe-pv">'+pePrev()+'</div>';
+    h=topBar(ed?'✏️ Karakterini Değiştir':'🐾 Karakterini Seç')+'<div class="pbox nmprev" id="pe-pv">'+pePrev()+'</div>';
     h+='<div class="tag">Karakterini seç</div><div class="nmtab" id="pe-tab">'+peTabs()+'</div><div class="emg" id="pe-em">'+peGrid()+'</div>';
-    h+='<button class="next" id="pe-go" onclick="peSave()">'+(ed?'💾 Kaydet':'✅ Profili Oluştur')+'</button>';
-    if(ed)h+='<button class="ghost delw" onclick="askDelProfile('+P.i+')">🗑 Profili Sil</button>';
-    h+='<p class="sub center">Adını hazır karakterlerden seçersin, yazmazsın. Bir karakteri ilk alan numarasız alır; daha önce başkası aldıysa yanına numara eklenir (örn. #482).</p>';
-  }else if(s==='bkr'){
-    h=topBar('Yedekten Geri Yükle')+'<p class="sub center">Eski telefonundaki <b>yedek kodunu</b> yaz. Profillerin, rekorların ve geçmişin bu telefona gelir.</p><input id="bk-in" class="inp" maxlength="14" autocapitalize="characters" autocomplete="off" placeholder="ör. ABCDEFGHJK"><button class="next" onclick="bkRestore()">♻️ Geri Yükle</button><p class="sub center">İnternet gerekir.</p>';
+    h+='<button class="next" id="pe-go" onclick="peSave()">'+(ed?'💾 Kaydet':'✅ Bu karakter benim')+'</button>';
+    h+='<p class="sub center">Karakterin senin adın olur ve <b>sonradan değiştirilemez</b>. Bir karakteri ilk alan numarasız alır; daha önce başkası aldıysa yanına numara eklenir (örn. #482).</p>';
   }else if(s==='home'){
     var lvh=frLive();
     h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="pbox live" id="fr-live"'+(lvh?'':' style="display:none"')+'>'+lvh+'</div><div class="hgrid"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Dört işlem</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Yarış, kapış, savaş</small></button><button class="btn" onclick="frOpen()"><span class="big">👫</span>Arkadaşlarım<small>Kapışmaya çağır<span id="fr-badge">'+(FR.inc.length?' · '+FR.inc.length+' yeni istek':'')+'</span></small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
     if(st.profile){var rx=rkGet(st.profile);h+='<button class="btn rkhome" onclick="rkMyCard()">'+rkMini(rx.r)+'<span>🪪 Karakter Kartım<small>'+RKA.RANKS[rx.r].n+' · '+rx.p+' puan</small></span></button>'}
     h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
-    h+='<button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><button class="ghost" onclick="themeOpen()">🎨 Tema</button><div style="height:4px"></div><details class="pbox bkd"><summary>☁️ Yedek ve geri yükleme</summary>'+bkBox()+'<button class="ghost" onclick="go(\'bkr\')">♻️ Yedekten Geri Yükle</button></details>';
+    if(!st.profile){var np=profiles();h+=np.length?'<button class="next" onclick="startGo()">'+esc(nkShow(np[0]))+' olarak oyna</button>':'<div class="pbox" style="text-align:center"><small>Karakter seçersen puanların, rütben ve rekorların kaydedilir.</small><button class="next" onclick="peOpen(-1)">🐾 Karakterimi Seç</button><button class="ghost" onclick="go(\'hgir\')">🔑 Hesabım var (kodla gir)</button></div>'}
+    h+='<button class="ghost" onclick="go(\'hesap\')">'+(st.profile?'👤 Hesabım ve ayarlar':'⚙️ Ayarlar')+'</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><button class="ghost" onclick="themeOpen()">🎨 Tema</button>';
   }else if(s==='gmenu'){
     h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre sınırlı, 3 canın var. Önce işlemi, sonra seviyeni seçersin.</p>'+audioBtns()+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'game\')">❓ Nasıl oynanır?</button><div class="col">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="gPick(\''+o+'\')">'+(o==='rnd'?'🎲 Karışık':OPS[o].sym+' '+OPS[o].name)+'<small>Seviye seç</small></button>'});
@@ -3219,7 +3571,8 @@ function render(){
     h=topBar('Yarış Geçmişim')+rhistHtml()+dhistHtml();
   }else if(s==='rjoin'){
     h=topBar('Yarışa Katıl')+'<div class="pbox" style="text-align:center"><small>Davet edildiğin oda</small><div class="rcode">'+esc(RJOIN||'')+'</div></div><p class="sub center"><b>Kim olarak katılacaksın?</b></p><div class="col">';
-    profiles().forEach(function(n,i){h+='<button class="btn" onclick="rjPick('+i+')">'+esc(nkShow(n))+'</button>'});
+    if(profiles().length>1)h+='<button class="btn" onclick="go(\'mig\')">🐾 Önce karakterini seç</button>';
+    else profiles().forEach(function(n,i){h+='<button class="btn" onclick="rjPick('+i+')">'+esc(nkShow(n))+'</button>'});
     h+='</div><div style="height:14px"></div><button class="next" onclick="rjGuest()">👤 Misafir olarak katıl</button>';
   }else if(s==='rooms'){
     h=topBar('Yarış Odası')+'<p class="sub center">Arkadaşlarınla yarış, 1’e 1 kapış, meydan muharebesine gir ya da canavarla savaş! Canavar dışındakiler için internet gerekir.</p>';
@@ -3330,7 +3683,7 @@ function render(){
       '<div class="pill"><b id="p-ok">'+st.ok+'</b>Doğru</div>'+
       '<div class="pill"><b id="p-bad">'+st.bad+'</b>Yanlış</div>'+
       '<div class="pill"><b id="p-st">'+st.streak+'</b>Seri</div></div>'+
-      '<div class="tag">'+tag+'</div>'+audioBtns()+(st.kind==='p'?'':'<div class="fmt"><button class="mini" id="fmtb" onclick="toggleFmt()">'+fmtLabel()+'</button></div>')+'<div class="q'+(q.html?' pq':'')+'" id="qbox">'+qHtml(q)+'</div><div class="col" id="opts">';
+      '<div class="tag">'+tag+'</div>'+audioBtns()+(st.kind==='p'?'':'<div class="fmt"><button class="mini" id="fmtb" onclick="toggleFmt()">'+fmtLabel()+'</button></div>')+(q.html?'<div class="qw"><div class="q pq" id="qbox">'+qHtml(q)+'</div><div class="ttsb"><button id="tts-n" aria-label="Sesli oku" onclick="ttsQ(0)">🔊</button><button id="tts-s" aria-label="Yavaş oku" onclick="ttsQ(1)">🐢</button></div></div>':'<div class="q" id="qbox">'+qHtml(q)+'</div>')+'<div class="col" id="opts">';
     q.opts.forEach(function(v){h+='<button class="btn opt" data-v="'+v+'" onclick="answer('+v+',this)">'+v+'</button>'});
     h+='</div><div class="msg" id="msg"></div><div id="steps"></div><button class="next" id="sol" hidden onclick="showSol()">💡 Sonucu Gör</button><button class="next" id="next" hidden onclick="nextQ()">Sonraki soru →</button><button class="ghost" onclick="askFinish()">🏁 Bitir ve Skoru Gör</button><button class="ghost" id="brk" onclick="askBreak()"'+(st.breakUsed?' disabled':'')+'>'+(st.breakUsed?'⏸ Acil mola hakkı kullanıldı':'⏸ Acil Mola (1 hak)')+'</button><div class="tag" id="saved"></div>';
   }else if(s==='summary'){
@@ -3345,7 +3698,7 @@ function render(){
   app.innerHTML=h;
   window.scrollTo(0,0);
   if(s==='welcome')chStart();
-  if(s==='profiles'){prLoad();nmSync()}
+  if(s==='quiz'&&st.kind==='p'&&ttsCfg().a&&!st.showSol)setTimeout(function(){if(st.screen==='quiz'&&!TTS.on)ttsQ(0)},450);
   if(!document.getElementById('mm-btn')){var mb=document.createElement('button');mb.id='mm-btn';mb.className='mmbtn';mb.onclick=mmToggle;document.body.appendChild(mb)}
   mmUpdate();
   if(s==='summary')drawReport(document.getElementById('card'));
@@ -3362,6 +3715,7 @@ function render(){
 }
 
 function pickProfile(i){var p=profiles()[i];st.profile=p;go('home');frEnsure();nmAsk(p)}
+function startGo(){var ps=profiles();if(ps.length>1)return go('mig');if(ps.length===1){st.profile=ps[0];go('home');frEnsure();nmAsk(ps[0]);return}go('profiles')}
 function guest(){st.profile=null;frStop();go('home')}
 function pickPOp(k){st.kind='p';st.op=k;st.mix=null;st.eldeli=null;go('digits')}
 function pickMix(m){st.kind='p';st.op='mix';st.mix=m;st.eldeli=null;go('digits')}
@@ -3546,7 +3900,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){try{
   navigator.serviceWorker.addEventListener('controllerchange',function(){
     if(!had){had=true;return}
     PENDRELOAD=true;
-    if(['welcome','profiles','home'].indexOf(st.screen)>=0)location.reload();
+    if(['welcome','profiles','home'].indexOf(st.screen)>=0&&!st.modal)location.reload();
     else toast('Yeni sürüm hazır. Ana menüye dönünce yenilenecek');
   });
   navigator.serviceWorker.register('sw.js').catch(function(){});
@@ -3554,13 +3908,17 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){try{
 st.vert=ls('mc_vert',false);
 render();
 if(DEEP)setTimeout(deepRun,400);
+if(HSP)setTimeout(function(){acLinkStart(HSP)},500);
 navInit();
 setTimeout(lbBackfill,3000);
 setTimeout(nmSync,1500);
 window.addEventListener('online',function(){setTimeout(nmSync,1000)});
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){})}catch(e){}
+setTimeout(function(){acPull(true)},2000);
 setTimeout(function(){bkRun()},6000);
-document.addEventListener('visibilitychange',function(){if(document.hidden&&BK.t){clearTimeout(BK.t);BK.t=null;bkRun()}if(!document.hidden)frBeat()});
+setTimeout(lbFixOnce,9000);
+window.addEventListener('online',function(){setTimeout(function(){acPull(true)},1500)});
+document.addEventListener('visibilitychange',function(){if(document.hidden&&BK.t){clearTimeout(BK.t);BK.t=null;bkRun()}if(!document.hidden){frBeat();setTimeout(acPull,800)}});
 </script>
 </body>
 </html>
