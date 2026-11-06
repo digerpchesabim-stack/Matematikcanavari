@@ -1,8 +1,8 @@
 // Shared in-Node Firestore store for multi-phone tests, with the room/player rules enforced.
 const fs=require('fs');
 const mock=fs.readFileSync(__dirname+'/mock2.js','utf8');
-const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win','at'];
-const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt','rk','pv'];
+const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win','at','ka','kb','cm'];
+const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt','rk','pv','tk','br'];
 module.exports=function(opts){
   opts=opts||{};
   const store={},subs=[],pages={},log=[],users={};let uidn=0;let lag=opts.lag||[30,150];
@@ -15,13 +15,13 @@ module.exports=function(opts){
       if(!old){
         if(Object.keys(d).some(k=>!ROOMK.includes(k)))return deny('room keys '+Object.keys(d));
         if(d.host!==uid||d.status!=='lobby')return deny('room create');
-        if('mode' in d&&!['duel','mm'].includes(d.mode))return deny('mode');
+        if('mode' in d&&!['duel','mm','tw'].includes(d.mode))return deny('mode');
         if('win' in d&&![10,15,20].includes(d.win))return deny('win');
         return null;
       }
       if(old.host!==uid||d.status!=='playing')return deny('room update');
       const ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
-      if(ch.some(k=>k!=='status'))return deny('room update keys '+ch);
+      if(ch.some(k=>k!=='status'&&k!=='pa'))return deny('room update keys '+ch);
       return null;
     }
     const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);
@@ -33,7 +33,7 @@ module.exports=function(opts){
       if(!old){if(seg[1].length!==7||typeof d.k!=='string'||d.k.length<16)return deny('pk create');return null}
       if(d.k!==old.k)return deny('pk key');return null;
     }
-    if(seg[0]==='pl'){if(!owns(seg[1]))return deny('pl owner');if(!only(d,['nick','seen','v','rk','md','st'])||('st' in d&&(typeof d.st!=='string'||d.st.length>60))||!d.nick||d.nick.length>60||!Number.isInteger(d.seen)||('rk' in d&&!(Number.isInteger(d.rk)&&d.rk>=0&&d.rk<=6))||('md' in d&&(typeof d.md!=='string'||d.md.length>12)))return deny('pl shape');return null}
+    if(seg[0]==='pl'){if(!owns(seg[1]))return deny('pl owner');if(!only(d,['nick','seen','v','rk','md','st','tm'])||('st' in d&&(typeof d.st!=='string'||d.st.length>60))||!d.nick||d.nick.length>60||!Number.isInteger(d.seen)||('rk' in d&&!(Number.isInteger(d.rk)&&d.rk>=0&&d.rk<=6))||('md' in d&&(typeof d.md!=='string'||d.md.length>12)))return deny('pl shape');return null}
     if(seg[0]==='ps'){if(!owns(seg[1]))return deny('ps owner');if(!only(d,['e','k','a','ts'])||typeof d.e!=='string'||!/^https:\/\//.test(d.e)||!Number.isInteger(d.ts))return deny('ps shape');return null}
     if(seg[0]==='fr'){
       const old=store[path];
@@ -55,6 +55,27 @@ module.exports=function(opts){
       if(owns(old.to)&&['ok','no'].includes(d.st))return null;
       if(owns(old.from)&&['x','d'].includes(d.st))return null;
       return deny('rv update '+old.st+'>'+d.st+' uid='+uid+' path='+path);
+    }
+    if(seg[0]==='tm'){
+      const old=store[path],K=['m','cap','by','w','l','ct','jn','lm','ts','v'];
+      if(!only(d,K)||!owns(d.by))return deny('tm shape');
+      if(!old){if(!/^[0-9]{1,3}$/.test(seg[1])||JSON.stringify(d.m)!==JSON.stringify([d.by])||d.cap!==d.by||d.w!==0||d.l!==0)return deny('tm create');return null}
+      const ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
+      const has=(a,b)=>b.every(x=>a.includes(x));
+      if(d.m.length===old.m.length+1){const tv=store['tv/'+d.by];if(d.m.length<=4&&has(d.m,old.m)&&d.m.includes(d.by)&&!old.m.includes(d.by)&&ch.every(k=>['m','by','jn','ts'].includes(k))&&tv&&tv.t===+seg[1])return null;return deny('tm join')}
+      if(d.m.length===old.m.length-1){if(old.m.includes(d.by)&&has(old.m,d.m)&&!d.m.includes(d.by)&&d.m.includes(d.cap)&&ch.every(k=>['m','by','cap','ts'].includes(k)))return null;return deny('tm leave')}
+      if(JSON.stringify(d.m)===JSON.stringify(old.m)&&old.m.includes(d.by)&&old.m.includes(d.cap)&&[0,1].includes((d.w|0)-(old.w|0))&&[0,1].includes((d.l|0)-(old.l|0))&&ch.every(k=>['cap','ct','w','l','lm','by','ts'].includes(k)))return null;
+      return deny('tm update '+ch);
+    }
+    if(seg[0]==='tv'){
+      if(!only(d,['t','from','nick','ts'])||!owns(d.from))return deny('tv shape');
+      const t=store['tm/'+d.t];if(!t||!t.m.includes(d.from))return deny('tv not member');
+      const f=store['fr/'+frId(d.from,seg[1])];if(!f||f.st!=='ok')return deny('tv not friends');return null;
+    }
+    if(seg[0]==='ti'){
+      if(!only(d,['by','nick','room','a','b','ts','cm'])||!owns(d.by))return deny('ti shape');
+      const t=store['tm/'+d.a];if(!t||!t.m.includes(d.by))return deny('ti not member');
+      if(+seg[1]!==d.a&&+seg[1]!==d.b)return deny('ti key');return null;
     }
     if(seg[0]==='ms'){
       if(!only(d,['from','to','m','ts','nick'])||seg[1]!==d.from+'_'+d.to||!Number.isInteger(d.m)||d.m<1||d.m>60||!owns(d.from))return deny('ms create');
@@ -112,7 +133,7 @@ module.exports=function(opts){
   async function handle(pid,json){
     const [op,path,uid,a,b,c]=JSON.parse(json);
     if(op==='get'){const seg=path.split('/');if(seg[0]==='pk')return JSON.stringify(deny('pk read'));
-      if(seg[0]==='iv'){const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);const o=store[path];if(!(owns(seg[1])||(o&&owns(o.from))))return JSON.stringify(deny('iv read'))}
+      if(seg[0]==='iv'||seg[0]==='tv'){const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);const o=store[path];if(!(owns(seg[1])||(o&&owns(o.from))))return JSON.stringify(deny(seg[0]+' read'))}
       return JSON.stringify(store[path]===undefined?null:store[path])}
     if(op==='upd'){if(store[path]===undefined)return JSON.stringify({__err:'not-found'});const m=Object.assign(JSON.parse(JSON.stringify(store[path])),a);const e=check(path,uid,m);if(e)return JSON.stringify(e);store[path]=m;changed(path);return 'null'}
     if(op==='set'){const e=check(path,uid,a);if(e)return JSON.stringify(e);store[path]=JSON.parse(JSON.stringify(a));changed(path);return 'null'}
@@ -121,6 +142,8 @@ module.exports=function(opts){
       if(old&&seg[0]==='iv'&&!(owns(seg[1])||owns(old.from)))return JSON.stringify(deny('iv del'));
       if(old&&seg[0]==='rv'&&!(owns(old.to)||owns(old.from)))return JSON.stringify(deny('rv del'));
       if(old&&seg[0]==='ms'&&!(owns(old.to)||owns(old.from)))return JSON.stringify(deny('ms del'));
+      if(old&&seg[0]==='tm'&&!(old.m.length===1&&owns(old.m[0])))return JSON.stringify(deny('tm del'));
+      if(old&&seg[0]==='tv'&&!(owns(seg[1])||owns(old.from)))return JSON.stringify(deny('tv del'));
       if(old&&(seg[0]==='pl')&&!owns(seg[1]))return JSON.stringify(deny('pl del'));
       if(old&&seg[0]==='nm'&&old.u!==uid)return JSON.stringify(deny('nm del'));
       if(old&&seg[0]==='pk'&&old.u!==uid)return JSON.stringify(deny('pk del'));
