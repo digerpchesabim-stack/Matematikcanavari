@@ -38,7 +38,7 @@ ok(await ev(A,()=>/Uygulamayı Paylaş/.test(document.body.innerText)),'ana men�
 await ev(A,()=>appShare());await sleep(200);
 const sh=await ev(A,()=>window.__sh&&window.__sh.text);console.log('  paylaşılan:',JSON.stringify(sh));
 ok(/Matematik Canavarı/.test(sh)&&/Ana ekrana ekle/.test(sh)&&/https?:|file:/.test(sh),'paylaşım metni (link + ana ekrana ekle)');
-await ev(A,()=>go('welcome'));await sleep(300);ok(await ev(A,()=>/Uygulamayı Paylaş/.test(document.body.innerText)&&/Sürüm 54/.test(document.body.innerText)),'giriş ekranında da var, Sürüm 54');
+await ev(A,()=>go('welcome'));await sleep(300);ok(await ev(A,()=>/Uygulamayı Paylaş/.test(document.body.innerText)&&new RegExp('Sürüm '+APPV).test(document.body.innerText)),'giriş ekranında da var, Sürüm güncel');
 await A.screenshot({path:OUT+'/paylas_giris.png'});
 console.log('  log:',JSON.stringify(S.log.filter(x=>/DENY|ERR/.test(x)).slice(0,6)));
 await b.close();console.log(fail?'HATA':'TAMAM');process.exit(fail?1:0)})().catch(e=>{console.error(e);process.exit(1)});

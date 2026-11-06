@@ -56,8 +56,13 @@ module.exports=function(opts){
       if(owns(old.from)&&['x','d'].includes(d.st))return null;
       return deny('rv update '+old.st+'>'+d.st+' uid='+uid+' path='+path);
     }
+    if(seg[0]==='ms'){
+      if(!only(d,['from','to','m','ts','nick'])||seg[1]!==d.from+'_'+d.to||!Number.isInteger(d.m)||d.m<1||d.m>60||!owns(d.from))return deny('ms create');
+      const f=store['fr/'+frId(d.from,d.to)];if(!f||f.st!=='ok')return deny('ms not friends');return null;
+    }
     if(seg[0]==='iv'){
-      if(!only(d,['from','nick','room','op','lv','win','ts','md'])||!owns(d.from))return deny('iv owner');
+      if(!only(d,['from','nick','room','op','lv','win','ts','md','g'])||!owns(d.from))return deny('iv owner');
+      const ov=store[path];if(d.g&&ov&&ov.from!==d.from&&Date.now()-ov.ts<=600000&&!(ov.rs&&ov.rs!=='seen'))return deny('iv group over other');
       const f=store['fr/'+frId(d.from,seg[1])];if(!f||f.st!=='ok')return deny('iv not friends');return null;
     }
     if(seg[0]==='nm'){
@@ -115,6 +120,7 @@ module.exports=function(opts){
       if(old&&seg[0]==='fr'&&!(owns(old.a)||owns(old.b)))return JSON.stringify(deny('fr del'));
       if(old&&seg[0]==='iv'&&!(owns(seg[1])||owns(old.from)))return JSON.stringify(deny('iv del'));
       if(old&&seg[0]==='rv'&&!(owns(old.to)||owns(old.from)))return JSON.stringify(deny('rv del'));
+      if(old&&seg[0]==='ms'&&!(owns(old.to)||owns(old.from)))return JSON.stringify(deny('ms del'));
       if(old&&(seg[0]==='pl')&&!owns(seg[1]))return JSON.stringify(deny('pl del'));
       if(old&&seg[0]==='nm'&&old.u!==uid)return JSON.stringify(deny('nm del'));
       if(old&&seg[0]==='pk'&&old.u!==uid)return JSON.stringify(deny('pk del'));

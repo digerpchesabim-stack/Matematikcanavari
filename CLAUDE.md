@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 6 Kasım 2026 · Yayındaki sürüm: **54**
+Son güncelleme: 6 Kasım 2026 · Yayındaki sürüm: **55**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -82,6 +82,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - Arkadaşlar (S38): `pk/{id}` {k,u} okunamaz, aynı k ile sahiplik taşınır; `owns(pid)` = pk.u == auth.uid. `pl/{id}` {nick,seen,v} herkese okunur. `fr/{a_b}` (a<b) {a,b,by,st,ts}: oluşturma 'req' (by sahibi), güncelleme sadece st→'ok' (karşı taraf), silme taraflar. `iv/{alıcı}`: sadece arkadaş yazar, alıcı/gönderen okur/siler.
 - Yedek (S36): `bk/{10 karakter}` {u,d,ts,v}, sadece get (liste yok), sahibi günceller.
 - S54: `iv` belgesine alıcı cevap yazar: `rs` ('seen'|'ok'|'busy'|'later'), `rr` (randevu odası), `ra` (saat). Oda `at` (zamanlı oyun başlama zamanı). `rv/{ODA}_{alıcı}` {from, fn, to, room, op, lv, win, md:'duel'|'mm', at, ts, st:'req'|'ok'|'no'|'x'(iptal)|'d'(başladı), n}: okuma oturum (liste), oluşturma arkadaş + oda kurucusu, alıcı st→ok/no, kurucu st→x/d, silme taraflar.
+- S55: `iv` + `g` (toplu davet; başkasının açık (10 dk içinde, cevapsız/seen) davetinin üzerine yazamaz), `md:'race'`. `ms/{gönderen}_{alıcı}` {from,to,m (1–60 tam sayı),ts,nick}: okuma oturum, yazma gönderen + arkadaş, silme taraflar.
 
 ## 7. Test düzeneği (`test/` klasörü)
 - Playwright + Chromium kurulu; `require('playwright')`. Sözdizimi kontrolü: `node -e "new Function(html.match(/<script>([\s\S]*)<\/script>/)[1])"`.
@@ -171,11 +172,20 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Saat yazımında Türkçe ek sorunu olmasın diye "saat 18:30 için / olunca" kalıpları kullanıldı (’de/’den yok).
   - Kurallar: rooms + 'at'; iv alıcı güncellemesi; rv (yeni). Testler: `test/rv1.js` (5 telefon: meşgul, 2 dk, daha sonra → randevu → saatinde otomatik başlama, iptal, muharebe doluluğu, kabul), `test/mus3.js`, `worker/test.mjs` (rs/rv/rva/rvc + KV + cron).
 
+- 55 (6 Kasım 2026 yayında): **📣 Herkesi çağır + 💬 hazır mesajlar.**
+  - Toplu çağırma (`frAllOpen` → `fcall` (oyun türü çipleri: 1'e 1 / Muharebe / Yarış, varsayılan 1'e 1) → oda → `frInvAll`; lobilerde `ivAllBtn`): sadece `frOnline` arkadaşlar, odada/çağrılmış olanlar hariç, `ivSendOne(to,nick,true)` (`iv.g=1`; kural başkasının açık davetini ezmez → setDoc reddedilirse "başka daveti vardı"). 3 dk sınırı (`FR.allT`). Alıcıda `ivBox` g: ⚔️ Katıl / ⏳ Meşgulüm (bildirimsiz); `rmJoinCode(code,onFail,soft)` hata → "Bu oyun doldu, başka sefere 🙂"; davet geri çekilirse aynı mesaj (`IVBG`). Oyun başlayınca (`rmGo`) ve muharebe 4 kişi olunca (`RM.rcl`) `ivRecall`. Lobide `#iv-sum` özet (`ivSumHtml`). Arkadaşlarım üstünde ve ana menü "Şu an oyunda" kutusunda düğme.
+  - Hazır mesajlar: `MSG` (1–22 mesaj, 23–32 emoji; **sadece sona ekle**), `MSGT` sekmeler, `MSGGAME` [5–10] (⚔️ Çağır düğmesi + bildirim). `ms/{from}_{to}` (`msSend`, 30 sn/kişi `MS.out`), dinleme `msStart` (to==ben), gösterim `msCheck` (FRBUSY'de değil; `mc_msr` görülen ts), seçici `msgOpen/msgPick/msgTab/msgSend`. Arkadaşlarım satırında 💬 + son mesaj (`msLine`, 24 saat), ana menü kutusunda 💬, karakter kartında "💬 Mesaj gönder", maç sonunda arkadaş rakiplere 👏/🎉 (`duMsgHtml`). Profil silinince ms belgeleri de silinir (`frWipe`). Bildirim: Worker `ms` (sadece MSGGAME), adres `?ms=1` → Arkadaşlarım.
+  - Test: `test/s55.js` (5 telefon).
+
 ## 9. Bekleyen / yayınlanmamış
-- Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması.)
-- **Sürüm 55 için kararlaştırılanlar (6 Kasım 2026; kullanıcı "hemen kodlama, konuşalım" dedi — "uygula" demeden kod yazma):**
-  1. **📣 Herkesi çağır:** sadece çevrim içi arkadaşlar (🟢, son 150 sn). Yer: Arkadaşlarım üstü, ana menü "Şu an oyunda" kutusu, muharebe lobisi. Tür: 1'e 1 (ilk kabul eden), muharebe (ilk 3), yarış (kabul eden herkes, kurucu başlatır). Toplu davette sadece ⚔️ Katıl / ⏳ Meşgulüm (Daha sonra yok). 3 dk'da bir. Oda dolunca/çıkınca davetler geri çekilir; geç açan "Bu oyun doldu, başka sefere 🙂". Açık daveti olan kişi atlanır. Lobide toplu durum (çağrıldı/gördü/geliyor/meşgul). Çevrim içi kimse yoksa uyarı.
-  2. **💬 Hazır mesajlar** (serbest yazı YOK; buluta sadece numara, kurallar numara aralığını denetler, sadece arkadaşlar): sadece son mesaj görünür. 4 sekme: Selam (👋 Merhaba!, 😊 Nasılsın?, 😄 İyiyim!, 👋 Görüşürüz!), Oyun (⚔️ Hadi oynayalım!, 🎮 Oyunu sen kur, ben gelirim, 📨 Beni çağır, 🛡️ Muharebe yapalım mı?, 🏁 Yarışalım mı?, 🔁 Rövanş ister misin?, ⏳ Biraz sonra geliyorum, 🙂 Şimdi oynayamam), Tebrik (👏 İyi oyundu!, 🎉 Tebrikler!, 💪 Çok iyisin!, 🔥 Harika oynadın!, 🍀 Bol şans!, 🏆 Rekor kırdım!), Cevap (👍 Tamam, 🤝 Anlaştık, 🙂 Teşekkürler, 🙏 Rica ederim). Emoji tepkileri: 👍 👏 🎉 💪 🔥 😊 😄 🤝 ⭐ 🏆 (bilerek yok: ❤️😘😍 romantik takılma, 😂🤡🐢👎 alay, 😢😡). Yeni mesaj sadece sona eklenir (numara değişmez). Gönderme: Arkadaşlarım'da 💬, karakter kartı, maç sonu kısa yol (👏/🔁). Alma: küçük kutu + mesaja göre cevap düğmeleri (oyun mesajlarında ⚔️ Çağır / ⏳ Sonra). Oyun sırasında gösterilmez. Önerilen (kullanıcı itiraz etmedi): bildirim sadece oyuna çağıran mesajlarda; aynı kişiye 30 sn'de bir.
+- Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri.)
+- **Sürüm 56 için kararlaştırılanlar (6 Kasım 2026, kullanıcı "uygula" dedi; 55'ten sonra):** 👥 **Takımlar ve takım kapışması.**
+  - Kalıcı takım: ad (tek kelime, hazır geniş liste; takılmaya açık ad yok) + emoji, en çok 4 kişi, her öğrencinin tek takımı, kendi isteğiyle ayrılır. Takım kartı: üyeler + rütbe, galibiyet/mağlubiyet, kaptan.
+  - Kaptan: kuran geçici kaptan; takımda ≥2 kişi olunca "👑 Kaptanlık Maçı" (2 kişi 1'e 1, 3–4 muharebe; kazanan kaptan; rütbe puanı yok; haftada bir, yeni üye gelince beklemeden). Kaptan maç başlatır + üye davet eder, **kimseyi çıkaramaz**. Kaptan yoksa herhangi bir üye kapışma başlatır. Kaptan ayrılırsa en yüksek rütbeli geçici kaptan.
+  - Takım kapışması (eşleşmeli): oyun başlayınca rütbeye göre otomatik çiftler; her çift 1'e 1 (önce doğru basan); herkes aynı soru sayısı (kaptan seçer, varsayılan 15); canlı takım skoru; sonuç: kazanan takım, çift skorları, ⭐ Takımın yıldızı, kaybedene "İyi mücadele! 💪".
+  - Bot: sadece az kişili takımı tamamlar; her takımda en az 2 gerçek oyuncu; bot sayısı gerçek oyuncu sayısını geçemez. "Denk bot": karşısındaki oyuncunun geçmiş kapışma hızına göre, ~%75 doğruluk; 👾 Takım Canavarı olarak görünür; botla kapışan bireysel puan almaz ama puanı takıma sayılır.
+  - Canavar Takımına Karşı: gerçek takım (≥2) vs bot takımı, puan yok.
+  - Rütbe: çiftini kazanan 1'e 1 ile aynı (K/O/Z 1/2/3); takım kazanırsa gerçek oyunculara ek +1/+2/+3; kaybedene kesinti yok; aynı takıma karşı günde 5 maç puanlı. Madalya 🤝 Takım Oyuncusu 5/15/30 takım galibiyeti.
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
