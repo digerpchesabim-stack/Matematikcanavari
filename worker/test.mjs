@@ -97,6 +97,15 @@ ok(j.ok && !KV.has(key), 'iptal: hatırlatma silindi, davetliye haber gitti');
 db['rv/R54AB_BBBBBBB'].st = 'ok';[s] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
 db['rv/R54AB_BBBBBBB'].st = 'no';[s] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
 const left = JSON.parse(KV.get(key) || '[]'); ok(left.length === 1 && left[0].k === 'AAAAAAA|R54AB', 'gelemem: davetlinin hatırlatması silindi');
+// S55: hazır mesaj bildirimi + toplu davet
+db['ms/AAAAAAA_BBBBBBB'] = { from: 'AAAAAAA', to: 'BBBBBBB', m: 5, ts: Date.now(), nick: '🦊 Kurnaz Tilki' };
+sent = null;[s, j] = await call({ t: 'TOK', k: 'ms', from: 'AAAAAAA', to: 'BBBBBBB' });
+ok(j.ok && sent && decrypt(sent.o.body).t === '💬 🦊 Kurnaz Tilki: ⚔️ Hadi oynayalım!', 'oyun mesajı bildirimi');
+db['ms/AAAAAAA_BBBBBBB'].m = 1; sent = null;[s] = await call({ t: 'TOK', k: 'ms', from: 'AAAAAAA', to: 'BBBBBBB' });
+ok(s === 403 && !sent, 'selam mesajı bildirim olmaz');
+db['iv/BBBBBBB'] = { from: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', ts: Date.now(), md: 'race', room: 'K7XQ2', g: 1 };
+sent = null;[s, j] = await call({ t: 'TOK', k: 'iv', from: 'AAAAAAA', to: 'BBBBBBB' });
+ok(j.ok && /herkesi Yarış Odasına/.test(decrypt(sent.o.body).t), 'toplu yarış daveti bildirimi');
 delete env.MCR; db['rv/R54AB_BBBBBBB'].st = 'ok'; sent = null;[s, j] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
 ok(j.ok, 'KV yoksa da cevap bildirimi çalışır');
 console.log(fail ? 'HATA ' + fail : 'TAMAM'); process.exit(fail ? 1 : 0);

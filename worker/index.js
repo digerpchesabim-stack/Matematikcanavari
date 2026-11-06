@@ -51,6 +51,8 @@ const ID = /^[A-Z0-9]{7}$/;
 function json(o, s) { return new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ 'content-type': 'application/json' }, CORS) }); }
 function fresh(ts) { return typeof ts === 'number' && Math.abs(Date.now() - ts) < 180000; }
 const ROOM = /^[A-Z0-9]{3,10}$/;
+// S55: bildirim olan hazır mesajlar (uygulamadaki MSG numaralarıyla aynı)
+const MSGG = { 5: '⚔️ Hadi oynayalım!', 6: '🎮 Oyunu sen kur, ben gelirim', 7: '📨 Beni çağır', 8: '🛡️ Muharebe yapalım mı?', 9: '🏁 Yarışalım mı?', 10: '🔁 Rövanş ister misin?' };
 // Türkiye saati (UTC+3, yaz saati yok)
 function hhmm(t) { const d = new Date(t + 3 * 3600000); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); }
 async function sendPush(env, ps, msg) {
@@ -102,14 +104,21 @@ export async function handle(req, env) {
   if (b.k === 'iv') {
     const iv = await doc('iv/' + to, tok);
     if (!iv || iv.from !== from || !fresh(iv.ts)) return json({ err: 'davet yok' }, 403);
-    msg = iv.md === 'mm' ? { t: '🛡️ ' + iv.nick + ' seni Meydan Muharebesine çağırıyor!', b: 'Dokun, muharebeye katıl.', g: 'iv' }
-                        : { t: '⚔️ ' + iv.nick + ' seni kapışmaya çağırıyor!', b: 'Dokun, maça katıl.', g: 'iv' };
+    const all = iv.g ? ' herkesi' : ' seni';
+    msg = iv.md === 'mm' ? { t: (iv.g ? '📣 ' : '🛡️ ') + iv.nick + all + ' Meydan Muharebesine çağırıyor!', b: 'Dokun, muharebeye katıl.', g: 'iv' }
+        : iv.md === 'race' ? { t: '📣 ' + iv.nick + all + ' Yarış Odasına çağırıyor!', b: 'Dokun, yarışa katıl.', g: 'iv' }
+        : { t: (iv.g ? '📣 ' : '⚔️ ') + iv.nick + all + ' kapışmaya çağırıyor!', b: iv.g ? 'İlk gelen oynar. Dokun, katıl.' : 'Dokun, maça katıl.', g: 'iv' };
     msg.u = SUB + '?kap=' + encodeURIComponent(String(iv.room || '')) + '&to=' + to;
   } else if (b.k === 'fr') {
     const fr = await doc('fr/' + (from < to ? from + '_' + to : to + '_' + from), tok);
     if (!fr || fr.by !== from || fr.st !== 'req' || !fresh(fr.ts)) return json({ err: 'istek yok' }, 403);
     const pl = await doc('pl/' + from, tok);
     msg = { t: '👫 ' + ((pl && pl.nick) || 'Bir oyuncu') + ' arkadaşlık isteği gönderdi', b: 'Kabul etmek için dokun.', g: 'fr', u: SUB + '?fr=1&to=' + to };
+  } else if (b.k === 'ms') {
+    // S55: hazır mesaj; sadece oyuna çağıran mesajlar bildirim olur
+    const ms = await doc('ms/' + from + '_' + to, tok);
+    if (!ms || ms.from !== from || ms.to !== to || !fresh(ms.ts) || !MSGG[ms.m]) return json({ err: 'mesaj yok' }, 403);
+    msg = { t: '💬 ' + (ms.nick || 'Arkadaşın') + ': ' + MSGG[ms.m], b: 'Dokun, cevap ver.', g: 'ms', u: SUB + '?ms=1&to=' + to };
   } else if (b.k === 'rs') {
     // davete "meşgulüm" cevabı: alıcının (from) davet belgesi, gönderen (to) tarafından yazılmış olmalı
     const iv = await doc('iv/' + from, tok);
