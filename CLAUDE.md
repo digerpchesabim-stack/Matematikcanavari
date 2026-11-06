@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **53**
+Son güncelleme: 6 Kasım 2026 · Yayındaki sürüm: **54**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -30,12 +30,12 @@ Son güncelleme: 5 Kasım 2026 · Yayındaki sürüm: **53**
 
 ## 4. Mimari (index.html)
 - Vanilla JS, tek `<script>`. Global durum `st` (st.screen, st.profile, st.g …), `go(screen)` → `render()`, `back()` (uygulama içi ← ve telefon geri tuşu aynı fonksiyon), `topBar(title)`, `modal(msg,yes,no,onYes,onNo)`, `toast()`.
-- **Ekranlar:** welcome, profiles (S53: ilk giriş = karakter seç / hesabım var / misafir), pedit (S46; S53'ten beri sadece yeni karakter ya da otomatik verilen adın tek seferlik değişimi), mig (S53 çoklu karakterden seçim), hesap (S53 Hesabım ve ayarlar), hgir (S53 hesap koduyla aç), fprof (S47), home, ops/mode/digits/quiz/summary/pmenu/mixmenu/history (pratik + problemler), gmenu/gsetup/gcount/game/gover (Akıldan İşlem), rooms/rcreate/rctb/lobby/rcount/rover/rjoin/rhist (yarış), dintro/duel/dover (1'e 1 kapışma), bpick/bset (canavara karşı), lb (rekorlar), guide (kılavuz).
+- **Ekranlar:** welcome, profiles (S53: ilk giriş = karakter seç / hesabım var / misafir), pedit (S46; S53'ten beri sadece yeni karakter ya da otomatik verilen adın tek seferlik değişimi), mig (S53 çoklu karakterden seçim), hesap (S53 Hesabım ve ayarlar), hgir (S53 hesap koduyla aç), fprof (S47), home, ops/mode/digits/quiz/summary/pmenu/mixmenu/history (pratik + problemler), gmenu/gsetup/gcount/game/gover (Akıldan İşlem), rooms/rcreate/rctb/lobby/rcount/rover/rjoin/rhist (yarış), dintro/duel/dover (1'e 1 kapışma), bpick/bset (canavara karşı), lb (rekorlar), guide (kılavuz), rvl/rvn (S54 Zamanlı Oyun listesi / kurma).
 - **localStorage:** mc_acc (S53, cihaza özel: dv cihaz kimliği, st son eşit bulut sürümü, ln bilinen son hesap açılışı; eşitlenmez), mc_fs (yazı boyutu 0/1/2), mc_tts ({a:1} problemi kendiliğinden oku), mc_mgk (geçiş yedeği kodu), mc_lbcl (bir kerelik rekor satırı temizliği), mc_profiles (S53'ten beri en çok 1), mc_records (oyun/pratik kayıtları, profil başına son 200), mc_bk/mc_bkh/mc_bkt (yedek kodu, son yedek özeti ve zamanı), mc_best (profil→mod anahtarı rekor), mc_rhist/mc_rbest (yarış geçmişi/rekoru), mc_dhist (kapışma geçmişi, `bot` alanı canavar maçları), mc_nm/mc_nmnew (oyun adları, S46; mc_gnick S46'da kaldırıldı), mc_audio, mc_dev (cihaz hesabı), mc_vert (yan yana/alt alta), mc_lbfix1 (S31 bir kerelik rekor kurtarma bayrağı).
 - **Ses:** Web Audio ile kodla üretilir (`auCtx`, `tone`, `sfxPlay`, `AU.sg`, `AU.nb` gürültü tamponu). Efektler: sndPop/Ok/Bad/Fast/Win/End/Tick, sndWhistle (düdük), sndClap (alkış), sndCrunch (çıtırtı), sndSwoosh, sndClang (kılıç). Müzik: musStart/musStop/musTempo (sadece Akıldan İşlem). Hazır ses dosyaları (S37): lose/pass/top/win.mp3; yeni ses dosyası eklenirse sw.js FILES listesine de ekle. Telefonlar dokunuş olmadan ses çalmaz.
 - **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`. Çıkış onaylanınca (S43) tüm geçmiş sarılır.
 - **Karşılama canavarı (S40):** `drawMonster(c,cx,cy,r,{m:ağız,happy})`; kovalamaca sahnesi `CH` (`chStart/chFrame/chTap`).
-- **Menü müziği (S40):** `menu.mp3`, `MM`/`mmUpdate`/`mmToggle`, `MMOFF` ekranlarında susar; sağ üstte 🎵 (`mc_mmus`).
+- **Menü müziği (S40):** `menu.mp3`, `MM`/`mmUpdate`/`mmToggle`, `MMOFF` ekranlarında susar; sağ üstte 🎵 (`mc_mmus`). S54: iPhone'da `volume` salt okunur → `MM.vol=false`, kısma efekti yok, doğrudan `pause()/play()` (test `test/mus3.js`).
 
 ## 5. Özellikler
 ### 5.1 Pratik ve Problemler
@@ -81,6 +81,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - Rekor koleksiyonları için kurallar: `lbOk()` listesi (30 koleksiyon), sadece kendi uid belgesi.
 - Arkadaşlar (S38): `pk/{id}` {k,u} okunamaz, aynı k ile sahiplik taşınır; `owns(pid)` = pk.u == auth.uid. `pl/{id}` {nick,seen,v} herkese okunur. `fr/{a_b}` (a<b) {a,b,by,st,ts}: oluşturma 'req' (by sahibi), güncelleme sadece st→'ok' (karşı taraf), silme taraflar. `iv/{alıcı}`: sadece arkadaş yazar, alıcı/gönderen okur/siler.
 - Yedek (S36): `bk/{10 karakter}` {u,d,ts,v}, sadece get (liste yok), sahibi günceller.
+- S54: `iv` belgesine alıcı cevap yazar: `rs` ('seen'|'ok'|'busy'|'later'), `rr` (randevu odası), `ra` (saat). Oda `at` (zamanlı oyun başlama zamanı). `rv/{ODA}_{alıcı}` {from, fn, to, room, op, lv, win, md:'duel'|'mm', at, ts, st:'req'|'ok'|'no'|'x'(iptal)|'d'(başladı), n}: okuma oturum (liste), oluşturma arkadaş + oda kurucusu, alıcı st→ok/no, kurucu st→x/d, silme taraflar.
 
 ## 7. Test düzeneği (`test/` klasörü)
 - Playwright + Chromium kurulu; `require('playwright')`. Sözdizimi kontrolü: `node -e "new Function(html.match(/<script>([\s\S]*)<\/script>/)[1])"`.
@@ -162,9 +163,17 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Sesli okuma: problemlerde soru kutusunun köşesinde 🔊 (0.9 hız) ve 🐢 (0.6), tekrar dokununca durur; `speechSynthesis`, tr-TR, emoji temizlenir; Türkçe ses yoksa uyarı; `mc_tts.a` ile yeni soruda kendiliğinden. Yazı boyutu: `<html data-fs>` + `body{zoom:1.15/1.3}`, ilk boyada baştaki betikle.
   - `modal(...,no=null)` tek düğmeli; `ovBusy`. Kurallar: `ac` (yeni), bk delete (sahibi), lb delete (kendi satırı). **Yayında önce kurallar.** Test: `test/acc1.js` (3 karakterli göç, iki cihaz, eşitleme, eski kod, yeni kullanıcı, sesli okuma, yazı boyutu, silme, satır temizliği); test sunucusunda giriş hesapları artık ortak (`dsrv` users).
 
+- 54 (6 Kasım 2026 yayında): **Davet cevabı + ⏰ Zamanlı Oyun + iPhone müzik düzeltmesi.**
+  - Davet penceresi (`ivBox`, `modal3`): ⚔️ Kabul et / ⏳ Meşgulüm / 🕐 Daha sonra oynayalım. Açılınca `rs:'seen'` (`ivAns`). Gönderen lobide izler (`ivWatch/ivSeen/ivUi/ivStHtml`, `RM.ivs`): 📨 → 👀 gördü → ✅ geliyor / ⏳ meşgul (pencere + oda kapanır) / 🕐 sonra (`rvLaterAsk`: "saat X için … Olur mu?"); 2 dk cevapsız: Bekle / Vazgeç; belge silinip 4 sn'de gelmezse "şimdi gelemiyor" (eski sürüm "Şimdi değil"). Muharebe lobisinde arkadaş başına durum (`IVT`).
+  - Daha sonra → `rvFrom(v)`: kurma ekranı rakip + ayarlar hazır, sadece zaman seçilir; randevuyu **alıcı kurar**, ilk davet edene randevu isteği gider.
+  - Zamanlı Oyun (`rvl`, `rvn`; Yarış Odası'nda Meydan Muharebesi'nin altında "⏰ Zamanlı Oyun Kur"; ana menüde üstte "⏰ Zamanlı oyunların" kutusu `rvHomeHtml` + Gir): 15/30/45/60 dk (`RVDT`, `rvAt` dakikaya yuvarlar), 1'e 1 (1 kişi) ya da muharebe (3–4 kişi seçilir, en çok 3 kabul: kurucuyla 4; 4. kabul "doldu"). Oda önceden kurulur (`rooms.at`), en çok 3 aktif randevu. Gelen istek penceresi `rvCheck` (Olur / Gelemem / Sonra karar veririm), listede de cevap. Gir saatten 10 dk önce (`RVPRE`). Lobide geri sayım (`rvLobbyHtml/rvLobbyTick`); 1'e 1 saat gelince ve ikisi de oradaysa başlar; muharebe saat gelince 4 kişiyle hemen, 3 kişiyle 1 dk sonra kendiliğinden (kurucu da başlatabilir). Kurucu erken çıkarsa oda silinmez. Başlayınca davetler `st:'d'` (`rvDone`). İptal `rvCancel` (x + oda silinir). Süresi geçen (saat + 15 dk, `RVEXP`) belgeler/odalar silinir (`rvClean`). Bildirimden `?rv=1` → Zamanlı Oyun.
+  - Worker: yeni türler `rs` (meşgul → davet edene), `rv` (randevu isteği), `rva` (Olur/Gelemem → kurucuya; Olur'da iki kişi için hatırlatma kaydı), `rvc` (iptal). **5 dk kala hatırlatma:** Cloudflare KV `mc-rv` (binding `MCR`), dakika kovası `m<dakika>`; cron her dakika (`scheduled` → `cron`). Abonelikler kabul anında kopyalanır (servis hesabı gerekmez). İş akışı KV'yi API ile bulur/oluşturur, `wrangler.toml` üretir; KV yoksa uyarı verip hatırlatmasız kurar. `/key` cevabında `kv`.
+  - Saat yazımında Türkçe ek sorunu olmasın diye "saat 18:30 için / olunca" kalıpları kullanıldı (’de/’den yok).
+  - Kurallar: rooms + 'at'; iv alıcı güncellemesi; rv (yeni). Testler: `test/rv1.js` (5 telefon: meşgul, 2 dk, daha sonra → randevu → saatinde otomatik başlama, iptal, muharebe doluluğu, kabul), `test/mus3.js`, `worker/test.mjs` (rs/rv/rva/rvc + KV + cron).
+
 ## 9. Bekleyen / yayınlanmamış
-- Yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme.)
-- Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod.
+- Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması.)
+- Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).

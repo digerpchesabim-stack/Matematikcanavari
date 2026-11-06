@@ -133,7 +133,7 @@ ok(await until(C,()=>st.screen==='home'&&profiles().length===1,null,6000),'karak
 await ev(C,()=>{peOpen(-1);peSave()});await sleep(300);
 ok(await ev(C,()=>profiles().length===1&&!st.modal),'ikinci karakter açılamaz');
 await ev(C,()=>{go('welcome')});await sleep(200);
-ok(await ev(C,()=>/Misafir olarak oyna/.test(document.body.innerText)&&/Sürüm 53/.test(document.body.innerText)),'karşılamada misafir seçeneği, Sürüm 53');
+ok(await ev(C,()=>/Misafir olarak oyna/.test(document.body.innerText)&&/Sürüm 54/.test(document.body.innerText)),'karşılamada misafir seçeneği, Sürüm 54');
 await ev(C,()=>startGo());await sleep(200);
 ok(await ev(C,()=>st.screen==='home'&&!!st.profile),'Haydi Başlayalım → doğrudan ana menü (Kim oynuyor yok)');
 const homeT=await ev(C,()=>document.body.innerText);

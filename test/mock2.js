@@ -20,6 +20,7 @@
     orderBy:function(f,d){return {__ob:1,f:f,d:d}},limit:function(n){return {__lim:1,n:n}},where:function(f,op,v){return {f:f,v:v}},
     getDoc:function(r){return srv('get',r.path,cur&&cur.uid).then(function(d){return snap(r.path,d)})},
     setDoc:function(r,d){return srv('set',r.path,cur&&cur.uid,d)},
+    updateDoc:function(r,d){return srv('upd',r.path,cur&&cur.uid,d)},
     deleteDoc:function(r){return srv('del',r.path,cur&&cur.uid)},
     getDocs:function(q){return srv('list',q.path,cur&&cur.uid,q).then(colSnap)},
     onSnapshot:function(r,f){var id=++sn,col=r.path.split('/').length%2===1;subs[id]={f:f,col:col,path:r.path};srv('sub',r.path,cur&&cur.uid,id,col,r.w||null);return function(){delete subs[id];srv('unsub',r.path,null,id)}}

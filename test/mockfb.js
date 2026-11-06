@@ -24,6 +24,7 @@
     where:function(f,op,v){return {f:f,v:v}},
     getDoc:function(r){return Promise.resolve(snap(r.path))},
     setDoc:function(r,d){store[r.path]=JSON.parse(JSON.stringify(d));setTimeout(notify,0);return Promise.resolve()},
+    updateDoc:function(r,d){if(!store[r.path])return Promise.reject(Object.assign(new Error('not-found'),{code:'not-found'}));Object.assign(store[r.path],JSON.parse(JSON.stringify(d)));setTimeout(notify,0);return Promise.resolve()},
     onSnapshot:function(r,f){var o={path:r.path,f:f,col:r.path.split('/').length%2===1};snaps.push(o);setTimeout(function(){f(o.col?colSnap(o.path):snap(o.path))},0);return function(){var i=snaps.indexOf(o);if(i>=0)snaps.splice(i,1)}},
     deleteDoc:function(r){delete store[r.path];setTimeout(notify,0);return Promise.resolve()},
     getDocs:function(q){

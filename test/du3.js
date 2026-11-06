@@ -17,7 +17,7 @@ console.log('  A ekran',await ev(A,()=>st.screen+' '+RM.code),'iv',JSON.stringif
 console.log('  B inv',await ev(B,()=>JSON.stringify(FR.inv)+' modal='+st.modal+' scr='+st.screen));
 await ev(B,()=>{frInvCheck()});await sleep(500);
 console.log('  B modal:',await ev(B,()=>st.modal?document.getElementById('ov').innerText.replace(/\n+/g,' '):'yok'));
-await ev(B,()=>{var y=document.getElementById('my');if(y)y.click()});
+await ev(B,()=>{var y=document.getElementById('m3-0');if(y)y.click()});
 for(let i=0;i<100&&(await ev(A,()=>st.screen))!=='duel';i++)await sleep(100);
 const st2=async p=>ev(p,()=>DU&&[DU.k,DU.ph,st.screen].join());
 const waitQ=async k=>{for(let i=0;i<300;i++){if((await st2(A))===k+',q,duel'&&(await st2(B))===k+',q,duel')return true;if(await ev(A,()=>DU&&DU.over))return false;await sleep(50)}console.log('  bekleme',k,await st2(A),await st2(B));return false};

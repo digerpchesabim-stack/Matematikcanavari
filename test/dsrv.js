@@ -1,7 +1,7 @@
 // Shared in-Node Firestore store for multi-phone tests, with the room/player rules enforced.
 const fs=require('fs');
 const mock=fs.readFileSync(__dirname+'/mock2.js','utf8');
-const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win'];
+const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win','at'];
 const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt','rk','pv'];
 module.exports=function(opts){
   opts=opts||{};
@@ -40,6 +40,21 @@ module.exports=function(opts){
       if(!old){if(!only(d,['a','b','by','st','ts'])||!(d.a<d.b)||seg[1]!==frId(d.a,d.b)||![d.a,d.b].includes(d.by)||d.st!=='req'||!owns(d.by))return deny('fr create');return null}
       const ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
       if(old.st!=='req'||d.st!=='ok'||ch.some(k=>!['st','ts'].includes(k))||!owns(old.by===old.a?old.b:old.a))return deny('fr update');return null;
+    }
+    if(seg[0]==='iv'&&store[path]&&owns(seg[1])){
+      const old=store[path],ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
+      if(ch.some(k=>!['rs','rr','ra'].includes(k))||!['seen','ok','busy','later'].includes(d.rs))return deny('iv answer');return null;
+    }
+    if(seg[0]==='rv'){
+      const old=store[path];
+      if(!old){if(!only(d,['from','fn','to','room','op','lv','win','md','at','ts','st','n'])||!owns(d.from)||seg[1]!==d.room+'_'+d.to||d.st!=='req'||!Number.isInteger(d.at)||!['duel','mm'].includes(d.md))return deny('rv create');
+        const f=store['fr/'+frId(d.from,d.to)];if(!f||f.st!=='ok')return deny('rv not friends');
+        const r=store['rooms/'+d.room];if(!r||r.host!==uid)return deny('rv room host');return null}
+      const ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
+      if(ch.some(k=>!['st','ts'].includes(k)))return deny('rv update keys '+ch);
+      if(owns(old.to)&&['ok','no'].includes(d.st))return null;
+      if(owns(old.from)&&['x','d'].includes(d.st))return null;
+      return deny('rv update '+old.st+'>'+d.st+' uid='+uid+' path='+path);
     }
     if(seg[0]==='iv'){
       if(!only(d,['from','nick','room','op','lv','win','ts','md'])||!owns(d.from))return deny('iv owner');
@@ -94,10 +109,12 @@ module.exports=function(opts){
     if(op==='get'){const seg=path.split('/');if(seg[0]==='pk')return JSON.stringify(deny('pk read'));
       if(seg[0]==='iv'){const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);const o=store[path];if(!(owns(seg[1])||(o&&owns(o.from))))return JSON.stringify(deny('iv read'))}
       return JSON.stringify(store[path]===undefined?null:store[path])}
+    if(op==='upd'){if(store[path]===undefined)return JSON.stringify({__err:'not-found'});const m=Object.assign(JSON.parse(JSON.stringify(store[path])),a);const e=check(path,uid,m);if(e)return JSON.stringify(e);store[path]=m;changed(path);return 'null'}
     if(op==='set'){const e=check(path,uid,a);if(e)return JSON.stringify(e);store[path]=JSON.parse(JSON.stringify(a));changed(path);return 'null'}
     if(op==='del'){const seg=path.split('/'),old=store[path];const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);
       if(old&&seg[0]==='fr'&&!(owns(old.a)||owns(old.b)))return JSON.stringify(deny('fr del'));
       if(old&&seg[0]==='iv'&&!(owns(seg[1])||owns(old.from)))return JSON.stringify(deny('iv del'));
+      if(old&&seg[0]==='rv'&&!(owns(old.to)||owns(old.from)))return JSON.stringify(deny('rv del'));
       if(old&&(seg[0]==='pl')&&!owns(seg[1]))return JSON.stringify(deny('pl del'));
       if(old&&seg[0]==='nm'&&old.u!==uid)return JSON.stringify(deny('nm del'));
       if(old&&seg[0]==='pk'&&old.u!==uid)return JSON.stringify(deny('pk del'));
