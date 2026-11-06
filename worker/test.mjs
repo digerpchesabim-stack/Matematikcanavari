@@ -1,6 +1,6 @@
 // Bildirim sunucusu testi: Firestore ve push servisini taklit eder, şifreli içeriği Node crypto ile çözer, VAPID imzasını doğrular.
 import crypto from 'node:crypto';
-import { handle } from './index.js';
+import { handle, cron } from './index.js';
 const u = b => Buffer.from(b).toString('base64url');
 // VAPID
 const v = crypto.createECDH('prime256v1'); v.generateKeys(); const vp = v.getPublicKey();
@@ -43,6 +43,7 @@ function checkVapid(h) {
   const c = JSON.parse(Buffer.from(b, 'base64url'));
   return ok && m[2] === env.VAPID_PUB && c.aud === 'https://fcm.googleapis.com' && c.exp > now / 1000;
 }
+function hhm(t) { const d = new Date(t + 3 * 3600000); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); }
 let fail = 0; const ok = (c, m) => { console.log((c ? '✓ ' : '✗ ') + m); if (!c) fail++; };
 const call = b => handle(new Request('https://w/push', { method: 'POST', body: JSON.stringify(b) }), env).then(r => r.json().then(j => [r.status, j]));
 let [s, j] = await call({ t: 'TOK', k: 'iv', from: 'AAAAAAA', to: 'BBBBBBB' });
@@ -62,4 +63,40 @@ ok(s === 403 && !sent, 'oturumsuz istek reddedildi');
 delete db['ps/BBBBBBB'];[s, j] = await call({ t: 'TOK', k: 'fr', from: 'AAAAAAA', to: 'BBBBBBB' });
 ok(j.ok === false && j.why === 'kapali', 'bildirimi kapalı oyuncu');
 const r = await handle(new Request('https://w/key'), env); ok((await r.json()).k === env.VAPID_PUB, '/key');
+// S54: davet cevabı ve zamanlı oyun
+db['ps/BBBBBBB'] = { e: 'https://fcm.googleapis.com/fcm/send/xyz', k: u(ua.getPublicKey()), a: u(auth), ts: now };
+db['ps/AAAAAAA'] = { e: 'https://fcm.googleapis.com/fcm/send/aaa', k: u(ua.getPublicKey()), a: u(auth), ts: now };
+db['pl/BBBBBBB'] = { nick: '🐼 Cesur Panda' };
+db['iv/BBBBBBB'] = { from: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', ts: now - 60000, room: 'K7XQ2', rs: 'busy' };
+sent = null;[s, j] = await call({ t: 'TOK', k: 'rs', from: 'BBBBBBB', to: 'AAAAAAA' });
+ok(j.ok && sent && /Cesur Panda şu an meşgul/.test(decrypt(sent.o.body).t), 'meşgulüm bildirimi davet edene gitti');
+sent = null;[s] = await call({ t: 'TOK', k: 'rs', from: 'BBBBBBB', to: 'CCCCCCC' });
+ok(s === 403 && !sent, 'başkasına meşgul bildirimi reddedildi');
+const KV = new Map(); env.MCR = { get: async k => KV.has(k) ? KV.get(k) : null, put: async (k, v) => { KV.set(k, v) }, delete: async k => { KV.delete(k) } };
+const at = Math.ceil((now + 30 * 60000) / 60000) * 60000;
+db['rv/R54AB_BBBBBBB'] = { from: 'AAAAAAA', fn: '🦊 Kurnaz Tilki', to: 'BBBBBBB', room: 'R54AB', md: 'duel', at, ts: now, st: 'req' };
+sent = null;[s, j] = await call({ t: 'TOK', k: 'rv', from: 'AAAAAAA', to: 'BBBBBBB', r: 'R54AB' });
+const tr = hhm(at); const mrv = sent && decrypt(sent.o.body);
+ok(j.ok && mrv && mrv.t.endsWith('saat ' + tr) && /\?rv=1&to=BBBBBBB$/.test(mrv.u), 'randevu isteği bildirimi: ' + (mrv && mrv.t));
+sent = null;[s] = await call({ t: 'TOK', k: 'rv', from: 'CCCCCCC', to: 'BBBBBBB', r: 'R54AB' });
+ok(s === 403 && !sent, 'başkası adına randevu reddedildi');
+sent = null;[s] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
+ok(s === 403 && !sent, 'cevaplanmamış randevuya cevap bildirimi reddedildi');
+db['rv/R54AB_BBBBBBB'].st = 'ok';
+sent = null;[s, j] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
+ok(j.ok && sent && /kabul etti/.test(decrypt(sent.o.body).t) && sent.url.endsWith('/aaa'), 'kabul bildirimi kurucuya');
+const key = 'm' + Math.floor((at - 300000) / 60000), rem = JSON.parse(KV.get(key) || '[]');
+ok(rem.length === 2 && rem.every(x => x.s && x.m && /5 dakika sonra kapışma/.test(x.m.t)), 'iki kişiye hatırlatma kaydedildi (' + key + ')');
+const realNow = Date.now; Date.now = () => at - 300000 + 5000; sent = null;
+const n = await cron(env); Date.now = realNow;
+ok(n === 2 && !KV.has(key), 'zamanlayıcı 5 dk kala gönderdi: ' + n);
+// iptal: hatırlatma silinir
+db['rv/R54AB_BBBBBBB'].st = 'ok';[s] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
+db['rv/R54AB_BBBBBBB'].st = 'x';[s, j] = await call({ t: 'TOK', k: 'rvc', from: 'AAAAAAA', to: 'BBBBBBB', r: 'R54AB' });
+ok(j.ok && !KV.has(key), 'iptal: hatırlatma silindi, davetliye haber gitti');
+db['rv/R54AB_BBBBBBB'].st = 'ok';[s] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
+db['rv/R54AB_BBBBBBB'].st = 'no';[s] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
+const left = JSON.parse(KV.get(key) || '[]'); ok(left.length === 1 && left[0].k === 'AAAAAAA|R54AB', 'gelemem: davetlinin hatırlatması silindi');
+delete env.MCR; db['rv/R54AB_BBBBBBB'].st = 'ok'; sent = null;[s, j] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
+ok(j.ok, 'KV yoksa da cevap bildirimi çalışır');
 console.log(fail ? 'HATA ' + fail : 'TAMAM'); process.exit(fail ? 1 : 0);

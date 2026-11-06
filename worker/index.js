@@ -50,11 +50,50 @@ async function doc(path, tok) {
 const ID = /^[A-Z0-9]{7}$/;
 function json(o, s) { return new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ 'content-type': 'application/json' }, CORS) }); }
 function fresh(ts) { return typeof ts === 'number' && Math.abs(Date.now() - ts) < 180000; }
+const ROOM = /^[A-Z0-9]{3,10}$/;
+// Türkiye saati (UTC+3, yaz saati yok)
+function hhmm(t) { const d = new Date(t + 3 * 3600000); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); }
+async function sendPush(env, ps, msg) {
+  const body = await encrypt(ps, JSON.stringify(msg));
+  return fetch(ps.e, { method: 'POST', body, headers: { Authorization: await vapid(env, ps.e), 'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: '900', Urgency: 'high' } });
+}
+function sub(ps) { return ps && ps.e && ps.k && ps.a ? { e: ps.e, k: ps.k, a: ps.a } : null; }
+// S54: 5 dk kala hatırlatma. KV'de dakika kovası: m<dakika> = [{k: oyuncu|oda, s: abonelik, m: mesaj}]
+const mkey = t => 'm' + Math.floor((t - 300000) / 60000);
+async function remAdd(env, rv, list) {
+  if (!env.MCR) return 'kv yok';
+  if (rv.at - 300000 < Date.now() + 60000) return 'gec';
+  const key = mkey(rv.at), cur = JSON.parse((await env.MCR.get(key)) || '[]');
+  for (const x of list) { if (!x.s) continue; const i = cur.findIndex(y => y.k === x.k); if (i >= 0) cur[i] = x; else cur.push(x); }
+  await env.MCR.put(key, JSON.stringify(cur), { expirationTtl: Math.max(120, Math.ceil((rv.at - Date.now()) / 1000) + 3600) });
+  return 'ok';
+}
+async function remDel(env, rv, f) {
+  if (!env.MCR) return;
+  const key = mkey(rv.at), cur = JSON.parse((await env.MCR.get(key)) || '[]'), nx = cur.filter(x => !f(x));
+  if (nx.length === cur.length) return;
+  if (nx.length) await env.MCR.put(key, JSON.stringify(nx), { expirationTtl: 3600 * 3 }); else await env.MCR.delete(key);
+}
+export async function cron(env) {
+  if (!env.MCR) return 0;
+  const m = Math.floor(Date.now() / 60000); let n = 0;
+  for (const k of ['m' + (m - 2), 'm' + (m - 1), 'm' + m]) {
+    const v = await env.MCR.get(k); if (!v) continue;
+    await env.MCR.delete(k);
+    for (const x of JSON.parse(v)) { try { await sendPush(env, x.s, x.m); n++; } catch (e) {} }
+  }
+  return n;
+}
+function rvMsg(rv, who) {
+  const t = hhmm(rv.at);
+  return rv.md === 'mm' ? { t: '⏰ 5 dakika sonra Meydan Muharebesi!', b: 'Saat ' + t + '. Dokun, Gir’e bas.', g: 'rm', u: SUB + '?rv=1&to=' + who }
+                        : { t: '⏰ 5 dakika sonra kapışma!', b: 'Saat ' + t + '. Dokun, Gir’e bas.', g: 'rm', u: SUB + '?rv=1&to=' + who };
+}
 
 export async function handle(req, env) {
   if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
   const u = new URL(req.url);
-  if (req.method === 'GET' && u.pathname === '/key') return json({ k: env.VAPID_PUB });
+  if (req.method === 'GET' && u.pathname === '/key') return json({ k: env.VAPID_PUB, kv: !!env.MCR });
   if (req.method !== 'POST' || u.pathname !== '/push') return json({ err: 'yok' }, 404);
   let b; try { b = JSON.parse(await req.text()); } catch (e) { return json({ err: 'istek' }, 400); }
   const tok = String(b.t || ''), to = String(b.to || ''), from = String(b.from || '');
@@ -71,12 +110,47 @@ export async function handle(req, env) {
     if (!fr || fr.by !== from || fr.st !== 'req' || !fresh(fr.ts)) return json({ err: 'istek yok' }, 403);
     const pl = await doc('pl/' + from, tok);
     msg = { t: '👫 ' + ((pl && pl.nick) || 'Bir oyuncu') + ' arkadaşlık isteği gönderdi', b: 'Kabul etmek için dokun.', g: 'fr', u: SUB + '?fr=1&to=' + to };
+  } else if (b.k === 'rs') {
+    // davete "meşgulüm" cevabı: alıcının (from) davet belgesi, gönderen (to) tarafından yazılmış olmalı
+    const iv = await doc('iv/' + from, tok);
+    if (!iv || iv.from !== to || iv.rs !== 'busy' || typeof iv.ts !== 'number' || Math.abs(Date.now() - iv.ts) > 900000) return json({ err: 'cevap yok' }, 403);
+    const pl = await doc('pl/' + from, tok);
+    msg = { t: '⏳ ' + ((pl && pl.nick) || 'Arkadaşın') + ' şu an meşgul', b: 'Sonra oynarsınız 🙂', g: 'iv' };
+  } else if (b.k === 'rv' || b.k === 'rva' || b.k === 'rvc') {
+    const room = String(b.r || '');
+    if (!ROOM.test(room)) return json({ err: 'istek' }, 400);
+    // rv: kurucu (from) → davetli (to) ; rva: davetli (from) → kurucu (to) ; rvc: kurucu iptal etti → davetli (to)
+    const inv = b.k === 'rva' ? from : to, host = b.k === 'rva' ? to : from;
+    const rv = await doc('rv/' + room + '_' + inv, tok);
+    if (!rv || rv.from !== host || rv.to !== inv || !fresh(rv.ts)) return json({ err: 'randevu yok' }, 403);
+    const t = hhmm(rv.at), mm = rv.md === 'mm';
+    if (b.k === 'rv') {
+      if (rv.st !== 'req') return json({ err: 'randevu yok' }, 403);
+      msg = { t: '⏰ ' + rv.fn + ' seni ' + (mm ? 'Meydan Muharebesine' : 'kapışmaya') + ' çağırıyor · saat ' + t, b: 'Olur mu? Dokun, cevap ver.', g: 'rv', u: SUB + '?rv=1&to=' + to };
+    } else if (b.k === 'rvc') {
+      if (rv.st !== 'x') return json({ err: 'randevu yok' }, 403);
+      await remDel(env, rv, x => x.r === room);
+      msg = { t: '🙂 ' + rv.fn + ' saat ' + t + ' oyununu iptal etti', b: 'Başka zaman oynarsınız.', g: 'rv', u: SUB + '?rv=1&to=' + to };
+    } else {
+      if (rv.st !== 'ok' && rv.st !== 'no') return json({ err: 'randevu yok' }, 403);
+      const pl = await doc('pl/' + from, tok), nk = (pl && pl.nick) || 'Arkadaşın';
+      if (rv.st === 'ok') {
+        const sh = sub(await doc('ps/' + host, tok)), si = sub(await doc('ps/' + inv, tok));
+        await remAdd(env, rv, [{ k: host + '|' + room, r: room, s: sh, m: rvMsg(rv, host) }, { k: inv + '|' + room, r: room, s: si, m: rvMsg(rv, inv) }]);
+        msg = { t: '✅ ' + nk + ' saat ' + t + ' randevusunu kabul etti', b: 'Saatinden 10 dakika önce Gir’e dokun.', g: 'rv', u: SUB + '?rv=1&to=' + to };
+      } else {
+        await remDel(env, rv, x => x.k === inv + '|' + room);
+        msg = { t: '🙂 ' + nk + ', saat ' + t + ' randevusuna gelemiyor', b: 'Başka bir saat deneyebilirsin.', g: 'rv', u: SUB + '?rv=1&to=' + to };
+      }
+    }
   } else return json({ err: 'tür' }, 400);
   const ps = await doc('ps/' + to, tok);
   if (!ps || !ps.e || !ps.k || !ps.a) return json({ ok: false, why: 'kapali' });
   msg.u = msg.u || SUB;
-  const body = await encrypt(ps, JSON.stringify(msg));
-  const r = await fetch(ps.e, { method: 'POST', body, headers: { Authorization: await vapid(env, ps.e), 'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: '900', Urgency: 'high' } });
+  const r = await sendPush(env, ps, msg);
   return json({ ok: r.ok, s: r.status });
 }
-export default { fetch: (req, env) => handle(req, env).catch(e => json({ err: 'hata', m: String(e && e.message || e) }, 500)) };
+export default {
+  fetch: (req, env) => handle(req, env).catch(e => json({ err: 'hata', m: String(e && e.message || e) }, 500)),
+  scheduled: (ev, env, ctx) => ctx.waitUntil(cron(env).catch(() => 0))
+};

@@ -29,6 +29,20 @@ jobs:
           fi
           test -n "$SUB" || { echo "workers.dev alt alanı alınamadı"; exit 1; }
           echo "SUB=$SUB" >> $GITHUB_ENV
+      - name: Hatırlatma deposu (KV, S54)
+        env:
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        run: |
+          API=https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/storage/kv/namespaces
+          pick='let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{try{const j=JSON.parse(s);const r=Array.isArray(j.result)?j.result.find(x=>x.title==="mc-rv"):j.result;console.log((r&&r.id)||"")}catch(e){console.log("")}})'
+          KV=$(curl -s -H "Authorization: Bearer $CF_API_TOKEN" "$API?per_page=100" | node -e "$pick")
+          if [ -z "$KV" ]; then
+            echo "KV deposu yok, oluşturuluyor"
+            KV=$(curl -s -X POST -H "Authorization: Bearer $CF_API_TOKEN" -H "Content-Type: application/json" --data '{"title":"mc-rv"}' "$API" | node -e "$pick")
+          fi
+          if [ -n "$KV" ]; then echo "KV hazır"; else echo "::warning::KV deposu oluşturulamadı (token izni?). 5 dk hatırlatması kapalı kalır."; fi
+          echo "KV=$KV" >> $GITHUB_ENV
       - name: Sunucuyu kur
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
@@ -36,7 +50,24 @@ jobs:
         run: |
           cd worker
           PUB=$(node -p "require('./vapid.json').pub"); X=$(node -p "require('./vapid.json').x"); Y=$(node -p "require('./vapid.json').y")
-          npx --yes wrangler@3 deploy index.js --name mc-push --compatibility-date 2024-09-01 --var VAPID_PUB:$PUB --var VAPID_X:$X --var VAPID_Y:$Y
+          {
+            echo 'name = "mc-push"'
+            echo 'main = "index.js"'
+            echo 'compatibility_date = "2024-09-01"'
+            echo '[vars]'
+            echo "VAPID_PUB = \"$PUB\""
+            echo "VAPID_X = \"$X\""
+            echo "VAPID_Y = \"$Y\""
+            if [ -n "$KV" ]; then
+              echo '[[kv_namespaces]]'
+              echo 'binding = "MCR"'
+              echo "id = \"$KV\""
+              echo '[triggers]'
+              echo 'crons = ["* * * * *"]'
+            fi
+          } > wrangler.toml
+          cat wrangler.toml | grep -v VAPID
+          npx --yes wrangler@3 deploy
           cat vapid_d | npx --yes wrangler@3 secret put VAPID_D --name mc-push
           rm -f vapid_d
       - name: Dene ve adresi uygulamaya yaz
@@ -45,6 +76,7 @@ jobs:
           URL="https://mc-push.$SUB.workers.dev"
           for i in $(seq 1 18); do K=$(curl -s $URL/key || true); echo "$K" | grep -q "$PUB" && break; sleep 10; done
           echo "$K" | grep -q "$PUB" || { echo "Sunucu cevap vermedi: $K"; exit 1; }
+          echo "Sunucu: $K" | sed 's/"k":"[^"]*"/"k":"…"/'
           printf '{"u":"%s","k":"%s"}\n' "$URL" "$PUB" > push.json
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add push.json
