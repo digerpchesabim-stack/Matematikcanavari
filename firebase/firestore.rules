@@ -10,7 +10,8 @@ service cloud.firestore {
       allow get: if signedIn();
       allow create: if signedIn()
         && request.resource.data.host == request.auth.uid
-        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win'])
+        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win', 'at'])
+        && (!('at' in request.resource.data) || request.resource.data.at is int)
         && (!('mode' in request.resource.data) || request.resource.data.mode in ['duel', 'mm'])
         && (!('win' in request.resource.data) || request.resource.data.win in [10, 15, 20])
         && (!('lv' in request.resource.data) || request.resource.data.lv in ['k', 'o', 'z'])
@@ -85,7 +86,31 @@ service cloud.firestore {
       allow create, update: if request.resource.data.keys().hasOnly(['from', 'nick', 'room', 'op', 'lv', 'win', 'ts', 'md'])
         && owns(request.resource.data.from)
         && get(/databases/$(database)/documents/fr/$(frId(request.resource.data.from, to))).data.st == 'ok';
+      // S54: alıcı sadece cevabını yazar (gördü / kabul / meşgul / daha sonra + randevu odası ve saati)
+      allow update: if owns(to)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['rs', 'rr', 'ra'])
+        && request.resource.data.rs in ['seen', 'ok', 'busy', 'later']
+        && (!('rr' in request.resource.data) || (request.resource.data.rr is string && request.resource.data.rr.size() <= 10))
+        && (!('ra' in request.resource.data) || request.resource.data.ra is int);
       allow delete: if owns(to) || owns(resource.data.from);
+    }
+
+    // S54: rv/{ODA}_{alıcı}: zamanlı oyun (randevu) isteği. Kurucu (from) odayı önceden kurar; alıcı Olur/Gelemem der.
+    match /rv/{id} {
+      allow read: if signedIn();
+      allow create: if request.resource.data.keys().hasOnly(['from', 'fn', 'to', 'room', 'op', 'lv', 'win', 'md', 'at', 'ts', 'st', 'n'])
+        && owns(request.resource.data.from)
+        && id == request.resource.data.room + '_' + request.resource.data.to
+        && request.resource.data.st == 'req'
+        && request.resource.data.at is int && request.resource.data.ts is int
+        && request.resource.data.md in ['duel', 'mm']
+        && request.resource.data.fn is string && request.resource.data.fn.size() <= 60
+        && get(/databases/$(database)/documents/fr/$(frId(request.resource.data.from, request.resource.data.to))).data.st == 'ok'
+        && get(/databases/$(database)/documents/rooms/$(request.resource.data.room)).data.host == request.auth.uid;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['st', 'ts'])
+        && ((owns(resource.data.to) && request.resource.data.st in ['ok', 'no'])
+          || (owns(resource.data.from) && request.resource.data.st in ['x', 'd']));
+      allow delete: if owns(resource.data.to) || owns(resource.data.from);
     }
 
     // ps/{id}: bildirim adresi (S49). Okumak için oturum yeter (adres tek başına bildirim göndermeye yetmez, sunucunun VAPID anahtarı gerekir)
