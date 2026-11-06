@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 6 Kasım 2026 · Yayındaki sürüm: **56**
+Son güncelleme: 6 Kasım 2026 · Yayındaki sürüm: **57**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -188,6 +188,11 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Puan (`twSave`): gerçek rakibe karşı çift galibiyeti `rkApply` (1'e 1 gibi, günlük 5 sınırı); takım kazanırsa +1/+2/+3 (`dc` 't:'+rakip takım, günde 5) ve `tw` sayacı → madalya 🤝 **Takım Oyuncusu** (RKF 7., 5/15/30; FAM 'team' iki halka; `m` 7 hane, pl.md 7). Canavar Takımı (kb −1) puan yok. Takım w/l: her takımdan pa sırasındaki ilk gerçek oyuncu yazar (`lm` ile tek sefer).
   - Geçmiş: dhist `tw:1, ta, tb2, A, B, tr` (Kapışmalarım'da 👥 satırı). Kılavuz `team`. Bildirim adresi `?tm=1` → Takımım.
   - Test: `test/s56.js` (5 telefon: kur, ad benzersiz, çağır/katıl, çıkarma reddi, kaptanlık maçı, 2'ye 3 + canavar, skor eşitliği, rütbe, w/l, canavar takımı, ayrılma/silme), `worker/test.mjs` (ti/tv).
+
+- 57 (6 Kasım 2026 yayında): **Kilitlenme düzeltmesi + Kaptanlık Maçı sadece takım.**
+  - Kullanıcı: 3 kişilik muharebe "Doğru! Sonuç bekleniyor…"da kilitlendi (bir oyuncu 0 puan, büyük olasılıkla telefonu arka planda: sinyal gidiyor, cevap/süre yazılmıyor → `duReady` sonsuza kadar bekliyordu). Çözüm: `duWatchSet/duWatch` — kendi cevabından sonra süre + 6 sn içinde gelmeyen cevap "süre doldu" sayılır (`DU.fill`, `duRv` → duBest/duWinner/duReady), 2 tur üst üste cevapsız → "… cevap vermiyor, oyundan düştü" + `duGone`. Takım kapışmasında `twGone`: 40 sn hiç tur ilerlemeyen oyuncu ayrılmış sayılır (`TWP`).
+  - Kaptanlık Maçı lobisi (`cmRoom`): başlık "👑 Kaptanlık Maçı", arkadaş listesi / herkesi çağır / davet linki yok; yerine takım üyeleri (✓ odada / 🟢 / ⚪) + "📣 Takımı yeniden çağır" (`cmRecall`, 60 sn). Takım dışı katılım `rmJoinCode`'da reddedilir.
+  - Test: `test/s57.js`.
 
 ## 9. Bekleyen / yayınlanmamış
 - Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri.)
