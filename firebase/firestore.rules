@@ -10,9 +10,9 @@ service cloud.firestore {
       allow get: if signedIn();
       allow create: if signedIn()
         && request.resource.data.host == request.auth.uid
-        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win', 'at'])
+        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win', 'at', 'ka', 'kb', 'cm'])
         && (!('at' in request.resource.data) || request.resource.data.at is int)
-        && (!('mode' in request.resource.data) || request.resource.data.mode in ['duel', 'mm'])
+        && (!('mode' in request.resource.data) || request.resource.data.mode in ['duel', 'mm', 'tw'])
         && (!('win' in request.resource.data) || request.resource.data.win in [10, 15, 20])
         && (!('lv' in request.resource.data) || request.resource.data.lv in ['k', 'o', 'z'])
         && (!('tb' in request.resource.data) || (request.resource.data.tb is int && request.resource.data.tb >= 0 && request.resource.data.tb <= 10))
@@ -22,7 +22,8 @@ service cloud.firestore {
       // Sadece kurucu, sadece durumu "playing" yapabilir
       allow update: if signedIn()
         && resource.data.host == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'pa'])
+        && (!('pa' in request.resource.data) || (request.resource.data.pa is string && request.resource.data.pa.size() <= 600))
         && request.resource.data.status == 'playing';
       allow delete: if signedIn() && (resource.data.host == request.auth.uid
         || request.time.toMillis() - resource.data.created > 86400000);
@@ -32,10 +33,10 @@ service cloud.firestore {
         // Yeni oyuncu sadece oda "lobby" iken girebilir
         allow create: if signedIn() && request.auth.uid == uid
           && get(/databases/$(database)/documents/rooms/$(code)).data.status == 'lobby'
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv'])
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv', 'tk', 'br'])
           && request.resource.data.nick is string && request.resource.data.nick.size() <= 60;
         allow update: if signedIn() && request.auth.uid == uid
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv']);
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv', 'tk', 'br']);
         allow delete: if signedIn() && request.auth.uid == uid;
       }
     }
@@ -58,7 +59,8 @@ service cloud.firestore {
     match /pl/{pid} {
       allow read: if signedIn();
       allow create, update: if owns(pid)
-        && request.resource.data.keys().hasOnly(['nick', 'seen', 'v', 'rk', 'md', 'st'])
+        && request.resource.data.keys().hasOnly(['nick', 'seen', 'v', 'rk', 'md', 'st', 'tm'])
+        && (!('tm' in request.resource.data) || (request.resource.data.tm is string && request.resource.data.tm.size() <= 4))
         && (!('st' in request.resource.data) || (request.resource.data.st is string && request.resource.data.st.size() <= 60))
         && (!('rk' in request.resource.data) || (request.resource.data.rk is int && request.resource.data.rk >= 0 && request.resource.data.rk <= 6))
         && (!('md' in request.resource.data) || (request.resource.data.md is string && request.resource.data.md.size() <= 12))
@@ -98,6 +100,67 @@ service cloud.firestore {
         && (!('rr' in request.resource.data) || (request.resource.data.rr is string && request.resource.data.rr.size() <= 10))
         && (!('ra' in request.resource.data) || request.resource.data.ra is int);
       allow delete: if owns(to) || owns(resource.data.from);
+    }
+
+    // S56: tm/{ad no}: takım. m = üye oyuncu kimlikleri (en çok 4), cap = kaptan, by = yazan üye.
+    function tmM(k) { return get(/databases/$(database)/documents/tm/$(k)).data.m; }
+    match /tm/{k} {
+      allow read: if signedIn();
+      allow create: if k.matches('^[0-9]{1,3}$')
+        && request.resource.data.keys().hasOnly(['m', 'cap', 'by', 'w', 'l', 'ct', 'jn', 'lm', 'ts', 'v'])
+        && owns(request.resource.data.by)
+        && request.resource.data.m == [request.resource.data.by]
+        && request.resource.data.cap == request.resource.data.by
+        && request.resource.data.w == 0 && request.resource.data.l == 0;
+      // katılma: sadece kendini ekler, geçerli takım daveti (tv) olmalı
+      allow update: if request.resource.data.keys().hasOnly(['m', 'cap', 'by', 'w', 'l', 'ct', 'jn', 'lm', 'ts', 'v'])
+        && owns(request.resource.data.by)
+        && request.resource.data.m.size() == resource.data.m.size() + 1
+        && request.resource.data.m.size() <= 4
+        && request.resource.data.m.hasAll(resource.data.m)
+        && request.resource.data.by in request.resource.data.m
+        && !(request.resource.data.by in resource.data.m)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['m', 'by', 'jn', 'ts'])
+        && get(/databases/$(database)/documents/tv/$(request.resource.data.by)).data.t == int(k);
+      // ayrılma: sadece kendini çıkarır; kimse başkasını çıkaramaz
+      allow update: if request.resource.data.keys().hasOnly(['m', 'cap', 'by', 'w', 'l', 'ct', 'jn', 'lm', 'ts', 'v'])
+        && owns(request.resource.data.by)
+        && request.resource.data.by in resource.data.m
+        && request.resource.data.m.size() == resource.data.m.size() - 1
+        && resource.data.m.hasAll(request.resource.data.m)
+        && !(request.resource.data.by in request.resource.data.m)
+        && request.resource.data.cap in request.resource.data.m
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['m', 'by', 'cap', 'ts']);
+      // kaptan, galibiyet/yenilgi (en çok 1 artar)
+      allow update: if request.resource.data.keys().hasOnly(['m', 'cap', 'by', 'w', 'l', 'ct', 'jn', 'lm', 'ts', 'v'])
+        && owns(request.resource.data.by)
+        && request.resource.data.by in resource.data.m
+        && request.resource.data.m == resource.data.m
+        && request.resource.data.cap in resource.data.m
+        && request.resource.data.w - resource.data.w in [0, 1]
+        && request.resource.data.l - resource.data.l in [0, 1]
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['cap', 'ct', 'w', 'l', 'lm', 'by', 'ts']);
+      allow delete: if resource.data.m.size() == 1 && owns(resource.data.m[0]);
+    }
+    // tv/{alıcı}: takıma çağırma (üye → arkadaşı)
+    match /tv/{to} {
+      allow get: if owns(to) || (resource != null && owns(resource.data.from));
+      allow create, update: if request.resource.data.keys().hasOnly(['t', 'from', 'nick', 'ts'])
+        && request.resource.data.t is int && request.resource.data.ts is int
+        && owns(request.resource.data.from)
+        && request.resource.data.from in tmM(string(request.resource.data.t))
+        && get(/databases/$(database)/documents/fr/$(frId(request.resource.data.from, to))).data.st == 'ok';
+      allow delete: if owns(to) || owns(resource.data.from);
+    }
+    // ti/{takım}: takım çağrısı (kapışma ya da kaptanlık maçı); takımın üyeleri dinler
+    match /ti/{k} {
+      allow read: if signedIn();
+      allow create, update: if request.resource.data.keys().hasOnly(['by', 'nick', 'room', 'a', 'b', 'ts', 'cm'])
+        && request.resource.data.a is int && request.resource.data.b is int
+        && owns(request.resource.data.by)
+        && request.resource.data.by in tmM(string(request.resource.data.a))
+        && (int(k) == request.resource.data.a || int(k) == request.resource.data.b);
+      allow delete: if owns(resource.data.by);
     }
 
     // S55: ms/{gönderen}_{alıcı}: hazır mesaj (sadece numara m; serbest yazı yok), sadece arkadaşa

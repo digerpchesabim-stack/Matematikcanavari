@@ -14,7 +14,7 @@ const db = {
   'pl/AAAAAAA': { nick: '🦊 Kurnaz Tilki' },
   'ps/BBBBBBB': { e: 'https://fcm.googleapis.com/fcm/send/xyz', k: u(ua.getPublicKey()), a: u(auth), ts: now }
 };
-const fv = x => typeof x === 'number' ? { integerValue: String(x) } : { stringValue: x };
+const fv = x => Array.isArray(x) ? { arrayValue: { values: x.map(y => ({ stringValue: y })) } } : typeof x === 'number' ? { integerValue: String(x) } : { stringValue: x };
 let sent = null;
 globalThis.fetch = async (url, o) => {
   if (url.startsWith('https://firestore')) {
@@ -106,6 +106,18 @@ ok(s === 403 && !sent, 'selam mesajı bildirim olmaz');
 db['iv/BBBBBBB'] = { from: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', ts: Date.now(), md: 'race', room: 'K7XQ2', g: 1 };
 sent = null;[s, j] = await call({ t: 'TOK', k: 'iv', from: 'AAAAAAA', to: 'BBBBBBB' });
 ok(j.ok && /herkesi Yarış Odasına/.test(decrypt(sent.o.body).t), 'toplu yarış daveti bildirimi');
+// S56: takım çağrısı ve takıma davet
+db['tm/3'] = { m: ['AAAAAAA', 'BBBBBBB', 'CCCCCCC'], cap: 'AAAAAAA' };
+db['ti/3'] = { by: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', room: 'K7XQ2', a: 3, b: 5, ts: Date.now() };
+const sentAll = []; const of = globalThis.fetch; globalThis.fetch = async (url, o) => { const r = await of(url, o); if (!url.startsWith('https://firestore')) sentAll.push(url); return r; };
+[s, j] = await call({ t: 'TOK', k: 'ti', from: 'AAAAAAA', to: '3' });
+ok(j.ok && j.n === 1, 'takım çağrısı bildirimi üyelere (bildirimi açık olan 1 kişi): ' + JSON.stringify(j));
+globalThis.fetch = of;
+[s] = await call({ t: 'TOK', k: 'ti', from: 'CCCCCCC', to: '3' });
+ok(s === 403, 'başkası adına takım çağrısı reddedildi');
+db['tv/BBBBBBB'] = { t: 3, from: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', ts: Date.now() };
+sent = null;[s, j] = await call({ t: 'TOK', k: 'tv', from: 'AAAAAAA', to: 'BBBBBBB' });
+ok(j.ok && /takımına çağırıyor/.test(decrypt(sent.o.body).t), 'takıma davet bildirimi');
 delete env.MCR; db['rv/R54AB_BBBBBBB'].st = 'ok'; sent = null;[s, j] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
 ok(j.ok, 'KV yoksa da cevap bildirimi çalışır');
 console.log(fail ? 'HATA ' + fail : 'TAMAM'); process.exit(fail ? 1 : 0);

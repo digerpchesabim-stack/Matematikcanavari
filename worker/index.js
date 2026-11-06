@@ -48,6 +48,14 @@ async function doc(path, tok) {
   return o;
 }
 const ID = /^[A-Z0-9]{7}$/;
+// dizi alanlarını da okuyan sürüm (takım üyeleri)
+async function docRaw(path, tok) {
+  const r = await fetch(FS + path, { headers: { Authorization: 'Bearer ' + tok } });
+  if (!r.ok) return null;
+  const j = await r.json(), o = {};
+  for (const [k, v] of Object.entries(j.fields || {})) o[k] = v.arrayValue ? (v.arrayValue.values || []).map(x => x.stringValue) : ('stringValue' in v ? v.stringValue : null);
+  return o;
+}
 function json(o, s) { return new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ 'content-type': 'application/json' }, CORS) }); }
 function fresh(ts) { return typeof ts === 'number' && Math.abs(Date.now() - ts) < 180000; }
 const ROOM = /^[A-Z0-9]{3,10}$/;
@@ -99,6 +107,22 @@ export async function handle(req, env) {
   if (req.method !== 'POST' || u.pathname !== '/push') return json({ err: 'yok' }, 404);
   let b; try { b = JSON.parse(await req.text()); } catch (e) { return json({ err: 'istek' }, 400); }
   const tok = String(b.t || ''), to = String(b.to || ''), from = String(b.from || '');
+  if (b.k === 'ti') {
+    // S56: takım çağrısı: ti/{takım} belgesi gönderen üye tarafından yazılmış olmalı; takımın diğer üyelerine gider
+    if (!tok || !/^[0-9]{1,3}$/.test(to) || !ID.test(from)) return json({ err: 'istek' }, 400);
+    const ti = await doc('ti/' + to, tok);
+    if (!ti || ti.by !== from || !fresh(ti.ts)) return json({ err: 'çağrı yok' }, 403);
+    const tm = await docRaw('tm/' + to, tok);
+    const mem = ((tm && tm.m) || []).filter(p => ID.test(p) && p !== from).slice(0, 4);
+    const t = ti.cm ? '👑 ' + ti.nick + ' takımında Kaptanlık Maçı kurdu!' : (String(ti.a) === to ? '⚔️ Takım arkadaşın ' + ti.nick + ' takım kapışması kurdu!' : '⚔️ Bir takım takımınıza meydan okuyor!');
+    let n = 0;
+    for (const p of mem) {
+      const ps = await doc('ps/' + p, tok);
+      if (!ps || !ps.e || !ps.k || !ps.a) continue;
+      try { const r = await sendPush(env, ps, { t, b: 'Takımın seni bekliyor. Dokun, katıl.', g: 'ti', u: SUB + '?tm=1&to=' + p }); if (r.ok) n++; } catch (e) {}
+    }
+    return json({ ok: true, n });
+  }
   if (!tok || !ID.test(to) || !ID.test(from) || to === from) return json({ err: 'istek' }, 400);
   let msg;
   if (b.k === 'iv') {
@@ -114,6 +138,10 @@ export async function handle(req, env) {
     if (!fr || fr.by !== from || fr.st !== 'req' || !fresh(fr.ts)) return json({ err: 'istek yok' }, 403);
     const pl = await doc('pl/' + from, tok);
     msg = { t: '👫 ' + ((pl && pl.nick) || 'Bir oyuncu') + ' arkadaşlık isteği gönderdi', b: 'Kabul etmek için dokun.', g: 'fr', u: SUB + '?fr=1&to=' + to };
+  } else if (b.k === 'tv') {
+    const tv = await doc('tv/' + to, tok);
+    if (!tv || tv.from !== from || !fresh(tv.ts)) return json({ err: 'çağrı yok' }, 403);
+    msg = { t: '👥 ' + tv.nick + ' seni takımına çağırıyor!', b: 'Dokun, takıma katıl.', g: 'tv', u: SUB + '?tm=1&to=' + to };
   } else if (b.k === 'ms') {
     // S55: hazır mesaj; sadece oyuna çağıran mesajlar bildirim olur
     const ms = await doc('ms/' + from + '_' + to, tok);
