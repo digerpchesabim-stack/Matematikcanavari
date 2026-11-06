@@ -83,8 +83,13 @@ service cloud.firestore {
     // iv/{alıcı}: kapışma daveti; sadece arkadaşlar gönderebilir, sadece alıcı ve gönderen görür
     match /iv/{to} {
       allow get: if owns(to) || (resource != null && owns(resource.data.from));
-      allow create, update: if request.resource.data.keys().hasOnly(['from', 'nick', 'room', 'op', 'lv', 'win', 'ts', 'md'])
+      // S55: toplu davet (g) başkasının açık davetinin üzerine yazamaz
+      allow create, update: if request.resource.data.keys().hasOnly(['from', 'nick', 'room', 'op', 'lv', 'win', 'ts', 'md', 'g'])
         && owns(request.resource.data.from)
+        && (!('g' in request.resource.data) || resource == null
+          || resource.data.from == request.resource.data.from
+          || request.time.toMillis() - resource.data.ts > 600000
+          || ('rs' in resource.data && resource.data.rs != 'seen'))
         && get(/databases/$(database)/documents/fr/$(frId(request.resource.data.from, to))).data.st == 'ok';
       // S54: alıcı sadece cevabını yazar (gördü / kabul / meşgul / daha sonra + randevu odası ve saati)
       allow update: if owns(to)
@@ -93,6 +98,19 @@ service cloud.firestore {
         && (!('rr' in request.resource.data) || (request.resource.data.rr is string && request.resource.data.rr.size() <= 10))
         && (!('ra' in request.resource.data) || request.resource.data.ra is int);
       allow delete: if owns(to) || owns(resource.data.from);
+    }
+
+    // S55: ms/{gönderen}_{alıcı}: hazır mesaj (sadece numara m; serbest yazı yok), sadece arkadaşa
+    match /ms/{id} {
+      allow read: if signedIn();
+      allow create, update: if request.resource.data.keys().hasOnly(['from', 'to', 'm', 'ts', 'nick'])
+        && id == request.resource.data.from + '_' + request.resource.data.to
+        && request.resource.data.m is int && request.resource.data.m >= 1 && request.resource.data.m <= 60
+        && request.resource.data.ts is int
+        && request.resource.data.nick is string && request.resource.data.nick.size() <= 60
+        && owns(request.resource.data.from)
+        && get(/databases/$(database)/documents/fr/$(frId(request.resource.data.from, request.resource.data.to))).data.st == 'ok';
+      allow delete: if owns(resource.data.from) || owns(resource.data.to);
     }
 
     // S54: rv/{ODA}_{alıcı}: zamanlı oyun (randevu) isteği. Kurucu (from) odayı önceden kurar; alıcı Olur/Gelemem der.
