@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 6 Kasım 2026 · Yayındaki sürüm: **57**
+Son güncelleme: 10 Kasım 2026 · Yayındaki sürüm: **58**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -36,6 +36,18 @@ Son güncelleme: 6 Kasım 2026 · Yayındaki sürüm: **57**
 - **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`. Çıkış onaylanınca (S43) tüm geçmiş sarılır.
 - **Karşılama canavarı (S40):** `drawMonster(c,cx,cy,r,{m:ağız,happy})`; kovalamaca sahnesi `CH` (`chStart/chFrame/chTap`).
 - **Menü müziği (S40):** `menu.mp3`, `MM`/`mmUpdate`/`mmToggle`, `MMOFF` ekranlarında susar; sağ üstte 🎵 (`mc_mmus`). S54: iPhone'da `volume` salt okunur → `MM.vol=false`, kısma efekti yok, doğrudan `pause()/play()` (test `test/mus3.js`).
+
+### 4.1 Tasarım sistemi (S58 — görünümü değiştirirken buraya uy)
+- Kullanıcı kararları (10 Kasım 2026): arayüz **kabartmalı 3D** + özel ekranlarda **gerçek 3D sahne**, hareket **dengeli** (menüler canlı, soru ekranı sakin), **yepyeni palet** (mor kimlik bırakıldı). Canavar maskot olarak mor kaldı (uygulama simgesiyle aynı).
+- Stil dosyası: `<style>` sonunda "S58: yeni tasarım sistemi" bloğu eski kuralların üstüne yazar (eski kurallar düzen için duruyor). Yazı tipi **Poppins** (500/700, Türkçe alt küme, base64 gömülü `MCP`; ek dosya yok).
+- Renk değişkenleri: `--bg/--bg2` zemin, `--card`, `--text`, `--muted`, `--accent` (kobalt #2f6bff) + `--accent-d` (alt kenar), `--gold/--gold2/--gold-d/--gold-t` (ana eylem düğmesi `.next` altın), `--ok/--ok-bg/--ok-d`, `--bad/--bad-bg/--bad-d`, `--line`, `--edge` (kartların alt kenarı = derinlik), `--sh` (gölge), `--me/--me-t` (kendi satırın), `--glow`. 6 tema aynı anahtarlarla: auto, light (Gündüz), sepia (Kum), dark (Gece), ocean, hc. Yeni renk eklerken sabit hex yazma, değişken kullan.
+- Kabartma kuralı: düğme/kart = `box-shadow:0 Npx 0 var(--edge)` + `:active{transform:translateY(N-1px)}`. `.btn .big` = renkli simge karosu (`.hgrid` içinde nth-child ile 6 renk). Izgaralar `minmax(0,1fr)` (320 px'te taşma olmasın).
+- 3D sahneler: karşılama (`.logo3d` kabartma başlık + dönen `.cube` küpler, canavar gölgeli/ışıklı `drawMonster`), kazanma madalyonu `coin3d(emoji)` (1'e 1/muharebe/takım/rekor/yarış), rütbe kutlaması `.rkart` dönerek gelir, karakter kartı `.kcard.tilt` telefon eğimi/parmakla eğilir (`tiltInit`, `--tx/--ty/--gx`), kapışma girişi isimler derinlikten gelir, geri sayım `#cdn.tick`, pencereler `boxin`.
+- Ekran geçişi: `render()` ekran değişince `#app`'e `scr-in` / `scr-back` (geri) / `scr-fade` (oyun ekranları `MMOFF`, quiz, summary, sabit alt çubuklu ekranlar) sınıfı verir.
+- **Sade mod** `html.lite` (`LITE`: hareketi azalt ayarı, ≤2 GB bellek ya da ≤2 çekirdek): küp/madalyon/eğim/3D geçiş kapanır.
+- Takım kapışması simgeleri: `icoShields()` (kalkanlar; menü/düğme, `tIcon(px)`), `icoTeams()` (iki takım + VS; giriş ve sonuç). SVG, her çağrıda benzersiz gradient kimliği (`ICN`).
+- Büyük yazı (`data-fs`): oyun ekranında cevap kutuları küçülür (iki sıra ekrana sığsın).
+- Paylaşılan görsellerde (canvas) mor tonlar kobalta çevrildi.
 
 ## 5. Özellikler
 ### 5.1 Pratik ve Problemler
@@ -194,8 +206,13 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Kaptanlık Maçı lobisi (`cmRoom`): başlık "👑 Kaptanlık Maçı", arkadaş listesi / herkesi çağır / davet linki yok; yerine takım üyeleri (✓ odada / 🟢 / ⚪) + "📣 Takımı yeniden çağır" (`cmRecall`, 60 sn). Takım dışı katılım `rmJoinCode`'da reddedilir.
   - Test: `test/s57.js`.
 
+- 58 (10 Kasım 2026 yayında): **Baştan tasarım: kabartmalı 3D arayüz + 3D sahneler + yeni palet** (ayrıntı §4.1). İşlev ve veri değişmedi; kural/Worker değişikliği yok.
+  - Düzeltilen hatalar: bildirim (toast) dar kalıp iki satıra bölünüyordu; 320 px'te karakter kategorileri taşıyordu; üst başlık sabit ses düğmesinin altına giriyordu; küçük ekranda pencere (tema) taşıp üstü kesiliyordu; "Çok büyük" yazıda Akıldan İşlem'de alt sıra cevaplar ekran dışında kalıyordu; takım kartı sola yaslıydı.
+  - Akıldan İşlem menüsü ana menü gibi simgeli ızgara oldu. Tema adları: Gündüz, Kum, Gece, Okyanus, Yüksek kontrast.
+  - Yeni test araçları: `test/shots.js [tema] [klasör]` (36 ekranı dolaşır, görüntü alır, sayfa hatası + taşan öğe raporu; `W=320 H=568`, `FS=2` ortam değişkenleri), `test/monkey.js [adım] [tohum] [profil]` (rastgele dokunma; 5 koşu, 0 hata).
+
 ## 9. Bekleyen / yayınlanmamış
-- Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri.)
+- Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri, S58 3D efektlerin eski telefonlarda akıcılığı ve telefonu eğince kartın eğilmesi.)
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
