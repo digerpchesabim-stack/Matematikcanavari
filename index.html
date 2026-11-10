@@ -4925,7 +4925,7 @@ function back(){SCR.back=true;
   if(s==='pedit')return go(st.pe&&st.pe.ret==='home'?'home':'profiles');
 }
 /* S58: 3D yardımcıları */
-var LITE=(function(){try{var n=navigator;return !!((window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)||(n.deviceMemory&&n.deviceMemory<=2)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2))}catch(e){return false}})();
+var LITE=(function(){try{var n=navigator;return !!((window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches)||(n.deviceMemory&&n.deviceMemory<=1)||(n.hardwareConcurrency&&n.hardwareConcurrency<=2))}catch(e){return false}})();
 if(LITE)document.documentElement.classList.add('lite');
 var SCR={last:null,back:false};
 function coin3d(e){var h='<div class="coinw"><div class="coin">',i;for(i=-6;i<=6;i+=2)h+='<i style="transform:translateZ('+i+'px)"></i>';return h+'<b class="f">'+e+'</b><b class="k">'+e+'</b></div></div>'}

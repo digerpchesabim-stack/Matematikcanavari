@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 10 Kasım 2026 · Yayındaki sürüm: **58**
+Son güncelleme: 10 Kasım 2026 · Yayındaki sürüm: **59**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -20,7 +20,7 @@ Son güncelleme: 10 Kasım 2026 · Yayındaki sürüm: **58**
 7. Commit mesajı sonuna oturumun verdiği `Co-Authored-By` / `Claude-Session` satırlarını ekle.
 
 ## 3. Yayın hattı
-- **Dosyalar:** `index.html` (tüm uygulama), `sw.js` (önbellek), `manifest.json`, `icon-192.png`, `icon-512.png`. Ayrıca `firebase/` (kurallar) ve `.github/workflows/firestore-rules.yml`.
+- **Dosyalar:** `index.html` (tüm uygulama), `sw.js` (önbellek), `manifest.json`, `icon-192.png`, `icon-512.png` (S59: 3B canavardan üretildi). Ayrıca `firebase/` (kurallar) ve `.github/workflows/firestore-rules.yml`.
 - **Her sürümde:** `index.html` içinde `var APPV=N` (karşılama ekranındaki `Sürüm N` buradan gelir, S51) ve `sw.js` içindeki `var CACHE = 'mc-vN'` değerini artır. Service worker cache-first çalışır; yeni sürümde sayfa kendini yeniler (`controllerchange`/`PENDRELOAD`). Telefonda eski sürüm görünüyorsa uygulama kapatılıp açılır.
 - **GitHub Pages:** main'e push → "pages build and deployment" çalışır. Kontrol: `gh run list --limit 3`. (Canlı siteye WebFetch izinli değil.)
 - **Firestore kuralları:** `firebase/firestore.rules` değişip push edilince Actions kuralları otomatik yükler (secret `FIREBASE_SA`, servis hesabında "Firebase Rules Admin" rolü). Elle tetikleme: `gh api -X POST repos/digerpchesabim-stack/Matematikcanavari/actions/workflows/firestore-rules.yml/dispatches -f ref=main` (GraphQL engelli, `gh workflow run` çalışmaz).
@@ -34,7 +34,7 @@ Son güncelleme: 10 Kasım 2026 · Yayındaki sürüm: **58**
 - **localStorage:** mc_acc (S53, cihaza özel: dv cihaz kimliği, st son eşit bulut sürümü, ln bilinen son hesap açılışı; eşitlenmez), mc_fs (yazı boyutu 0/1/2), mc_tts ({a:1} problemi kendiliğinden oku), mc_mgk (geçiş yedeği kodu), mc_lbcl (bir kerelik rekor satırı temizliği), mc_profiles (S53'ten beri en çok 1), mc_records (oyun/pratik kayıtları, profil başına son 200), mc_bk/mc_bkh/mc_bkt (yedek kodu, son yedek özeti ve zamanı), mc_best (profil→mod anahtarı rekor), mc_rhist/mc_rbest (yarış geçmişi/rekoru), mc_dhist (kapışma geçmişi, `bot` alanı canavar maçları), mc_nm/mc_nmnew (oyun adları, S46; mc_gnick S46'da kaldırıldı), mc_audio, mc_dev (cihaz hesabı), mc_vert (yan yana/alt alta), mc_lbfix1 (S31 bir kerelik rekor kurtarma bayrağı).
 - **Ses:** Web Audio ile kodla üretilir (`auCtx`, `tone`, `sfxPlay`, `AU.sg`, `AU.nb` gürültü tamponu). Efektler: sndPop/Ok/Bad/Fast/Win/End/Tick, sndWhistle (düdük), sndClap (alkış), sndCrunch (çıtırtı), sndSwoosh, sndClang (kılıç). Müzik: musStart/musStop/musTempo (sadece Akıldan İşlem). Hazır ses dosyaları (S37): lose/pass/top/win.mp3; yeni ses dosyası eklenirse sw.js FILES listesine de ekle. Telefonlar dokunuş olmadan ses çalmaz.
 - **Geri tuşu (S27):** `NAV` — dokunuş (click) anında 10 kayıtlık geçmiş tamponu doldurulur (Chrome dokunuşsuz eklenen kayıtları atlar). `popstate` → modal açıksa "Hayır", karşılamada çıkış sorusu, aksi halde `back()`. Çıkış onaylanınca (S43) tüm geçmiş sarılır.
-- **Karşılama canavarı (S40):** `drawMonster(c,cx,cy,r,{m:ağız,happy})`; kovalamaca sahnesi `CH` (`chStart/chFrame/chTap`).
+- **Maskot (S59, 3B):** `drawMonster(c,cx,cy,r,o)` her yerde (karşılama sahnesi + paylaşım kartları) önce 3B modeli dener; ayrıntı §4.2. Kovalamaca sahnesi `CH` (`chStart/chFrame/chTap`, `chSprite/chSym` 3B semboller).
 - **Menü müziği (S40):** `menu.mp3`, `MM`/`mmUpdate`/`mmToggle`, `MMOFF` ekranlarında susar; sağ üstte 🎵 (`mc_mmus`). S54: iPhone'da `volume` salt okunur → `MM.vol=false`, kısma efekti yok, doğrudan `pause()/play()` (test `test/mus3.js`).
 
 ### 4.1 Tasarım sistemi (S58 — görünümü değiştirirken buraya uy)
@@ -44,10 +44,18 @@ Son güncelleme: 10 Kasım 2026 · Yayındaki sürüm: **58**
 - Kabartma kuralı: düğme/kart = `box-shadow:0 Npx 0 var(--edge)` + `:active{transform:translateY(N-1px)}`. `.btn .big` = renkli simge karosu (`.hgrid` içinde nth-child ile 6 renk). Izgaralar `minmax(0,1fr)` (320 px'te taşma olmasın).
 - 3D sahneler: karşılama (`.logo3d` kabartma başlık + dönen `.cube` küpler, canavar gölgeli/ışıklı `drawMonster`), kazanma madalyonu `coin3d(emoji)` (1'e 1/muharebe/takım/rekor/yarış), rütbe kutlaması `.rkart` dönerek gelir, karakter kartı `.kcard.tilt` telefon eğimi/parmakla eğilir (`tiltInit`, `--tx/--ty/--gx`), kapışma girişi isimler derinlikten gelir, geri sayım `#cdn.tick`, pencereler `boxin`.
 - Ekran geçişi: `render()` ekran değişince `#app`'e `scr-in` / `scr-back` (geri) / `scr-fade` (oyun ekranları `MMOFF`, quiz, summary, sabit alt çubuklu ekranlar) sınıfı verir.
-- **Sade mod** `html.lite` (`LITE`: hareketi azalt ayarı, ≤2 GB bellek ya da ≤2 çekirdek): küp/madalyon/eğim/3D geçiş kapanır.
+- **Sade mod** `html.lite` (`LITE`: hareketi azalt ayarı, `deviceMemory<=1` (2 GB'den az bellek) ya da ≤2 çekirdek): küp/madalyon/eğim/3D geçiş kapanır. S59'da gevşetildi (önce `<=2` idi; tarayıcı 2–3,9 GB'ı "2" bildirdiği için 3 GB'lık telefonlar da efektleri görmüyordu). Maskot `LITE`'tan bağımsız.
 - Takım kapışması simgeleri: `icoShields()` (kalkanlar; menü/düğme, `tIcon(px)`), `icoTeams()` (iki takım + VS; giriş ve sonuç). SVG, her çağrıda benzersiz gradient kimliği (`ICN`).
 - Büyük yazı (`data-fs`): oyun ekranında cevap kutuları küçülür (iki sıra ekrana sığsın).
 - Paylaşılan görsellerde (canvas) mor tonlar kobalta çevrildi.
+
+### 4.2 3B maskot (S59)
+- Kullanıcı kararları (10 Kasım 2026): maskot gerçek 3B; ilk model (böğürtlen gibi tüylü gövde, sivri boynuz) "sempatik değil" bulundu → yeniden tasarım, **C (perçemli)** seçildi (`M3.v=2`; A sade=0, B tüy yakalı=1 kodda duruyor, `M3V`). Sahnede gezsin, simgeleri yesin, dokununca gıdıklanıp zıplasın, telefon titresin, sayılar/semboller de 3B olsun. Uygulama simgesi de bu modelden (kobalt zemin, `icon-192/512.png`).
+- Model: `M3FS` (WebGL1 parça gölgelendirici, ışın izlemeli SDF; kitaplık/dosya yok): tombul pürüzsüz gövde, açık karın, büyük parlak gözler (göz bebeği `look`, verilmezse kameraya bakar), kısa yuvarlak sarı boynuz, perçem, tek diş, pembe yanak; ağız `m` ile gerçek oyuk + dil; `happy` kapalı gülen göz; `blink`; `walk/ph` ayak ve kol; `sq` esneme. Işık görüş uzayında sabit (sol üst), yumuşak gölge + AO + kenar ışığı.
+- `drawMonster(c,cx,cy,r,o)`; `o`: m, happy, yaw, pitch, roll, look:[x,y], blink, walk, ph, sq, live (canlı sahne), nosh (gölgeyi çizme), flat (2B zorla), v (görünüm). r = gövde yarıçapı; çizim kutusu 3,24·r.
+- Üç kademe: (1) **canlı 3B** her karede (`m3dRender` → 512 px ekran dışı GL tuvali → `m3dBlit` ile `drawImage`); (2) yavaşsa `m3dPerf` (30 karelik ortalama >30 ms) çözünürlüğü 1 → 0,7 → 0,52 → 0,4 düşürür, yetmezse **hazır 3B pozlar** (`m3dSprite`, `M3S`: 16 yön × ağız 3 kademe × mutlu; bir kez çizilip saklanır, esneme tuval ölçeğiyle; yazılımla çizimde `M3.sw` doğrudan bu kademe); (3) WebGL yoksa / bağlam kaybında eski 2B çizim (eski tasarım; nadir). Tercih `mc_m3` {v,q,l} (cihaza özel, yedekte yok). Kartlardaki durağan çizim her zaman tam 3B (`m3dReady(true)` derlemeyi bekler; canlı sahnede derleme arka planda, hazır olana dek 2B).
+- Karşılama sahnesi `chFrame`: koştuğu yöne döner/yatar, hedefe bakar, göz kırpar, yedikten sonra sevinir; **dokununca gıdıklanır** (`m.tk` 0,8 sn: titrer, gözlerini kapar, güler; `sndGiggle`), sonra zıplayıp tam tur atar (`sndBoing`, inişte toz, `m.land`); `buzz()` = `navigator.vibrate` (Android; iPhone desteklemez). Semboller: `chSprite` (ön yüz ışıklı/pahlı + yan yüz bir kez çizilir, yazı tipi MCP) + `chSym` (katman katman kalınlık; sağa sola/öne arkaya salınır; **rakamlar baş aşağı dönmez**, 6/9 karışmasın). Aşağıdaki nesne önde ve biraz büyük (`dsc`). Tuval ekran çözünürlüğünde (en çok 2 kat), canavar r=78.
+- Test: `test/m3d.js`. Test makinesinde GL yazılımla çalışır → sahne hazır pozlarla çizilir; canlı 3B'yi görmek için `M3.live=true` + `m3dPerf` kapatılır. Simgeyi yeniden üretmek: modeli 1024 px çizip küçült (`M3.n=1024`, kobalt zemin + ortada ışık, r=0,288·N).
 
 ## 5. Özellikler
 ### 5.1 Pratik ve Problemler
@@ -211,17 +219,14 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Akıldan İşlem menüsü ana menü gibi simgeli ızgara oldu. Tema adları: Gündüz, Kum, Gece, Okyanus, Yüksek kontrast.
   - Yeni test araçları: `test/shots.js [tema] [klasör]` (36 ekranı dolaşır, görüntü alır, sayfa hatası + taşan öğe raporu; `W=320 H=568`, `FS=2` ortam değişkenleri), `test/monkey.js [adım] [tohum] [profil]` (rastgele dokunma; 5 koşu, 0 hata).
 
+- 59 (10 Kasım 2026 yayında): **3B maskot + 3B semboller + gıdıklanma + yeni simge** (ayrıntı §4.2). İşlev/veri/kural/Worker değişmedi.
+  - Canavar gerçek 3B model (C görünümü); karşılama sahnesi yeniden yazıldı (gezer, yer, dokununca gıdıklanır → zıplar, telefon titrer), sayılar/semboller 3B; kartlardaki canavar da 3B. Yavaş cihazlar için üç kademe.
+  - Uygulama simgesi yeni canavardan; sade mod sınırı gevşetildi (§4.1).
+  - Düzeltilen eski hata: karşılamada canavara dokununca zıplama hiç görünmüyordu.
+  - Test notu: test makinesi 2 çekirdekli olduğundan uygulama sade modda açılıyordu; S58 ekran testleri fark edilmeden sade modda koşmuştu. `shots.js`/`monkey.js` artık 8 çekirdek bildirir (`LITE=1` ile sade mod).
+
 ## 9. Bekleyen / yayınlanmamış
-- **S59 taslağı `s59` dalında (main'de DEĞİL, yayınlanmadı; kullanıcının "yükle" demesi bekleniyor):** 3B maskot + 3B semboller + gıdıklanma.
-  - Kullanıcı kararları (10 Kasım 2026): S58 efektleri yetersiz → "maskotu 3D yap"; ilk model (böğürtlen gibi tüylü gövde, sivri boynuz) "sempatik değil"; yeniden tasarımda **C (perçemli)** seçildi (`M3.v=2`; A sade=0, B tüy yakalı=1 kodda duruyor). İstekler: canavar ekranda gezsin, simgeleri yesin, dokununca gıdıklanıp zıplasın, telefon titresin, çevredeki sayı/semboller de 3B olsun.
-  - Model: `M3FS` (WebGL1 parça gölgelendirici, ışın izlemeli SDF; kitaplık yok): tombul pürüzsüz gövde, büyük parlak gözler, kısa yuvarlak boynuz, perçem, tek diş. `M3V` görünümler, `m3dInit/m3dReady/m3dRender/m3dBlit/m3dSprite/m3dPerf`, `monShadow`. `drawMonster(c,cx,cy,r,o)`; `o`: m, happy, yaw, pitch, roll, look, blink, walk, ph, sq, live, nosh, flat, v.
-  - Üç kademe: (1) canlı 3B her karede çizilir (`m3dBlit`, 512 px GL tuvali → `drawImage`); (2) yavaşsa `m3dPerf` (30 karelik ortalama >30 ms) çözünürlüğü 1 → 0.7 → 0.52 → 0.4 düşürür, yetmezse **hazır 3B pozlar** (`m3dSprite`: 16 yön × ağız 3 kademe × mutlu, bir kez çizilip saklanır; yazılımla çizimde `M3.sw` doğrudan bu kademe); (3) WebGL yoksa/bağlam kaybında eski 2B çizim. Tercih `mc_m3` (cihaza özel, yedekte yok). Kartlardaki durağan çizim her zaman 3B.
-  - Karşılama sahnesi (`CH`, `chFrame` yeniden yazıldı): canavar koştuğu yöne döner/yatar, hedefe bakar, göz kırpar, yedikten sonra sevinir; **dokununca gıdıklanır** (`m.tk` 0,8 sn: titrer, gözlerini kapar, güler; `sndGiggle`), sonra zıplayıp tam tur atar (`sndBoing`, inişte toz); `buzz()` = `navigator.vibrate` (Android; iPhone desteklemez). Semboller 3B: `chSprite` (ön yüz ışıklı/pahlı + yan yüz, bir kez çizilir) + `chSym` (katman katman kalınlık, sağa sola ve öne arkaya döner; rakamlar baş aşağı dönmez — 6/9 karışmasın). Aşağıdaki nesne önde ve biraz büyük (derinlik). Tuval ekran çözünürlüğünde (en çok 2 kat), canavar r=78. Eski kodda zıplama hiç görünmüyordu (`hop=1` ile başlıyordu).
-  - Test: `test/m3d.js`. **Test makinesi 2 çekirdekli → uygulama `LITE` (sade mod) açıyordu; S58 ekran testleri sade modda koşmuştu.** `shots.js`/`monkey.js` artık 8 çekirdek bildirir (`LITE=1` ile sade mod). Test makinesinde GL yazılımla çalışır → sahne hazır pozlarla çizilir; canlı 3B'yi görmek için `M3.live=true` + `m3dPerf` kapatılır (bkz. scratch `film.js`: sahte saatle kare kare film).
-  - Durum: 30 senaryo + m3d + shots (4 düzen) + monkey geçti. Kullanıcıya önizleme: "Canavar 3B Önizleme" artifact'i (canlı sahne) + `canavar_3b_sahne.mp4`.
-  - Cevap bekleyen soru: `LITE` eşiği (`deviceMemory<=2` → 3 GB'lık telefonlar da sade moda düşüyor, S58 3D efektlerini görmüyor) gevşetilsin mi? (Maskot `LITE`'tan bağımsız.)
-  - Yayınlarken: `APPV=59`, `mc-v59` hazır; §4 "Karşılama canavarı" ve §4.1'i güncelle, §8'e S59 girdisi yaz, bu maddeyi kısalt; kural/Worker değişikliği yok; kılavuz değişikliği gerekmez. İstenirse uygulama simgesi de yeni modelden üretilebilir (sorulmadı).
-- Bunun dışında yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri, S58 3D efektlerin eski telefonlarda akıcılığı ve telefonu eğince kartın eğilmesi.)
+- Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: S59 3B canavarın akıcılığı/kademesi ve Android titreşimi, sade mod sınırı gevşedikten sonra 2–3 GB'lık telefonlarda S58 efektleri, sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri, S58 3D efektlerin eski telefonlarda akıcılığı ve telefonu eğince kartın eğilmesi.)
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)

@@ -58,6 +58,9 @@ ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));if(
 p=await open(null,null,{reducedMotion:'reduce'});
 ok(await p.evaluate(()=>LITE&&document.documentElement.classList.contains('lite')),'sade mod açık');
 let s1=await probe(p);ok(s1.st===2&&Math.abs(s1.s-a.s)<a.s*0.001,'sade modda da canavar 3B');ok(p.errs.length===0,'sayfa hatası yok');await p.context().close();
+// sade mod sınırı (S59): 2–3 GB bellekli telefon artık sade moda düşmez; 1 GB ve altı düşer
+for(const [mem,exp] of [[2,false],[1,true],[4,false]]){p=await open('try{Object.defineProperty(navigator,"deviceMemory",{get:function(){return '+mem+'}})}catch(e){}');
+  ok(await p.evaluate(()=>LITE)===exp,'bellek '+mem+' GB → sade mod '+(exp?'açık':'kapalı'));await p.context().close()}
 // 320 px
 p=await open(null,{width:320,height:568});ok(await p.evaluate(()=>M3.st>=1&&document.documentElement.scrollWidth<=320),'320 px: taşma yok');if(out)await p.screenshot({path:path.join(out,'karsilama_320.png')});await p.context().close();
 await b.close();console.log(fail?('BAŞARISIZ '+fail):'HEPSİ GEÇTİ');process.exit(fail?1:0)})().catch(e=>{console.error(e);process.exit(1)});
