@@ -1,5 +1,5 @@
 // S58: rastgele dokunma testi. Görünen düğmelere rastgele basar, arada geri tuşuna basar; sayfa hatası çıkarsa son adımlarla birlikte yazar.
-// Kullanım: node test/monkey.js [adım=700] [tohum=1] [profil=1|0]
+// Kullanım: node test/monkey.js [adım=700] [tohum=1] [profil=1|0]   (sade mod için LITE=1)
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
 const U='file://'+path.resolve(__dirname,'../index.html');
 const N=+(process.argv[2]||700),SEED=+(process.argv[3]||1),PROF=process.argv[4]!=='0';
@@ -9,6 +9,7 @@ const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:39
 const p=await ctx.newPage();const errs=[];let trail=[];
 p.on('pageerror',e=>errs.push({m:String(e.message||e),s:String(e.stack||'').split('\n').slice(0,3).join(' | '),t:trail.slice(-6)}));
 await p.addInitScript(fs.readFileSync(__dirname+'/mockfb.js','utf8'));
+await p.addInitScript((lite)=>{if(!lite)try{Object.defineProperty(navigator,'hardwareConcurrency',{get:()=>8})}catch(e){}},!!process.env.LITE);
 await p.addInitScript(()=>{window.open=function(){return null};try{Object.defineProperty(navigator,'share',{value:function(){return Promise.resolve()},configurable:true})}catch(e){}
   try{navigator.clipboard.writeText=function(){return Promise.resolve()}}catch(e){}window.print=function(){};try{localStorage.setItem('mc_mmus','false')}catch(e){}});
 await p.goto(U);await sleep(800);

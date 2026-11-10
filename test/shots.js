@@ -1,4 +1,5 @@
 // S58: bütün ana ekranları dolaşır, görüntü alır, sayfa hatalarını ve taşan öğeleri raporlar. Kullanım: node test/shots.js [tema] [klasör]
+// S59: test makinesi 2 çekirdekli olduğu için uygulama kendiliğinden sade moda (html.lite) geçiyordu; artık 8 çekirdek bildirilir. Sade mod için: LITE=1
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
 const U='file://'+path.resolve(__dirname,'../index.html');
 const theme=process.argv[2]||'light',out=process.argv[3]||path.resolve(__dirname,'shots');
@@ -8,6 +9,7 @@ fs.mkdirSync(out,{recursive:true});
 const b=await chromium.launch();const ctx=await b.newContext({viewport:{width:+(process.env.W||390),height:+(process.env.H||844)},deviceScaleFactor:2});
 const p=await ctx.newPage();const errs=[];p.on('pageerror',e=>errs.push(String(e.message||e)));p.on('console',m=>{if(m.type()==='error'&&!/Failed to load resource|net::ERR/.test(m.text()))errs.push('console: '+m.text())});
 await p.addInitScript(fs.readFileSync(__dirname+'/mockfb.js','utf8'));
+await p.addInitScript((lite)=>{if(!lite)try{Object.defineProperty(navigator,'hardwareConcurrency',{get:()=>8})}catch(e){}},!!process.env.LITE);
 await p.addInitScript(([t,t2])=>{try{localStorage.setItem('mc_theme',JSON.stringify(t));localStorage.setItem('mc_mmus','false');if(t2)localStorage.setItem('mc_fs',JSON.stringify(t2))}catch(e){}},[theme,+(process.env.FS||0)]);
 await p.goto(U);await sleep(900);
 const over=[];

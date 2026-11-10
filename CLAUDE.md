@@ -212,7 +212,14 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Yeni test araçları: `test/shots.js [tema] [klasör]` (36 ekranı dolaşır, görüntü alır, sayfa hatası + taşan öğe raporu; `W=320 H=568`, `FS=2` ortam değişkenleri), `test/monkey.js [adım] [tohum] [profil]` (rastgele dokunma; 5 koşu, 0 hata).
 
 ## 9. Bekleyen / yayınlanmamış
-- Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri, S58 3D efektlerin eski telefonlarda akıcılığı ve telefonu eğince kartın eğilmesi.)
+- **S59 taslağı `s59` dalında (main'de DEĞİL, yayınlanmadı):** 3B maskot. Kullanıcı S58 efektlerini yetersiz buldu, "maskotu 3D yap" dedi; ilk model (böğürtlen gibi tüylü gövde, sivri boynuz) "sempatik değil" bulundu, yeniden tasarlandı. Kullanıcıdan **A (sade) / B (tüy yakalı) / C (perçemli)** seçimi ve "yükle" onayı bekleniyor; seçim `M3.v` (0/1/2) varsayılanıdır.
+  - Kod: `M3FS` (WebGL1 parça gölgelendirici, ışın izlemeli SDF model; kitaplık yok), `M3V` görünümler, `m3dInit/m3dReady/m3dRender/m3dBlit/m3dPerf`, `monShadow`. `drawMonster(c,cx,cy,r,o)` önce 3B dener (ekran dışı 512 px GL tuvali → `drawImage`), olmazsa eski 2B çizim. `o`: m, happy, yaw, pitch, roll, look, blink, walk, ph, sq, live, nosh, flat, v.
+  - Karşılama sahnesi (`chFrame`): koştuğu yöne döner, hedefe bakar, göz kırpar, dokununca zıplayıp tam tur atar (eski kodda zıplama hiç görünmüyordu: `hop=1` ile başlıyordu); tuval ekran çözünürlüğünde (en çok 2 kat), canavar r=78.
+  - Yavaş cihaz: `m3dPerf` kare süresine bakar (30 karelik ortalama >30 ms) → çözünürlük 1 → 0.7 → 0.52 → 0.4 → canlı sahne 2B; tercih `mc_m3` (cihaza özel, yedekte yok). Kartlardaki durağan çizim her zaman 3B. WebGL yoksa/bağlam kaybında 2B.
+  - Test: `test/m3d.js`. **Test makinesi 2 çekirdekli → uygulama `LITE` (sade mod) açıyordu; S58 ekran testleri sade modda koşmuştu.** `shots.js`/`monkey.js` artık 8 çekirdek bildirir (`LITE=1` ile sade mod). Yazılım GL çok yavaş olduğundan testlerde canlı sahne kısa sürede 2B'ye düşer (beklenen).
+  - Kullanıcıya sorulacak/sorulan: `LITE` eşiği (`deviceMemory<=2` → 3 GB'lık telefonlar da sade moda düşüyor, 3D efektleri görmüyor) gevşetilsin mi?
+  - Yayınlarken: `APPV=59`, `mc-v59` hazır; §4.1 ve §8'e S59 girdisi yaz; kılavuz değişikliği gerekmez.
+- Bunun dışında yayınlanmamış kod yok. (Gerçek telefonda denenecekler: sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri, S58 3D efektlerin eski telefonlarda akıcılığı ve telefonu eğince kartın eğilmesi.)
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
