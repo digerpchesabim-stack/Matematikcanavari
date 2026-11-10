@@ -1260,6 +1260,10 @@ function tone(f,t,d,type,v,dest){
 }
 function sfxPlay(fn){if(!AU.sfx)return;var c=auCtx();if(!c)return;try{fn(c.currentTime)}catch(e){}}
 function sndPop(){sfxPlay(function(t){tone(660,t,0.06,'sine',0.5,AU.sg)})}
+/* S59: gıdıklanma kıkırtısı, zıplama sesi, telefon titreşimi (iPhone titreşimi desteklemez) */
+function sndGiggle(){sfxPlay(function(t){var f=[988,1319,1047,1397,1175,1568,1319],i;for(i=0;i<f.length;i++)tone(f[i],t+i*0.082,0.075,'triangle',0.30,AU.sg)})}
+function sndBoing(){sfxPlay(function(t){var c=AU.ctx,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(250,t);o.frequency.exponentialRampToValueAtTime(840,t+0.24);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.5,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.32);o.connect(g);g.connect(AU.sg);o.start(t);o.stop(t+0.35)})}
+function buzz(p){try{if(navigator.vibrate)navigator.vibrate(p)}catch(e){}}
 function sndOk(n){sfxPlay(function(t){
   var L=n>=3?[72,76,79,84]:(n===2?[72,76,79]:[72,76]),i;
   for(i=0;i<L.length;i++)tone(mf(L[i]),t+i*0.08,0.16,'triangle',0.5,AU.sg);
@@ -3111,30 +3115,54 @@ function frWipe(p,mx){
   }).then(function(){return Promise.all(['from','to'].map(function(k){return fb.getDocs(fb.query(fb.collection(CL.db,'ms'),fb.where(k,'==',me.id))).then(function(qs){var ps=[];qs.forEach(function(d){ps.push(fb.deleteDoc(fb.doc(CL.db,'ms',d.id)).catch(function(){}))});return Promise.all(ps)}).catch(function(){})}))}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'iv',me.id)).catch(function(){})}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'ps',me.id)).catch(function(){})}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pl',me.id))}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pk',me.id))}).catch(function(){});
 }
 
-/* ---------- karşılama: canavar rakam ve sembolleri kovalar ---------- */
-var CH={raf:0,t:0,W:480,H:440,m:null,it:[],cr:[],tgt:null};
+/* ---------- karşılama: canavar rakam ve sembolleri kovalar (S59: 3B canavar + 3B semboller) ---------- */
+var CH={raf:0,t:0,W:480,H:440,m:null,it:[],cr:[],tgt:null,sp:{},spn:0};
 var CHSYM=['0','1','2','3','4','5','6','7','8','9','+','−','×','÷','='];
 function chNew(edge){
   var W=CH.W,H=CH.H,x,y,a=Math.random()*Math.PI*2,sp=16+Math.random()*20;
   if(edge){var e=Math.floor(Math.random()*4);x=e===0?-30:(e===1?W+30:Math.random()*W);y=e===2?-30:(e===3?H+30:Math.random()*H)}
   else{x=50+Math.random()*(W-100);y=50+Math.random()*(H-100)}
-  return {ch:CHSYM[Math.floor(Math.random()*CHSYM.length)],col:MONCOL[Math.floor(Math.random()*MONCOL.length)],x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,sz:42+Math.random()*18,rot:(Math.random()-0.5)*0.6,vr:(Math.random()-0.5)*0.8,s:1,eat:0,ph:Math.random()*6};
+  return {ch:CHSYM[Math.floor(Math.random()*CHSYM.length)],col:MONCOL[Math.floor(Math.random()*MONCOL.length)],x:x,y:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,sz:[50,58,66][Math.floor(Math.random()*3)],rot:(Math.random()-0.5)*0.3,s:1,eat:0,ph:Math.random()*20};
+}
+function chShade(h,f){var n=parseInt(h.slice(1),16),r=n>>16,g=(n>>8)&255,b=n&255,t=f<0?0:255,a=Math.abs(f);return 'rgb('+Math.round(r+(t-r)*a)+','+Math.round(g+(t-g)*a)+','+Math.round(b+(t-b)*a)+')'}
+/* Bir sembolün ön yüzü (ışıklı, kenarı pahlı) ve yan yüzü (koyu) bir kez çizilip saklanır; her karede katman katman basılır */
+function chSprite(ch,col,sz,k){
+  var fo=false;try{fo=!!(document.fonts&&document.fonts.check('700 20px MCP'))}catch(e){}
+  var px=Math.round(sz*k),key=ch+col+px+(fo?'f':'');if(CH.sp[key])return CH.sp[key];
+  if(CH.spn>90){CH.sp={};CH.spn=0}
+  var w=Math.ceil(px*1.05)+8,h=Math.ceil(px*1.3)+8,font='700 '+px+'px '+(fo?'MCP,':'')+'system-ui,-apple-system,Segoe UI,Roboto,sans-serif',cy=h/2+px*0.04,d=Math.max(1.5,px*0.035);
+  function mk(fill,dx,dy){var cv=document.createElement('canvas');cv.width=w;cv.height=h;var c=cv.getContext('2d');c.font=font;c.textAlign='center';c.textBaseline='middle';c.fillStyle=typeof fill==='function'?fill(c):fill;c.fillText(ch,w/2+(dx||0),cy+(dy||0));return cv}
+  function edge(colr,sgn){var cv=mk(colr),c=cv.getContext('2d');c.globalCompositeOperation='destination-out';c.font=font;c.textAlign='center';c.textBaseline='middle';c.fillText(ch,w/2+d*sgn,cy+d*sgn);return cv}
+  var f=mk(function(c){var g=c.createLinearGradient(0,cy-px*0.4,0,cy+px*0.4);g.addColorStop(0,chShade(col,0.30));g.addColorStop(0.55,col);g.addColorStop(1,chShade(col,-0.16));return g}),fc=f.getContext('2d');
+  fc.globalAlpha=0.62;fc.drawImage(edge('#fff',1),0,0);fc.globalAlpha=0.30;fc.drawImage(edge(chShade(col,-0.6),-1),0,0);fc.globalAlpha=1;
+  CH.spn++;return CH.sp[key]={f:f,s:mk(chShade(col,-0.40)),b:mk(chShade(col,-0.55)),w:w,h:h};
+}
+function chSym(c,it,k,ds){
+  var sp=chSprite(it.ch,it.col,it.sz,k),w=sp.w/k,h=sp.h/k,th=Math.sin(it.ph*0.55)*0.8,pt=Math.sin(it.ph*0.4+it.rot*9)*0.28,dep=it.sz*0.21,N=LITE?4:9,sx=Math.cos(th),sy=Math.cos(pt),ox=-Math.sin(th)*dep,oy=Math.sin(pt)*dep+dep*0.22,i,u;
+  c.save();c.translate(it.x,it.y+Math.sin(it.ph)*4);c.rotate(it.rot+Math.sin(it.ph*0.3)*0.12);c.scale(it.s*ds,it.s*ds);
+  for(i=N;i>=0;i--){u=i/N;c.save();c.translate(ox*u,oy*u);c.scale(sx,sy);c.drawImage(i===N?sp.b:(i?sp.s:sp.f),-w/2,-h/2,w,h);c.restore()}
+  c.restore();
 }
 function chStart(){
   var cv=document.getElementById('mon');if(!cv)return;
-  if(!CH.m){CH.m={x:CH.W/2,y:CH.H/2,vx:0,vy:0,r:78,eat:0,food:null,hop:0,dir:1,yaw:0,pit:0,wk:0,bt:1.5,bl:0};CH.it=[];for(var i=0;i<7;i++)CH.it.push(chNew(false))}
-  /* S59: tuval ekran çözünürlüğünde (en çok 2 kat) çizilir; 3B canavar net görünsün */
+  if(!CH.m){CH.m={x:CH.W/2,y:CH.H/2,vx:0,vy:0,r:78,eat:0,food:null,hop:0,dir:1,yaw:0,pit:0,wk:0,bt:1.5,bl:0,tk:0,land:0,joy:0};CH.it=[];for(var i=0;i<7;i++)CH.it.push(chNew(false))}
+  /* tuval ekran çözünürlüğünde (en çok 2 kat) çizilir; 3B canavar ve semboller net görünsün */
   try{var bw=cv.getBoundingClientRect().width,k=!bw?1:Math.max(1,Math.min(2,Math.round((window.devicePixelRatio||1)*bw/CH.W*4)/4));if(cv.width!==CH.W*k){cv.width=CH.W*k;cv.height=CH.H*k}}catch(e){}
-  if(M3.live)m3dReady(false);
+  m3dReady(false);
   CH.t=0;if(!CH.raf)CH.raf=requestAnimationFrame(chFrame);
 }
 function chTap(ev){
   var cv=document.getElementById('mon');if(!cv||!CH.m)return;
   auCtx();
-  var r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)*CH.W/r.width,y=(ev.clientY-r.top)*CH.H/r.height,i,b=null,bd=1e9,d;
+  var r=cv.getBoundingClientRect(),x=(ev.clientX-r.left)*CH.W/r.width,y=(ev.clientY-r.top)*CH.H/r.height,i,b=null,bd=1e9,d,m=CH.m;
+  /* canavara dokununca: gıdıklanır (kıkırdar, titrer), sonra zıplayıp döner; telefon da titrer */
+  if(Math.hypot(m.x-x,m.y-y)<m.r*1.15){
+    if(m.hop)return;
+    if(!(m.tk>0.3))sndGiggle();
+    m.tk=0.8;buzz([18,45,18,45,18,45,30]);return;
+  }
   for(i=0;i<CH.it.length;i++){var it=CH.it[i];if(it.eat)continue;d=Math.hypot(it.x-x,it.y-y);if(d<bd){bd=d;b=it}}
-  if(b&&bd<60){CH.tgt=b;b.vx*=0.3;b.vy*=0.3;return}
-  if(Math.hypot(CH.m.x-x,CH.m.y-y)<CH.m.r*1.1){if(!CH.m.hop){CH.m.hop=0.001;sndPop()}}
+  if(b&&bd<64){CH.tgt=b;b.vx*=0.3;b.vy*=0.3}
 }
 function chFrame(now){
   CH.raf=0;
@@ -3142,28 +3170,33 @@ function chFrame(now){
   if(!cv||st.screen!=='welcome'||document.hidden){CH.t=0;return}
   var raw=CH.t?now-CH.t:0,dt=CH.t?Math.min(0.05,raw/1000):0.016;CH.t=now;
   var c=cv.getContext('2d'),W=CH.W,H=CH.H,m=CH.m,i,it,d,dx,dy,o={},sp,kk=cv.width/W;
-  c.setTransform(kk,0,0,kk,0,0);
+  var cl=function(v){return Math.max(-1,Math.min(1,v))},dsc=function(y){return 0.9+0.2*Math.max(0,Math.min(1,y/H))};
   /* semboller: süzülür, kenardan seker, canavar yaklaşınca kaçmaya çalışır */
   for(i=0;i<CH.it.length;i++){
     it=CH.it[i];if(it.eat)continue;
     dx=it.x-m.x;dy=it.y-m.y;d=Math.hypot(dx,dy)||1;
-    if(d<150&&!m.eat){it.vx+=dx/d*70*dt;it.vy+=dy/d*70*dt}
+    if(d<150&&!m.eat&&!m.tk){it.vx+=dx/d*70*dt;it.vy+=dy/d*70*dt}
     sp=Math.hypot(it.vx,it.vy);if(sp>70){it.vx*=70/sp;it.vy*=70/sp}
     if(sp<14){it.vx*=1.05;it.vy*=1.05}
-    it.x+=it.vx*dt;it.y+=it.vy*dt;it.rot+=it.vr*dt;it.ph+=dt*3;
+    it.x+=it.vx*dt;it.y+=it.vy*dt;it.ph+=dt*3;
     if(it.x<34){it.x=34;it.vx=Math.abs(it.vx)}if(it.x>W-34){it.x=W-34;it.vx=-Math.abs(it.vx)}
     if(it.y<34){it.y=34;it.vy=Math.abs(it.vy)}if(it.y>H-34){it.y=H-34;it.vy=-Math.abs(it.vy)}
   }
-  /* canavar: hedefe koşar, yakalayınca yer */
+  /* canavar: yeme süreci (gıdıklanırken de sürer) */
   if(m.eat){
     m.eat+=dt;var f=m.food;
     if(f){var u=Math.min(1,m.eat/0.25);f.x+=(m.x-f.x)*u*0.5;f.y+=(m.y+m.r*0.3-f.y)*u*0.5;f.s=Math.max(0,1-m.eat/0.3)}
     if(m.eat<0.3)o.m=Math.min(1,m.eat/0.15);
     else if(m.eat<1.0){var cu=(m.eat-0.3)/0.7;o.m=Math.abs(Math.cos(cu*Math.PI*3))*0.5;if(f&&!f.done){f.done=1;CH.it.splice(CH.it.indexOf(f),1);sndCrunch()}
       if(Math.random()<0.25)CH.cr.push({x:m.x+(Math.random()-0.5)*50,y:m.y+m.r*0.35,vx:(Math.random()-0.5)*120,vy:-Math.random()*120-40,s:4+Math.random()*4,l:0.7,col:f?f.col:'#f59e0b'})}
-    else if(m.eat<1.35)o.happy=true;
-    else{m.eat=0;m.food=null;CH.it.push(chNew(true))}
-  }else{
+    else if(m.eat<1.4){o.happy=true;m.joy=1}
+    else{m.eat=0;m.food=null;m.joy=0;CH.it.push(chNew(true))}
+  }
+  if(m.tk>0){
+    /* gıdıklanma: durur, yüzünü çevirir, kıkırdar; bitince zıplar */
+    m.tk-=dt;m.vx*=Math.pow(0.02,dt);m.vy*=Math.pow(0.02,dt);
+    if(m.tk<=0){m.tk=0;m.hop=0.001;sndBoing();buzz(35)}
+  }else if(!m.eat&&!m.hop){
     var t=CH.tgt;
     if(!t||CH.it.indexOf(t)<0||t.eat){t=null;var bd=1e9;for(i=0;i<CH.it.length;i++){it=CH.it[i];d=Math.hypot(it.x-m.x,it.y-m.y);if(d<bd){bd=d;t=it}}CH.tgt=t}
     if(t){
@@ -3172,32 +3205,37 @@ function chFrame(now){
       if(Math.abs(m.vx)>8)m.dir=m.vx>0?1:-1;
       if(d<m.r*0.8){t.eat=1;m.eat=0.001;m.food=t;m.vx*=0.2;m.vy*=0.2;CH.tgt=null}
     }
-    m.x+=m.vx*dt;m.y+=m.vy*dt;
-    m.x=Math.max(m.r,Math.min(W-m.r,m.x));m.y=Math.max(m.r*1.2,Math.min(H-m.r*1.3,m.y));
-  }
-  if(m.hop){m.hop+=dt*1.35;if(m.hop>=1)m.hop=0}
-  for(i=CH.cr.length-1;i>=0;i--){var p=CH.cr[i];p.vy+=420*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l<=0)CH.cr.splice(i,1)}
-  /* çizim */
-  c.clearRect(0,0,W,H);
-  c.textAlign='center';c.textBaseline='middle';
-  for(i=0;i<CH.it.length;i++){
-    it=CH.it[i];c.save();c.translate(it.x,it.y+Math.sin(it.ph)*4);c.rotate(it.rot);c.scale(it.s,it.s);
-    c.font='800 '+Math.round(it.sz)+'px system-ui,sans-serif';c.lineWidth=7;c.strokeStyle='#fff';c.strokeText(it.ch,0,0);c.fillStyle=it.col;c.fillText(it.ch,0,0);c.restore();
-  }
-  var walk=!m.eat&&Math.hypot(m.vx,m.vy)>20,bob=walk?Math.abs(Math.sin(now/90))*-10:0,hp=m.hop||0,hop=hp?-Math.sin(hp*Math.PI)*46:0;
-  /* S59: 3B poz — koştuğu yöne döner, hedefe bakar, göz kırpar, dokununca zıplayıp tam tur atar */
-  var cl=function(v){return Math.max(-1,Math.min(1,v))},ty=m.eat?0:-cl(m.vx/105)*0.82,tp=m.eat?0.04:-cl(m.vy/105)*0.2,tg=CH.tgt;
-  m.yaw+=(ty-m.yaw)*Math.min(1,dt*6);m.pit+=(tp-m.pit)*Math.min(1,dt*6);m.wk+=((walk?1:0)-m.wk)*Math.min(1,dt*8);
+  }else{m.vx*=Math.pow(0.05,dt);m.vy*=Math.pow(0.05,dt)}
+  if(!m.eat||m.tk>0||m.hop){m.x+=m.vx*dt;m.y+=m.vy*dt}
+  m.x=Math.max(m.r,Math.min(W-m.r,m.x));m.y=Math.max(m.r*1.2,Math.min(H-m.r*1.3,m.y));
+  if(m.hop){m.hop+=dt*1.35;if(m.hop>=1){m.hop=0;m.land=0.26;for(i=0;i<6;i++)CH.cr.push({x:m.x+(Math.random()-0.5)*m.r*1.4,y:m.y+m.r*1.08,vx:(Math.random()-0.5)*160,vy:-Math.random()*50-10,s:5+Math.random()*5,l:0.45,col:'rgba(150,160,200,.55)',g:60})}}
+  if(m.land>0)m.land=Math.max(0,m.land-dt);
+  for(i=CH.cr.length-1;i>=0;i--){var p=CH.cr[i];p.vy+=(p.g||420)*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l<=0)CH.cr.splice(i,1)}
+  /* poz: koştuğu yöne döner ve yatar, hedefe bakar, göz kırpar */
+  var tk=m.tk>0,hp=m.hop||0,walk=!m.eat&&!tk&&!hp&&Math.hypot(m.vx,m.vy)>20,ds=dsc(m.y),R=m.r*ds;
+  var bob=walk?Math.abs(Math.sin(now/90))*-10:(m.joy&&!tk?Math.abs(Math.sin(now/110))*-7:0),hop=hp?-Math.sin(hp*Math.PI)*52:0;
+  var ty=(m.eat||tk||hp)?0:-cl(m.vx/105)*0.82,tp=(m.eat||tk||hp)?0.04:-cl(m.vy/105)*0.2,tg=CH.tgt;
+  m.yaw+=(ty-m.yaw)*Math.min(1,dt*(tk?12:6));m.pit+=(tp-m.pit)*Math.min(1,dt*6);m.wk+=((walk?1:0)-m.wk)*Math.min(1,dt*8);
   m.bt-=dt;if(m.bt<0){m.bl=0.17;m.bt=1.8+Math.random()*3.2}
   if(m.bl>0){m.bl-=dt;o.blink=Math.sin(Math.PI*cl(1-m.bl/0.17))}
-  o.live=true;o.nosh=true;o.yaw=m.yaw+(hp?hp*hp*(3-2*hp)*Math.PI*2:0);o.pitch=m.pit;o.walk=m.wk;o.ph=now/90;
-  o.sq=1+(walk?Math.abs(Math.sin(now/90))*0.05-0.02:Math.sin(now/650)*0.012)+(hp?Math.sin(hp*Math.PI)*0.08:0)-(o.m||0)*0.03;
-  o.look=m.eat?[0,-0.3]:(tg&&!hp?[cl((tg.x-m.x)/170)*0.3,-cl((tg.y-m.y)/170)*0.5]:null);
+  var roll=walk?(-cl(m.vx/125)*0.07+Math.sin(now/120)*0.05):0,sq=1+(walk?Math.abs(Math.sin(now/90))*0.05-0.02:Math.sin(now/650)*0.012);
+  o.live=true;o.nosh=true;o.yaw=m.yaw;o.pitch=m.pit;o.walk=m.wk;o.ph=now/90;
+  o.look=m.eat?[0,-0.3]:(tg&&!hp&&!tk?[cl((tg.x-m.x)/170)*0.3,-cl((tg.y-m.y)/170)*0.5]:null);
+  if(tk){var en=Math.min(1,m.tk/0.12)*Math.min(1,(0.8-m.tk)/0.08+0.4);
+    roll=Math.sin(now/36)*0.15*en;sq=1+Math.sin(now/44)*0.055*en;o.happy=true;o.m=0.4+0.3*Math.abs(Math.sin(now/62));o.walk=en;o.ph=now/42;o.look=null}
+  if(hp){o.yaw=m.yaw+hp*hp*(3-2*hp)*Math.PI*2;sq+=Math.sin(hp*Math.PI)*0.09-(hp<0.12?(0.12-hp)*0.9:0);o.happy=true;o.m=0.5;o.walk=0}
+  if(m.land>0)sq-=Math.sin((1-m.land/0.26)*Math.PI)*0.09;
+  o.sq=sq-(o.m||0)*0.03;
   if(M3.lf){M3.lf=false;m3dPerf(raw)}
-  var shs=1+hop/160;
-  c.save();c.translate(m.x,m.y+bob+hop);c.rotate(walk?Math.sin(now/120)*0.06*m.dir:0);
-  monShadow(c,0,m.r*1.12-bob-hop,m.r*1.02*shs,m.r*0.2*shs,0.26*shs);
-  drawMonster(c,0,0,m.r,o);c.restore();
+  /* çizim: aşağıdaki nesneler önde (derinlik), önce arkadaki semboller, sonra canavar, sonra öndekiler */
+  c.setTransform(kk,0,0,kk,0,0);c.clearRect(0,0,W,H);
+  var gy=m.y+R*0.55,front=[];
+  for(i=0;i<CH.it.length;i++){it=CH.it[i];if(it===m.food||it.y+it.sz*0.3>gy){front.push(it);continue}chSym(c,it,kk,dsc(it.y))}
+  var shs=1+hop/170;
+  monShadow(c,m.x,m.y+R*1.12,R*1.02*shs,R*0.2*shs,0.26*shs);
+  c.save();c.translate(m.x,m.y+bob+hop);c.rotate(roll);
+  drawMonster(c,0,0,R,o);c.restore();
+  for(i=0;i<front.length;i++)chSym(c,front[i],kk,dsc(front[i].y));
   for(i=0;i<CH.cr.length;i++){var q=CH.cr[i];c.globalAlpha=Math.max(0,Math.min(1,q.l*2));circ(c,q.x,q.y,q.s,q.col);c.globalAlpha=1}
   CH.raf=requestAnimationFrame(chFrame);
 }
@@ -4476,7 +4514,7 @@ var M3FS=[
 "}"].join('\n');
 /* görünüm: [tüy halkası, perçem, göz ölçeği] */
 var M3V=[[0,0,1],[1,0,1],[0,1,1.08]];
-var M3={v:0,st:0,gl:null,cv:null,pr:null,u:{},n:512,q:1,live:true,lf:false,ft:0,fc:0,slow:0,off:false,t0:0};
+var M3={v:2,st:0,gl:null,cv:null,pr:null,u:{},n:512,q:1,live:true,lf:false,ft:0,fc:0,slow:0,off:false,t0:0};
 (function(){try{var v=JSON.parse(localStorage.getItem('mc_m3'));if(v&&v.v===1){if(v.q>=0.4&&v.q<=1)M3.q=v.q;if(v.l===0)M3.live=false}}catch(e){}})();
 function m3dInit(){
   if(M3.st)return;M3.st=1;M3.t0=Date.now();
@@ -4488,6 +4526,8 @@ function m3dInit(){
     var gl=cv.getContext('webgl',{alpha:true,premultipliedAlpha:true,antialias:false,depth:false,stencil:false,powerPreference:'low-power'});
     if(!gl||gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER,gl.HIGH_FLOAT).precision<20){M3.st=-1;return}
     M3.gl=gl;
+    /* ekran kartı hızlandırması yoksa (yazılımla çizim) canlı sahne hazır 3B pozlarla çizilir (m3dSprite) */
+    try{var di=gl.getExtension('WEBGL_debug_renderer_info');if(di&&/swiftshader|llvmpipe|software|basic render/i.test(String(gl.getParameter(di.UNMASKED_RENDERER_WEBGL)))){M3.sw=true;M3.live=false}}catch(e){}
     var vs=gl.createShader(gl.VERTEX_SHADER);gl.shaderSource(vs,'attribute vec2 a;void main(){gl_Position=vec4(a,0.0,1.0);}');gl.compileShader(vs);
     var fs=gl.createShader(gl.FRAGMENT_SHADER);gl.shaderSource(fs,M3FS);gl.compileShader(fs);
     var pr=gl.createProgram();gl.attachShader(pr,vs);gl.attachShader(pr,fs);gl.bindAttribLocation(pr,0,'a');gl.linkProgram(pr);
@@ -4511,7 +4551,7 @@ function m3dReady(wait){
     M3.st=2;return true;
   }catch(e){M3.st=-1;return false}
 }
-/* Canlı sahnede kare süresi ölçülür: yavaşsa önce çözünürlük düşer, yine yavaşsa canlı sahne 2B çizime döner */
+/* Canlı sahnede kare süresi ölçülür: yavaşsa önce çözünürlük düşer, yine yavaşsa canlı sahne hazır 3B pozlara (m3dSprite) döner */
 function m3dPerf(ms){
   if(M3.st!==2||M3.off||!M3.live||!(ms>0)||ms>250)return;
   M3.fc++;if(M3.fc<=15)return;M3.ft+=ms;
@@ -4549,12 +4589,32 @@ function m3dRender(n,o){
 function m3dBlit(c,cx,cy,r,o){
   try{
     var k=1;if(c.getTransform){var t=c.getTransform();k=Math.sqrt(Math.abs(t.a*t.d-t.b*t.c))||1}
-    var S=3.24*r,live=o&&o.live,n=m3dRender(Math.min(live?400:M3.n,Math.ceil(S*k*(live?M3.q:1))),o);
+    var S=3.24*r,live=o&&o.live,n=m3dRender(Math.min(M3.n,Math.ceil(S*k*(live?M3.q:1))),o);
     if(M3.st!==2||M3.gl.isContextLost())return false;
     c.drawImage(M3.cv,0,M3.n-n,n,n,cx-S/2,cy-S/2,S,S);
     if(live)M3.lf=true;
     return true;
   }catch(e){M3.off=true;return false}
+}
+/* Orta kademe: canlı 3B ağır gelen cihazlarda (ya da ekran kartı hızlandırması yokken) canavarın 3B pozları bir kez çizilip saklanır
+   (16 yön × ağız 3 kademe × mutlu), sahnede bu hazır görüntüler kullanılır; esneme tuval ölçeğiyle verilir. Görünüm aynı kalır, yük çok azalır. */
+var M3S={c:{},n:0};
+function m3dSprite(c,cx,cy,r,o){
+  try{
+    var k=1;if(c.getTransform){var t=c.getTransform();k=Math.sqrt(Math.abs(t.a*t.d-t.b*t.c))||1}
+    var n=k>1.4?320:256,yq=((Math.round((o.yaw||0)/0.3927)%16)+16)%16,mq=Math.round(Math.max(0,Math.min(1,o.m||0))*2),key=yq+'|'+mq+'|'+(o.happy?1:0)+'|'+n+'|'+M3.v,sp=M3S.c[key];
+    if(!sp){
+      if(M3S.n>=40){M3S.c={};M3S.n=0}
+      var ya=yq*0.3927;if(ya>Math.PI)ya-=Math.PI*2;
+      m3dRender(n,{yaw:ya,pitch:0.04,m:mq/2,happy:o.happy});
+      if(M3.st!==2||M3.gl.isContextLost())return false;
+      sp=document.createElement('canvas');sp.width=sp.height=n;sp.getContext('2d').drawImage(M3.cv,0,M3.n-n,n,n,0,0,n,n);
+      M3S.c[key]=sp;M3S.n++;
+    }
+    var S=3.24*r,q=o.sq||1,by=r*1.15;
+    c.save();c.translate(cx,cy+by);c.scale(1/Math.sqrt(q),q);c.drawImage(sp,-S/2,-S/2-by,S,S);c.restore();
+    return true;
+  }catch(e){return false}
 }
 function monShadow(c,x,y,w,h,a){
   c.save();c.translate(x,y);c.scale(1,h/w);var g=c.createRadialGradient(0,0,w*0.15,0,0,w);g.addColorStop(0,'rgba(22,24,70,'+a+')');g.addColorStop(1,'rgba(22,24,70,0)');
@@ -4564,9 +4624,10 @@ function monShadow(c,x,y,w,h,a){
    o: {m ağız 0..1, happy, yaw, pitch, roll, look:[x,y], blink, walk, ph, sq, live (canlı sahne), nosh (gölgeyi çizme), flat (2B zorla)} */
 function drawMonster(c,cx,cy,r,o){
   o=o||{};var body='#8b5cf6',dark='#7040e0',i,a,m=o.m||0;
-  if(!o.flat&&(!o.live||M3.live)&&m3dReady(!o.live)){
+  if(!o.flat&&m3dReady(!o.live)){
     if(!o.nosh)monShadow(c,cx,cy+r*1.14,r*1.05,r*0.2,0.30);
-    if(m3dBlit(c,cx,cy,r,o))return;
+    if(o.live&&!M3.live){if(m3dSprite(c,cx,cy,r,o))return}
+    else if(m3dBlit(c,cx,cy,r,o))return;
   }
   if(!o.nosh){c.save();c.beginPath();c.ellipse(cx,cy+r*1.2,r*0.95,r*0.16,0,0,Math.PI*2);c.fillStyle='rgba(20,30,70,.16)';c.fill();c.restore()}
   [-1,1].forEach(function(s){
@@ -4900,7 +4961,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button></div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button></div></div>';
   }else if(s==='profiles'){
     h=startHtml();
   }else if(s==='mig'){
