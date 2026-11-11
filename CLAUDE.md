@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 10 Kasım 2026 · Yayındaki sürüm: **59**
+Son güncelleme: 11 Kasım 2026 · Yayındaki sürüm: **60**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -226,7 +226,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Test notu: test makinesi 2 çekirdekli olduğundan uygulama sade modda açılıyordu; S58 ekran testleri fark edilmeden sade modda koşmuştu. `shots.js`/`monkey.js` artık 8 çekirdek bildirir (`LITE=1` ile sade mod).
 
 ## 9. Bekleyen / yayınlanmamış
-- **S60 taslağı `s60` dalında (yayınlanmadı, kullanıcının "yükle" demesi bekleniyor).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
+- **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
   - Ana menü "A+B": karakter şeridi (`.hstrip`, rkMini + rkLeft + çubuk → rkMyCard), büyük altın Oyna (`.hplay`, canavar `homeMon`, `homePlay` → son Akıldan İşlem oyunu `mc_glast` {profil|'~': {op,lv,tb}}, yoksa gmenu), 4 kare (Akıldan İşlem, İşlemler, Problemler, Yarış Odası). "Şu an oyunda" kutusu ana menüden kalktı.
   - Alt sekme çubuğu `#tabs` (`TABS`, `tabsUi`, `tabOn`, `tabGo`, `tabBadge`): Oyna/home, Arkadaşlar/friends (+ Takımım `#tm-home`), Kartım/kart (+ Skorlarım), Ayarlar/hesap (+ Kılavuz, Paylaş). Sadece karakterle ve bu ekranlarda; `body.hastabs` alt boşluk, toast yukarı.
   - Engelle: `mc_blk` {profil:[{i,n}]} (yedekte), `blkAsk/blkAdd/blkDel/blkHas/blkHtml`, arkadaş profili + kart (`rkBlkBtn`), Hesabım "Engellediklerim"; engellenen frStart'ta listelerden düşer, arkadaşlık silinir.
