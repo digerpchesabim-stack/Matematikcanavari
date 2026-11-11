@@ -359,6 +359,8 @@ body.hastabs #app{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
 body.hastabs #toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
 @media (prefers-reduced-motion:reduce){.hplay canvas{animation:none}}
 .blkrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.info1{text-align:left;margin-top:64px}.infot{font-size:21px;font-weight:700;line-height:1.25;margin:2px 0 12px;text-align:center}
+.infol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}.infol li{display:flex;gap:10px;align-items:flex-start;font-size:16px;line-height:1.35}.infol span{flex:none;font-size:18px}
 </style>
 </head>
 <body>
@@ -4948,6 +4950,8 @@ function go(s){
   setTimeout(rvCheck,600);setTimeout(msCheck,900);setTimeout(tmCheck,1200);
   if(PENDRELOAD&&(s==='home'||s==='welcome'||s==='profiles')){location.reload();return}
   if(s==='bkr')s='hgir';
+  /* S60: ilk açılışta bir kez bilgilendirme kartı (hangi bilgiler kullanılır) */
+  if((s==='profiles'||s==='home'||s==='mig')&&!ls('mc_info',0)){st.infoNext=s;s='info'}
   var np=profiles().length;
   if(np>1&&(s==='profiles'||(s==='home'&&st.profile)))s='mig';
   if(np===1&&s==='profiles'){if(!st.profile){st.profile=profiles()[0];setTimeout(frEnsure,0)}s='home'}
@@ -4967,6 +4971,7 @@ function back(){SCR.back=true;
   if(s==='rjoin'){RJOIN=null;return go('welcome')}
   if(s==='lb')return go(LBV.from||'home');
   if(s==='rhist')return go('rooms');
+  if(s==='info')return go('welcome');
   if(s==='hesap')return go('home');
   if(s==='hgir')return go(st.profile?'hesap':(profiles().length?'welcome':'profiles'));
   if(s==='mig')return go(RJOIN?'rjoin':'welcome');
@@ -5039,6 +5044,8 @@ function render(){
     h=startHtml();
   }else if(s==='mig'){
     h=migHtml();
+  }else if(s==='info'){
+    h='<div class="pbox info1"><div class="infot">Matematik Canavarı hangi bilgileri kullanır?</div><ul class="infol"><li><span>✅</span><div>Seçtiğin karakter adı ve oyun sonuçların</div></li><li><span>✅</span><div>Arkadaş listen ve rekorların</div></li><li><span>❌</span><div>Gerçek adın, telefonun, konumun, fotoğrafın <b>istenmez</b></div></li><li><span>❌</span><div>Reklam <b>yoktur</b></div></li></ul></div><button class="ghost" onclick="infoFull()">👨‍👩‍👧 Veliler için: tam gizlilik metni</button><button class="next" onclick="infoOk()">Anladım, devam</button>';
   }else if(s==='hesap'){
     h=hesapHtml();
   }else if(s==='hgir'){
@@ -5266,6 +5273,8 @@ function render(){
 function pickProfile(i){var p=profiles()[i];st.profile=p;go('home');frEnsure();nmAsk(p)}
 function startGo(){var ps=profiles();if(ps.length>1)return go('mig');if(ps.length===1){st.profile=ps[0];go('home');frEnsure();nmAsk(ps[0]);return}go('profiles')}
 function guest(){st.profile=null;frStop();go('home')}
+function infoOk(){lsSet('mc_info',1);var n=st.infoNext||'profiles';st.infoNext=null;go(n)}
+function infoFull(){modal('<div style="text-align:left"><b>🔒 Gizlilik</b>'+PRIV+'</div>','Tamam',null,function(){},null)}
 /* S60: alt sekme çubuğu: Oyna / Arkadaşlar / Kartım / Ayarlar (sadece karakterle, ana ekranlarda) */
 var TABS=[['🏠','Oyna'],['👫','Arkadaşlar'],['🪪','Kartım'],['⚙️','Ayarlar']];
 function tabOn(){

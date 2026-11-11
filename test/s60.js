@@ -52,4 +52,15 @@ ok(await p.evaluate(()=>document.getElementById('tabs').hidden&&!document.queryS
 await prof(p);await sleep(700);await p.evaluate(()=>{if(st.modal)closeModal()});ok(await p.evaluate(()=>document.documentElement.scrollWidth<=320),'320 px taşma yok');await shot(p,'06_gece_320');
 const ov=await p.evaluate(()=>{var t=document.getElementById('tabs').getBoundingClientRect(),l=[...document.querySelectorAll('#app button')].pop();window.scrollTo(0,1e5);var r=l.getBoundingClientRect();return r.bottom<=t.top+1});ok(ov,'son düğme sekme çubuğunun altında kalmıyor');
 ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();
+// ilk açılış bilgilendirme kartı
+{const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});const q=await ctx.newPage();q.errs=[];q.on('pageerror',e=>q.errs.push(String(e.message||e)));
+ await q.addInitScript(()=>{window.__INFO0=1;try{localStorage.setItem('mc_mmus','false')}catch(e){}});await q.addInitScript(fs.readFileSync(__dirname+'/mockfb.js','utf8'));await q.goto(U);await sleep(800);
+ await q.evaluate(()=>startGo());await sleep(300);ok(await q.evaluate(()=>st.screen==='info'&&/hangi bilgileri/.test(document.getElementById('app').textContent)),'ilk açılışta bilgilendirme kartı');await shot(q,'07_bilgilendirme');
+ await q.evaluate(()=>infoFull());await sleep(200);ok(await q.evaluate(()=>/Gizlilik/.test(document.getElementById('ov').textContent)),'veliler için tam metin');await q.evaluate(()=>closeModal());
+ await q.evaluate(()=>back());await sleep(200);ok(await q.evaluate(()=>st.screen==='welcome'),'geri → karşılama');
+ await q.evaluate(()=>startGo());await sleep(200);await q.evaluate(()=>infoOk());await sleep(300);ok(await q.evaluate(()=>st.screen==='profiles'),'Anladım → karakter seçimi');
+ await q.evaluate(()=>go('welcome'));await q.evaluate(()=>startGo());await sleep(300);ok(await q.evaluate(()=>st.screen==='profiles'),'ikinci kez çıkmıyor');
+ await q.evaluate(()=>{localStorage.removeItem('mc_info');localStorage.setItem('mc_profiles',JSON.stringify(['🦊 Kurnaz Tilki']));st.profile='🦊 Kurnaz Tilki';go('home')});await sleep(300);ok(await q.evaluate(()=>st.screen==='info'),'mevcut kullanıcı da bir kez görür');
+ await q.evaluate(()=>infoOk());await sleep(300);ok(await q.evaluate(()=>st.screen==='home'),'sonra ana menü');
+ ok(q.errs.length===0,'sayfa hatası yok '+JSON.stringify(q.errs.slice(0,3)));await ctx.close()}
 await b.close();console.log(fail?'BAŞARISIZ '+fail:'HEPSİ GEÇTİ');process.exit(fail?1:0)})().catch(e=>{console.error(e);process.exit(1)});

@@ -1,4 +1,6 @@
 // in-memory Firebase mock (init script)
+/* S60: testlerde ilk açılış bilgilendirme kartı görülmüş sayılır (window.__INFO0 ile kapatılır) */
+try{if(!window.__INFO0)localStorage.setItem('mc_info','1')}catch(e){}
 (function(){
   var store={},users={},cur=null,listeners=[],uidn=0,snaps=[];
   window.__DB=store;window.__USERS=users;

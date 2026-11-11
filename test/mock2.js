@@ -1,4 +1,6 @@
 // Firebase mock whose data lives in Node (shared between pages); auth is per page.
+/* S60: testlerde ilk açılış bilgilendirme kartı görülmüş sayılır (window.__INFO0 ile kapatılır) */
+try{if(!window.__INFO0)localStorage.setItem('mc_info','1')}catch(e){}
 (function(){
   var cur=null,listeners=[],uidn=0,subs={},sn=0,PID=window.__PID||'p';
   function fire(){listeners.forEach(function(f){f(cur)})}
