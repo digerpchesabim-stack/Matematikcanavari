@@ -52,11 +52,27 @@ ok(await p.evaluate(()=>document.getElementById('tabs').hidden&&!document.queryS
 await prof(p);await sleep(700);await p.evaluate(()=>{if(st.modal)closeModal()});ok(await p.evaluate(()=>document.documentElement.scrollWidth<=320),'320 px taşma yok');await shot(p,'06_gece_320');
 const ov=await p.evaluate(()=>{var t=document.getElementById('tabs').getBoundingClientRect(),l=[...document.querySelectorAll('#app button')].pop();window.scrollTo(0,1e5);var r=l.getBoundingClientRect();return r.bottom<=t.top+1});ok(ov,'son düğme sekme çubuğunun altında kalmıyor');
 ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();
+// yasal sayfalar ve Verilerimi sil → takımdan çıkma
+p=await open();await prof(p);await sleep(600);await p.evaluate(()=>{if(st.modal)closeModal()});
+await p.evaluate(()=>tabGo(3));await sleep(300);
+ok(await p.evaluate(()=>/Gizlilik Politikası/.test(document.getElementById('app').textContent)&&/KVKK Aydınlatma/.test(document.getElementById('app').textContent)),'Ayarlar: yasal metin düğmeleri');
+await p.evaluate(()=>legalOpen('gizlilik'));await sleep(300);
+ok(await p.evaluate(()=>st.screen==='legal'&&document.querySelectorAll('.lgl section').length>=10&&/Hangi bilgileri/.test(document.getElementById('app').textContent)),'Gizlilik Politikası uygulamada');await shot(p,'08_gizlilik',true);
+ok(await p.evaluate(()=>document.documentElement.scrollWidth<=390),'yasal ekranda taşma yok');
+await p.evaluate(()=>{[...document.querySelectorAll('.lgl a')].find(a=>/veri-silme|silme sayfas/i.test(a.textContent)||/veri-silme/.test(a.getAttribute('onclick')||'')).click()});await sleep(300);
+ok(await p.evaluate(()=>st.lg==='veri-silme'&&/Neler silinir/.test(document.getElementById('app').textContent)),'sayfalar arası bağlantı');
+await p.evaluate(()=>legalOpen('aydinlatma'));await sleep(200);ok(await p.evaluate(()=>/KVKK m\. 11/.test(document.getElementById('app').textContent)),'aydınlatma metni');
+await p.evaluate(()=>back());await sleep(300);ok(await p.evaluate(()=>st.screen==='hesap'),'geri → Ayarlar');
+const tw=await p.evaluate(async()=>{await frEnsure();var me=(frIds()[st.profile]||{}).id;var fb=await devAuth();await fb.setDoc(fb.doc(CL.db,'tm','7'),{m:[me,'ZZZZZZZ'],cap:me,by:me,w:0,l:0,ts:Date.now(),v:60});tmSetKey(7);return me});
+await p.evaluate(()=>acWipe());await sleep(2500);
+ok(await p.evaluate(async()=>{var fb=await devAuth();var s=await fb.getDoc(fb.doc(CL.db,'tm','7'));return s.exists()&&s.data().m.length===1&&s.data().m[0]==='ZZZZZZZ'&&s.data().cap==='ZZZZZZZ'}),'Verilerimi sil takımdan da çıkarır');
+ok(await p.evaluate(()=>st.screen==='welcome'),'silme sonrası karşılama');
+ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();
 // ilk açılış bilgilendirme kartı
 {const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:2});const q=await ctx.newPage();q.errs=[];q.on('pageerror',e=>q.errs.push(String(e.message||e)));
  await q.addInitScript(()=>{window.__INFO0=1;try{localStorage.setItem('mc_mmus','false')}catch(e){}});await q.addInitScript(fs.readFileSync(__dirname+'/mockfb.js','utf8'));await q.goto(U);await sleep(800);
  await q.evaluate(()=>startGo());await sleep(300);ok(await q.evaluate(()=>st.screen==='info'&&/hangi bilgileri/.test(document.getElementById('app').textContent)),'ilk açılışta bilgilendirme kartı');await shot(q,'07_bilgilendirme');
- await q.evaluate(()=>infoFull());await sleep(200);ok(await q.evaluate(()=>/Gizlilik/.test(document.getElementById('ov').textContent)),'veliler için tam metin');await q.evaluate(()=>closeModal());
+ await q.evaluate(()=>infoFull());await sleep(200);ok(await q.evaluate(()=>st.screen==='legal'&&st.lg==='gizlilik'),'veliler için tam metin');await q.evaluate(()=>back());await sleep(200);ok(await q.evaluate(()=>st.screen==='info'),'yasal → bilgilendirme kartına dönüş');
  await q.evaluate(()=>back());await sleep(200);ok(await q.evaluate(()=>st.screen==='welcome'),'geri → karşılama');
  await q.evaluate(()=>startGo());await sleep(200);await q.evaluate(()=>infoOk());await sleep(300);ok(await q.evaluate(()=>st.screen==='profiles'),'Anladım → karakter seçimi');
  await q.evaluate(()=>go('welcome'));await q.evaluate(()=>startGo());await sleep(300);ok(await q.evaluate(()=>st.screen==='profiles'),'ikinci kez çıkmıyor');
