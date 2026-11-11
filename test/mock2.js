@@ -1,6 +1,7 @@
 // Firebase mock whose data lives in Node (shared between pages); auth is per page.
 /* S60: testlerde ilk açılış bilgilendirme kartı görülmüş sayılır (window.__INFO0 ile kapatılır) */
-try{if(!window.__INFO0)localStorage.setItem('mc_info','1')}catch(e){}
+/* (açılışta localStorage'a yazmak Chromium'da yenilemede depoyu kaybettiriyordu; bu yüzden sadece okuma taklidi) */
+try{if(!window.__INFO0){var __gi=Storage.prototype.getItem;Storage.prototype.getItem=function(k){var v=__gi.call(this,k);return v===null&&k==='mc_info'?'1':v}}}catch(e){}
 (function(){
   var cur=null,listeners=[],uidn=0,subs={},sn=0,PID=window.__PID||'p';
   function fire(){listeners.forEach(function(f){f(cur)})}

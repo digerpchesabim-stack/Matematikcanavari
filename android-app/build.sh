@@ -28,7 +28,7 @@ A=android/app
 [ $FCM = 1 ] && cp google-services.json $A/
 cp res/drawable/ic_stat_mc.xml $A/src/main/res/drawable/
 # sürüm numarası = uygulamadaki APPV
-sed -i -E "s/versionCode [0-9]+/versionCode $APPV/; s/versionName \"[^\"]*\"/versionName \"$APPV\"/" $A/build.gradle
+sed -i -E "s/versionCode( =)? [0-9]+/versionCode\1 $APPV/; s/versionName( =)? \"[^\"]*\"/versionName\1 \"$APPV\"/" $A/build.gradle
 grep -E "versionCode|versionName|targetSdk|compileSdk" $A/build.gradle android/variables.gradle || true
 # bildirim simgesi/kanalı ve dikey ekran
 M=$A/src/main/AndroidManifest.xml

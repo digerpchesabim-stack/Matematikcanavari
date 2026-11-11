@@ -33,8 +33,8 @@ await ev(B,([c,t])=>{DEEP=deepParse('?kap='+c+'&to='+t);deepRun()},[code2,pb]);
 for(let i=0;i<80&&!['dintro','duel'].includes(await ev(B,()=>st.screen));i++)await sleep(150);
 ok(['dintro','duel'].includes(await ev(B,()=>st.screen)),'açık uygulamada da doğrudan kapışma');
 // paylaş
-await ev(A,()=>{rmReset();go('home');window.__sh=null;navigator.share=o=>{window.__sh=o;return Promise.resolve()}});await sleep(300);
-ok(await ev(A,()=>/Uygulamayı Paylaş/.test(document.body.innerText)),'ana menüde Uygulamayı Paylaş');
+await ev(A,()=>{rmReset();go('hesap');window.__sh=null;navigator.share=o=>{window.__sh=o;return Promise.resolve()}});await sleep(300);
+ok(await ev(A,()=>/Uygulamayı Paylaş/.test(document.body.innerText)),'Ayarlar sekmesinde Uygulamayı Paylaş (S60)');
 await ev(A,()=>appShare());await sleep(200);
 const sh=await ev(A,()=>window.__sh&&window.__sh.text);console.log('  paylaşılan:',JSON.stringify(sh));
 ok(/Matematik Canavarı/.test(sh)&&/Ana ekrana ekle/.test(sh)&&/https?:|file:/.test(sh),'paylaşım metni (link + ana ekrana ekle)');

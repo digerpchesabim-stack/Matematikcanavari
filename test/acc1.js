@@ -137,7 +137,7 @@ ok(await ev(C,()=>/Misafir olarak oyna/.test(document.body.innerText)&&new RegEx
 await ev(C,()=>startGo());await sleep(200);
 ok(await ev(C,()=>st.screen==='home'&&!!st.profile),'Haydi Başlayalım → doğrudan ana menü (Kim oynuyor yok)');
 const homeT=await ev(C,()=>document.body.innerText);
-ok(/Hesabım ve ayarlar/.test(homeT)&&!/Yedek ve geri yükleme/.test(homeT),'ana menüde Hesabım (eski yedek kutusu yok)');
+ok(/Ayarlar/.test(homeT)&&!/Yedek ve geri yükleme/.test(homeT),'S60: Hesabım alt sekmede (Ayarlar), eski yedek kutusu yok');
 await ev(C,()=>{back()});await sleep(100);
 ok(await ev(C,()=>st.screen==='welcome'),'ana menüden geri → karşılama');
 // ---------- 6) Sesli okuma ----------

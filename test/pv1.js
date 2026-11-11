@@ -19,6 +19,6 @@ const r4=await A.evaluate(()=>new Promise(res=>{RM.players.push({uid:'NEW',nick:
 ok(r4==='true,2,dintro','rakip gelince iki kişiyle başladı: '+r4);
 // güncelle düğmesi
 await A.evaluate(()=>{rmReset();go('welcome')});await sleep(300);
-ok(await A.evaluate(()=>/Sürüm 5[0-9]/.test(document.body.innerText)&&!!document.querySelector('.vupd')),'giriş ekranında Sürüm ve Güncelle düğmesi');
+ok(await A.evaluate(()=>/Sürüm \d+/.test(document.body.innerText)&&!!document.querySelector('.vupd')),'giriş ekranında Sürüm ve Güncelle düğmesi');
 await A.screenshot({path:(process.env.OUT||'.')+'/guncelle.png'});
 await b.close();console.log(fail?'HATA':'TAMAM');process.exit(fail?1:0)})().catch(e=>{console.error(e);process.exit(1)});
