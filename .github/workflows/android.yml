@@ -4,6 +4,8 @@ on:
     branches: [main, s60]
     paths: ['index.html', '*.mp3', '*.png', 'gizlilik.html', 'aydinlatma.html', 'veri-silme.html', 'manifest.json', 'push.json', 'android-app/**', '.github/workflows/android.yml']
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   apk:
     runs-on: ubuntu-latest
@@ -31,3 +33,8 @@ jobs:
           name: apk
           path: android-app/out/*.apk
           retention-days: 30
+      - name: APK'yı apk dalına koy (indirme kolaylığı)
+        run: |
+          D=$(mktemp -d); cp android-app/out/*.apk $D/
+          cd $D && git init -q -b apk && git add . && git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "APK ${GITHUB_SHA::7}"
+          git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" apk:apk-${GITHUB_REF_NAME}
