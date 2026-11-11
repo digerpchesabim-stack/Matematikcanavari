@@ -9,7 +9,7 @@ await p.addInitScript(fs.readFileSync(R+'/test/mockfb.js','utf8'));
 await p.addInitScript(()=>{try{localStorage.setItem('mc_mmus','false');Object.defineProperty(navigator,'hardwareConcurrency',{get:()=>8})}catch(e){}});
 await p.goto('file://'+R+'/index.html');await p.waitForTimeout(1200);
 await p.evaluate(()=>{try{go('guide')}catch(e){}});
-await p.evaluate(([c,m])=>{window.__PV_CLIPS=c;window.__PV_MARKS=m},['file://'+D+'/clips/',JSON.parse(fs.readFileSync(D+'/clips/marks.json'))]);
+await p.evaluate(([c,m,e])=>{window.__PV_CLIPS=c;window.__PV_MARKS=m;window.__PV_END=e},['file://'+D+'/clips/',JSON.parse(fs.readFileSync(D+'/clips/marks.json')),process.env.PV_END||'magaza']);
 await p.addScriptTag({path:D+'/stage.js'});
 console.log('M3',await p.evaluate(()=>PV.init()));await p.evaluate(()=>document.fonts.ready);await p.waitForTimeout(300);
 const t0=Date.now();let n=0;

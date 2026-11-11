@@ -245,7 +245,7 @@ function sc6(t){var D=T[6]-T[5];exitX(s6,t,D);
       c2.beginPath();c2.arc(X[1]+165,300,r0,-0.7,0.7);c2.stroke();c2.beginPath();c2.arc(X[1]-165,300,r0,Math.PI-0.7,Math.PI+0.7);c2.stroke()}}
 }
 /* ============ SAHNE 7: kapanış ============ */
-var s7=el('div','sc'),s7p=phone(s7),s7m=monCanvas(s7,900),s7l=el('div','ab logo','<span class="w">Matematik</span><b><span class="w">Canavarı</span></b>',s7),s7t=el('div','ab pl1','Topla · Çıkar · Çarp · Böl',s7);s7t.style.fontSize='60px',s7a=el('div','ab L','Dört işlem artık bir oyun · 6–10 yaş',s7),s7s=el('canvas','ab',null,s7);
+var s7=el('div','sc'),s7p=phone(s7),s7m=monCanvas(s7,900),s7l=el('div','ab logo','<span class="w">Matematik</span><b><span class="w">Canavarı</span></b>',s7),s7t=el('div','ab pl1',window.__PV_END==='sosyal'?'İndir · Oyna · Öğren':'Topla · Çıkar · Çarp · Böl',s7);s7t.style.fontSize=window.__PV_END==='sosyal'?'72px':'60px',s7a=el('div','ab L',window.__PV_END==='sosyal'?'Google Play’de':'Dört işlem artık bir oyun',s7),s7s=el('canvas','ab',null,s7);
 s7s.width=W;s7s.height=H;s7s.cx=s7s.getContext('2d');
 function sc7(t){var D=T[7]-T[6],mx=350,my=560,r=178;
   var e=E.back(pr(t,0,0.6)),hop=Math.abs(Math.sin(t*4.2)),land=1-cl(hop/0.25,0,1),sq=1+0.05*hop-0.07*land;
@@ -256,7 +256,7 @@ function sc7(t){var D=T[7]-T[6],mx=350,my=560,r=178;
   ws[1].style.cssText='display:inline-block;transform:translateY('+((1-p2)*70)+'px) scale('+(0.5+0.5*p2)+');opacity:'+pr(t,0.48,0.12);
   tf(s7l,640,250,1,0,1);
   var p3=E.back(pr(t,0.95,0.4));tf(s7t,642,640+(1-p3)*40,0.7+0.3*p3,-2,pr(t,0.95,0.14));s7t.style.transformOrigin='0 50%';
-  var p4=E.back(pr(t,1.35,0.4));tf(s7a,646,790+(1-p4)*30,1,0,pr(t,1.35,0.14));
+  var p4=E.back(pr(t,1.35,0.4));tf(s7a,646,790+(1-p4)*30,window.__PV_END==='sosyal'?1.3:1,0,pr(t,1.35,0.14));s7a.style.transformOrigin='0 50%';
   var e2=E.back(pr(t,0.5,0.6));clip(s7p,'home',Math.min(89,t*30));ptf(s7p,1725,580+(1-e2)*600+Math.sin(t*1.6)*8,-20,4,0.74,pr(t,0.5,0.15),5);
   var c=s7s.cx;c.clearRect(0,0,W,H);var rs=rng(21),q;for(q=0;q<12;q++){var ph=rs()*6.28,x=rs()*W,y=rs()*H*0.9,a=Math.max(0,Math.sin(t*3.2+ph))*pr(t,0.4,0.4);star(c,x,y,10+rs()*20,a*.85,'#fff6c9')}
 }
