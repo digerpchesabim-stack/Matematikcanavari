@@ -47,6 +47,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          FIREBASE_SA: ${{ secrets.FIREBASE_SA }}
         run: |
           cd worker
           PUB=$(node -p "require('./vapid.json').pub"); X=$(node -p "require('./vapid.json').x"); Y=$(node -p "require('./vapid.json').y")
@@ -70,6 +71,8 @@ jobs:
           npx --yes wrangler@3 deploy
           cat vapid_d | npx --yes wrangler@3 secret put VAPID_D --name mc-push
           rm -f vapid_d
+          # S60: Android bildirimleri (FCM). Anahtar GitHub gizlisinden doğrudan Worker gizlisine gider, hiçbir yere yazılmaz.
+          if [ -n "$FIREBASE_SA" ]; then printf '%s' "$FIREBASE_SA" | npx --yes wrangler@3 secret put FCM_SA --name mc-push; else echo "::warning::FIREBASE_SA yok, Android bildirimleri kapalı"; fi
       - name: Dene ve adresi uygulamaya yaz
         run: |
           PUB=$(node -p "require('./worker/vapid.json').pub")

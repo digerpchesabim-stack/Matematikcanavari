@@ -1,0 +1,31 @@
+name: Android paketi
+on:
+  push:
+    branches: [main, s60]
+    paths: ['index.html', '*.mp3', '*.png', 'gizlilik.html', 'aydinlatma.html', 'veri-silme.html', 'manifest.json', 'push.json', 'android-app/**', '.github/workflows/android.yml']
+  workflow_dispatch:
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+      - name: google-services.json (varsa gizliden)
+        env:
+          GS: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: if [ -n "$GS" ] && [ ! -f android-app/google-services.json ]; then printf '%s' "$GS" > android-app/google-services.json; fi
+      - name: Paketi derle
+        run: bash android-app/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apk
+          path: android-app/out/*.apk
+          retention-days: 30

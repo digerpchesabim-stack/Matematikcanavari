@@ -20,7 +20,7 @@
 :root[data-theme="hc"] .btn small,:root[data-theme="hc"] .sub,:root[data-theme="hc"] .tag{color:#000;font-weight:600}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-#app{max-width:480px;margin:0 auto;padding:16px;padding-top:calc(16px + env(safe-area-inset-top,0px));padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));min-height:100vh}
+#app{max-width:480px;margin:0 auto;padding:16px;padding-top:calc(16px + var(--safe-area-inset-top,env(safe-area-inset-top,0px)));padding-bottom:calc(24px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)));min-height:100vh}
 h1{font-size:28px;margin:8px 0 4px}
 .sub{color:var(--muted);margin:0 0 20px;font-size:15px}
 .center{text-align:center}
@@ -90,7 +90,7 @@ h1{font-size:28px;margin:8px 0 4px}
 .st .op{color:var(--accent)}
 .st .lz{opacity:.35}
 .stext{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:19px;line-height:1.45;margin:10px 0 14px;text-align:left}
-#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#1d2433;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
+#toast{position:fixed;left:50%;bottom:calc(24px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)));transform:translateX(-50%);background:#1d2433;color:#fff;padding:12px 18px;border-radius:12px;font-size:15px;opacity:0;transition:opacity .25s;pointer-events:none;max-width:90%;text-align:center}
 .pq{font-size:20px;font-weight:600;text-align:left;padding:20px 16px;line-height:1.7;letter-spacing:0}
 .pq .qs{display:block;margin-top:8px;font-weight:800}
 .nm{color:var(--accent);font-weight:800;font-size:1.1em}
@@ -343,7 +343,7 @@ h1{font-weight:800;letter-spacing:-.01em}
 @keyframes hpb{50%{transform:translateY(-5px)}}
 .hpt{font-size:30px;font-weight:700;line-height:1.1}
 .hplay small{font-size:14px;opacity:.85;margin-top:3px}
-.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--card);border-top:1.5px solid var(--line);box-shadow:0 -6px 18px var(--sh);padding:6px max(6px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--card);border-top:1.5px solid var(--line);box-shadow:0 -6px 18px var(--sh);padding:6px max(6px,env(safe-area-inset-right,0px)) calc(8px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px))) max(6px,env(safe-area-inset-left,0px))}
 .tabs[hidden]{display:none}
 .tabs button{border:0;background:none;color:var(--muted);font-family:inherit;font-weight:700;font-size:12px;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;min-height:52px;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .tabs button span{font-size:23px;line-height:1.15;transition:transform .15s}
@@ -351,12 +351,12 @@ h1{font-weight:800;letter-spacing:-.01em}
 .tabs button.on span{transform:translateY(-2px) scale(1.1)}
 .tabs i{position:absolute;top:1px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--bad);color:#fff;font-style:normal;font-size:11px;line-height:18px;padding:0 4px}
 .tabs i:empty{display:none}
-body.hastabs #app{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+body.hastabs #app{padding-bottom:calc(88px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
 .lite .hplay canvas,.lite .tabs button span{animation:none;transition:none}
 #tabs button,#tabs button:active,#tabs button.on{background:none!important;border:0!important;box-shadow:none!important;transform:none!important;width:auto!important;margin:0!important;border-radius:12px;color:var(--muted)}
 #tabs button.on{color:var(--accent)}
 #tabs button:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
-body.hastabs #toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+body.hastabs #toast{bottom:calc(92px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))!important}
 @media (prefers-reduced-motion:reduce){.hplay canvas{animation:none}}
 .blkrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .info1{text-align:left;margin-top:64px}.infot{font-size:21px;font-weight:700;line-height:1.25;margin:2px 0 12px;text-align:center}
@@ -366,12 +366,44 @@ body.hastabs #toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))!importan
 .lgl h2{font-size:18px;margin:0 0 8px}.lgl h3{font-size:15px;margin:12px 0 4px}.lgl p,.lgl li{font-size:15px;line-height:1.55}.lgl ul,.lgl ol{padding-left:22px;margin:0 0 8px}.lgl .sum li{list-style:none;margin-left:-22px}
 .lgl .tw{overflow-x:auto;margin:6px 0 8px}.lgl table{border-collapse:collapse;min-width:540px;font-size:13.5px}.lgl th,.lgl td{text-align:left;vertical-align:top;padding:7px 8px;border-bottom:1px solid var(--line)}.lgl th{font-size:12px;color:var(--muted)}
 .lgl mark{background:var(--gold);color:var(--gold-t);border-radius:4px;padding:0 3px}.lgl a{color:var(--accent)}.lgl .note,.lgmeta{font-size:13px;color:var(--muted)}
+
+/* S60: çentik/durum çubuğu (Android paketi kenardan kenara çizer; Capacitor --safe-area-inset-* verir) */
+.mmbtn,.thbtn{top:calc(12px + var(--safe-area-inset-top,env(safe-area-inset-top,0px)))}
+#ov{padding-top:calc(20px + var(--safe-area-inset-top,env(safe-area-inset-top,0px)));padding-bottom:calc(20px + var(--safe-area-inset-bottom,env(safe-area-inset-bottom,0px)))}
+html.native{-webkit-user-select:none;user-select:none}html.native input,html.native textarea{-webkit-user-select:text;user-select:text}
 </style>
 </head>
 <body>
 <div id="app"></div>
 <div id="toast"></div>
 <div id="ov" hidden></div>
+<script>
+/* S60: Android paketi (Capacitor). Web'de NATIVE=false, aşağıdakilerin hiçbiri çalışmaz. */
+var CAPN=window.Capacitor,NATIVE=!!(CAPN&&CAPN.isNativePlatform&&CAPN.isNativePlatform());
+var WEBURL='https://digerpchesabim-stack.github.io/Matematikcanavari/';
+function appUrl(){return NATIVE?WEBURL:location.origin+location.pathname}
+function natP(n){try{return (CAPN&&CAPN.Plugins&&CAPN.Plugins[n])||null}catch(e){return null}}
+if(NATIVE)(function(){
+  document.documentElement.classList.add('native');
+  var H=natP('Haptics'),S=natP('Share'),F=natP('Filesystem');
+  /* titreşim deseni [açık,kapalı,açık…] */
+  var vib=function(p){if(!H)return false;var a=typeof p==='number'?[p]:(p||[]),t=0;a.forEach(function(d,i){d=+d||0;if(i%2===0&&d>0)setTimeout(function(){try{H.vibrate({duration:d}).catch(function(){})}catch(e){}},t);t+=d});return true};
+  /* paylaşım: yazı/bağlantı ve görsel (görsel önce önbellek klasörüne yazılır) */
+  var ab=function(e){var m=String(e&&e.message||e);if(/cancel/i.test(m)){var x=new Error(m);x.name='AbortError';throw x}throw e};
+  var share=function(d){
+    if(!S)return Promise.reject(new Error('share'));d=d||{};
+    var f=d.files&&d.files[0],go=function(fs){var o={dialogTitle:'Paylaş'};if(d.title)o.title=d.title;if(d.text)o.text=d.text;if(d.url)o.url=d.url;if(fs)o.files=fs;return S.share(o).catch(ab)};
+    if(!f)return go(null);
+    if(!F)return Promise.reject(new Error('fs'));
+    return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(String(r.result).split(',')[1])};r.onerror=rej;r.readAsDataURL(f)})
+      .then(function(b){return F.writeFile({path:(f.name||'paylas.png').replace(/[^\w.-]/g,'_'),data:b,directory:'CACHE'})})
+      .then(function(w){return go([w.uri])});
+  };
+  try{Object.defineProperty(navigator,'vibrate',{value:vib,configurable:true})}catch(e){}
+  try{Object.defineProperty(navigator,'share',{value:share,configurable:true})}catch(e){}
+  try{Object.defineProperty(navigator,'canShare',{value:function(){return !!S},configurable:true})}catch(e){}
+})();
+</script>
 <script>
 var OPS={
   add:{name:'Toplama',sym:'+',mode:true},
@@ -855,7 +887,7 @@ function cloudPass(pin){return 'mc'+pin+'canavar'}
 function cloudLoad(){
   if(window.__MC_FB)return Promise.resolve(window.__MC_FB);
   if(CL.fb)return Promise.resolve(CL.fb);
-  var b='https://www.gstatic.com/firebasejs/'+FBV+'/';
+  var b=NATIVE?'./fb/':'https://www.gstatic.com/firebasejs/'+FBV+'/';
   return Promise.all([import(b+'firebase-app.js'),import(b+'firebase-auth.js'),import(b+'firebase-firestore.js')]).then(function(m){
     var o={};m.forEach(function(x){for(var k in x)o[k]=x[k]});CL.fb=o;return o;
   });
@@ -1205,7 +1237,7 @@ function copyTxt(t,msg){
   if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){toast(msg)},fb);else fb();
 }
 function hsCopy(){copyTxt(bkCode(),'Hesap kodun kopyalandı')}
-function hsLink(){return location.origin+location.pathname+'?hesap='+bkCode()}
+function hsLink(){return appUrl()+'?hesap='+bkCode()}
 function hsSend(){
   var u=hsLink(),t='🔑 Matematik Canavarı hesabım. Bu bağlantıyı bilgisayarda ya da öbür cihazımda açacağım:\n'+u+'\n\nBu bağlantıyı başkasıyla paylaşma.';
   bkRun(true);
@@ -1254,10 +1286,17 @@ function fsSet(v){lsSet('mc_fs',v);fsApply();bkSoon();render()}
 var TTS={on:false,w:-1,u:null};
 function ttsCfg(){return ls('mc_tts',{})||{}}
 function ttsAuto(){var c=ttsCfg();c.a=c.a?0:1;lsSet('mc_tts',c);bkSoon();render()}
-function ttsOk(){try{return 'speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined'}catch(e){return false}}
+function ttsOk(){if(NATIVE&&natP('TextToSpeech'))return true;try{return 'speechSynthesis' in window&&typeof SpeechSynthesisUtterance!=='undefined'}catch(e){return false}}
 function ttsVoice(){var v=[];try{v=speechSynthesis.getVoices()||[]}catch(e){}var t=v.filter(function(x){return /^tr([-_]|$)/i.test(x.lang||'')});return {any:v.length>0,tr:t.filter(function(x){return x.localService})[0]||t[0]||null}}
 function ttsClean(s){return String(s||'').replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu,'').replace(/\s+/g,' ').trim()}
 function ttsSay(txt,w){
+  if(NATIVE&&natP('TextToSpeech')){
+    var T=natP('TextToSpeech'),was0=TTS.on&&TTS.w===w;ttsStop();if(was0)return;
+    var id={};TTS.on=true;TTS.w=w;TTS.u=id;ttsUi();
+    var fin=function(){if(TTS.u===id){TTS.on=false;TTS.u=null;ttsUi()}};
+    T.speak({text:ttsClean(txt),lang:'tr-TR',rate:w===1?0.6:0.9,pitch:1,volume:1,category:'playback'}).then(fin,function(){if(TTS.u!==id)return;fin();toast('Sesli okuma çalışmadı. Telefon ayarlarından (Metin okuma) Türkçe ses eklenebilir.')});
+    return;
+  }
   if(!ttsOk()){toast('Bu cihaz sesli okumayı desteklemiyor');return}
   var was=TTS.on&&TTS.w===w;ttsStop();if(was)return;
   var V=ttsVoice();
@@ -1268,11 +1307,11 @@ function ttsSay(txt,w){
   TTS.on=true;TTS.w=w;TTS.u=u;ttsUi();
   try{speechSynthesis.speak(u)}catch(e){TTS.on=false;TTS.u=null;ttsUi();toast('Sesli okuma çalışmadı')}
 }
-function ttsStop(){TTS.u=null;TTS.on=false;try{if(ttsOk())speechSynthesis.cancel()}catch(e){}ttsUi()}
+function ttsStop(){TTS.u=null;TTS.on=false;try{if(NATIVE&&natP('TextToSpeech'))natP('TextToSpeech').stop().catch(function(){});else if(ttsOk())speechSynthesis.cancel()}catch(e){}ttsUi()}
 function ttsUi(){var a=document.getElementById('tts-n'),b=document.getElementById('tts-s');if(a)a.textContent=TTS.on&&TTS.w===0?'⏹':'🔊';if(b)b.textContent=TTS.on&&TTS.w===1?'⏹':'🐢'}
 function ttsQ(w){if(st.q&&st.q.text)ttsSay(st.q.text,w)}
 function ttsTest(){ttsSay('Merhaba! Ben Matematik Canavarı. Ali’nin 5 kalemi var. Annesi 3 kalem daha aldı.',0)}
-try{if(ttsOk())speechSynthesis.getVoices()}catch(e){}
+try{if(!NATIVE&&ttsOk())speechSynthesis.getVoices()}catch(e){}
 function bkWhen(){var t=ls('mc_bkt',0);if(!t)return 'henüz yok';var d=new Date(t);return fmtDate(d)+' '+fmtTime(d)}
 
 /* ---------- ses ve müzik (Web Audio, dosyasız) ---------- */
@@ -3456,11 +3495,11 @@ function deepRun(){
 }
 try{if('serviceWorker' in navigator)navigator.serviceWorker.addEventListener('message',function(e){var x=e.data;if(x&&x.mc==='open'&&x.u){try{DEEP=deepParse(new URL(x.u,location.href).search)}catch(er){DEEP=null}if(DEEP)deepRun()}})}catch(e){}
 function appShare(){
-  var url=location.origin+location.pathname,t='🐲 Matematik Canavarı: 4 işlem oyunu! Benimle kapışmak için aç:\n'+url+'\n\nTelefonuna yüklemek için: bağlantıyı aç, tarayıcı menüsünden "Ana ekrana ekle"ye dokun.';
+  var url=appUrl(),t='🐲 Matematik Canavarı: 4 işlem oyunu! Benimle kapışmak için aç:\n'+url+'\n\nTelefonuna yüklemek için: bağlantıyı aç, tarayıcı menüsünden "Ana ekrana ekle"ye dokun.';
   var wa=function(){try{window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')}catch(e){location.href='https://wa.me/?text='+encodeURIComponent(t)}};
   if(navigator.share)navigator.share({title:'Matematik Canavarı',text:t}).catch(function(e){if(!e||e.name!=='AbortError')wa()});else wa();
 }
-function rmLink(){return location.origin+location.pathname+'?oda='+encodeURIComponent(RM.code||'')}
+function rmLink(){return appUrl()+'?oda='+encodeURIComponent(RM.code||'')}
 function rmCopy(){
   var t=rmLink(),done=function(){toast('Link kopyalandı')},fb=function(){
     var a=document.createElement('textarea');a.value=t;a.setAttribute('readonly','');a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();
@@ -4430,11 +4469,11 @@ function rkHelpHtml(){
 
 /* ---------- bildirimler (S49): Web Push, sunucu Cloudflare Worker (push.json: adres + VAPID açık anahtarı) ---------- */
 var PUSH={cfg:null};
-function pushOk(){return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window}
-function pushIOS(){return /iPhone|iPad|iPod/.test(navigator.userAgent)&&!(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches))}
+function pushOk(){if(NATIVE)return !!PUSH.fcm;return 'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window}
+function pushIOS(){if(NATIVE)return false;return /iPhone|iPad|iPod/.test(navigator.userAgent)&&!(navigator.standalone||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches))}
 function pushCfg(){if(PUSH.cfg)return Promise.resolve(PUSH.cfg);return fetch('push.json?t='+Date.now(),{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).then(function(j){if(j&&j.u&&j.k)PUSH.cfg=j;return PUSH.cfg}).catch(function(){return null})}
 function pushKey(x){x=x.replace(/-/g,'+').replace(/_/g,'/');while(x.length%4)x+='=';var r=atob(x),o=new Uint8Array(r.length),i;for(i=0;i<r.length;i++)o[i]=r.charCodeAt(i);return o}
-function pushState(){if(!pushOk())return pushIOS()?'ios':'no';var p=Notification.permission;if(p==='denied')return 'denied';return p==='granted'&&ls('mc_push',{}).on?'on':'off'}
+function pushState(){if(NATIVE){if(!PUSH.fcm)return 'no';var q=ls('mc_push',{});return q.den?'denied':q.on&&q.f?'on':'off'}if(!pushOk())return pushIOS()?'ios':'no';var p=Notification.permission;if(p==='denied')return 'denied';return p==='granted'&&ls('mc_push',{}).on?'on':'off'}
 function pushSub(force){
   return pushCfg().then(function(c){
     if(!c)throw 'cfg';
@@ -4451,13 +4490,49 @@ function pushSave(j,force){
   return devAuth().then(function(fb){return fb.setDoc(fb.doc(CL.db,'ps',pid),{e:j.endpoint,k:j.keys.p256dh,a:j.keys.auth,ts:Date.now()})}).then(function(){var m2=ls('mc_push',{});m2.w=m2.w||{};m2.w[pid]=sig;lsSet('mc_push',m2)});
 }
 function pushOn(){
+  if(NATIVE){natPushOn();return}
   if(!pushOk()){toast(pushIOS()?'Önce uygulamayı ana ekrana ekle':'Bu tarayıcı bildirimleri desteklemiyor');return}
   Notification.requestPermission().then(function(p){
     if(p!=='granted'){toast('Bildirim izni verilmedi');if(st.screen==='friends')render();return}
     return pushSub(true).then(function(){toast('🔔 Bildirimler açıldı');if(st.screen==='friends')render()});
   }).catch(function(){toast('Bildirimler açılamadı, internetini kontrol et')});
 }
-function pushSync(){if(pushState()==='on'&&FR.pid)pushSub(false).catch(function(){})}
+function pushSync(){if(pushState()!=='on'||!FR.pid)return;if(NATIVE){natPushReg();return}pushSub(false).catch(function(){})}
+/* S60 Android: Firebase Cloud Messaging. Paket google-services.json ile kurulduysa fcm.json vardır. */
+function natPushInit(){
+  var P=natP('PushNotifications');if(!NATIVE||!P)return;
+  fetch('fcm.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null}).catch(function(){return null}).then(function(j){
+    if(!j||!j.on)return;PUSH.fcm=true;
+    try{P.createChannel({id:'mc',name:'Oyun çağrıları',description:'Arkadaş davetleri, takım çağrıları ve hatırlatmalar',importance:5,visibility:1,vibration:true}).catch(function(){})}catch(e){}
+    P.addListener('registration',function(t){natPushSave(t&&t.value)});
+    P.addListener('registrationError',function(){if(PUSH.nf){PUSH.nf=false;toast('Bildirimler açılamadı, internetini kontrol et')}});
+    P.addListener('pushNotificationActionPerformed',function(a){
+      var d=a&&a.notification&&a.notification.data,u=d&&d.u;if(!u)return;
+      try{DEEP=deepParse(new URL(u).search)}catch(e){DEEP=null}
+      if(DEEP)setTimeout(deepRun,st.screen==='welcome'?900:50);
+    });
+    P.checkPermissions().then(function(r){var q=ls('mc_push',{});if(r.receive==='denied'){q.den=1}else delete q.den;if(r.receive!=='granted')q.on=0;lsSet('mc_push',q);if(st.screen==='friends')render();if(q.on&&FR.pid)natPushReg()}).catch(function(){});
+    if(st.screen==='friends')render();
+  });
+}
+function natPushReg(){try{natP('PushNotifications').register().catch(function(){})}catch(e){}}
+function natPushOn(){
+  var P=natP('PushNotifications');if(!P||!PUSH.fcm){toast('Bu cihaz bildirimleri desteklemiyor');return}
+  P.requestPermissions().then(function(r){
+    var q=ls('mc_push',{});
+    if(r.receive!=='granted'){q.den=r.receive==='denied'?1:0;lsSet('mc_push',q);toast('Bildirim izni verilmedi');if(st.screen==='friends')render();return}
+    delete q.den;q.on=1;lsSet('mc_push',q);PUSH.nf=true;natPushReg();
+  }).catch(function(){toast('Bildirimler açılamadı')});
+}
+function natPushSave(tok){
+  if(!tok||!FR.pid)return;
+  var pid=FR.pid,sig=tok.slice(-32),q=ls('mc_push',{}),force=PUSH.nf;if(!force&&q.w&&q.w[pid]===sig&&q.f===sig)return;
+  devAuth().then(function(fb){return fb.setDoc(fb.doc(CL.db,'ps',pid),{f:tok,ts:Date.now()})}).then(function(){
+    var m2=ls('mc_push',{});m2.on=1;m2.f=sig;m2.w=m2.w||{};m2.w[pid]=sig;lsSet('mc_push',m2);
+    if(PUSH.nf){PUSH.nf=false;toast('🔔 Bildirimler açıldı')}
+    if(st.screen==='friends')render();
+  }).catch(function(){if(PUSH.nf){PUSH.nf=false;toast('Bildirimler açılamadı, internetini kontrol et')}});
+}
 function pushSend(to,k,x){
   if(!FR.pid||!CL.user||!to)return;
   var from=FR.pid;
@@ -4938,6 +5013,12 @@ function navFill(){
   try{while(NAV.d<NAV.max){history.pushState({mc:1},'');NAV.d++}}catch(e){}
 }
 function navInit(){
+  /* S60 Android: geri tuşu doğrudan uygulamaya gelir (geçmiş tamponu gerekmez) */
+  if(NATIVE){var A=natP('App');if(A)A.addListener('backButton',function(){
+    if(st.modal){var n=document.getElementById('mn');if(n)n.click();return}
+    if(st.screen==='welcome'){askExit();return}
+    back();
+  });return}
   if(!window.history||!history.pushState)return;
   document.addEventListener('click',navFill,true);
   /* çıkış sırasında kullanıcı yeniden dokunursa uygulamada kalmak istiyordur */
@@ -4953,6 +5034,7 @@ function navInit(){
 }
 function askExit(){modal('Uygulamadan çıkmak istiyor musun?','Evet, çık','Hayır, kal',appExit,null)}
 function appExit(){
+  if(NATIVE&&natP('App')){natP('App').exitApp();return}
   NAV.ex=true;NAV.d=0;
   try{window.close()}catch(e){}
   try{history.back()}catch(e){}
@@ -5055,7 +5137,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button></div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+(NATIVE?'':' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button>')+'</div></div>';
   }else if(s==='profiles'){
     h=startHtml();
   }else if(s==='mig'){
@@ -5496,7 +5578,7 @@ function finish(){
 }
 
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
-if('serviceWorker' in navigator){window.addEventListener('load',function(){try{
+if(!NATIVE&&'serviceWorker' in navigator){window.addEventListener('load',function(){try{
   var had=!!navigator.serviceWorker.controller;
   navigator.serviceWorker.addEventListener('controllerchange',function(){
     if(!had){had=true;return}
@@ -5506,6 +5588,7 @@ if('serviceWorker' in navigator){window.addEventListener('load',function(){try{
   });
   navigator.serviceWorker.register('sw.js').catch(function(){});
 }catch(e){}})}
+if(NATIVE)setTimeout(natPushInit,300);
 st.vert=ls('mc_vert',false);
 render();
 if(DEEP)setTimeout(deepRun,400);

@@ -197,12 +197,15 @@ service cloud.firestore {
     // ps/{id}: bildirim adresi (S49). Okumak için oturum yeter (adres tek başına bildirim göndermeye yetmez, sunucunun VAPID anahtarı gerekir)
     match /ps/{pid} {
       allow get: if signedIn();
+      // S60: Android uygulaması {f: FCM jetonu, ts}; tarayıcı {e,k,a,ts}
       allow create, update: if owns(pid)
-        && request.resource.data.keys().hasOnly(['e', 'k', 'a', 'ts'])
-        && request.resource.data.e is string && request.resource.data.e.size() < 800 && request.resource.data.e.matches('^https://.*')
-        && request.resource.data.k is string && request.resource.data.k.size() < 200
-        && request.resource.data.a is string && request.resource.data.a.size() < 100
-        && request.resource.data.ts is int;
+        && request.resource.data.ts is int
+        && ((request.resource.data.keys().hasOnly(['e', 'k', 'a', 'ts'])
+          && request.resource.data.e is string && request.resource.data.e.size() < 800 && request.resource.data.e.matches('^https://.*')
+          && request.resource.data.k is string && request.resource.data.k.size() < 200
+          && request.resource.data.a is string && request.resource.data.a.size() < 100)
+        || (request.resource.data.keys().hasOnly(['f', 'ts'])
+          && request.resource.data.f is string && request.resource.data.f.size() > 20 && request.resource.data.f.size() < 400));
       allow delete: if owns(pid);
     }
 

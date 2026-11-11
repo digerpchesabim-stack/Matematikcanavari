@@ -63,11 +63,35 @@ const ROOM = /^[A-Z0-9]{3,10}$/;
 const MSGG = { 5: '⚔️ Hadi oynayalım!', 6: '🎮 Oyunu sen kur, ben gelirim', 7: '📨 Beni çağır', 8: '🛡️ Muharebe yapalım mı?', 9: '🏁 Yarışalım mı?', 10: '🔁 Rövanş ister misin?' };
 // Türkiye saati (UTC+3, yaz saati yok)
 function hhmm(t) { const d = new Date(t + 3 * 3600000); return String(d.getUTCHours()).padStart(2, '0') + ':' + String(d.getUTCMinutes()).padStart(2, '0'); }
+// S60: Android uygulaması (FCM HTTP v1). Servis hesabı anahtarı Worker gizlisi FCM_SA (GitHub'daki FIREBASE_SA'dan iş akışı aktarır).
+let FCMT = null;
+async function fcmToken(env) {
+  if (FCMT && FCMT.exp > Date.now() + 60000) return FCMT.t;
+  const sa = JSON.parse(env.FCM_SA), now = Math.floor(Date.now() / 1000);
+  const h = b64u(enc.encode(JSON.stringify({ alg: 'RS256', typ: 'JWT' })));
+  const c = b64u(enc.encode(JSON.stringify({ iss: sa.client_email, scope: 'https://www.googleapis.com/auth/firebase.messaging', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 })));
+  const der = ub64(sa.private_key.replace(/-----[A-Z ]+-----/g, '').replace(/\s/g, ''));
+  const key = await crypto.subtle.importKey('pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, enc.encode(h + '.' + c));
+  const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=' + h + '.' + c + '.' + b64u(sig) });
+  const j = await r.json();
+  if (!j.access_token) throw new Error('fcm oturum');
+  FCMT = { t: j.access_token, exp: Date.now() + (j.expires_in || 3600) * 1000 };
+  return FCMT.t;
+}
+async function sendFcm(env, f, msg) {
+  if (!env.FCM_SA) return new Response('', { status: 503 });
+  const t = await fcmToken(env);
+  const message = { token: f, notification: { title: msg.t, body: msg.b || '' }, data: { u: msg.u || SUB, g: msg.g || '' },
+    android: { priority: 'high', ttl: '900s', notification: { channel_id: 'mc', tag: msg.g || 'mc', icon: 'ic_stat_mc', color: '#2f6bff' } } };
+  return fetch('https://fcm.googleapis.com/v1/projects/' + PROJECT + '/messages:send', { method: 'POST', headers: { Authorization: 'Bearer ' + t, 'content-type': 'application/json' }, body: JSON.stringify({ message }) });
+}
 async function sendPush(env, ps, msg) {
+  if (ps.f) return sendFcm(env, ps.f, msg);
   const body = await encrypt(ps, JSON.stringify(msg));
   return fetch(ps.e, { method: 'POST', body, headers: { Authorization: await vapid(env, ps.e), 'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: '900', Urgency: 'high' } });
 }
-function sub(ps) { return ps && ps.e && ps.k && ps.a ? { e: ps.e, k: ps.k, a: ps.a } : null; }
+function sub(ps) { return ps && ps.f ? { f: ps.f } : ps && ps.e && ps.k && ps.a ? { e: ps.e, k: ps.k, a: ps.a } : null; }
 // S54: 5 dk kala hatırlatma. KV'de dakika kovası: m<dakika> = [{k: oyuncu|oda, s: abonelik, m: mesaj}]
 const mkey = t => 'm' + Math.floor((t - 300000) / 60000);
 async function remAdd(env, rv, list) {
@@ -103,7 +127,7 @@ function rvMsg(rv, who) {
 export async function handle(req, env) {
   if (req.method === 'OPTIONS') return new Response(null, { headers: CORS });
   const u = new URL(req.url);
-  if (req.method === 'GET' && u.pathname === '/key') return json({ k: env.VAPID_PUB, kv: !!env.MCR });
+  if (req.method === 'GET' && u.pathname === '/key') return json({ k: env.VAPID_PUB, kv: !!env.MCR, fcm: !!env.FCM_SA });
   if (req.method !== 'POST' || u.pathname !== '/push') return json({ err: 'yok' }, 404);
   let b; try { b = JSON.parse(await req.text()); } catch (e) { return json({ err: 'istek' }, 400); }
   const tok = String(b.t || ''), to = String(b.to || ''), from = String(b.from || '');
@@ -117,8 +141,8 @@ export async function handle(req, env) {
     const t = ti.cm ? '👑 ' + ti.nick + ' takımında Kaptanlık Maçı kurdu!' : (String(ti.a) === to ? '⚔️ Takım arkadaşın ' + ti.nick + ' takım kapışması kurdu!' : '⚔️ Bir takım takımınıza meydan okuyor!');
     let n = 0;
     for (const p of mem) {
-      const ps = await doc('ps/' + p, tok);
-      if (!ps || !ps.e || !ps.k || !ps.a) continue;
+      const ps = sub(await doc('ps/' + p, tok));
+      if (!ps) continue;
       try { const r = await sendPush(env, ps, { t, b: 'Takımın seni bekliyor. Dokun, katıl.', g: 'ti', u: SUB + '?tm=1&to=' + p }); if (r.ok) n++; } catch (e) {}
     }
     return json({ ok: true, n });
@@ -181,8 +205,8 @@ export async function handle(req, env) {
       }
     }
   } else return json({ err: 'tür' }, 400);
-  const ps = await doc('ps/' + to, tok);
-  if (!ps || !ps.e || !ps.k || !ps.a) return json({ ok: false, why: 'kapali' });
+  const ps = sub(await doc('ps/' + to, tok));
+  if (!ps) return json({ ok: false, why: 'kapali' });
   msg.u = msg.u || SUB;
   const r = await sendPush(env, ps, msg);
   return json({ ok: r.ok, s: r.status });

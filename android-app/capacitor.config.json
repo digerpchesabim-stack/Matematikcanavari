@@ -1,0 +1,12 @@
+{
+  "appId": "com.matematikcanavari.oyun",
+  "appName": "Matematik Canavarı",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": false
+  },
+  "plugins": {
+    "PushNotifications": { "presentationOptions": [] },
+    "SystemBars": { "insetsHandling": "css" }
+  }
+}

@@ -120,4 +120,31 @@ sent = null;[s, j] = await call({ t: 'TOK', k: 'tv', from: 'AAAAAAA', to: 'BBBBB
 ok(j.ok && /takımına çağırıyor/.test(decrypt(sent.o.body).t), 'takıma davet bildirimi');
 delete env.MCR; db['rv/R54AB_BBBBBBB'].st = 'ok'; sent = null;[s, j] = await call({ t: 'TOK', k: 'rva', from: 'BBBBBBB', to: 'AAAAAAA', r: 'R54AB' });
 ok(j.ok, 'KV yoksa da cevap bildirimi çalışır');
+// S60: Android (FCM HTTP v1): servis hesabıyla RS256 oturum, FCM'e doğru gövde
+{
+  const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', { modulusLength: 2048 });
+  env.FCM_SA = JSON.stringify({ client_email: 'mc@x.iam.gserviceaccount.com', private_key: privateKey.export({ type: 'pkcs8', format: 'pem' }) });
+  db['ps/BBBBBBB'] = { f: 'fcmTOKEN_' + 'x'.repeat(40), ts: Date.now() };
+  db['iv/BBBBBBB'] = { from: 'AAAAAAA', nick: '🦊 Kurnaz Tilki', ts: Date.now(), room: 'K7XQ2' };
+  const calls = []; const of2 = globalThis.fetch;
+  globalThis.fetch = async (url, o) => {
+    if (url === 'https://oauth2.googleapis.com/token') { calls.push({ url, o }); return new Response(JSON.stringify({ access_token: 'AT', expires_in: 3600 })); }
+    if (url.startsWith('https://fcm.googleapis.com/v1/')) { calls.push({ url, o }); return new Response('{}', { status: 200 }); }
+    return of2(url, o);
+  };
+  [s, j] = await call({ t: 'TOK', k: 'iv', from: 'AAAAAAA', to: 'BBBBBBB' });
+  const as = new URLSearchParams(calls[0] && calls[0].o.body).get('assertion') || '';
+  const [h, c, g] = as.split('.');
+  const vok = crypto.verify('sha256', Buffer.from(h + '.' + c), publicKey, Buffer.from(g || '', 'base64url'));
+  const cl = JSON.parse(Buffer.from(c || '', 'base64url').toString() || '{}');
+  ok(vok && cl.iss === 'mc@x.iam.gserviceaccount.com' && /firebase.messaging/.test(cl.scope), 'FCM: servis hesabı imzası geçerli');
+  const fm = calls[1] && JSON.parse(calls[1].o.body).message;
+  ok(j.ok && calls[1].o.headers.Authorization === 'Bearer AT' && /projects\/matematik-canavari-57e2d\/messages:send$/.test(calls[1].url) && fm.token === db['ps/BBBBBBB'].f && /kapışmaya çağırıyor/.test(fm.notification.title) && /\?kap=K7XQ2&to=BBBBBBB$/.test(fm.data.u) && fm.android.notification.channel_id === 'mc', 'FCM: davet bildirimi Android cihaza');
+  calls.length = 0;[s, j] = await call({ t: 'TOK', k: 'iv', from: 'AAAAAAA', to: 'BBBBBBB' });
+  ok(j.ok && calls.length === 1, 'FCM: oturum jetonu saklanıyor');
+  delete env.FCM_SA;[s, j] = await call({ t: 'TOK', k: 'iv', from: 'AAAAAAA', to: 'BBBBBBB' });
+  ok(!j.ok, 'FCM anahtarı yoksa gönderilmez, hata vermez');
+  const [s2, k2] = [0, await (await handle(new Request('https://w/key'), env)).json()]; ok(k2.fcm === false, '/key fcm durumu');
+  globalThis.fetch = of2;
+}
 console.log(fail ? 'HATA ' + fail : 'TAMAM'); process.exit(fail ? 1 : 0);
