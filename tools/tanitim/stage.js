@@ -245,7 +245,7 @@ function sc6(t){var D=T[6]-T[5];exitX(s6,t,D);
       c2.beginPath();c2.arc(X[1]+165,300,r0,-0.7,0.7);c2.stroke();c2.beginPath();c2.arc(X[1]-165,300,r0,Math.PI-0.7,Math.PI+0.7);c2.stroke()}}
 }
 /* ============ SAHNE 7: kapanış ============ */
-var s7=el('div','sc'),s7p=phone(s7),s7m=monCanvas(s7,900),s7l=el('div','ab logo','<span class="w">Matematik</span><b><span class="w">Canavarı</span></b>',s7),s7t=el('div','ab pl1',window.__PV_END==='sosyal'?'İndir · Oyna · Öğren':'Topla · Çıkar · Çarp · Böl',s7);s7t.style.fontSize=window.__PV_END==='sosyal'?'72px':'60px',s7a=el('div','ab L',window.__PV_END==='sosyal'?'Google Play’de':'Dört işlem artık bir oyun',s7),s7s=el('canvas','ab',null,s7);
+var s7=el('div','sc'),s7p=phone(s7),s7m=monCanvas(s7,900),s7l=el('div','ab logo','<span class="w">Matematik</span><b><span class="w">Canavarı</span></b>',s7),s7t=el('div','ab pl1',window.__PV_END==='sosyal'?'İndir · Oyna · Öğren':'Oyna · Öğren · Kapış',s7);s7t.style.fontSize='72px',s7a=el('div','ab L',window.__PV_END==='sosyal'?'Google Play’de':'Dört işlem artık bir oyun',s7),s7s=el('canvas','ab',null,s7);
 s7s.width=W;s7s.height=H;s7s.cx=s7s.getContext('2d');
 function sc7(t){var D=T[7]-T[6],mx=350,my=560,r=178;
   var e=E.back(pr(t,0,0.6)),hop=Math.abs(Math.sin(t*4.2)),land=1-cl(hop/0.25,0,1),sq=1+0.05*hop-0.07*land;
