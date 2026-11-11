@@ -326,6 +326,39 @@ h1{font-weight:800;letter-spacing:-.01em}
 :root[data-theme="hc"] .next{background:var(--gold);border:2px solid #000}
 :root[data-theme="hc"] .logo3d,:root[data-theme="hc"] .logo3d span{text-shadow:none;color:#000}
 
+
+/* S60: yeni ana menü (karakter şeridi + büyük Oyna + 4 kare) ve alt sekme çubuğu */
+.hstrip{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:10px 12px 10px 10px;box-shadow:0 5px 0 var(--edge);margin:2px 0 14px;color:var(--text);font:inherit;cursor:pointer}
+.hstrip:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge)}
+.hstrip .rkmini{width:54px;height:54px;flex:none}
+.hsi{flex:1;min-width:0;display:flex;flex-direction:column}
+.hsi b{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hsi small{color:var(--muted);font-size:13px;line-height:1.3}
+.hbar{display:block;height:9px;border-radius:5px;background:var(--line);margin-top:6px;overflow:hidden}
+.hbar i{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--gold2),var(--gold))}
+.hgo{font-size:28px;color:var(--muted);line-height:1}
+.hplay{display:flex;flex-direction:column;align-items:center;width:100%;border:0;border-radius:26px;padding:8px 12px 16px;margin:0 0 16px;background:linear-gradient(180deg,var(--gold2),var(--gold));color:var(--gold-t);box-shadow:0 7px 0 var(--gold-d),0 12px 22px var(--sh);font:inherit;cursor:pointer}
+.hplay:active{transform:translateY(6px);box-shadow:0 1px 0 var(--gold-d)}
+.hplay canvas{width:104px;height:104px;animation:hpb 2.4s ease-in-out infinite}
+@keyframes hpb{50%{transform:translateY(-5px)}}
+.hpt{font-size:30px;font-weight:700;line-height:1.1}
+.hplay small{font-size:14px;opacity:.85;margin-top:3px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--card);border-top:1.5px solid var(--line);box-shadow:0 -6px 18px var(--sh);padding:6px max(6px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(6px,env(safe-area-inset-left,0px))}
+.tabs[hidden]{display:none}
+.tabs button{border:0;background:none;color:var(--muted);font-family:inherit;font-weight:700;font-size:12px;line-height:1.2;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;min-height:52px;position:relative;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.tabs button span{font-size:23px;line-height:1.15;transition:transform .15s}
+.tabs button.on{color:var(--accent)}
+.tabs button.on span{transform:translateY(-2px) scale(1.1)}
+.tabs i{position:absolute;top:1px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--bad);color:#fff;font-style:normal;font-size:11px;line-height:18px;padding:0 4px}
+.tabs i:empty{display:none}
+body.hastabs #app{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+.lite .hplay canvas,.lite .tabs button span{animation:none;transition:none}
+#tabs button,#tabs button:active,#tabs button.on{background:none!important;border:0!important;box-shadow:none!important;transform:none!important;width:auto!important;margin:0!important;border-radius:12px;color:var(--muted)}
+#tabs button.on{color:var(--accent)}
+#tabs button:focus-visible{outline:3px solid var(--accent);outline-offset:-3px}
+body.hastabs #toast{bottom:calc(92px + env(safe-area-inset-bottom,0px))!important}
+@media (prefers-reduced-motion:reduce){.hplay canvas{animation:none}}
+.blkrow{display:flex;align-items:center;justify-content:space-between;gap:8px}
 </style>
 </head>
 <body>
@@ -402,7 +435,7 @@ function frProfHtml(){
   h+='<div class="pbox h2h"><div class="tag" style="margin-top:0">⚔️ Aranızdaki kapışmalar</div><div class="h2s"><div><b>'+w+'</b><small>Sen</small></div><div class="dvs">⚔️</div><div><b>'+(L.length-w)+'</b><small>'+esc(sp[1])+'</small></div></div><small>'+(L.length?L.length+' maç':'Henüz birlikte kapışmadınız')+'</small></div>';
   h+='<button class="next" onclick="frCall(\''+o+'\')">⚔️ Kapışmaya çağır</button>';
   if(L.length){h+='<div class="tag">Son kapışmalar</div>';for(i=0;i<Math.min(L.length,30);i++){var x=L[i],d=new Date(x.t);h+='<div class="rrow"><span>'+(x.w?'🏆 Sen kazandın':'💪 '+esc(sp[1])+' kazandı')+(x.left?' <small>(ayrıldı)</small>':'')+'<br><small>'+fmtDate(d)+' '+fmtTime(d)+' · '+gLabelL(x.op,x.lv,x.tb)+'</small></span><b>'+x.a+' – '+x.b+'</b></div>'}}
-  h+='<button class="ghost delw" onclick="frDel(\''+o+'\',1,function(){go(\'friends\')})">🗑 Arkadaşlıktan çıkar</button>';
+  h+='<button class="ghost delw" onclick="frDel(\''+o+'\',1,function(){go(\'friends\')})">🗑 Arkadaşlıktan çıkar</button><button class="ghost delw" onclick="blkAsk(\''+o+'\')">🚫 Engelle</button>';
   return h;
 }
 /* rekorlar tablosunda bir satıra dokununca */
@@ -851,7 +884,7 @@ function devAuth(){
    mc_acc (cihaza özel, eşitlenmez) = {dv: cihaz kimliği, st: bu cihazın bildiği son bulut sürümü (ac.ts), ln: bilinen son "hesap açıldı" zamanı}
    Eşitleme: açılışta / internete dönünce / öne gelince ac okunur; başka cihaz daha yeni yazdıysa bk indirilip birleştirilir.
    Birleştirme: kayıtlar birleşir, rekorlar ve rütbe sayaçları büyük olan (geri gitmez), ayarlar son yazan cihazınki. */
-var BKK=['mc_rk','mc_theme','mc_pid','mc_nm','mc_nmnew','mc_lbpid','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_vert','mc_audio','mc_fs','mc_tts','mc_mgk','mc_dev','mc_tm'],BK={busy:false,t:null};
+var BKK=['mc_blk','mc_glast','mc_rk','mc_theme','mc_pid','mc_nm','mc_nmnew','mc_lbpid','mc_profiles','mc_records','mc_best','mc_rhist','mc_rbest','mc_dhist','mc_vert','mc_audio','mc_fs','mc_tts','mc_mgk','mc_dev','mc_tm'],BK={busy:false,t:null};
 var ACLWW=['mc_theme','mc_vert','mc_audio','mc_fs','mc_tts'],AC={t:0,busy:false,gone:false},HS={show:false};
 var ACBUSY=['game','gcount','duel','dintro','rcount','quiz','mig','hgir'];
 function cloudQueue(){bkSoon()}
@@ -1152,7 +1185,8 @@ function hesapHtml(){
   var fs=fsGet(),tc=ttsCfg();
   h+='<div class="tag">🔠 Yazı boyutu</div><div class="chips">'+[['Normal',0],['Büyük',1],['Çok büyük',2]].map(function(o){return '<button class="chip'+(fs===o[1]?' on':'')+'" onclick="fsSet('+o[1]+')">'+o[0]+'</button>'}).join('')+'</div>';
   h+='<div class="tag">🔊 Sesli okuma</div><button class="btn tgl" onclick="ttsAuto()">'+(tc.a?'✅':'⬜')+' Problemi kendiliğinden oku<small>Problemlerde her soru açılınca sesli okunur. Sorunun köşesindeki 🔊 düğmesi her zaman çalışır.</small></button><button class="ghost" onclick="ttsTest()">▶️ Sesi dene</button>';
-  h+='<button class="ghost" onclick="themeOpen()">🎨 Tema</button>';
+  h+='<button class="ghost" onclick="themeOpen()">🎨 Tema</button><button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button>';
+  if(p)h+=blkHtml();
   h+='<details class="pbox gd"><summary><b>🔒 Gizlilik</b></summary>'+PRIV+'</details>';
   if(p)h+='<button class="ghost delw" onclick="acWipeAsk()">🗑 Verilerimi sil</button>';
   var mg=ls('mc_mgk','');if(mg)h+='<p class="sub center" style="font-size:12px;opacity:.65">Geçiş yedeği: '+mg+'</p>';
@@ -1511,8 +1545,17 @@ function gSave(){
 }
 var GS={op:'add'};
 function gPick(op){GS.op=op;go('gsetup')}
+/* S60: ana menüdeki büyük Oyna düğmesi son oynanan Akıldan İşlem oyununu başlatır */
+function gLast(){var a=ls('mc_glast',{}),x=a[st.profile||'~'];return x&&OPS[x.op]||x&&x.op==='rnd'?x:null}
+function homePlay(){var x=gLast();if(x)gStart(x.op,x.lv,x.tb);else go('gmenu')}
+function homeMon(){
+  var c=document.getElementById('hpm');if(!c)return;
+  var g=c.getContext('2d');g.clearRect(0,0,c.width,c.height);
+  drawMonster(g,104,100,52,{yaw:-0.22,pitch:0.04,happy:true,m:0.25,nosh:true});
+}
 function gStart(op,lv,tb){
   lv=lv||'k';tb=tb||0;if(op!=='mul'&&op!=='div')tb=0;if(tb)lv='k';
+  try{var gl0=ls('mc_glast',{});gl0[st.profile||'~']={op:op,lv:lv,tb:tb};lsSet('mc_glast',gl0)}catch(e){}
   var mk=gMk(op,lv,tb);
   st.g={op:op,lv:lv,tb:tb,mk:mk,sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:gTime(0,lv),lt:99,rem:gTime(0,lv),el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:bestGet(mk),newBest:false};
   st.g.q=gQ();musTempo(st.g.tm);
@@ -2124,6 +2167,7 @@ function frStart(p,id){
       var l=[],inc=[],out=[],k;
       var all=Object.assign({},A,B);
       for(k in all){var x=all[k],o=x.a===id?x.b:x.a;
+        if(blkHas(o))continue;
         if(x.st==='ok')l.push(o);else if(x.by===id)out.push(o);else inc.push(o)}
       FR.list=l;FR.inc=inc;FR.out=out;
       frNicks(fb,l.concat(inc,out));
@@ -2160,6 +2204,7 @@ function frUi(){
   if(st.screen==='rover')roverUpdate();
   if(st.screen==='friends'){var e=document.getElementById('fr-body');if(e)e.innerHTML=frBody()}
   if(st.screen==='fprof'&&!st.modal)render();
+  tabBadge();
   if(st.screen==='home'){var b=document.getElementById('fr-badge');if(b)b.textContent=FR.inc.length?' · '+FR.inc.length+' yeni istek':'';var lv=document.getElementById('fr-live');if(lv){var lh=frLive();lv.innerHTML=lh;lv.style.display=lh?'':'none'}}
 }
 function frOpen(){go('friends');if(st.profile)frEnsure().then(function(){frUi()})}
@@ -2215,6 +2260,30 @@ function frAddId(c,e){
 }
 function frAccept(o){
   devAuth().then(function(fb){return fb.setDoc(fb.doc(CL.db,'fr',frKey(FR.pid,o)),{a:FR.pid<o?FR.pid:o,b:FR.pid<o?o:FR.pid,by:o,st:'ok',ts:Date.now()})}).then(function(){toast('Artık arkadaşsınız 🎉')}).catch(function(){toast('Kabul edilemedi, tekrar dene')});
+}
+/* S60: engelleme. Engellenen kişi arkadaşlıktan çıkar; ondan gelen arkadaşlık isteği görünmez (davet ve mesaj zaten sadece arkadaştan gelir) */
+function blkAll(){return ls('mc_blk',{})}
+function blkList(){return (st.profile&&blkAll()[st.profile])||[]}
+function blkHas(o){return blkList().some(function(x){return x.i===o})}
+function blkAsk(o,nk){
+  nk=nk||FR.nick[o]||frFmt(o);
+  modal('🚫 <b>'+esc(nkShow(nk))+'</b> engellensin mi?<br><small>Arkadaşlıktan çıkar. Sana arkadaşlık isteği, davet ve mesaj gönderemez. Engeli Hesabım bölümünden kaldırabilirsin.</small>','🚫 Engelle','Vazgeç',function(){blkAdd(o,nk)},null);
+}
+function blkAdd(o,nk){
+  if(!st.profile||!o)return;
+  var a=blkAll(),l=a[st.profile]||[];if(!l.some(function(x){return x.i===o}))l.push({i:o,n:nk||''});a[st.profile]=l;lsSet('mc_blk',a);
+  var was=FR.list.indexOf(o)>=0||FR.inc.indexOf(o)>=0||FR.out.indexOf(o)>=0;
+  FR.list=FR.list.filter(function(x){return x!==o});FR.inc=FR.inc.filter(function(x){return x!==o});FR.out=FR.out.filter(function(x){return x!==o});
+  if(was&&FR.pid)frDel(o,0,null);
+  toast('🚫 Engellendi');bkSoon&&bkSoon();
+  if(st.screen==='fprof')go('friends');else render();
+}
+function blkDel(o){
+  var a=blkAll();a[st.profile]=(a[st.profile]||[]).filter(function(x){return x.i!==o});lsSet('mc_blk',a);toast('Engel kaldırıldı');render();
+}
+function blkHtml(){
+  var l=blkList();if(!l.length)return '';
+  return '<div class="tag">🚫 Engellediklerim</div><div class="pbox">'+l.map(function(x){return '<div class="rrow blkrow"><span>'+esc(nkShow(x.n||frFmt(x.i)))+'</span><button class="mini" onclick="blkDel(\''+x.i+'\')">Engeli kaldır</button></div>'}).join('')+'</div>';
 }
 function frDel(o,ask,after){
   var go2=function(){devAuth().then(function(fb){return fb.deleteDoc(fb.doc(CL.db,'fr',frKey(FR.pid,o)))}).then(function(){if(after)after()}).catch(function(){toast('Silinemedi, tekrar dene')})};
@@ -2507,7 +2576,7 @@ function tmOn(p){if(p===FR.pid)return true;var x=TM.pl[p];return !!(x&&Date.now(
 function tmUi(){
   if(st.modal)return;
   if(st.screen==='tml'){var e=document.getElementById('tm-body');if(e)e.innerHTML=tmBody()}
-  if(st.screen==='home'){var b=document.getElementById('tm-home');if(b)b.innerHTML=tmHomeBtn()}
+  if(st.screen==='home'||st.screen==='friends'){var b=document.getElementById('tm-home');if(b)b.innerHTML=tmHomeBtn()}
 }
 function tmHomeBtn(){
   if(!st.profile)return '';
@@ -3532,7 +3601,7 @@ function rmBeat(){
 }
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
-var PV=2,APPV=59;
+var PV=2,APPV=60;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
@@ -3806,7 +3875,7 @@ function confetti(big){
   c.style.cssText='position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:99';
   c.width=W;c.height=H;x=c.getContext('2d');
   if(!x)return;
-  document.body.appendChild(c);
+  document.body.appendChild(c);var cs=null;
   for(i=0;i<n;i++)P.push({x:Math.random()*W,y:-20-Math.random()*H*0.6,vx:(Math.random()-0.5)*3,vy:2+Math.random()*4,s:6+Math.random()*8,r:Math.random()*6,vr:(Math.random()-0.5)*0.3,c:cols[i%cols.length]});
   (function f(){
     var el=Date.now()-t0;
@@ -3815,7 +3884,9 @@ function confetti(big){
       p.x+=p.vx;p.y+=p.vy;p.r+=p.vr;
       x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/3,p.s,p.s*0.6);x.restore();
     });
-    if(el<dur)requestAnimationFrame(f);else if(c.parentNode)c.parentNode.removeChild(c);
+    /* S60: ekran değişince konfeti durur (kutlama ekranı 0,4 sn içinde açılmış olur) */
+    if(el>400&&cs===null)cs=st.screen;
+    if(el<dur&&(cs===null||cs===st.screen))requestAnimationFrame(f);else if(c.parentNode)c.parentNode.removeChild(c);
   })();
 }
 function lbOpen(kind,op,lv){
@@ -4099,7 +4170,7 @@ function rkGet(p){var x=rkRaw(p);if(!x.bf){rkBackfill(p,x);rkPut(p,x)}return x}
 function rkMine(){return st.profile?rkRaw(st.profile).r|0:0}
 function rkDay(t){var d=t?new Date(t):new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()}
 function rkRank(x){for(var i=6;i>0;i--){if(x.p>=RKP[i]&&x.hz>=RKZ[i])return i}return 0}
-function rkVal(x,fi,t){var k=RKF[fi].k;if(k==='se')return x.sb[t];if(k==='dz')return x.dz;if(k==='q')return x.q;return x[k][t]}
+function rkVal(x,fi,t){var k=RKF[fi].k,v;if(k==='se')v=(x.sb||[])[t];else if(k==='dz')v=x.dz;else if(k==='q')v=x.q;else v=Array.isArray(x[k])?x[k][t]:0;return +v||0}
 function rkHas(x,fi,t){return ((+x.m.charAt(fi)||0)>>t)&1}
 function rkAddQ(x,n,t){if(!(n>0))return;var d=rkDay(t);x.q+=n;if(x.dd!==d){x.dd=d;x.dq=0}x.dq+=n;if(x.dq>=20&&x.dk!==d){x.dk=d;x.dz++}}
 /* bir maçın sonucunu sayaçlara işle. mult: puan çarpanı (eski maçlar 0.5); cap: günlük rakip anahtarı */
@@ -4256,11 +4327,13 @@ function rkCardOpen(pid,nick){
 function rkMyCard(){rkCardOpen(null)}
 function rkFrBtns(c){
   if(!st.profile||!FR.ready)return '<p class="sub center">Arkadaşlık için bir <b>profil</b> ile gir.</p>';
-  if(FR.list.indexOf(c)>=0)return '<button class="next" onclick="frCall(\''+c+'\')">⚔️ Kapışmaya çağır</button><button class="ghost" onclick="msgOpen(\''+c+'\')">💬 Mesaj gönder</button><button class="ghost" onclick="st.fpFrom=\'kart\';frProf(\''+c+'\')">⚔️ Aranızdaki kapışmalar</button>';
+  if(FR.list.indexOf(c)>=0)return '<button class="next" onclick="frCall(\''+c+'\')">⚔️ Kapışmaya çağır</button><button class="ghost" onclick="msgOpen(\''+c+'\')">💬 Mesaj gönder</button><button class="ghost" onclick="st.fpFrom=\'kart\';frProf(\''+c+'\')">⚔️ Aranızdaki kapışmalar</button>'+rkBlkBtn(c);
   if(FR.out.indexOf(c)>=0)return '<p class="sub center">⏳ Arkadaşlık isteğin gönderildi. Kabul etmesi bekleniyor.</p>';
   if(FR.inc.indexOf(c)>=0)return '<button class="next" onclick="frAccept(\''+c+'\');setTimeout(render,900)">✓ Arkadaşlık isteğini kabul et</button>';
-  return '<button class="next" onclick="frAddId(\''+c+'\');setTimeout(render,900)">➕ Arkadaşlık isteği gönder</button><p class="sub center">Kabul ederse onu kapışmaya çağırabilirsin.</p>';
+  if(blkHas(c))return '<p class="sub center">🚫 Bu oyuncuyu engelledin.</p><button class="ghost" onclick="blkDel(\''+c+'\')">Engeli kaldır</button>';
+  return '<button class="next" onclick="frAddId(\''+c+'\');setTimeout(render,900)">➕ Arkadaşlık isteği gönder</button><p class="sub center">Kabul ederse onu kapışmaya çağırabilirsin.</p>'+rkBlkBtn(c);
 }
+function rkBlkBtn(c){var k=st.kc;return '<button class="ghost delw" onclick="blkAsk(\''+c+'\',\''+esc((k&&k.nick)||'').replace(/'/g,'')+'\')">🚫 Engelle</button>'}
 function rkKartHtml(){
   if(st.kc){
     var k=st.kc,h=topBar('🪪 Karakter Kartı');
@@ -4271,7 +4344,7 @@ function rkKartHtml(){
   var h2=topBar('🪪 Karakter Kartım');
   if(!st.profile)return h2+'<p class="sub center">Karakter kartı için bir <b>profil</b> ile gir.</p><button class="ghost" onclick="go(\'rhelp\')">❓ Nasıl kazanırım?</button>';
   var d=rkMyData(),x=d.x;
-  h2+=rkCardHtml(d)+'<button class="next" onclick="rkCardShare()">📤 Kartımı Paylaş</button><button class="ghost" onclick="go(\'rhelp\')">❓ Nasıl kazanırım?</button>';
+  h2+=rkCardHtml(d)+'<button class="next" onclick="rkCardShare()">📤 Kartımı Paylaş</button><button class="ghost" onclick="go(\'history\')">📊 Skorlarım</button><button class="ghost" onclick="go(\'rhelp\')">❓ Nasıl kazanırım?</button>';
   h2+='<div class="tag">Rütbe merdiveni</div><div class="rklad">';
   RKA.RANKS.forEach(function(R,i){h2+='<div class="'+(i<=x.r?'':'locked')+(i===x.r?' cur':'')+'">'+rkStill(RKA.emblem(i,{noRibbon:1}))+'<b>'+R.n+'</b><small>'+RKP[i]+'</small></div>'});
   h2+='</div>';
@@ -4977,12 +5050,15 @@ function render(){
     h+='<button class="next" id="pe-go" onclick="peSave()">'+(ed?'💾 Kaydet':'✅ Bu karakter benim')+'</button>';
     h+='<p class="sub center">Karakterin senin adın olur ve <b>sonradan değiştirilemez</b>. Bir karakteri ilk alan numarasız alır; daha önce başkası aldıysa yanına numara eklenir (örn. #482).</p>';
   }else if(s==='home'){
-    var lvh=frLive(),rvh=rvHomeHtml();
-    h=topBar(st.profile?'Merhaba, '+esc(st.profile):'Misafir')+'<div class="pbox live rvbox" id="rv-box"'+(rvh?'':' style="display:none"')+'>'+rvh+'</div><div class="pbox live" id="fr-live"'+(lvh?'':' style="display:none"')+'>'+lvh+'</div><div class="hgrid"><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Dört işlem</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem Oyunu<small>Hızlı cevapla</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Yarış, kapış, savaş</small></button><button class="btn" onclick="frOpen()"><span class="big">👫</span>Arkadaşlarım<small>Kapışmaya çağır<span id="fr-badge">'+(FR.inc.length?' · '+FR.inc.length+' yeni istek':'')+'</span></small></button><button class="btn" onclick="lbOpen(\'solo\')"><span class="big">🏆</span>Rekorlar Tablosu<small>En yüksek puanlar</small></button></div><div style="height:12px"></div>';
-    if(st.profile){var rx=rkGet(st.profile);h+='<button class="btn rkhome" onclick="rkMyCard()">'+rkMini(rx.r)+'<span>🪪 Karakter Kartım<small>'+RKA.RANKS[rx.r].n+' · '+rx.p+' puan</small></span></button><div id="tm-home">'+tmHomeBtn()+'</div>'}
-    h+=st.profile?'<button class="btn" onclick="go(\'history\')">📊 Skorlarım</button>':'<p class="sub center">Misafir oturumunda sonuçlar kaydedilmez.</p>';
-    if(!st.profile){var np=profiles();h+=np.length?'<button class="next" onclick="startGo()">'+esc(nkShow(np[0]))+' olarak oyna</button>':'<div class="pbox" style="text-align:center"><small>Karakter seçersen puanların, rütben ve rekorların kaydedilir.</small><button class="next" onclick="peOpen(-1)">🐾 Karakterimi Seç</button><button class="ghost" onclick="go(\'hgir\')">🔑 Hesabım var (kodla gir)</button></div>'}
-    h+='<button class="ghost" onclick="go(\'hesap\')">'+(st.profile?'👤 Hesabım ve ayarlar':'⚙️ Ayarlar')+'</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><button class="ghost" onclick="themeOpen()">🎨 Tema</button>';
+    var rvh=rvHomeHtml(),pp=st.profile,lg=gLast();
+    h=topBar(pp?'Merhaba!':'Misafir');
+    if(pp){var rx=rkGet(pp),nr=rx.r<6?rx.r+1:6,pc=rx.r>=6?100:Math.min(100,Math.round(rx.p*100/RKP[nr]));
+      h+='<button class="hstrip" onclick="rkMyCard()" aria-label="Karakter Kartım">'+rkMini(rx.r)+'<span class="hsi"><b>'+esc(pp)+'</b><small>'+RKA.RANKS[rx.r].n+' · '+rx.p+' puan · '+rkLeft(rx)+'</small><span class="hbar"><i style="width:'+pc+'%"></i></span></span><span class="hgo">›</span></button>'}
+    h+='<div class="pbox live rvbox" id="rv-box"'+(rvh?'':' style="display:none"')+'>'+rvh+'</div>';
+    h+='<button class="hplay" onclick="homePlay()"><canvas id="hpm" width="208" height="208" aria-hidden="true"></canvas><span class="hpt">▶ Oyna</span><small>'+(lg?'Kaldığın yer: '+gLabelL(lg.op,lg.lv,lg.tb):'Akıldan İşlem Oyunu')+'</small></button>';
+    h+='<div class="hgrid"><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem<small>Hızlı cevapla</small></button><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Dört işlem</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="go(\'rooms\')"><span class="big">🏁</span>Yarış Odası<small>Yarış, kapışma, takım</small></button></div>';
+    if(!pp){var np=profiles();h+=np.length?'<button class="next" onclick="startGo()">'+esc(nkShow(np[0]))+' olarak oyna</button>':'<div class="pbox" style="text-align:center"><small>Karakter seçersen puanların, rütben ve rekorların kaydedilir.</small><button class="next" onclick="peOpen(-1)">🐾 Karakterimi Seç</button><button class="ghost" onclick="go(\'hgir\')">🔑 Hesabım var (kodla gir)</button></div>';
+      h+='<button class="ghost" onclick="go(\'hesap\')">⚙️ Ayarlar</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button>'}
   }else if(s==='gmenu'){
     h=topBar('Akıldan İşlem Oyunu')+'<p class="sub center">İşlemi çöz, doğru cevaba dokun. Süre sınırlı, 3 canın var. Önce işlemi, sonra seviyeni seçersin.</p>'+audioBtns()+'<button class="ghost" onclick="lbOpen(\'solo\')">🏆 Rekorlar Tablosu</button><button class="ghost" onclick="guideOpen(\'game\')">❓ Nasıl oynanır?</button><div class="hgrid">';
     ['add','sub','mul','div','rnd'].forEach(function(o){h+='<button class="btn" onclick="gPick(\''+o+'\')"><span class="big">'+(o==='rnd'?'🎲':OPS[o].sym)+'</span>'+(o==='rnd'?'Karışık':OPS[o].name)+'<small>Seviye seç</small></button>'});
@@ -5069,7 +5145,7 @@ function render(){
   }else if(s==='fprof'){
     h=frProfHtml();
   }else if(s==='friends'){
-    h=topBar('👫 Arkadaşlarım')+(st.profile?pushBox():'')+'<div id="fr-body">'+frBody()+'</div>';
+    h=topBar('👫 Arkadaşlarım')+(st.profile?'<div id="tm-home">'+tmHomeBtn()+'</div>'+pushBox():'')+'<div id="fr-body">'+frBody()+'</div>';
   }else if(s==='rvl'){
     h=rvlHtml();
   }else if(s==='rvn'){
@@ -5170,6 +5246,8 @@ function render(){
     ap0.classList.remove('scr-in','scr-back','scr-fade');void ap0.offsetWidth;ap0.classList.add(cl);SCR.last=s;
   }
   SCR.back=false;tiltInit();
+  tabsUi();
+  if(s==='home')setTimeout(homeMon,30);
   if(!document.getElementById('mm-btn')){var mb=document.createElement('button');mb.id='mm-btn';mb.className='mmbtn';mb.onclick=mmToggle;document.body.appendChild(mb)}
   mmUpdate();
   if(s==='summary')drawReport(document.getElementById('card'));
@@ -5188,6 +5266,26 @@ function render(){
 function pickProfile(i){var p=profiles()[i];st.profile=p;go('home');frEnsure();nmAsk(p)}
 function startGo(){var ps=profiles();if(ps.length>1)return go('mig');if(ps.length===1){st.profile=ps[0];go('home');frEnsure();nmAsk(ps[0]);return}go('profiles')}
 function guest(){st.profile=null;frStop();go('home')}
+/* S60: alt sekme çubuğu: Oyna / Arkadaşlar / Kartım / Ayarlar (sadece karakterle, ana ekranlarda) */
+var TABS=[['🏠','Oyna'],['👫','Arkadaşlar'],['🪪','Kartım'],['⚙️','Ayarlar']];
+function tabOn(){
+  var s=st.screen;if(!st.profile)return -1;
+  if(s==='home')return 0;if(s==='friends')return 1;if((s==='kart'||s==='rozet')&&!st.kc)return 2;if(s==='history')return 2;if(s==='hesap')return 3;
+  return -1;
+}
+function tabsUi(){
+  var t=document.getElementById('tabs'),on=tabOn();
+  if(!t){t=document.createElement('nav');t.id='tabs';t.className='tabs';t.setAttribute('aria-label','Ana bölümler');
+    t.innerHTML=TABS.map(function(x,i){return '<button onclick="tabGo('+i+')"><span>'+x[0]+'</span>'+x[1]+(i===1?'<i id="tab-frb"></i>':'')+'</button>'}).join('');document.body.appendChild(t)}
+  t.hidden=on<0;document.body.classList.toggle('hastabs',on>=0);
+  [].forEach.call(t.children,function(b,i){b.classList.toggle('on',i===on);if(i===on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  tabBadge();
+}
+function tabBadge(){var e=document.getElementById('tab-frb');if(e)e.textContent=FR.inc&&FR.inc.length?FR.inc.length:''}
+function tabGo(i){
+  if(i===tabOn())return;
+  if(i===0)go('home');else if(i===1)frOpen();else if(i===2){st.kcFrom='home';rkMyCard()}else go('hesap');
+}
 function pickPOp(k){st.kind='p';st.op=k;st.mix=null;st.eldeli=null;go('digits')}
 function pickMix(m){st.kind='p';st.op='mix';st.mix=m;st.eldeli=null;go('digits')}
 function pickOp(k){st.kind='o';st.mix=null;st.op=k;st.eldeli=null;go(OPS[k].mode?'mode':'digits')}

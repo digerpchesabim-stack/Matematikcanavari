@@ -226,6 +226,13 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Test notu: test makinesi 2 çekirdekli olduğundan uygulama sade modda açılıyordu; S58 ekran testleri fark edilmeden sade modda koşmuştu. `shots.js`/`monkey.js` artık 8 çekirdek bildirir (`LITE=1` ile sade mod).
 
 ## 9. Bekleyen / yayınlanmamış
+- **S60 taslağı `s60` dalında (yayınlanmadı, kullanıcının "yükle" demesi bekleniyor).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
+  - Ana menü "A+B": karakter şeridi (`.hstrip`, rkMini + rkLeft + çubuk → rkMyCard), büyük altın Oyna (`.hplay`, canavar `homeMon`, `homePlay` → son Akıldan İşlem oyunu `mc_glast` {profil|'~': {op,lv,tb}}, yoksa gmenu), 4 kare (Akıldan İşlem, İşlemler, Problemler, Yarış Odası). "Şu an oyunda" kutusu ana menüden kalktı.
+  - Alt sekme çubuğu `#tabs` (`TABS`, `tabsUi`, `tabOn`, `tabGo`, `tabBadge`): Oyna/home, Arkadaşlar/friends (+ Takımım `#tm-home`), Kartım/kart (+ Skorlarım), Ayarlar/hesap (+ Kılavuz, Paylaş). Sadece karakterle ve bu ekranlarda; `body.hastabs` alt boşluk, toast yukarı.
+  - Engelle: `mc_blk` {profil:[{i,n}]} (yedekte), `blkAsk/blkAdd/blkDel/blkHas/blkHtml`, arkadaş profili + kart (`rkBlkBtn`), Hesabım "Engellediklerim"; engellenen frStart'ta listelerden düşer, arkadaşlık silinir.
+  - Hatalar: konfeti ekran değişince durur; `rkVal` sağlam ("NaN" test verisinden: sayaç dizi değil sayı yazılmıştı).
+  - Test `test/s60.js`; 33 test + shots + monkey geçti. APPV 60, mc-v60. Kural/Worker değişikliği yok.
+  - Sıradaki paketler (kullanıcıya sunuldu): 2 yasal sayfalar, 3 arayüz (Yanlış kutusu, ses düğmeleri, sen dili), 4 Android paketi (Capacitor), 5 Play Console + kapalı test, 6 oyun derinliği. Analiz dokümanı: "Matematik Canavarı — Play Store Yayın Analizi" (Claude Docs).
 - Yayınlanmamış kod yok. (Gerçek telefonda denenecekler: S59 3B canavarın akıcılığı/kademesi ve Android titreşimi, sade mod sınırı gevşedikten sonra 2–3 GB'lık telefonlarda S58 efektleri, sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri, S58 3D efektlerin eski telefonlarda akıcılığı ve telefonu eğince kartın eğilmesi.)
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
 
