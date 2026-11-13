@@ -51,7 +51,7 @@ await ev(A,()=>{clearInterval(window.__ap);go('rhist')});await sleep(300);consol
 await ev(A,()=>rmLeave());await ev(B,()=>{clearInterval(window.__ap);rmLeave()});await sleep(500);
 // 1'e 1: A-B iki maç, rakip pid kaydı
 await ev(A,()=>{rcGo('duel');rcSet('win',10);rcOp('add')});await sleep(900);const c2=await ev(A,()=>RM.code);
-await B.fill('#r-code',c2);await ev(B,()=>rmJoin());await sleep(800);
+await ev(B,c=>rmJoinCode(c,null),c2);await sleep(800);
 await bot(A,500,1500,0.9);await bot(B,700,2500,0.8);
 for(let i=0;i<120;i++){const s=await Promise.all([A,B].map(p=>ev(p,()=>st.screen)));if(s.every(x=>x==='dover'))break;await sleep(1000)}
 console.log('12 1e1 kayıt:',await ev(A,()=>JSON.stringify(ls('mc_dhist',[])[0])));

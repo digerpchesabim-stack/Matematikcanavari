@@ -3741,7 +3741,7 @@ function onMode(r){return r&&(r.mode==='duel'||r.mode==='mm'||r.mode==='ta')?r.m
 function onTitle(r){var m=onMode(r);return m==='ta'?'Takım '+(ONT[r.tm]||ONT[2]):ONM[m][1]}
 function onOpSym(op){return op==='rnd'?'🎲':OPS[op].sym}
 function onIsBot(u){return typeof u==='string'&&u.charAt(0)==='~'}
-function onReal(){return RM.players.filter(function(p){return !p.bot})}
+function onReal(){var l=RM.players.filter(function(p){return !p.bot}),me=CL.user?CL.user.uid:'';if(RM.me&&me&&!l.some(function(p){return p.uid===me}))l=l.concat([Object.assign({uid:me},RM.me)]);return l}
 function onCapRoom(){return !!(RM.room&&RM.room.cap)}
 function onOpen(){go('online');if(st.profile)onLoad(false)}
 /* liste: seviye başına en çok 8 oda (kota için canlı dinleme yok; 20 sn saklanır) */
@@ -4007,7 +4007,7 @@ function onStart(){
   bs.forEach(function(b,j){b.n=nm[j%nm.length];b.k=rk;if(m==='duel'||m==='mm'){b.m=0;b.r=[];b.p=[]}else{b.s=0;b.h=GHEARTS;b.c=0;b.o=0;b.b=0;b.t=0;b.d=false}});
   RM.ast=true;RM.bs=bs.length?bs:null;
   var go2=function(){rmStart()};
-  if(RM.bs&&RM.me){RM.me.ts=Date.now();RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',CL.user.uid),Object.assign({},RM.me,{bs:obPub()})).then(go2,function(e){RM.ast=false;RM.bs=null;toast(rmErr(e))})}
+  if(RM.bs&&RM.me){RM.me.ts=Date.now();RM.me.bs=obPub();RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',CL.user.uid),RM.me).then(go2,function(e){RM.ast=false;RM.bs=null;delete RM.me.bs;toast(rmErr(e))})}
   else go2();
 }
 function obPub(){return (RM.bs||[]).map(function(b){var o={},k;for(k in b)if(k!=='na')o[k]=b[k];return o})}

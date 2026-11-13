@@ -78,7 +78,7 @@ ok(/Takım Canavarı/.test(lv)&&/Hazır/.test(lv),'lobide eksik yer canavarla do
 await A.screenshot({path:__dirname+'/s56_lobi.png'});
 await ev(A,()=>rmStart());
 ok(await waitF(E,()=>st.screen==='dintro'||st.screen==='duel',null,15000),'kapışma başladı');
-const pa=await ev(A,()=>RM.room.pa);console.log('  eşleşme:',pa);
+await waitF(A,()=>!!(RM.room&&RM.room.pa));const pa=await ev(A,()=>RM.room.pa);console.log('  eşleşme:',pa);
 ok(pa.split(',').length===3&&(pa.match(/~/g)||[]).length===1,'3 çift, 1 canavar');
 await sleep(4000);await E.screenshot({path:__dirname+'/s56_duel.png'});
 for(const [k,d] of [['A',1800],['B',1800],['C',400],['D',400],['E',400]])await auto(P[k],d);
