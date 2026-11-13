@@ -24,7 +24,7 @@ const open=async()=>{const ctx=await b.newContext({viewport:{width:390,height:84
 const calls=(p,n,m)=>p.evaluate(([n,m])=>window.__cap.calls.filter(c=>c[0]===n&&(!m||c[1]===m)),[n,m]);
 srv.fcm=true;let p=await open();
 ok(await p.evaluate(()=>NATIVE&&document.documentElement.classList.contains('native')),'Android olarak açıldı');
-ok(await p.evaluate(()=>!document.querySelector('.vupd')&&/Sürüm 60/.test(document.body.textContent)),'giriş: sürüm yazıyor, "Güncelle" düğmesi yok');
+ok(await p.evaluate(()=>!document.querySelector('.vupd')&&/Sürüm \d+/.test(document.body.textContent)),'giriş: sürüm yazıyor, "Güncelle" düğmesi yok');
 ok(await p.evaluate(()=>navigator.serviceWorker.getRegistrations().then(r=>r.length===0)),'servis çalışanı kurulmadı');
 ok(await p.evaluate(()=>appUrl()===WEBURL&&rmLink().indexOf(WEBURL+'?oda=')===0),'bağlantılar web adresini kullanır');
 // titreşim

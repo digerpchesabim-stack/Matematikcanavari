@@ -17,12 +17,12 @@ ok(await p.evaluate(()=>!!document.querySelector('.hstrip')&&!!document.querySel
 ok(await p.evaluate(()=>{var t=document.getElementById('tabs');return t&&!t.hidden&&t.children[0].classList.contains('on')}),'alt sekme çubuğu görünür, Oyna seçili');
 ok(await p.evaluate(()=>/Akıldan İşlem Oyunu/.test(document.querySelector('.hplay').textContent)),'ilk açılışta Oyna → Akıldan İşlem');
 await sleep(500);
-ok(await p.evaluate(()=>{var c=document.getElementById('hpm').getContext('2d').getImageData(0,0,208,208).data,n=0;for(var i=3;i<c.length;i+=4)if(c[i]>200)n++;return n>3000}),'Oyna düğmesinde canavar çizildi');
+ok(await p.evaluate(()=>{var i=document.querySelector('.hplay img');return !!i&&/mc-idle\.webp$/.test(i.getAttribute('src'))&&i.complete&&i.naturalWidth>=300}),'Oyna düğmesinde canavar (hazır kare) yüklendi');
 await shot(p,'01_ana_menu');
 ok(await p.evaluate(()=>document.documentElement.scrollWidth<=390),'taşma yok');
 await p.evaluate(()=>homePlay());await sleep(300);ok(await p.evaluate(()=>st.screen==='gmenu'&&document.getElementById('tabs').hidden),'Oyna (ilk) → oyun menüsü, sekmeler gizli');
 await p.evaluate(()=>{gStart('mul','o',0)});await sleep(300);await p.evaluate(()=>{go('home')});await sleep(300);
-ok(await p.evaluate(()=>/Kaldığın yer: Çarpma · Orta/.test(document.querySelector('.hplay').textContent)),'Kaldığın yer: Çarpma · Orta');
+ok(await p.evaluate(()=>/Çarpma · Orta/.test(document.querySelector('.hplay').textContent)&&/Kaldığın yerden devam/.test(document.querySelector('.hplay').textContent)),'Oyna: Çarpma · Orta, kaldığın yerden devam');
 await p.evaluate(()=>homePlay());await sleep(300);ok(await p.evaluate(()=>st.g&&st.g.op==='mul'&&st.g.lv==='o'),'Oyna son oyunu başlatır');
 await p.evaluate(()=>go('home'));await sleep(300);
 await p.evaluate(()=>tabGo(1));await sleep(600);ok(await p.evaluate(()=>st.screen==='friends'&&!!document.getElementById('tm-home')&&document.getElementById('tabs').children[1].classList.contains('on')),'Arkadaşlar sekmesi + Takımım');await shot(p,'02_arkadaslar');

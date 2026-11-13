@@ -10,7 +10,7 @@ echo "Sürüm $APPV, Firebase SDK $FBV"
 
 rm -rf www out && mkdir -p www/fb out
 cp $R/index.html $R/manifest.json $R/icon-192.png $R/icon-512.png $R/push.json $R/gizlilik.html $R/aydinlatma.html $R/veri-silme.html www/
-cp $R/*.mp3 www/
+cp $R/*.mp3 $R/mc-*.webp www/
 for f in firebase-app firebase-auth firebase-firestore; do
   curl -fsSL "https://www.gstatic.com/firebasejs/$FBV/$f.js" | sed "s#https://www.gstatic.com/firebasejs/$FBV/#./#g" > www/fb/$f.js
 done

@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 11 Kasım 2026 · Yayındaki sürüm: **60**
+Son güncelleme: 13 Kasım 2026 · Yayındaki sürüm: **61**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -225,6 +225,13 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Düzeltilen eski hata: karşılamada canavara dokununca zıplama hiç görünmüyordu.
   - Test notu: test makinesi 2 çekirdekli olduğundan uygulama sade modda açılıyordu; S58 ekran testleri fark edilmeden sade modda koşmuştu. `shots.js`/`monkey.js` artık 8 çekirdek bildirir (`LITE=1` ile sade mod).
 
+- 61 (13 Kasım 2026 yayında; kullanıcı örnek ekranları onaylayıp "uygula ve yükle" dedi): **Pastel, düz ve yumuşak tasarım + 3 tema + hazır kare canavar.** Tasarım örneği: "Matematik Canavarı — Yeni Tasarım" (Design artifact, 4 ekran). İşlev/veri/kural değişmedi. Bu sürümle s60 dalı (Android paketi, FCM, Play gönderim hattı) da main'e alındı.
+  - Kullanıcı kararları: kabartma kalktı → düz kart + yumuşak gölge; cam (buzlu) sadece üst başlık, alt sekme çubuğu, pencereler; pastel renk; 3B süsler (küp, madalyon, eğilen kart, geçişler) **kaldı**, renkleri pastele uyarlandı; tema 3'e indi (Açık, Gece, Yüksek kontrast + Otomatik; eski Kum/Okyanus seçimi Açık'a döner: baş betik + `themeGet`); canavar "hazır kareler" (her telefonda aynı netlik).
+  - CSS: `<style>` sonunda "S61: pastel" bloğu S58'in üstüne yazar. Yeni değişkenler: `--e1/--e2` (yumuşak gölge), `--eg` (altın düğme gölgesi), `--bd` (kenarlık; sadece hc'de 2px), `--glass/--glass-b`, `--acc-bg/--acc-t` (yumuşak vurgu zemini/yazısı: seçili çip, mini düğme), işlem renkleri `--op-add/sub/mul/div/mix` + `-t` (yeşil/turuncu/mavi/mor/altın; `.big.op-<işlem>`, `.optile`). `--edge` saydam (eski kabartma kuralları kendiliğinden düzleşir). `.top` yapışkan cam başlık. `#tabs` yüzen cam. Sayfa içi `.tabs:not(#tabs)` (rekorlar) artık alt çubuk gibi sabitlenmez (S60 hatası).
+  - Canavar: canlı sahne (`o.live`) artık her cihazda `m3dSprite` ile (416 px, sade modda 320; göz kırpma anahtarı eklendi; yürürken tuvalde hafif salınım); çözünürlük düşürme kademesi kullanılmıyor. Küçük canavar görselleri dosya: `mc-idle/happy/look/wait/cheer.webp` (320 px, 3B modelden; `scratch ds3/mon.js` ile üretildi; sw.js FILES + build.sh'ta). Yardımcılar: `monImg(k,cls)`, `topMon()` (üst başlıkta ekrana göre poz; soru ekranlarında yok), `qMon()` + `.qm` sarmalayıcı (soru kartı köşesi; problemlerde `.qw` sol üst), `monReact(ok)` (sndOk/sndFast/sndBad içinden: doğruda `happy` + zıplama 0,55 sn, yanlışta `wait` 0,8 sn — **yanlışta gülen poz kullanma**), `rMon/rHero(win,başlık,alt)` (sonuç: gover, summary, rover `#r-mon`, dover `.rwin` madalyon + canavar), `.wmon` (geri sayım, `ovBusy`).
+  - Tuval kartlarında (paylaşılan görseller) kobalt yerine pastel çivit (`#6b78e6→#4450c0`, yazı `#4a56c8`). Süre çubuğu `--ok-d / #e9b949 / --bad-d`.
+  - Test: `test/s61.js`; s60/acc1/native1 güncellendi. Bilinen: `s55.js` 32. satır S60'tan beri düşüyor ("Şu an oyunda" kutusu ana menüden kalkmıştı; test eski).
+
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
   - Ana menü "A+B": karakter şeridi (`.hstrip`, rkMini + rkLeft + çubuk → rkMyCard), büyük altın Oyna (`.hplay`, canavar `homeMon`, `homePlay` → son Akıldan İşlem oyunu `mc_glast` {profil|'~': {op,lv,tb}}, yoksa gmenu), 4 kare (Akıldan İşlem, İşlemler, Problemler, Yarış Odası). "Şu an oyunda" kutusu ana menüden kalktı.
@@ -236,7 +243,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Hatalar: konfeti ekran değişince durur; `rkVal` sağlam ("NaN" test verisinden: sayaç dizi değil sayı yazılmıştı).
   - Test `test/s60.js`; 33 test + shots + monkey geçti. APPV 60, mc-v60. Kural/Worker değişikliği yok.
   - Sıradaki paketler (kullanıcıya sunuldu): 2 yasal sayfalar, 3 arayüz (Yanlış kutusu, ses düğmeleri, sen dili), 4 Android paketi (Capacitor), 5 Play Console + kapalı test, 6 oyun derinliği. Analiz dokümanı: "Matematik Canavarı — Play Store Yayın Analizi" (Claude Docs).
-- **S61 taslağı `s60` dalında (yayınlanmadı): Android paketi (Play Store adım 2–4).** main'e alınmadı; web uygulamasına etkisi yok (NATIVE=false iken her şey eskisi gibi, test/native1.js web bölümü).
+- **Android paketi (Play Store adım 2–4; S61 ile main'e alındı, mağazaya henüz gönderilmedi).** Web uygulamasına etkisi yok (NATIVE=false iken her şey eskisi gibi, test/native1.js web bölümü).
   - `android-app/`: Capacitor 8 (`capacitor.config.json`, appId **`com.matematikcanavari.oyun`** — Play'e ilk yüklemeden sonra değişmez), `package.json` (core/cli/android 8.4, app, haptics, share, filesystem, push-notifications, @capacitor-community/text-to-speech 8), `assets/` (simge: 1024 tek parça + uyarlanabilir ön/arka katman, scratch `m3d/icon2.js fg|bg`), `res/drawable/ic_stat_mc.xml` (bildirim simgesi), `build.sh`.
   - `build.sh` (sadece Actions'ta; burada npm yok): kök dosyaları `www/`'ye kopyalar, Firebase SDK'yı gstatic'ten `www/fb/`'ye indirip iç bağlantıları göreceli yapar, `google-services.json` varsa `www/fcm.json` ({on:1}) yazar, `cap add/sync`, simgeler (`@capacitor/assets`), versionCode/versionName = APPV, manifest: FCM varsayılan simge/renk/kanal `mc` + dikey ekran. Hedef/derleme SDK 36, min 24.
   - `.github/workflows/android.yml`: main ve s60'a push (uygulama dosyaları/android-app) → debug APK; yapıt + **`apk-<dal>` dalına** konur (buradan yapıt indirme engelli: `git fetch origin apk-s60` + `git archive FETCH_HEAD | tar -x`). Gizli `GOOGLE_SERVICES_JSON` varsa kullanılır; yoksa `android-app/google-services.json` dosyası (gizli değildir, depoya konabilir).

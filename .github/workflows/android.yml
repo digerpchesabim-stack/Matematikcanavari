@@ -2,7 +2,7 @@ name: Android paketi
 on:
   push:
     branches: [main, s60]
-    paths: ['index.html', '*.mp3', '*.png', 'gizlilik.html', 'aydinlatma.html', 'veri-silme.html', 'manifest.json', 'push.json', 'android-app/**', '.github/workflows/android.yml']
+    paths: ['index.html', '*.mp3', '*.png', '*.webp', 'gizlilik.html', 'aydinlatma.html', 'veri-silme.html', 'manifest.json', 'push.json', 'android-app/**', '.github/workflows/android.yml']
   workflow_dispatch:
     inputs:
       play:

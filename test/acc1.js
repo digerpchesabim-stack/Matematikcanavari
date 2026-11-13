@@ -115,8 +115,8 @@ ok(ca.n===6&&cb.n===6&&ca.b.sub===44&&ca.b.mul===55&&cb.b.sub===44&&cb.b.mul===5
 const w0=st['ac/'+code].ts;await ev(A,()=>{AC.t=0;return acPull(true).then(()=>bkRun())});await ev(B,()=>{AC.t=0;return acPull(true).then(()=>bkRun())});
 ok(st['ac/'+code].ts===w0,'değişiklik yokken buluta yeniden yazılmadı');
 // tema ayarı eşitlenir
-await ev(B,()=>{fsSet(1);themeSet('sepia');closeModal();return bkRun(true)});await ev(A,()=>{AC.t=0;return acPull(true)});
-ok(await ev(A,()=>document.documentElement.getAttribute('data-fs')==='1'&&document.documentElement.getAttribute('data-theme')==='sepia'),'yazı boyutu ve tema öbür cihaza geçti');
+await ev(B,()=>{fsSet(1);themeSet('dark');closeModal();return bkRun(true)});await ev(A,()=>{AC.t=0;return acPull(true)});
+ok(await ev(A,()=>document.documentElement.getAttribute('data-fs')==='1'&&document.documentElement.getAttribute('data-theme')==='dark'),'yazı boyutu ve tema öbür cihaza geçti');
 await ev(A,()=>{fsSet(0);themeSet('auto');closeModal()});await ev(B,()=>{fsSet(0);themeSet('auto');closeModal()});
 // ---------- 5) Yeni kullanıcı ----------
 const C=await newPhone('C');await sleep(400);
