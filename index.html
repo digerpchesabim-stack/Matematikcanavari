@@ -4205,7 +4205,7 @@ function rmLeaveLocal(){
   var wasGame=st.screen==='game';
   rmReset();
   if(wasGame&&st.g){st.g.done=true;if(st.g.to)clearTimeout(st.g.to)}
-  go('rooms');
+  ON.t=0;go('online');if(st.profile)onLoad(false);
 }
 function ivRecall(){
   var l=[],k;for(k in (RM.ivs||{})){var o=RM.ivs[k];if(o.st==='sent'||o.st==='seen')l.push([k,o.ts])}
@@ -5738,7 +5738,6 @@ function go(s){
   setTimeout(rvCheck,600);setTimeout(msCheck,900);setTimeout(tmCheck,1200);
   if(PENDRELOAD&&(s==='home'||s==='welcome'||s==='profiles')){location.reload();return}
   if(s==='bkr')s='hgir';
-  if(s==='rooms'){s='online';if(st.profile)setTimeout(function(){onLoad(false)},0)}
   /* S60: ilk açılışta bir kez bilgilendirme kartı (hangi bilgiler kullanılır) */
   if((s==='profiles'||s==='home'||s==='mig')&&!ls('mc_info',0)){st.infoNext=s;s='info'}
   var np=profiles().length;
@@ -5760,7 +5759,7 @@ function back(){SCR.back=true;
   if(s==='guide')return go(GV.from||'welcome');
   if(s==='rjoin'){RJOIN=null;return go('welcome')}
   if(s==='lb')return go(LBV.from||'home');
-  if(s==='rhist')return go('rooms');
+  if(s==='rhist')return go('online');
   if(s==='legal'){var lf=st.lgFrom||'hesap';st.lgFrom=null;return go(lf)}
   if(s==='info')return go('welcome');
   if(s==='hesap')return go('home');
