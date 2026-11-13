@@ -43,4 +43,13 @@ cat $M
 cd android
 ./gradlew --no-daemon assembleDebug
 cp app/build/outputs/apk/debug/app-debug.apk ../out/matematik-canavari-$APPV-debug.apk
+# Play için imzalı AAB: yükleme anahtarı gizlileri varsa (UPLOAD_KS = keystore base64, UPLOAD_KS_PASS, UPLOAD_KEY_ALIAS, UPLOAD_KEY_PASS)
+if [ -n "${UPLOAD_KS:-}" ]; then
+  KS=$(mktemp -d)/upload.jks; printf '%s' "$UPLOAD_KS" | base64 -d > "$KS"
+  ./gradlew --no-daemon bundleRelease \
+    -Pandroid.injected.signing.store.file="$KS" -Pandroid.injected.signing.store.password="$UPLOAD_KS_PASS" \
+    -Pandroid.injected.signing.key.alias="$UPLOAD_KEY_ALIAS" -Pandroid.injected.signing.key.password="${UPLOAD_KEY_PASS:-$UPLOAD_KS_PASS}"
+  rm -f "$KS"
+  cp app/build/outputs/bundle/release/app-release.aab ../out/matematik-canavari-$APPV.aab
+else echo "::notice::Yükleme anahtarı yok: sadece debug APK derlendi"; fi
 ls -la ../out

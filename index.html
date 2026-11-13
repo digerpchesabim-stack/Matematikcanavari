@@ -4524,6 +4524,38 @@ function natPushOn(){
     delete q.den;q.on=1;lsSet('mc_push',q);PUSH.nf=true;natPushReg();
   }).catch(function(){toast('Bildirimler açılamadı')});
 }
+/* S61 Android: Play'de yeni sürüm var mı (AppUpdate eklentisi). Kapışmada iki telefonun aynı sürümde olması gerekir. */
+var NUP={av:0,t:0,imm:false};
+function natUpdCheck(force){
+  var A=natP('AppUpdate');if(!NATIVE||!A||!navigator.onLine)return Promise.resolve(0);
+  if(!force&&Date.now()-NUP.t<6*3600e3)return Promise.resolve(NUP.av);
+  NUP.t=Date.now();
+  return A.getAppUpdateInfo().then(function(i){
+    var was=NUP.av;NUP.av=i&&i.updateAvailability===2?(+i.availableVersionCode||1):0;NUP.imm=!!(i&&i.immediateUpdateAllowed);
+    if(was!==NUP.av&&st.screen==='welcome'&&!st.modal)render();
+    return NUP.av;
+  }).catch(function(){return 0});
+}
+function natUpdAsk(){
+  if(!NUP.av||st.modal||['welcome','home'].indexOf(st.screen)<0)return;
+  var q=ls('mc_nup',{});if(q.v===NUP.av&&Date.now()-(q.t||0)<864e5)return;
+  lsSet('mc_nup',{v:NUP.av,t:Date.now()});
+  modal('🆕 Yeni sürüm hazır!<br>Arkadaşlarınla sorunsuz kapışmak için güncelle.','🔄 Güncelle','Sonra',natUpdGo);
+}
+function natUpdGo(){
+  var A=natP('AppUpdate');if(!A)return;
+  if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
+  var store=function(){return A.openAppStore().catch(function(){toast('Google Play açılamadı')})};
+  if(!NUP.imm){store();return}
+  A.performImmediateUpdate().then(function(r){if(r&&r.code>1)store()}).catch(store);
+}
+/* S61 Android: oyun ekranlarında ekran kararmasın (KeepAwake eklentisi) */
+var KA={on:false};
+function kaUpdate(){
+  var K=natP('KeepAwake');if(!NATIVE||!K)return;
+  var on=!document.hidden&&MMOFF.indexOf(st.screen)>=0;if(on===KA.on)return;KA.on=on;
+  try{(on?K.keepAwake():K.allowSleep()).catch(function(){})}catch(e){}
+}
 function natPushSave(tok){
   if(!tok||!FR.pid)return;
   var pid=FR.pid,sig=tok.slice(-32),q=ls('mc_push',{}),force=PUSH.nf;if(!force&&q.w&&q.w[pid]===sig&&q.f===sig)return;
@@ -5137,7 +5169,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+(NATIVE?'':' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button>')+'</div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+(NATIVE?(NUP.av?' <button class="vupd" onclick="natUpdGo()">🔄 Güncelle</button>':''):' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button>')+'</div></div>';
   }else if(s==='profiles'){
     h=startHtml();
   }else if(s==='mig'){
@@ -5357,7 +5389,7 @@ function render(){
   tabsUi();
   if(s==='home')setTimeout(homeMon,30);
   if(!document.getElementById('mm-btn')){var mb=document.createElement('button');mb.id='mm-btn';mb.className='mmbtn';mb.onclick=mmToggle;document.body.appendChild(mb)}
-  mmUpdate();
+  mmUpdate();kaUpdate();
   if(s==='summary')drawReport(document.getElementById('card'));
   if(s==='gover')drawGame(document.getElementById('gcard'));
   if(s==='dover'){var dc0=document.getElementById('dcard');if(dc0)drawDuel(dc0);if(!(DU&&DU.tw))duOverUi()}
@@ -5589,6 +5621,7 @@ if(!NATIVE&&'serviceWorker' in navigator){window.addEventListener('load',functio
   navigator.serviceWorker.register('sw.js').catch(function(){});
 }catch(e){}})}
 if(NATIVE)setTimeout(natPushInit,300);
+if(NATIVE){setTimeout(function(){natUpdCheck(true).then(natUpdAsk)},3000);document.addEventListener('visibilitychange',function(){kaUpdate();if(!document.hidden)natUpdCheck(false).then(natUpdAsk)})}
 st.vert=ls('mc_vert',false);
 render();
 if(DEEP)setTimeout(deepRun,400);

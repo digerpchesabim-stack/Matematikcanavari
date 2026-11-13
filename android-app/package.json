@@ -3,6 +3,8 @@
   "private": true,
   "description": "Matematik Canavarı Android paketi (Capacitor). Uygulama dosyaları depo kökünden www/ içine kopyalanır.",
   "dependencies": {
+    "@capacitor-community/keep-awake": "^8.0.0",
+    "@capacitor-community/text-to-speech": "^8.0.0",
     "@capacitor/android": "^8.4.0",
     "@capacitor/app": "^8.0.0",
     "@capacitor/cli": "^8.4.0",
@@ -11,7 +13,7 @@
     "@capacitor/haptics": "^8.0.0",
     "@capacitor/push-notifications": "^8.0.0",
     "@capacitor/share": "^8.0.0",
-    "@capacitor-community/text-to-speech": "^8.0.0"
+    "@capawesome/capacitor-app-update": "^8.0.3"
   },
   "devDependencies": {
     "@capacitor/assets": "^3.0.5"

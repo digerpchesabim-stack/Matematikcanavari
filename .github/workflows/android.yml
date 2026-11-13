@@ -4,6 +4,11 @@ on:
     branches: [main, s60]
     paths: ['index.html', '*.mp3', '*.png', 'gizlilik.html', 'aydinlatma.html', 'veri-silme.html', 'manifest.json', 'push.json', 'android-app/**', '.github/workflows/android.yml']
   workflow_dispatch:
+    inputs:
+      play:
+        description: "İmzalı AAB'yi Google Play dahili test kanalına gönder"
+        type: boolean
+        default: false
 permissions:
   contents: write
 jobs:
@@ -27,14 +32,37 @@ jobs:
           GS: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: if [ -n "$GS" ] && [ ! -f android-app/google-services.json ]; then printf '%s' "$GS" > android-app/google-services.json; fi
       - name: Paketi derle
+        env:
+          UPLOAD_KS: ${{ secrets.UPLOAD_KS }}
+          UPLOAD_KS_PASS: ${{ secrets.UPLOAD_KS_PASS }}
+          UPLOAD_KEY_ALIAS: ${{ secrets.UPLOAD_KEY_ALIAS }}
+          UPLOAD_KEY_PASS: ${{ secrets.UPLOAD_KEY_PASS }}
         run: bash android-app/build.sh
       - uses: actions/upload-artifact@v4
         with:
           name: apk
-          path: android-app/out/*.apk
+          path: |
+            android-app/out/*.apk
+            android-app/out/*.aab
           retention-days: 30
+      # Play'e gönderme sadece elle tetiklenince (play: true) ve PLAY_SA gizlisi (Play Console servis hesabı) varsa.
+      # İlk AAB Play Console'a elle yüklenmeli; sonrakiler buradan. Taslak olarak gider, yayına Play Console'dan alınır.
+      - name: Play gönderimi mümkün mü
+        id: pc
+        if: ${{ inputs.play }}
+        env:
+          SA: ${{ secrets.PLAY_SA }}
+        run: if [ -n "$SA" ] && ls android-app/out/*.aab >/dev/null 2>&1; then echo "ok=1" >> $GITHUB_OUTPUT; else echo "::error::PLAY_SA gizlisi ya da imzalı AAB yok"; exit 1; fi
+      - uses: r0adkll/upload-google-play@v1
+        if: ${{ inputs.play && steps.pc.outputs.ok == '1' }}
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SA }}
+          packageName: com.matematikcanavari.oyun
+          releaseFiles: android-app/out/*.aab
+          track: internal
+          status: draft
       - name: APK'yı apk dalına koy (indirme kolaylığı)
         run: |
-          D=$(mktemp -d); cp android-app/out/*.apk $D/
+          D=$(mktemp -d); cp android-app/out/*.apk android-app/out/*.aab $D/ 2>/dev/null || true
           cd $D && git init -q -b apk && git add . && git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "APK ${GITHUB_SHA::7}"
           git push -qf "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" apk:apk-${GITHUB_REF_NAME}

@@ -11,12 +11,12 @@ const srv=http.createServer((q,s)=>{let u=decodeURIComponent(q.url.split('?')[0]
 (async()=>{if(out)fs.mkdirSync(out,{recursive:true});
 await new Promise(r=>srv.listen(0,r));const U='http://127.0.0.1:'+srv.address().port+'/';
 const b=await chromium.launch();
-const CAP=()=>{const L=window.__cap={calls:[],ls:{}};const rec=(n,m)=>function(a){L.calls.push([n,m,a===undefined?null:JSON.parse(JSON.stringify(a))]);return Promise.resolve(m==='writeFile'?{uri:'file:///data/cache/'+a.path}:m==='requestPermissions'||m==='checkPermissions'?{receive:window.__perm||'granted'}:undefined)};
+const CAP=()=>{const L=window.__cap={calls:[],ls:{}};const rec=(n,m)=>function(a){L.calls.push([n,m,a===undefined?null:JSON.parse(JSON.stringify(a))]);return Promise.resolve(m==='getAppUpdateInfo'?(window.__upd||{updateAvailability:1}):m==='performImmediateUpdate'?{code:window.__updCode||0}:m==='writeFile'?{uri:'file:///data/cache/'+a.path}:m==='requestPermissions'||m==='checkPermissions'?{receive:window.__perm||'granted'}:undefined)};
   const pl=(n,ms)=>{const o={addListener:function(e,f){(L.ls[n+'.'+e]=L.ls[n+'.'+e]||[]).push(f);return Promise.resolve({remove(){}})}};ms.forEach(m=>o[m]=rec(n,m));return o};
   window.__emit=(k,x)=>(L.ls[k]||[]).forEach(f=>f(x));
   window.Capacitor={isNativePlatform:()=>true,getPlatform:()=>'android',Plugins:{
     Haptics:pl('Haptics',['vibrate','impact']),Share:pl('Share',['share']),Filesystem:pl('Filesystem',['writeFile']),App:pl('App',['exitApp']),
-    TextToSpeech:pl('TextToSpeech',['speak','stop']),PushNotifications:pl('PushNotifications',['register','requestPermissions','checkPermissions','createChannel'])}};
+    TextToSpeech:pl('TextToSpeech',['speak','stop']),AppUpdate:pl('AppUpdate',['getAppUpdateInfo','performImmediateUpdate','openAppStore']),KeepAwake:pl('KeepAwake',['keepAwake','allowSleep']),PushNotifications:pl('PushNotifications',['register','requestPermissions','checkPermissions','createChannel'])}};
   try{localStorage.setItem('mc_mmus','false');Object.defineProperty(navigator,'hardwareConcurrency',{get:()=>8})}catch(e){}};
 const open=async()=>{const ctx=await b.newContext({viewport:{width:390,height:844}});const p=await ctx.newPage();p.errs=[];
   p.on('pageerror',e=>p.errs.push(String(e.message||e)));
@@ -74,7 +74,21 @@ ok(await p.evaluate(()=>!!st.modal&&/çıkmak/.test(document.getElementById('ov'
 await p.evaluate(()=>{var b=[...document.querySelectorAll('#ov button')].find(x=>/Evet/.test(x.textContent));b.click()});await sleep(200);
 ok((await calls(p,'App','exitApp')).length===1,'"Evet, çık" → uygulama kapanır');
 ok(await p.evaluate(()=>history.length<=2),'geçmiş tamponu kullanılmadı');
+// ekran açık kalsın: oyun ekranında keepAwake, menüde allowSleep
+await p.evaluate(()=>{st.modal=false;document.getElementById('ov').hidden=true;go('home')});await sleep(200);
+await p.evaluate(()=>{st.screen='quiz';kaUpdate()});await sleep(100);await p.evaluate(()=>{st.screen='home';kaUpdate()});await sleep(100);
+let ka=(await calls(p,'KeepAwake')).map(c=>c[1]);ok(ka.join()==='keepAwake,allowSleep','oyun ekranında ekran açık kalır, menüde serbest: '+ka.join());
+ok((await calls(p,'AppUpdate','getAppUpdateInfo')).length>=1&&await p.evaluate(()=>NUP.av===0),'açılışta güncelleme denetlendi (güncel)');
 if(out)await p.screenshot({path:path.join(out,'native.png')});
+ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();
+// Play'de yeni sürüm var
+p=await open();await p.evaluate(()=>{window.__upd={updateAvailability:2,availableVersionCode:61,immediateUpdateAllowed:true};NUP.t=0;return natUpdCheck(true).then(natUpdAsk)});await sleep(400);
+ok(await p.evaluate(()=>!!st.modal&&/Yeni sürüm/.test(document.getElementById('ov').textContent)),'yeni sürüm: "Güncelle" penceresi');
+await p.evaluate(()=>document.getElementById('my').click());await sleep(200);
+ok((await calls(p,'AppUpdate','performImmediateUpdate')).length===1&&(await calls(p,'AppUpdate','openAppStore')).length===0,'Güncelle → Play içi anında güncelleme');
+await p.evaluate(()=>{go('welcome')});await sleep(400);ok(await p.evaluate(()=>{var b=document.querySelector('.vupd');return !!b&&/natUpdGo/.test(b.getAttribute('onclick'))}),'girişte "🔄 Güncelle" düğmesi görünür');
+await p.evaluate(()=>{window.__updCode=4;natUpdGo()});await sleep(200);ok((await calls(p,'AppUpdate','openAppStore')).length===1,'anında güncelleme olmazsa Play sayfası açılır');
+await p.evaluate(()=>{st.modal=false;natUpdAsk()});await sleep(100);ok(await p.evaluate(()=>!st.modal),'aynı sürüm için pencere günde bir kez');
 ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();
 // google-services olmadan derlenmiş paket: bildirim kutusu yok, hata yok
 srv.fcm=false;p=await open();
