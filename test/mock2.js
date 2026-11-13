@@ -19,7 +19,7 @@ try{if(!window.__INFO0){var __gi=Storage.prototype.getItem;Storage.prototype.get
     signOut:function(){cur=null;fire();return Promise.resolve()},
     doc:function(db){var a=[].slice.call(arguments,1);return {path:a.join('/')}},
     collection:function(db){var a=[].slice.call(arguments,1);return {path:a.join('/')}},
-    query:function(c){var cs=[].slice.call(arguments,1);var o={path:c.path,ob:null,lim:null,w:null};cs.forEach(function(x){if(x.__ob)o.ob=x;else if(x.__lim)o.lim=x.n;else o.w=x});return o},
+    query:function(c){var cs=[].slice.call(arguments,1);var o={path:c.path,ob:null,lim:null,w:null,ws:[]};cs.forEach(function(x){if(x.__ob)o.ob=x;else if(x.__lim)o.lim=x.n;else{o.w=x;o.ws.push(x)}});return o},
     orderBy:function(f,d){return {__ob:1,f:f,d:d}},limit:function(n){return {__lim:1,n:n}},where:function(f,op,v){return {f:f,v:v}},
     getDoc:function(r){return srv('get',r.path,cur&&cur.uid).then(function(d){return snap(r.path,d)})},
     setDoc:function(r,d){return srv('set',r.path,cur&&cur.uid,d)},

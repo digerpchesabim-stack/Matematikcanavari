@@ -8,36 +8,83 @@ service cloud.firestore {
     // Yarış odaları
     match /rooms/{code} {
       allow get: if signedIn();
+      // S62: açık odalar listesi. Sorgu pub == 1 ile süzülmeli, en çok 20 oda.
+      allow list: if signedIn() && resource.data.pub == 1 && request.query.limit <= 20;
+      // S62: pub (1 = listede), cap (kişi sayısı), pw (1 = şifreli), tm (takım büyüklüğü), rk (kurucunun rütbesi),
+      //      hp (kurucunun oyuncu kimliği), nb (bot sayısı), n (içerideki oyuncu), hb (kurucunun son sinyali)
       allow create: if signedIn()
         && request.resource.data.host == request.auth.uid
-        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win', 'at', 'ka', 'kb', 'cm'])
+        && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win', 'at', 'ka', 'kb', 'cm', 'pub', 'cap', 'pw', 'tm', 'rk', 'hp', 'nb', 'n', 'hb'])
         && (!('at' in request.resource.data) || request.resource.data.at is int)
-        && (!('mode' in request.resource.data) || request.resource.data.mode in ['duel', 'mm', 'tw'])
+        && (!('pub' in request.resource.data) || request.resource.data.pub in [0, 1])
+        && (!('pw' in request.resource.data) || request.resource.data.pw in [0, 1])
+        && (!('cap' in request.resource.data) || (request.resource.data.cap is int && request.resource.data.cap >= 2 && request.resource.data.cap <= 10))
+        && (!('tm' in request.resource.data) || request.resource.data.tm in [2, 3, 4])
+        && (!('rk' in request.resource.data) || (request.resource.data.rk is int && request.resource.data.rk >= 0 && request.resource.data.rk <= 6))
+        && (!('hp' in request.resource.data) || (request.resource.data.hp is string && request.resource.data.hp.size() <= 10))
+        && (!('nb' in request.resource.data) || (request.resource.data.nb is int && request.resource.data.nb >= 0 && request.resource.data.nb <= 9))
+        && (!('n' in request.resource.data) || request.resource.data.n is int)
+        && (!('hb' in request.resource.data) || request.resource.data.hb is int)
+        && (!('mode' in request.resource.data) || request.resource.data.mode in ['duel', 'mm', 'tw', 'ta'])
         && (!('win' in request.resource.data) || request.resource.data.win in [10, 15, 20])
         && (!('lv' in request.resource.data) || request.resource.data.lv in ['k', 'o', 'z'])
         && (!('tb' in request.resource.data) || (request.resource.data.tb is int && request.resource.data.tb >= 0 && request.resource.data.tb <= 10))
         && request.resource.data.status == 'lobby'
         && request.resource.data.op in ['add', 'sub', 'mul', 'div', 'rnd']
         && code.size() >= 3 && code.size() <= 10;
-      // Sadece kurucu, sadece durumu "playing" yapabilir
+      // Sadece kurucu: durumu "playing" yapar; lobideyken oyuncu sayısı, sinyal ve bot sayısını günceller (S62)
       allow update: if signedIn()
         && resource.data.host == request.auth.uid
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'pa'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'pa', 'n', 'hb', 'nb'])
         && (!('pa' in request.resource.data) || (request.resource.data.pa is string && request.resource.data.pa.size() <= 600))
-        && request.resource.data.status == 'playing';
+        && (!('nb' in request.resource.data) || (request.resource.data.nb is int && request.resource.data.nb >= 0 && request.resource.data.nb <= 9))
+        && (!('n' in request.resource.data) || request.resource.data.n is int)
+        && (!('hb' in request.resource.data) || request.resource.data.hb is int)
+        && (request.resource.data.status == 'playing' || (request.resource.data.status == 'lobby' && resource.data.status == 'lobby'));
       allow delete: if signedIn() && (resource.data.host == request.auth.uid
         || request.time.toMillis() - resource.data.created > 86400000);
 
+      // S62: sec/pw = odanın 4 haneli şifresi. Kimse okuyamaz; sadece kurucu yazar.
+      match /sec/{d} {
+        allow read: if false;
+        allow create, update: if signedIn() && d == 'pw'
+          && get(/databases/$(database)/documents/rooms/$(code)).data.host == request.auth.uid
+          && request.resource.data.keys().hasOnly(['p'])
+          && request.resource.data.p is string && request.resource.data.p.matches('^[0-9]{4}$');
+        allow delete: if signedIn() && get(/databases/$(database)/documents/rooms/$(code)).data.host == request.auth.uid;
+      }
+      // S62: tk/{uid} = giriş bileti. Sadece doğru şifreyle yazılabilir; kimse okuyamaz.
+      match /tk/{uid} {
+        allow read: if false;
+        allow create, update: if signedIn() && request.auth.uid == uid
+          && request.resource.data.keys().hasOnly(['p'])
+          && request.resource.data.p == get(/databases/$(database)/documents/rooms/$(code)/sec/pw).data.p;
+        allow delete: if signedIn() && request.auth.uid == uid;
+      }
+      // S62: kick/{uid} = kurucunun odadan çıkardığı oyuncu (geri giremez)
+      match /kick/{uid} {
+        allow get: if signedIn();
+        allow create, update, delete: if signedIn()
+          && get(/databases/$(database)/documents/rooms/$(code)).data.host == request.auth.uid;
+      }
       match /players/{uid} {
         allow read: if signedIn();
-        // Yeni oyuncu sadece oda "lobby" iken girebilir
+        // Yeni oyuncu sadece oda "lobby" iken girebilir; şifreli odaya biletle; çıkarılan giremez (S62)
         allow create: if signedIn() && request.auth.uid == uid
           && get(/databases/$(database)/documents/rooms/$(code)).data.status == 'lobby'
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv', 'tk', 'br'])
+          && (get(/databases/$(database)/documents/rooms/$(code)).data.get('pw', 0) != 1
+            || get(/databases/$(database)/documents/rooms/$(code)).data.host == uid
+            || exists(/databases/$(database)/documents/rooms/$(code)/tk/$(uid)))
+          && !exists(/databases/$(database)/documents/rooms/$(code)/kick/$(uid))
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv', 'tk', 'br', 'bs'])
           && request.resource.data.nick is string && request.resource.data.nick.size() <= 60;
+        // bs = kurucunun yönettiği botların durumu (en çok 9)
         allow update: if signedIn() && request.auth.uid == uid
-          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv', 'tk', 'br']);
-        allow delete: if signedIn() && request.auth.uid == uid;
+          && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv', 'tk', 'br', 'bs'])
+          && (!('bs' in request.resource.data) || (request.resource.data.bs is list && request.resource.data.bs.size() <= 9));
+        // kurucu lobideyken oyuncuyu çıkarabilir
+        allow delete: if signedIn() && (request.auth.uid == uid
+          || get(/databases/$(database)/documents/rooms/$(code)).data.host == request.auth.uid);
       }
     }
 

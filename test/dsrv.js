@@ -1,8 +1,8 @@
 // Shared in-Node Firestore store for multi-phone tests, with the room/player rules enforced.
 const fs=require('fs');
 const mock=fs.readFileSync(__dirname+'/mock2.js','utf8');
-const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win','at','ka','kb','cm'];
-const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt','rk','pv','tk','br'];
+const ROOMK=['host','hostNick','op','status','seed','created','qv','lv','tb','mode','win','at','ka','kb','cm','pub','cap','pw','tm','rk','hp','nb','n','hb'];
+const PLK=['nick','score','hearts','ok','bad','n','tt','done','ts','rid','m','r','pr','pid','jt','rk','pv','tk','br','bs'];
 module.exports=function(opts){
   opts=opts||{};
   const store={},subs=[],pages={},log=[],users={};let uidn=0;let lag=opts.lag||[30,150];
@@ -15,13 +15,14 @@ module.exports=function(opts){
       if(!old){
         if(Object.keys(d).some(k=>!ROOMK.includes(k)))return deny('room keys '+Object.keys(d));
         if(d.host!==uid||d.status!=='lobby')return deny('room create');
-        if('mode' in d&&!['duel','mm','tw'].includes(d.mode))return deny('mode');
+        if('mode' in d&&!['duel','mm','tw','ta'].includes(d.mode))return deny('mode');
+        if('cap' in d&&!(Number.isInteger(d.cap)&&d.cap>=2&&d.cap<=10))return deny('cap');if('tm' in d&&![2,3,4].includes(d.tm))return deny('tm');
         if('win' in d&&![10,15,20].includes(d.win))return deny('win');
         return null;
       }
-      if(old.host!==uid||d.status!=='playing')return deny('room update');
+      if(old.host!==uid||!(d.status==='playing'||(d.status==='lobby'&&old.status==='lobby')))return deny('room update');
       const ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
-      if(ch.some(k=>k!=='status'&&k!=='pa'))return deny('room update keys '+ch);
+      if(ch.some(k=>!['status','pa','n','hb','nb'].includes(k)))return deny('room update keys '+ch);
       return null;
     }
     const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);
@@ -113,10 +114,19 @@ module.exports=function(opts){
       if(Object.keys(d).some(k=>!['u','ts','dv','ln','lnd','del','v'].includes(k))||!Number.isInteger(d.ts))return deny('ac shape');
       return null;
     }
+    if(seg[0]==='rooms'&&seg[2]==='sec'){const r=store['rooms/'+seg[1]];if(seg[3]!=='pw'||!r||r.host!==uid||!only(d,['p'])||!/^[0-9]{4}$/.test(d.p))return deny('sec');return null}
+    if(seg[0]==='rooms'&&seg[2]==='tk'){const pw=store['rooms/'+seg[1]+'/sec/pw'];if(seg[3]!==uid||!only(d,['p'])||!pw||pw.p!==d.p)return deny('tk wrong password');return null}
+    if(seg[0]==='rooms'&&seg[2]==='kick'){const r=store['rooms/'+seg[1]];if(!r||r.host!==uid)return deny('kick not host');return null}
     if(seg[0]==='rooms'&&seg[2]==='players'){
       if(seg[3]!==uid)return deny('player uid');
       if(Object.keys(d).some(k=>!PLK.includes(k)))return deny('player keys '+Object.keys(d));
-      if(!store[path]&&(!store['rooms/'+seg[1]]||store['rooms/'+seg[1]].status!=='lobby'))return deny('player create not lobby');
+      const r=store['rooms/'+seg[1]];
+      if(!store[path]){
+        if(!r||r.status!=='lobby')return deny('player create not lobby');
+        if(r.pw===1&&r.host!==uid&&!store['rooms/'+seg[1]+'/tk/'+uid])return deny('player create no ticket');
+        if(store['rooms/'+seg[1]+'/kick/'+uid])return deny('player create kicked');
+      }
+      if('bs' in d&&!(Array.isArray(d.bs)&&d.bs.length<=9))return deny('bs');
       return null;
     }
     return null;
@@ -133,6 +143,7 @@ module.exports=function(opts){
   async function handle(pid,json){
     const [op,path,uid,a,b,c]=JSON.parse(json);
     if(op==='get'){const seg=path.split('/');if(seg[0]==='pk')return JSON.stringify(deny('pk read'));
+      if(seg[0]==='rooms'&&(seg[2]==='sec'||seg[2]==='tk'))return JSON.stringify(deny('secret read'));
       if(seg[0]==='iv'||seg[0]==='tv'){const owns=(pid)=>!!(store['pk/'+pid]&&store['pk/'+pid].u===uid);const o=store[path];if(!(owns(seg[1])||(o&&owns(o.from))))return JSON.stringify(deny(seg[0]+' read'))}
       return JSON.stringify(store[path]===undefined?null:store[path])}
     if(op==='upd'){if(store[path]===undefined)return JSON.stringify({__err:'not-found'});const m=Object.assign(JSON.parse(JSON.stringify(store[path])),a);const e=check(path,uid,m);if(e)return JSON.stringify(e);store[path]=m;changed(path);return 'null'}
@@ -150,10 +161,11 @@ module.exports=function(opts){
       if(old&&seg[0]==='bk'&&old.u!==uid)return JSON.stringify(deny('bk del'));
       if(seg[0]==='ac')return JSON.stringify(deny('ac del'));
       if(/^lb[gr]_/.test(seg[0])&&seg[1]!==uid)return JSON.stringify(deny('lb del'));
-      if(seg[0]==='rooms'&&seg.length===4&&seg[3]!==uid)return JSON.stringify(deny('player del'));
+      if(seg[0]==='rooms'&&seg.length===4&&seg[2]==='players'&&seg[3]!==uid&&!(store['rooms/'+seg[1]]&&store['rooms/'+seg[1]].host===uid))return JSON.stringify(deny('player del'));
       delete store[path];changed(path);return 'null'}
     if(op==='list'){let l=Object.keys(store).filter(k=>parent(k)===path).map(k=>[k,store[k]]);const q=a||{};
-      if(q.w)l=l.filter(x=>x[1][q.w.f]===q.w.v);if(q.ob)l.sort((x,y)=>q.ob.d==='desc'?y[1][q.ob.f]-x[1][q.ob.f]:x[1][q.ob.f]-y[1][q.ob.f]);if(q.lim)l=l.slice(0,q.lim);return JSON.stringify(l)}
+      if(path==='rooms'&&!(q.ws||[]).some(w=>w.f==='pub'&&w.v===1))return JSON.stringify(deny('rooms list without pub'));
+      (q.ws&&q.ws.length?q.ws:(q.w?[q.w]:[])).forEach(w=>{l=l.filter(x=>x[1][w.f]===w.v)});if(q.ob)l.sort((x,y)=>q.ob.d==='desc'?y[1][q.ob.f]-x[1][q.ob.f]:x[1][q.ob.f]-y[1][q.ob.f]);if(q.lim)l=l.slice(0,q.lim);return JSON.stringify(l)}
     if(op==='auth'){const u=users[path];if(a==='in'){if(!u||u.pw!==b)return JSON.stringify({__err:'auth/invalid-credential'});return JSON.stringify(u.uid)}
       if(a==='up'){if(u)return JSON.stringify({__err:'auth/email-already-in-use'});const id=pid+'_u'+(++uidn);users[path]={uid:id,pw:b};return JSON.stringify(id)}
       if(a==='del'){delete users[path];return 'null'}}
