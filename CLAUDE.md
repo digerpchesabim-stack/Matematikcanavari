@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **65**
+Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **66**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -262,8 +262,9 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Oda Kur (`ocHtml`): sadece üç başlık kartı (`.occ`, `.och`), dokununca kart açılır, ayarlar içinde (`ocBody(m)`: kişi (1'e 1'de yok), seviye, işlem (+ tablo), soru/puan, kimler girebilsin + şifre aynı satırda, "Odayı Kur"); tek kart açık (`OC.open`, `ocOpen` → kaydırma). Son seçim `mc_oc` (cihaza özel, şifre hariç; `ocSave/ocLoad`, `onNew` yükler). `onQuickNew` OC'yi geçici değiştirip geri koyar.
   - Test: `test/s62.js` Oda Kur bölümü akordiyona göre (kapalı başlıklar, açılma, tek kart, 1'e 1'de kişi yok, hatırlama).
 
-- 66 (14 Kasım 2026; kullanıcı taslakları adım adım onaylayıp "değişiklikleri uygula" dedi — **henüz yüklenmedi**): **Şövalye konseptinde ana sayfa + Online Oyna simgeleri, hareketli Oyna canavarı.**
+- 66 (14 Kasım 2026 yayında; kullanıcı taslakları adım adım onaylayıp "uygula", sonra "yükle" dedi): **Şövalye konseptinde ana sayfa + Online Oyna simgeleri, hareketli Oyna canavarı.**
   - Kullanıcı kararları: ana sayfa şövalye/canavar konseptine uysun; Akıldan İşlem = düşünen şövalye (balonda 3+5=?→8), İşlemler = dörde bölünmüş arma kalkanı (+ − × ÷ renkli bölmeler), Problemler = otantik parşömen (tüy kalem, kırmızı mühür), Online Oyna = turnuva arması (çapraz mızraklar + kırmızı/mavi flamalar, ikiye bölünmüş kalkan, taç). Atlı şövalye düellosu "karışık" bulundu, oyun kolu konsepte uymadı. Online ekranı: Hemen Oyna ışıltılı yıldırım, Oda Kur **kale** (+ rozetli; kapı seçeneği reddedildi), Kodla Gir ışıltılı anahtar, küçük düğmeler parşömen (Yarış Geçmişim) ve soru balonu. Sıra: Hemen Oyna → Oda Kur + Kodla Gir büyük kartlar (`.obig/.obt`) → Açık odalar → `.omini`. Eski `.obar` (yapışkan alt çubuk) kalktı.
+  - Hareket ve ışıltı (kullanıcı "sen öner" dedi, önerileri onaylayıp "yükle"): düşünen şövalye (balon daireleri sırayla, balon açılır, "?" → "8" + altın patlama, sorguç dalgalanır, siperde ışık), arma (çerçevede dönen ışık, düğme nabız, kıvılcım), parşömen (5 sn: açılır, yazı belirir, tüy kalem yazar, mavi çizgi çekilir, kapanır), turnuva (mızraklar sallanır, taç taşları sırayla ışıldar, kıvılcımlar), yıldırım (3 sn'de bir şimşek çakar + Hemen Oyna kartı `oqshk` titrer), kale (pencereler yanıp söner, kapıdan ışık), anahtar (sallanır, başta yıldız), küçük parşömen kupası parlar, "?" zıplar. "Hareketi azalt"ta hepsi durağan.
   - Kod: `MI` (IIFE içinde SVG çiziciler, global ad çakışması yok), `mIco(k,anim)` (anim yoksa / `RMOT` ise `<animate*>` çıkarılır). Ana sayfa `.hgrid.hgi .hico`. Oyna kartı canavarı `hpmHtml()` (7 poz üst üste) + `hpmTick` (CSS `hpact` 4 sn döngüsünün zamanına göre poz: bekler, göz kırpar, zıplar (cheer), güler, sağa/sola bakar, bakar), `render` sonunda `hpmStart()`.
 
 ## 9. Bekleyen / yayınlanmamış

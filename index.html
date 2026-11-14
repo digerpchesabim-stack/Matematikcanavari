@@ -622,6 +622,7 @@ body.hastabs #toast{bottom:calc(104px + var(--safe-area-inset-bottom,env(safe-ar
 .rmhero{width:132px;height:132px}
 @media (prefers-reduced-motion:reduce){.ocb{animation:none}}
 
+.oquick{animation:oqshk 3s infinite}@keyframes oqshk{0%,67%{transform:none}69%{transform:translate(-1.5px,.5px)}71%{transform:translate(1.5px,-.5px)}73%{transform:translate(-1px,0)}75%,100%{transform:none}}@media (prefers-reduced-motion:reduce){.oquick{animation:none}}
 /* S66: konsept simgeleri */
 .hgi .btn .hico{display:block;width:78px;height:78px;margin:-4px 0 4px}.hgi .btn .hico svg{display:block}
 .hplay .hpm{position:relative;display:block;width:168px;height:168px;flex:none;margin:-6px -6px -6px 0;animation:hpact 4s ease-in-out infinite;pointer-events:none}
@@ -6015,21 +6016,21 @@ function bolt(n){var g='bo'+n,p='M36 3 L14 36 H29 L24 61 L50 24 H34 Z';return '<
 '<radialGradient id="'+g+'h" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6b0" stop-opacity=".95"/><stop offset=".5" stop-color="#ffd23f" stop-opacity=".45"/><stop offset="1" stop-color="#ffb800" stop-opacity="0"/></radialGradient>'+
 '<linearGradient id="'+g+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><clipPath id="'+g+'c"><path d="'+p+'"/></clipPath></defs>'+
 '<circle cx="32" cy="32" r="30" fill="url(#'+g+'h)"><animate attributeName="opacity" values=".55;1;.55" dur="1.2s" repeatCount="indefinite"/></circle>'+
-'<g filter="url(#'+g+'d)"><path d="'+p+'" transform="translate(2.2 2.2)" fill="#a35d00"/><path d="'+p+'" fill="url(#'+g+'g)" stroke="#fff6c8" stroke-width="1.4" stroke-linejoin="round"/>'+
+'<g><animateTransform attributeName="transform" type="translate" values="0 0;0 0;-1.4 .6;1.4 -.6;-.8 0;0 0;0 0" keyTimes="0;.68;.7;.72;.74;.76;1" dur="3s" repeatCount="indefinite"/><g filter="url(#'+g+'d)"><path d="'+p+'" transform="translate(2.2 2.2)" fill="#a35d00"/><path d="'+p+'" fill="url(#'+g+'g)" stroke="#fff6c8" stroke-width="1.4" stroke-linejoin="round"/>'+
 '<path d="M35 7 L18 33 H24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>'+
-'<g clip-path="url(#'+g+'c)"><rect x="-30" y="0" width="16" height="64" fill="url(#'+g+'s)" transform="skewX(-20)"><animate attributeName="x" values="-30;-30;80" keyTimes="0;.55;1" dur="2.2s" repeatCount="indefinite"/></rect></g></g>'+
-spark(54,10,1.1,'0s')+spark(10,50,.8,'.6s')+'</svg>'}
+'<g clip-path="url(#'+g+'c)"><rect x="-30" y="0" width="16" height="64" fill="url(#'+g+'s)" transform="skewX(-20)"><animate attributeName="x" values="-30;-30;80" keyTimes="0;.55;1" dur="2.2s" repeatCount="indefinite"/></rect></g><path d="'+p+'" fill="#fff" opacity="0"><animate attributeName="opacity" values="0;0;1;.2;.9;0;0" keyTimes="0;.68;.7;.72;.74;.8;1" dur="3s" repeatCount="indefinite"/></path></g></g>'+
+'<circle cx="32" cy="32" r="0" fill="#fff8c8" opacity=".7"><animate attributeName="r" values="0;0;30;0;0" keyTimes="0;.69;.73;.82;1" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;.75;0;0" keyTimes="0;.69;.71;.82;1" dur="3s" repeatCount="indefinite"/></circle>'+spark(54,10,1.1,'0s')+spark(10,50,.8,'.6s')+'</svg>'}
 function spark(x,y,s,b){return '<path transform="translate('+x+' '+y+') scale('+s+')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2Z" fill="#fff"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;.2;.45;1" dur="1.8s" begin="'+b+'" repeatCount="indefinite"/></path>'}
 function key(n){var g='ky'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+GOLD(g+'g')+DS(g)+
 '<radialGradient id="'+g+'h" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6c4" stop-opacity=".8"/><stop offset="1" stop-color="#ffd23f" stop-opacity="0"/></radialGradient>'+
 '<linearGradient id="'+g+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
 '<mask id="'+g+'m"><g fill="#fff"><circle cx="20" cy="22" r="13"/><rect x="27" y="28" width="30" height="8" rx="3" transform="rotate(35 27 28)"/></g><circle cx="20" cy="22" r="5.2" fill="#000"/></mask></defs>'+
 '<circle cx="22" cy="24" r="22" fill="url(#'+g+'h)"><animate attributeName="opacity" values=".4;.9;.4" dur="1.6s" repeatCount="indefinite"/></circle>'+
-'<g filter="url(#'+g+'d)"><g transform="translate(1.8 1.8)" fill="#a35d00" mask="url(#'+g+'m)"><rect width="64" height="64"/></g>'+
+'<g><animateTransform attributeName="transform" type="rotate" values="-5 20 10;6 20 10;-5 20 10" dur="2.6s" repeatCount="indefinite"/><g filter="url(#'+g+'d)"><g transform="translate(1.8 1.8)" fill="#a35d00" mask="url(#'+g+'m)"><rect width="64" height="64"/></g>'+
 '<g mask="url(#'+g+'m)"><rect width="64" height="64" fill="url(#'+g+'g)"/><rect x="-40" y="-10" width="14" height="90" fill="url(#'+g+'s)" transform="rotate(25)"><animate attributeName="x" values="-40;-40;70" keyTimes="0;.5;1" dur="2.4s" repeatCount="indefinite"/></rect></g>'+
 '<g transform="rotate(35 27 28)"><rect x="47" y="35" width="4.5" height="8" rx="1" fill="url(#'+g+'g)"/><rect x="40" y="35" width="4.5" height="6" rx="1" fill="url(#'+g+'g)"/></g>'+
 '<path d="M11 18 A10 10 0 0 1 22 11" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>'+
-'<circle cx="20" cy="22" r="13" fill="none" stroke="#fff6c8" stroke-width="1"/></g>'+spark(50,12,1,'.3s')+spark(8,44,.7,'1s')+'</svg>'}
+'<circle cx="20" cy="22" r="13" fill="none" stroke="#fff6c8" stroke-width="1"/></g>'+spark(13,13,1.3,'.9s')+'</g>'+spark(50,12,1,'.3s')+spark(8,44,.7,'1s')+'</svg>'}
 function castle(n){var g='cs'+n,bw='<linearGradient id="'+g+'w" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#eef1fb"/><stop offset=".6" stop-color="#c7cee3"/><stop offset="1" stop-color="#9aa5c2"/></linearGradient>';
 var fl='M33 4 L46 7 L33 11 Z',fl2='M33 4 L45 9 L33 11 Z';
 return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+bw+DS(g)+'<linearGradient id="'+g+'r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fa2ff"/><stop offset="1" stop-color="#4450c0"/></linearGradient>'+GOLD(g+'g')+'</defs>'+
@@ -6041,8 +6042,8 @@ return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><
 '<path d="M16 32 h4 v-3 h4 v3 h4 v-3 h4 v3 h4 v-3 h4 v3 h4 V58 H16Z" fill="url(#'+g+'w)"/>'+
 // orta kule
 '<path d="M24 19 h3 v-3 h3.3 v3 h3.4 v-3 h3.3 v3 h3 V34 H24Z" fill="url(#'+g+'w)"/>'+
-'<path d="M32 58 V46 a6 6 0 0 1 12 0 V58Z" transform="translate(-6 0)" fill="url(#'+g+'r)"/><path d="M26 46 a6 6 0 0 1 12 0" transform="" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/>'+
-'<rect x="29.5" y="23" width="5" height="7" rx="2.5" fill="#4450c0"/><rect x="10" y="34" width="4" height="6" rx="2" fill="#4450c0"/><rect x="50" y="34" width="4" height="6" rx="2" fill="#4450c0"/>'+
+'<path d="M32 58 V46 a6 6 0 0 1 12 0 V58Z" transform="translate(-6 0)" fill="url(#'+g+'r)"/><path d="M26 58 V46 a6 6 0 0 1 12 0 V58Z" fill="#ffd76a" opacity="0"><animate attributeName="opacity" values="0;.55;0" dur="2s" repeatCount="indefinite"/></path><path d="M26 46 a6 6 0 0 1 12 0" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/>'+
+'<rect x="29.5" y="23" width="5" height="7" rx="2.5" fill="#4450c0"><animate attributeName="fill" values="#4450c0;#ffd76a;#ffe9a8;#4450c0;#4450c0" keyTimes="0;.15;.5;.7;1" dur="2.4s" begin="0s" repeatCount="indefinite"/></rect><rect x="10" y="34" width="4" height="6" rx="2" fill="#4450c0"><animate attributeName="fill" values="#4450c0;#ffd76a;#ffe9a8;#4450c0;#4450c0" keyTimes="0;.15;.5;.7;1" dur="2.4s" begin=".5s" repeatCount="indefinite"/></rect><rect x="50" y="34" width="4" height="6" rx="2" fill="#4450c0"><animate attributeName="fill" values="#4450c0;#ffd76a;#ffe9a8;#4450c0;#4450c0" keyTimes="0;.15;.5;.7;1" dur="2.4s" begin="1s" repeatCount="indefinite"/></rect>'+
 '<path d="M7 27 V57 M17 33 V57 M25 20 V33" stroke="#fff" stroke-width="1.6" opacity=".7"/>'+
 '</g><g transform="translate(51 47)"><circle r="9" fill="url(#'+g+'g)" stroke="#fff" stroke-width="1.6"/><path d="M0 -4.6 V4.6 M-4.6 0 H4.6" stroke="#7a4600" stroke-width="2.6" stroke-linecap="round"/><animateTransform attributeName="transform" type="scale" additive="sum" values="1;1.12;1" dur="1.2s" repeatCount="indefinite"/></g></svg>'}
 function door(n){var g='dr'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+
@@ -6057,16 +6058,16 @@ function door(n){var g='dr'+n;return '<svg viewBox="0 0 64 64" width="100%" heig
 function scroll(n){var g='sc'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+'<linearGradient id="'+g+'p" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff7e2"/><stop offset="1" stop-color="#ecd8a8"/></linearGradient></defs><g filter="url(#'+g+'d)">'+
 '<rect x="14" y="12" width="36" height="40" fill="url(#'+g+'p)"/><path d="M20 21h24M20 27h24M20 33h18M20 39h22" stroke="#b39461" stroke-width="2" stroke-linecap="round"/>'+
 '<rect x="10" y="7" width="44" height="7" rx="3.5" fill="url(#'+g+'g)"/><rect x="10" y="50" width="44" height="7" rx="3.5" fill="url(#'+g+'g)"/></g>'+
-'<g transform="translate(47 44)"><circle r="9" fill="#ffd23f" stroke="#fff" stroke-width="1.6"/><text y="4" text-anchor="middle" font-size="11" font-family="Arial" font-weight="800" fill="#7a4600">🏆</text></g></svg>'}
+'<g transform="translate(47 44)"><circle r="12" fill="#ffe680" opacity="0"><animate attributeName="opacity" values="0;.7;0;0" keyTimes="0;.15;.35;1" dur="2.6s" repeatCount="indefinite"/></circle><circle r="9" fill="#ffd23f" stroke="#fff" stroke-width="1.6"/><text y="4" text-anchor="middle" font-size="11" font-family="Arial" font-weight="800" fill="#7a4600">🏆</text></g></svg>'}
 function help(n){var g='hp'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+'<radialGradient id="'+g+'b" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#c3cbff"/><stop offset=".6" stop-color="#6b78e6"/><stop offset="1" stop-color="#3b45a8"/></radialGradient></defs><g filter="url(#'+g+'d)">'+
-'<path d="M32 6 a24 22 0 1 1 -12 41 L10 54 L13 43 A24 22 0 0 1 32 6Z" fill="url(#'+g+'b)"/><text x="32" y="38" text-anchor="middle" font-size="28" font-family="MCP,Arial" font-weight="800" fill="#fff">?</text><path d="M18 18 a18 16 0 0 1 12 -6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/></g></svg>'}
+'<path d="M32 6 a24 22 0 1 1 -12 41 L10 54 L13 43 A24 22 0 0 1 32 6Z" fill="url(#'+g+'b)"/><text x="32" y="38" text-anchor="middle" font-size="28" font-family="MCP,Arial" font-weight="800" fill="#fff">?<animateTransform attributeName="transform" type="translate" values="0 0;0 0;0 -4;0 0;0 -1.5;0 0" keyTimes="0;.7;.78;.86;.92;1" dur="2.8s" repeatCount="indefinite"/></text><path d="M18 18 a18 16 0 0 1 12 -6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/></g></svg>'}
 
 function MET(id){return '<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#cfd6e6"/><stop offset=".7" stop-color="#8d98b3"/><stop offset="1" stop-color="#5d6782"/></linearGradient>'}
 function TEAM(id,a,b,c){return '<linearGradient id="'+id+'" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset=".5" stop-color="'+b+'"/><stop offset="1" stop-color="'+c+'"/></linearGradient>'}
 /* Akıldan İşlem: düşünen şövalye */
 function thinker(n){var g='th'+n;
 var bub='M48 6 C54 0,66 1,70 6 C76 1,90 4,90 13 C96 16,95 27,88 29 C88 36,78 38,73 35 C68 40,56 39,53 34 C45 36,40 29,43 23 C37 19,40 9,48 6Z';
-return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+MET(g+'m')+TEAM(g+'t','#8fb4ff','#3b6cf0','#1d3a9e')+TEAM(g+'p','#ff9a9a','#e5484d','#9e1f2a')+GOLD(g+'g')+'</defs>'+
+return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+MET(g+'m')+TEAM(g+'t','#8fb4ff','#3b6cf0','#1d3a9e')+TEAM(g+'p','#ff9a9a','#e5484d','#9e1f2a')+GOLD(g+'g')+'<clipPath id="'+g+'hc"><path d="M20 52 C20 36,27 28,36 28 C45 28,52 36,52 52 L52 64 C52 70,46 72,36 72 C26 72,20 70,20 64Z"/></clipPath></defs>'+
 '<ellipse cx="36" cy="93" rx="26" ry="3" fill="#1b2140" opacity=".14"/><g transform="translate(0 8) scale(.92)">'+
 // gövde (zırh + tabard)
 '<g filter="url(#'+g+'d)"><path d="M8 96 C8 80,16 72,36 72 C56 72,64 80,64 96Z" fill="url(#'+g+'m)"/>'+
@@ -6074,18 +6075,18 @@ return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><
 '<ellipse cx="13" cy="80" rx="9" ry="7" fill="url(#'+g+'m)"/><ellipse cx="59" cy="80" rx="9" ry="7" fill="url(#'+g+'m)"/>'+
 // kafa (eğilerek düşünür)
 '<g><animateTransform attributeName="transform" type="rotate" values="6 36 70;10 36 70;6 36 70" dur="3s" repeatCount="indefinite"/>'+
-'<path d="M30 30 C26 20,32 12,40 14 C36 18,38 22,42 22 C40 26,36 28,34 32Z" fill="url(#'+g+'p)"/>'+
+'<path d="M30 30 C26 20,32 12,40 14 C36 18,38 22,42 22 C40 26,36 28,34 32Z" fill="url(#'+g+'p)"><animateTransform attributeName="transform" type="rotate" values="0 34 30;-7 34 30;0 34 30;5 34 30;0 34 30" dur="1.8s" repeatCount="indefinite"/></path>'+
 '<path d="M20 52 C20 36,27 28,36 28 C45 28,52 36,52 52 L52 64 C52 70,46 72,36 72 C26 72,20 70,20 64Z" fill="url(#'+g+'m)"/>'+
 '<path d="M25 40 C26 34,30 31,34 30" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".9"/>'+
-'<rect x="22" y="47" width="28" height="4.4" rx="2" fill="#262c44"/><rect x="34.2" y="47" width="3.6" height="18" rx="1.6" fill="#262c44"/>'+
+'<path d="M22 30 L28 30 L20 72 L14 72Z" fill="#fff" opacity="0" clip-path="url(#'+g+'hc)"><animate attributeName="opacity" values="0;0;.45;0;0" keyTimes="0;.7;.76;.84;1" dur="3s" repeatCount="indefinite"/><animateTransform attributeName="transform" type="translate" values="0 0;0 0;30 0;30 0" keyTimes="0;.7;.84;1" dur="3s" repeatCount="indefinite"/></path><rect x="22" y="47" width="28" height="4.4" rx="2" fill="#262c44"/><rect x="34.2" y="47" width="3.6" height="18" rx="1.6" fill="#262c44"/>'+
 '<g fill="#262c44"><circle cx="27" cy="58" r="1.1"/><circle cx="27" cy="62" r="1.1"/><circle cx="45" cy="58" r="1.1"/><circle cx="45" cy="62" r="1.1"/></g>'+
 '<path d="M36 28 V72" stroke="#7d88a6" stroke-width=".8" opacity=".7"/></g>'+
 // çenedeki eldiven
 '<path d="M50 96 C52 86,54 80,52 74" stroke="url(#'+g+'m)" stroke-width="9" stroke-linecap="round" fill="none"/>'+
 '<rect x="44" y="64" width="13" height="11" rx="5" fill="url(#'+g+'m)"/><path d="M46 67 h9 M46 70 h9" stroke="#7d88a6" stroke-width="1"/></g></g>'+
 // düşünce balonu
-'<g filter="url(#'+g+'d)"><circle cx="45" cy="44" r="2.6" fill="#fff"/><circle cx="49" cy="38" r="3.6" fill="#fff"/><path d="'+bub+'" fill="#fff"/></g>'+
-'<text x="66" y="24.5" text-anchor="middle" font-family="MCP,Arial" font-weight="800" font-size="12" fill="#2f3a7a">3+5=<tspan fill="#1f9d55">8<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.45;.55;.9;1" dur="3s" repeatCount="indefinite"/></tspan><tspan fill="#c27a00" dx="-7.4">?<animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;.45;.55;.9;1" dur="3s" repeatCount="indefinite"/></tspan></text>'+
+'<g filter="url(#'+g+'d)"><circle cx="45" cy="44" r="2.6" fill="#fff"><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.95;1" dur="3s" repeatCount="indefinite"/></circle><circle cx="49" cy="38" r="3.6" fill="#fff"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.06;.11;.95;1" dur="3s" repeatCount="indefinite"/></circle><g transform="translate(66 22)"><g><animateTransform attributeName="transform" type="scale" values="0;0;1.12;1;1;0" keyTimes="0;.12;.2;.26;.95;1" dur="3s" repeatCount="indefinite"/><path d="'+bub+'" transform="translate(-66 -22)" fill="#fff"/></g></g></g>'+
+'<circle cx="81" cy="20" r="0" fill="#ffd23f" opacity=".8"><animate attributeName="r" values="0;0;11;0;0" keyTimes="0;.5;.56;.64;1" dur="3s" repeatCount="indefinite"/></circle><text x="66" y="24.5" text-anchor="middle" font-family="MCP,Arial" font-weight="800" font-size="12" fill="#2f3a7a">3+5=<tspan fill="#1f9d55">8<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.48;.52;.9;1" dur="3s" repeatCount="indefinite"/></tspan><tspan fill="#c27a00" dx="-7.4">?<animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;.22;.26;.48;.52;1" dur="3s" repeatCount="indefinite"/></tspan><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.2;.26;.93;1" dur="3s" repeatCount="indefinite"/></text>'+
 spark(89,40,1,'1.4s')+'</svg>'}
 /* Problemler: otantik parşömen + tüy kalem */
 function parch2(n){var g='pa'+n;
@@ -6095,21 +6096,22 @@ return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><
 '<radialGradient id="'+g+'s" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#a87432" stop-opacity=".35"/><stop offset="1" stop-color="#a87432" stop-opacity="0"/></radialGradient>'+
 '<linearGradient id="'+g+'w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b07a43"/><stop offset=".45" stop-color="#7a4a1f"/><stop offset="1" stop-color="#4a2a10"/></linearGradient>'+
 '<radialGradient id="'+g+'x" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8a80"/><stop offset=".55" stop-color="#c62828"/><stop offset="1" stop-color="#7a1010"/></radialGradient>'+
-'<linearGradient id="'+g+'f" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dde8"/></linearGradient></defs>'+
+'<linearGradient id="'+g+'f" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dde8"/></linearGradient><clipPath id="'+g+'k"><rect x="0" y="20" width="96" height="56"><animate attributeName="height" values="4;56;56;56;4" keyTimes="0;.2;.88;.96;1" dur="5s" repeatCount="indefinite"/></rect></clipPath></defs>'+
 '<ellipse cx="48" cy="90" rx="34" ry="3.4" fill="#1b2140" opacity=".14"/><g filter="url(#'+g+'d)">'+
-'<path d="'+sh+'" fill="url(#'+g+'p)"/><ellipse cx="62" cy="58" rx="9" ry="6" fill="url(#'+g+'s)"/><ellipse cx="30" cy="34" rx="7" ry="5" fill="url(#'+g+'s)"/>'+
+'<g clip-path="url(#'+g+'k)">'+'<path d="'+sh+'" fill="url(#'+g+'p)"/><ellipse cx="62" cy="58" rx="9" ry="6" fill="url(#'+g+'s)"/><ellipse cx="30" cy="34" rx="7" ry="5" fill="url(#'+g+'s)"/>'+
 '<path d="M18 22 C30 20,44 23,58 21 C66 20,74 22,78 22" stroke="#9c6a2c" stroke-width="1" fill="none" opacity=".6"/>'+
 '<text x="46" y="42" text-anchor="middle" font-family="Georgia,\'Times New Roman\',serif" font-style="italic" font-weight="700" font-size="13" fill="#4a2a10">3 + 5 = ?</text>'+
 '<path d="M26 52 C34 50,42 53,50 51 M26 59 C36 57,46 60,58 58 M26 66 C32 64,38 66,44 65" stroke="#7a5022" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".55"/>'+
+'<path d="M38 46 H58" stroke="#2f6bff" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="20" stroke-dashoffset="20"><animate attributeName="stroke-dashoffset" values="20;20;0;0;20" keyTimes="0;.3;.45;.9;1" dur="5s" repeatCount="indefinite"/></path></g>'+
 // rulo + sap
 '<rect x="12" y="15" width="72" height="9" rx="4.5" fill="url(#'+g+'p)"/><path d="M14 17 H82" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/><rect x="5" y="17" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><rect x="82" y="17" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><circle cx="5" cy="19.5" r="3.4" fill="url(#'+g+'w)"/><circle cx="91" cy="19.5" r="3.4" fill="url(#'+g+'w)"/>'+
-'<rect x="12" y="72" width="72" height="9" rx="4.5" fill="url(#'+g+'p)"/><rect x="5" y="74" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><rect x="82" y="74" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><circle cx="5" cy="76.5" r="3.4" fill="url(#'+g+'w)"/><circle cx="91" cy="76.5" r="3.4" fill="url(#'+g+'w)"/>'+
+'<g><animateTransform attributeName="transform" type="translate" values="0 -52;0 0;0 0;0 0;0 -52" keyTimes="0;.2;.88;.96;1" dur="5s" repeatCount="indefinite"/><rect x="12" y="72" width="72" height="9" rx="4.5" fill="url(#'+g+'p)"/><rect x="5" y="74" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><rect x="82" y="74" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><circle cx="5" cy="76.5" r="3.4" fill="url(#'+g+'w)"/><circle cx="91" cy="76.5" r="3.4" fill="url(#'+g+'w)"/>'+
 // mühür + kurdele
 '<path d="M64 78 L60 92 L64 89 L67 93 L68 79Z" fill="#a61b1b"/><path d="M70 78 L72 92 L75 88 L79 91 L74 78Z" fill="#c62828"/>'+
 '<path d="M69 66 C75 64,79 69,78 74 C80 79,74 83,69 81 C63 83,59 78,61 73 C59 68,64 64,69 66Z" fill="url(#'+g+'x)"/><circle cx="69.5" cy="73.5" r="5" fill="none" stroke="#7a1010" stroke-width="1"/><text x="69.5" y="77" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="9" fill="#7a1010">M</text>'+
-'<ellipse cx="66" cy="69" rx="2.4" ry="1.4" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".2;.7;.2" dur="2s" repeatCount="indefinite"/></ellipse></g>'+
+'<ellipse cx="66" cy="69" rx="2.4" ry="1.4" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".2;.7;.2" dur="2s" repeatCount="indefinite"/></ellipse></g></g>'+
 // tüy kalem
-'<g><animateTransform attributeName="transform" type="rotate" values="0 76 60;-6 76 60;0 76 60;5 76 60;0 76 60" dur="2.6s" repeatCount="indefinite"/>'+
+'<g><animateTransform attributeName="transform" type="rotate" values="0 76 60;0 76 60;-8 76 60;4 76 60;-8 76 60;4 76 60;0 76 60;0 76 60" keyTimes="0;.28;.32;.36;.4;.44;.48;1" dur="5s" repeatCount="indefinite"/><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.18;.24;.9;.96" dur="5s" repeatCount="indefinite"/>'+
 '<path d="M64 62 C70 46,80 34,94 28 C90 40,82 52,67 61Z" fill="url(#'+g+'f)" stroke="#b9c0d0" stroke-width=".6"/><path d="M64 62 L90 32" stroke="#9aa3b8" stroke-width="1"/><path d="M61 66 L64 61" stroke="#3a2a1a" stroke-width="1.8" stroke-linecap="round"/></g>'+
 '</svg>'}
 /* Online Oyna: atlı şövalyeler mızrak düellosu */
@@ -6156,13 +6158,14 @@ TEAM(g+'qa','#7ee2a8','#2fb36b','#17804a')+TEAM(g+'qb','#ffc093','#f08a3c','#b85
 '<path d="M48 10 V90 M12 50 H84" stroke="url(#'+g+'g)" stroke-width="4"/>'+
 '<rect x="-40" y="0" width="16" height="96" fill="url(#'+g+'s)" transform="skewX(-20)"><animate attributeName="x" values="-40;-40;110" keyTimes="0;.55;1" dur="3.2s" repeatCount="indefinite"/></rect></g>'+
 '<path d="'+S+'" fill="none" stroke="url(#'+g+'g)" stroke-width="4.4"/><path d="M18 16 H44" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/>'+
-'<circle cx="48" cy="50" r="5" fill="url(#'+g+'g)" stroke="#fff8d6" stroke-width="1"/></g></svg>'}
+'<path d="'+S+'" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="10 90"><animate attributeName="stroke-dashoffset" values="0;-100" dur="2.4s" repeatCount="indefinite"/></path>'+
+'<circle cx="48" cy="50" r="5" fill="url(#'+g+'g)" stroke="#fff8d6" stroke-width="1"><animate attributeName="r" values="5;6.6;5" dur="1.2s" repeatCount="indefinite"/></circle></g>'+spark(84,12,1,'.4s')+spark(12,40,.8,'1.3s')+'</svg>'}
 /* Online Oyna: turnuva arması — çapraz mızraklar, flamalar, ortada kırmızı-mavi kalkan ve taç */
 function tourney(n){var g='tn'+n;
 function lance(rot,c1,c2,flag,b){var f1='M0 0 C8 -2,14 2,24 0 L18 6 L24 12 C14 14,8 10,0 12Z',f2='M0 0 C8 2,14 -2,24 1 L19 6 L24 11 C14 10,8 14,0 12Z';
-return '<g transform="rotate('+rot+' 48 50)"><path d="M48 92 L48 8" stroke="#efe2c4" stroke-width="4.2" stroke-linecap="round"/><path d="M48 80 V72 M48 64 V56 M48 40 V32 M48 24 V18" stroke="'+c1+'" stroke-width="4.4"/>'+
+return '<g transform="rotate('+rot+' 48 50)"><g><animateTransform attributeName="transform" type="rotate" values="0 48 80;'+(rot<0?-3:3)+' 48 80;0 48 80" dur="2.2s" begin="'+b+'" repeatCount="indefinite"/><path d="M48 92 L48 8" stroke="#efe2c4" stroke-width="4.2" stroke-linecap="round"/><path d="M48 80 V72 M48 64 V56 M48 40 V32 M48 24 V18" stroke="'+c1+'" stroke-width="4.4"/>'+
 '<path d="M44.5 84 L48 70 L51.5 84Z" fill="url(#'+g+'m)"/><path d="M48 8 L48 2" stroke="#8d98b3" stroke-width="3" stroke-linecap="round"/>'+
-'<g transform="translate(49.6 12)"><path d="'+f1+'" fill="'+c1+'" stroke="'+c2+'" stroke-width=".8"><animate attributeName="d" values="'+f1+';'+f2+';'+f1+'" dur="1.3s" begin="'+b+'" repeatCount="indefinite"/></path></g></g>'}
+'<g transform="translate(49.6 12)"><path d="'+f1+'" fill="'+c1+'" stroke="'+c2+'" stroke-width=".8"><animate attributeName="d" values="'+f1+';'+f2+';'+f1+'" dur="1.3s" begin="'+b+'" repeatCount="indefinite"/></path></g></g></g>'}
 return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+MET(g+'m')+TEAM(g+'r','#ff8a8a','#e5484d','#9e1f2a')+TEAM(g+'u','#8fb4ff','#3b6cf0','#1d3a9e')+
 '<clipPath id="'+g+'c"><path d="M30 40 H66 V56 C66 68,57 75,48 79 C39 75,30 68,30 56Z"/></clipPath>'+
 '<linearGradient id="'+g+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>'+
@@ -6175,8 +6178,8 @@ lance(-32,'#e5484d','#9e1f2a','r','0s')+lance(32,'#3b6cf0','#1d3a9e','u','.6s')+
 '<path d="M48 50 L50.6 55.4 L56.4 56 L52 60 L53.2 65.8 L48 63 L42.8 65.8 L44 60 L39.6 56 L45.4 55.4Z" fill="url(#'+g+'g)" stroke="#fff8d6" stroke-width=".6"/>'+
 // taç
 '<path d="M36 38 L34 26 L41 32 L48 22 L55 32 L62 26 L60 38Z" fill="url(#'+g+'g)" stroke="#a86a08" stroke-width=".8"/><circle cx="34" cy="25.5" r="2" fill="url(#'+g+'g)"/><circle cx="48" cy="21.5" r="2.2" fill="url(#'+g+'g)"/><circle cx="62" cy="25.5" r="2" fill="url(#'+g+'g)"/>'+
-'<circle cx="48" cy="33" r="2" fill="#e5484d"/><circle cx="41" cy="34.5" r="1.4" fill="#3b6cf0"/><circle cx="55" cy="34.5" r="1.4" fill="#3b6cf0"/></g>'+
-spark(48,14,1,'.5s')+'</svg>'}
+'<circle cx="48" cy="33" r="2" fill="#e5484d"><animate attributeName="fill" values="#e5484d;#ffb3b3;#e5484d;#e5484d" keyTimes="0;.12;.25;1" dur="2.4s" repeatCount="indefinite"/></circle><circle cx="41" cy="34.5" r="1.4" fill="#3b6cf0"><animate attributeName="fill" values="#3b6cf0;#b9d0ff;#3b6cf0;#3b6cf0" keyTimes="0;.12;.25;1" dur="2.4s" begin=".6s" repeatCount="indefinite"/></circle><circle cx="55" cy="34.5" r="1.4" fill="#3b6cf0"><animate attributeName="fill" values="#3b6cf0;#b9d0ff;#3b6cf0;#3b6cf0" keyTimes="0;.12;.25;1" dur="2.4s" begin="1.2s" repeatCount="indefinite"/></circle></g>'+
+spark(48,14,1.2,'.5s')+spark(30,22,.7,'1.3s')+spark(66,22,.7,'2s')+'</svg>'}
 
 
 return {bolt:bolt,key:key,castle:castle,scroll:scroll,help:help,thinker:thinker,crest:crest,parch:parch2,tourney:tourney};
