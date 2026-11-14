@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **63**
+Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **64**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -251,7 +251,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Konfeti: kazanınca **sesten önce** çağrılır (ses hatası konfetiyi engellemesin), z-index 9999, ekran değişimi denetimi 0,7 sn. (Emülatörde konfeti hep çıkıyordu; gerçek telefondaki sebep kesin değil.)
   - Test: `test/s63.js` (kazan/kaybet, tek canavar, kart canavarsız/paylaşımda canavarlı, konfeti).
 
-- 64 (14 Kasım 2026; kullanıcı gerçek telefonda botlu odada oynayıp bildirdi: "online kapışmaların hepsi hız mantığına göre olacaktı", 3 can/kendi hızında yarış istenmiyor): **Online odaların hepsi hız motorunda.** `QV=7` (yeni odalar qv 7; qv<7 açık odalar listede görünmez, kodla girilince "eski sürümle kurulmuş").
+- 64 (14 Kasım 2026 yayında; kullanıcı gerçek telefonda botlu odada oynayıp bildirdi: "online kapışmaların hepsi hız mantığına göre olacaktı", 3 can/kendi hızında yarış istenmiyor): **Online odaların hepsi hız motorunda.** `QV=7` (yeni odalar qv 7; qv<7 açık odalar listede görünmez, kodla girilince "eski sürümle kurulmuş").
   - Kullanıcı kararları: herkes aynı soruyu aynı anda görür, can yok. **Yarış (4–10)**: oda `mode:'sr'`, hız sıralı puan — en hızlı doğru 3, ikinci 2, üçüncü 1 (`DU.sm='rank'`, `DU.rp[k]`, `duRankPts`; geç kalma kilidi yok, 2./3. de puan alır). **Takım odası** (`mode:'ta'`): her soruda ilk doğru basanın takımı 1 puan (`DU.sm='team'`, `DU.sd` taraf haritası `pa` + bot `tk`, `duSide`, `DU.ts`; takım arkadaşı önce bilince "Takım arkadaşın bildi!"). İkisinde de `win` = soru sayısı (`DU.nq`, 10/15/20; Oda Kur'da "Kaç soru?"), sondan bir önceki soruda "🔔 SON SORU!".
   - Kapışma motoru: `duOn` sr/ta'yı içerir; `rmRefresh` otomatik başlatma sadece `mode==='duel'`; `rmGo` cap'li odalarda beklenen oyuncu sayısı = n−1 + bot. Botlar hepsi kapışma alanlarıyla (`m,r,p`). Giriş kartı (HIZ YARIŞI / TAKIM KAPIŞMASI iki sütun), oyun başlığı, skor (`.dsc4.n6` 6–10 kişi; takımda iki taraf + soru sayacı), sonuç (`duTeamHtml`, `duTeamRk`: karşıda gerçek oyuncu varsa +1/+2/+3 ve Takım Oyuncusu, günde 5), paylaşım kartı. Eski yarış motorundaki `taOver/taSave/taBarHtml` artık kullanılmıyor (kod duruyor).
   - Oda türleri 3'e indi (kullanıcı: "Herkes tek mantıklı… 1 vs 1 hariç kırmızı ya da mavi takım seçimi, cs mantığı"): **1’e 1** (2), **Takım** 🔴 Kırmızı – 🔵 Mavi (2’ye 2 … 5’e 5, `ONT`), **Herkes Tek** (`race`→`sr`, 3/4/6/8/10 kişi, 3-2-1 puan). Muharebe Oda Kur'dan kalktı (`ONM.mm` eski odalar için duruyor). Takım odasına giren herkes (kurucu dahil) `onTeamAsk` penceresinde takımını seçer (`.tpick`, dolu takım kapalı; `onSideSet`, `RM.tq` bir kez sorulur, `RM.sd` seçti); lobide "↔️ Takımını değiştir". `DTN` takım adları.
