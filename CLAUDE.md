@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 13 Kasım 2026 · Yayındaki sürüm: **62**
+Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **63**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -242,6 +242,14 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Diğer: tanımadıklara arkadaşlık isteği günde 5 (`mc_frq`; kodla ekleme sınırsız); muharebe 5 kişi (`duCap` = oda `cap`); kılavuzda `online`.
   - **Yapılmayanlar (kullanıcıya söylendi):** botla oynarken gelen gerçek rakibe otomatik geçiş (bot maçı başlayınca oda listeden çıkar; maç bitince yeniden Hemen Oyna), takım maçında ayrılanın yerine bot geçmesi (puanı kalır), takımlarda rütbe toplamı dengesi (sadece kişi sayısı eşitlenir), kota uyarısı (Firebase konsolundan kurulur; buradan erişim yok). Play Console'da "kullanıcılar etkileşime girer" beyanı gerekecek.
   - Test: `test/s62.js` (6 telefon: liste, önizleme, rütbe filtresi, misafir, şifre + bilet, çıkarma, kilit, botlu muharebe/1'e 1/yarış, takım odası, Hemen Oyna, engelleme, sadece kodla). `dsrv.js` yeni kuralları ve çoklu `where`'i destekler.
+
+- 63 (14 Kasım 2026 yayında; kullanıcı gerçek telefon ekran görüntüsüyle bildirdi: sonuç sayfasında 3 canavar, konfeti yok): **Sonuç sayfasında tek, hareketli canavar.**
+  - Kullanıcı kararları: sayfada tek canavar; duruma göre hareket etsin (kazanınca zıplasın/sevinsin, kaybedince farklı tepki); paylaşım kartı sayfada **kalsın ama canavarsız**, paylaşılan resimde canavar **olsun**; konfeti geri gelsin.
+  - Başlık canavarı sonuç ekranlarında yok (`MONQ` + dover/gover/rover/summary/history). `rMon(k,id)` artık `data-mk` = win/lose/tie/wait; `monScan()` (render sonunda) → `monPlay(el)`: `MONSEQ` kare dizisi + CSS sınıfı (`mwin`: iki zıplama + havada dönüş + sallanma; `mlose`: çöker, başı eğik → yukarı bakar → gülümser → toparlanır; `mtie`: sağa sola bakar; `mwait`: nefes). `monSet(id,m)` (rover/takım sonucu değişince). Hareket sade modda da var, sadece "hareketi azalt" ayarında yok.
+  - Yeni pozlar: `mc-sad` (başı eğik, gözler kapalı), `mc-peek` (eğik baştan yukarı bakar), `mc-blink`, `mc-sidel`, `mc-sider` (scratch `ds3/mon2.js`; sw.js FILES'ta).
+  - Kart: `cardMon(c,x,y,r,emoji,light)` — `CARDMON=false` iken canavar yerine soluk daire + simge; çizim fonksiyonları `cv._rd` saklar; `shareCanvas` paylaşmadan önce `CARDMON=true` ile canavarlı çizer, 1,2 sn sonra sayfadaki kartı canavarsız yeniden çizer.
+  - Konfeti: kazanınca **sesten önce** çağrılır (ses hatası konfetiyi engellemesin), z-index 9999, ekran değişimi denetimi 0,7 sn. (Emülatörde konfeti hep çıkıyordu; gerçek telefondaki sebep kesin değil.)
+  - Test: `test/s63.js` (kazan/kaybet, tek canavar, kart canavarsız/paylaşımda canavarlı, konfeti).
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
