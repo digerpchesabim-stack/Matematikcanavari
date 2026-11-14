@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **64**
+Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **65**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -256,6 +256,11 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Kapışma motoru: `duOn` sr/ta'yı içerir; `rmRefresh` otomatik başlatma sadece `mode==='duel'`; `rmGo` cap'li odalarda beklenen oyuncu sayısı = n−1 + bot. Botlar hepsi kapışma alanlarıyla (`m,r,p`). Giriş kartı (HIZ YARIŞI / TAKIM KAPIŞMASI iki sütun), oyun başlığı, skor (`.dsc4.n6` 6–10 kişi; takımda iki taraf + soru sayacı), sonuç (`duTeamHtml`, `duTeamRk`: karşıda gerçek oyuncu varsa +1/+2/+3 ve Takım Oyuncusu, günde 5), paylaşım kartı. Eski yarış motorundaki `taOver/taSave/taBarHtml` artık kullanılmıyor (kod duruyor).
   - Oda türleri 3'e indi (kullanıcı: "Herkes tek mantıklı… 1 vs 1 hariç kırmızı ya da mavi takım seçimi, cs mantığı"): **1’e 1** (2), **Takım** 🔴 Kırmızı – 🔵 Mavi (2’ye 2 … 5’e 5, `ONT`), **Herkes Tek** (`race`→`sr`, 3/4/6/8/10 kişi, 3-2-1 puan). Muharebe Oda Kur'dan kalktı (`ONM.mm` eski odalar için duruyor). Takım odasına giren herkes (kurucu dahil) `onTeamAsk` penceresinde takımını seçer (`.tpick`, dolu takım kapalı; `onSideSet`, `RM.tq` bir kez sorulur, `RM.sd` seçti); lobide "↔️ Takımını değiştir". `DTN` takım adları.
   - Kurallar: rooms mode + `'sr'`, `tm` 2–5 (**yayında önce kurallar**). Test: `test/s62.js` 5–6. bölümler hız motoruna göre yeniden yazıldı + takım seçimi.
+
+- 65 (14 Kasım 2026 yayında; kullanıcı simge taslağını ve Oda Kur akordiyon taslağını onaylayıp "uygula ve yükle" dedi): **3B oda simgeleri + akordiyon Oda Kur.**
+  - Simgeler (SVG, kodla, ek dosya yok): `swords` (1'e 1: gümüş bıçaklı altın saplı çapraz kılıçlar, 2,4 sn'de bir çarpışır + kıvılcım), `knights` (Takım: yandan miğferli kırmızı/mavi şövalye + yıldızlı kalkan, sırayla hamle, ortada parlayan VS), `flag` (Herkes Tek: altın topuzlu direkte dalgalanan damalı bayrak). `roomIco(k,anim)`: anim yoksa ya da "hareketi azalt" (`RMOT`) açıksa `<animate>` etiketleri çıkarılır. Kimlikler `ICN` ile benzersiz. Hareketli: Oda Kur başlıkları, kapışma girişi (`.rmhero`; `.rhero` sınıf adı sonuç ekranında zaten kullanılıyor); hareketsiz: liste satırı (`.oric`), lobi başlığı (`.tico`). Takım girişinde isimler taraf rengiyle (Kırmızı = dn2).
+  - Oda Kur (`ocHtml`): sadece üç başlık kartı (`.occ`, `.och`), dokununca kart açılır, ayarlar içinde (`ocBody(m)`: kişi (1'e 1'de yok), seviye, işlem (+ tablo), soru/puan, kimler girebilsin + şifre aynı satırda, "Odayı Kur"); tek kart açık (`OC.open`, `ocOpen` → kaydırma). Son seçim `mc_oc` (cihaza özel, şifre hariç; `ocSave/ocLoad`, `onNew` yükler). `onQuickNew` OC'yi geçici değiştirip geri koyar.
+  - Test: `test/s62.js` Oda Kur bölümü akordiyona göre (kapalı başlıklar, açılma, tek kart, 1'e 1'de kişi yok, hatırlama).
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
