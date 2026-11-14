@@ -621,6 +621,23 @@ body.hastabs #toast{bottom:calc(104px + var(--safe-area-inset-bottom,env(safe-ar
 .roe{font-size:22px}
 .rmhero{width:132px;height:132px}
 @media (prefers-reduced-motion:reduce){.ocb{animation:none}}
+
+/* S66: konsept simgeleri */
+.hgi .btn .hico{display:block;width:78px;height:78px;margin:-4px 0 4px}.hgi .btn .hico svg{display:block}
+.hplay .hpm{position:relative;display:block;width:168px;height:168px;flex:none;margin:-6px -6px -6px 0;animation:hpact 4s ease-in-out infinite;pointer-events:none}
+.hplay .hpm img{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;animation:none}
+.hplay .hpm img.on{opacity:1}
+@keyframes hpact{0%,30%{transform:none}36%{transform:translateY(-22px) rotate(-6deg)}42%{transform:translateY(0) scale(1.04,.93)}47%{transform:translateY(-12px) rotate(5deg)}53%{transform:none}70%{transform:translateX(-5px)}78%{transform:translateX(5px)}86%,100%{transform:none}}
+.oqsv{width:64px;height:64px;background:none;border-radius:0;margin:-6px 0}.oqsv svg{display:block}
+.obig{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0 4px}
+.obt{display:flex;flex-direction:column;align-items:center;gap:2px;padding:10px 8px 14px;border:var(--bd) solid var(--line);border-radius:22px;background:var(--card);color:var(--text);font:inherit;cursor:pointer;box-shadow:var(--e1);margin:0;min-height:0}
+.obt:active{transform:scale(.97)}
+.obt .obi{display:block;width:88px;height:88px}.obt .obi svg{display:block}.obt b{font-size:18px}.obt small{font-size:13px;color:var(--muted);font-weight:500}
+.omini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:14px 0 6px}
+.omini button{display:flex;align-items:center;gap:8px;padding:8px 10px;border:var(--bd) solid var(--line);border-radius:18px;background:var(--card);color:var(--acc-t);font:inherit;font-size:14px;font-weight:700;text-align:left;cursor:pointer;box-shadow:var(--e1);margin:0;min-height:52px}
+.omi{display:block;width:38px;height:38px;flex:none}.omi svg{display:block}
+@media (max-width:359px){.hplay .hpm{width:128px;height:128px}.hgi .btn .hico{width:66px;height:66px}.obt .obi{width:72px;height:72px}}
+@media (prefers-reduced-motion:reduce){.hplay .hpm{animation:none}}
 </style>
 </head>
 <body>
@@ -4293,10 +4310,10 @@ function taSave(t,win){
 function onHtml(){
   var h=topBar('🌍 Online Oyna');
   if(!st.profile)return h+'<div class="pbox" style="text-align:center">'+monImg('wait','wmon')+'<p><b>Açık odalarda oynamak için karakterini seç.</b></p><p class="sub">Karakter seçmek 10 saniye sürer. Arkadaşının verdiği kodla misafir olarak da girebilirsin.</p></div><button class="next" onclick="onChar()">🐾 Karakterimi Seç</button><button class="ghost" onclick="onCode()">🔑 Kodla Gir</button>';
-  h+='<button class="oquick" onclick="onQuick()"><span class="oqi">⚡</span><span class="oqx"><b>Hemen Oyna</b><small>Sana uygun odaya girersin</small></span></button>';
+  h+='<button class="oquick" onclick="onQuick()"><span class="oqi oqsv">'+mIco('bolt',1)+'</span><span class="oqx"><b>Hemen Oyna</b><small>Sana uygun odaya girersin</small></span></button>';
+  h+='<div class="obig"><button class="obt" onclick="onNew()"><span class="obi">'+mIco('castle',1)+'</span><b>Oda Kur</b><small>Kendi odanı aç</small></button><button class="obt" onclick="onCode()"><span class="obi">'+mIco('key',1)+'</span><b>Kodla Gir</b><small>Arkadaşının odası</small></button></div>';
   h+='<div class="ohead"><span class="tag">Açık odalar</span><button class="mini" id="on-rf" onclick="onLoad(true)"'+(ON.busy?' disabled':'')+'>🔄 Yenile</button></div><div id="on-list">'+onListHtml()+'</div>';
-  h+='<div class="obar"><button class="obb a" onclick="onNew()">➕ Oda Kur</button><button class="obb" onclick="onCode()">🔑 Kodla Gir</button></div>';
-  h+='<button class="ghost" onclick="go(\'rhist\')">📜 Yarış Geçmişim</button><button class="ghost" onclick="guideOpen(\'online\')">❓ Online Oyna nasıl çalışır?</button>';
+  h+='<div class="omini"><button onclick="go(\'rhist\')"><span class="omi">'+mIco('scroll')+'</span>Yarış Geçmişim</button><button onclick="guideOpen(\'online\')"><span class="omi">'+mIco('help')+'</span>Nasıl çalışır?</button></div>';
   return h;
 }
 function onChar(){var l=profiles();if(l.length===1){st.profile=l[0];setTimeout(frEnsure,0);onOpen()}else go('profiles')}
@@ -4468,7 +4485,7 @@ function rmBeat(){
 }
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
-var PV=2,APPV=65;
+var PV=2,APPV=66;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
@@ -5990,6 +6007,192 @@ function icoShields(){
   var sh=function(x,f,g,dk,xs){return '<g transform="translate('+x+' 10) scale('+(f?-0.82:0.82)+' 0.82) translate(0 10)"><path d="M0 34 Q-18 29 -34 34 L-34 68 Q-34 96 0 112 Q34 96 34 68 L34 34 Q18 29 0 34Z" fill="url(#irm'+n+')"/><path d="M0 39 Q-15 35 -29 39 L-29 68 Q-29 91 0 105 Q29 91 29 68 L29 39 Q15 35 0 39Z" fill="url(#'+g+n+')"/><path d="M0 39 Q-15 35 -29 39 L-29 60 Q-6 52 29 58 L29 39 Q15 35 0 39Z" fill="#fff" opacity=".22"/><path d="M0 39 V105" stroke="'+dk+'" stroke-width="2" opacity=".35"/></g><g transform="translate('+x+' 76) scale(.9)">'+icoSym(n,xs)+'</g>'};
   return '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'+icoDefs(n)+'<circle cx="60" cy="40" r="26" fill="url(#igl'+n+')"/>'+sw(-38)+sw(38)+sh(36,false,'ird','#8b1a1a',false)+sh(84,true,'ibu','#173f80',true)+icoSpark(60,30,9,'#fff')+icoSpark(60,30,5,'#ffd84d')+'</svg>';
 }
+/* S66: konsept simgeleri (ana sayfa: düşünen şövalye, arma kalkanı, parşömen, turnuva arması; Online: yıldırım, kale, anahtar, parşömen, soru balonu) */
+var MI=(function(){
+function DS(g){return '<filter id="'+g+'d" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2.2" stdDeviation="1.6" flood-color="#1b2140" flood-opacity=".32"/></filter>'}
+function GOLD(id){return '<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset=".35" stop-color="#ffd24a"/><stop offset=".7" stop-color="#f0a30f"/><stop offset="1" stop-color="#b56d00"/></linearGradient>'}
+function bolt(n){var g='bo'+n,p='M36 3 L14 36 H29 L24 61 L50 24 H34 Z';return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+GOLD(g+'g')+DS(g)+
+'<radialGradient id="'+g+'h" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6b0" stop-opacity=".95"/><stop offset=".5" stop-color="#ffd23f" stop-opacity=".45"/><stop offset="1" stop-color="#ffb800" stop-opacity="0"/></radialGradient>'+
+'<linearGradient id="'+g+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><clipPath id="'+g+'c"><path d="'+p+'"/></clipPath></defs>'+
+'<circle cx="32" cy="32" r="30" fill="url(#'+g+'h)"><animate attributeName="opacity" values=".55;1;.55" dur="1.2s" repeatCount="indefinite"/></circle>'+
+'<g filter="url(#'+g+'d)"><path d="'+p+'" transform="translate(2.2 2.2)" fill="#a35d00"/><path d="'+p+'" fill="url(#'+g+'g)" stroke="#fff6c8" stroke-width="1.4" stroke-linejoin="round"/>'+
+'<path d="M35 7 L18 33 H24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>'+
+'<g clip-path="url(#'+g+'c)"><rect x="-30" y="0" width="16" height="64" fill="url(#'+g+'s)" transform="skewX(-20)"><animate attributeName="x" values="-30;-30;80" keyTimes="0;.55;1" dur="2.2s" repeatCount="indefinite"/></rect></g></g>'+
+spark(54,10,1.1,'0s')+spark(10,50,.8,'.6s')+'</svg>'}
+function spark(x,y,s,b){return '<path transform="translate('+x+' '+y+') scale('+s+')" d="M0 -5 L1.2 -1.2 L5 0 L1.2 1.2 L0 5 L-1.2 1.2 L-5 0 L-1.2 -1.2Z" fill="#fff"><animate attributeName="opacity" values="0;1;0;0" keyTimes="0;.2;.45;1" dur="1.8s" begin="'+b+'" repeatCount="indefinite"/></path>'}
+function key(n){var g='ky'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+GOLD(g+'g')+DS(g)+
+'<radialGradient id="'+g+'h" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff6c4" stop-opacity=".8"/><stop offset="1" stop-color="#ffd23f" stop-opacity="0"/></radialGradient>'+
+'<linearGradient id="'+g+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+'<mask id="'+g+'m"><g fill="#fff"><circle cx="20" cy="22" r="13"/><rect x="27" y="28" width="30" height="8" rx="3" transform="rotate(35 27 28)"/></g><circle cx="20" cy="22" r="5.2" fill="#000"/></mask></defs>'+
+'<circle cx="22" cy="24" r="22" fill="url(#'+g+'h)"><animate attributeName="opacity" values=".4;.9;.4" dur="1.6s" repeatCount="indefinite"/></circle>'+
+'<g filter="url(#'+g+'d)"><g transform="translate(1.8 1.8)" fill="#a35d00" mask="url(#'+g+'m)"><rect width="64" height="64"/></g>'+
+'<g mask="url(#'+g+'m)"><rect width="64" height="64" fill="url(#'+g+'g)"/><rect x="-40" y="-10" width="14" height="90" fill="url(#'+g+'s)" transform="rotate(25)"><animate attributeName="x" values="-40;-40;70" keyTimes="0;.5;1" dur="2.4s" repeatCount="indefinite"/></rect></g>'+
+'<g transform="rotate(35 27 28)"><rect x="47" y="35" width="4.5" height="8" rx="1" fill="url(#'+g+'g)"/><rect x="40" y="35" width="4.5" height="6" rx="1" fill="url(#'+g+'g)"/></g>'+
+'<path d="M11 18 A10 10 0 0 1 22 11" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".85"/>'+
+'<circle cx="20" cy="22" r="13" fill="none" stroke="#fff6c8" stroke-width="1"/></g>'+spark(50,12,1,'.3s')+spark(8,44,.7,'1s')+'</svg>'}
+function castle(n){var g='cs'+n,bw='<linearGradient id="'+g+'w" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#eef1fb"/><stop offset=".6" stop-color="#c7cee3"/><stop offset="1" stop-color="#9aa5c2"/></linearGradient>';
+var fl='M33 4 L46 7 L33 11 Z',fl2='M33 4 L45 9 L33 11 Z';
+return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+bw+DS(g)+'<linearGradient id="'+g+'r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fa2ff"/><stop offset="1" stop-color="#4450c0"/></linearGradient>'+GOLD(g+'g')+'</defs>'+
+'<ellipse cx="32" cy="59" rx="25" ry="3" fill="#1b2140" opacity=".14"/><g filter="url(#'+g+'d)">'+
+'<rect x="32.2" y="3" width="1.6" height="16" fill="#7a86a6"/><path d="'+fl+'" fill="#ef5a5a"><animate attributeName="d" values="'+fl+';'+fl2+';'+fl+'" dur="1s" repeatCount="indefinite"/></path>'+
+// yan kuleler
+'<path d="M6 26 h4 v-3 h3 v3 h3 v-3 h3 v3 h1 V58 H6Z" fill="url(#'+g+'w)"/><path d="M44 26 h1 v-3 h3 v3 h3 v-3 h3 v3 h4 V58 H44Z" fill="url(#'+g+'w)"/>'+
+// orta gövde
+'<path d="M16 32 h4 v-3 h4 v3 h4 v-3 h4 v3 h4 v-3 h4 v3 h4 V58 H16Z" fill="url(#'+g+'w)"/>'+
+// orta kule
+'<path d="M24 19 h3 v-3 h3.3 v3 h3.4 v-3 h3.3 v3 h3 V34 H24Z" fill="url(#'+g+'w)"/>'+
+'<path d="M32 58 V46 a6 6 0 0 1 12 0 V58Z" transform="translate(-6 0)" fill="url(#'+g+'r)"/><path d="M26 46 a6 6 0 0 1 12 0" transform="" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.2"/>'+
+'<rect x="29.5" y="23" width="5" height="7" rx="2.5" fill="#4450c0"/><rect x="10" y="34" width="4" height="6" rx="2" fill="#4450c0"/><rect x="50" y="34" width="4" height="6" rx="2" fill="#4450c0"/>'+
+'<path d="M7 27 V57 M17 33 V57 M25 20 V33" stroke="#fff" stroke-width="1.6" opacity=".7"/>'+
+'</g><g transform="translate(51 47)"><circle r="9" fill="url(#'+g+'g)" stroke="#fff" stroke-width="1.6"/><path d="M0 -4.6 V4.6 M-4.6 0 H4.6" stroke="#7a4600" stroke-width="2.6" stroke-linecap="round"/><animateTransform attributeName="transform" type="scale" additive="sum" values="1;1.12;1" dur="1.2s" repeatCount="indefinite"/></g></svg>'}
+function door(n){var g='dr'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+
+'<linearGradient id="'+g+'f" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a6b4ff"/><stop offset="1" stop-color="#4450c0"/></linearGradient>'+
+'<linearGradient id="'+g+'o" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c98a4b"/><stop offset="1" stop-color="#7a4a1e"/></linearGradient>'+
+'<radialGradient id="'+g+'l" cx=".5" cy=".6" r=".6"><stop offset="0" stop-color="#fffbe0"/><stop offset=".6" stop-color="#ffe27a"/><stop offset="1" stop-color="#ffc83d"/></radialGradient></defs>'+
+'<ellipse cx="32" cy="59" rx="22" ry="3" fill="#1b2140" opacity=".14"/><g filter="url(#'+g+'d)"><path d="M12 58 V22 a20 20 0 0 1 40 0 V58Z" fill="url(#'+g+'f)"/>'+
+'<path d="M18 58 V24 a14 14 0 0 1 28 0 V58Z" fill="url(#'+g+'l)"><animate attributeName="opacity" values=".8;1;.8" dur="1.4s" repeatCount="indefinite"/></path>'+
+'<path d="M18 58 V24 a14 14 0 0 1 4 -9.7 L30 18 V61Z" fill="url(#'+g+'o)"/><circle cx="26.5" cy="40" r="1.8" fill="url(#'+g+'g)"/>'+
+'<path d="M14 24 a18 18 0 0 1 9 -15" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/></g>'+
+'<g transform="translate(50 47)"><circle r="9" fill="url(#'+g+'g)" stroke="#fff" stroke-width="1.6"/><path d="M0 -4.6 V4.6 M-4.6 0 H4.6" stroke="#7a4600" stroke-width="2.6" stroke-linecap="round"/></g></svg>'}
+function scroll(n){var g='sc'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+'<linearGradient id="'+g+'p" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff7e2"/><stop offset="1" stop-color="#ecd8a8"/></linearGradient></defs><g filter="url(#'+g+'d)">'+
+'<rect x="14" y="12" width="36" height="40" fill="url(#'+g+'p)"/><path d="M20 21h24M20 27h24M20 33h18M20 39h22" stroke="#b39461" stroke-width="2" stroke-linecap="round"/>'+
+'<rect x="10" y="7" width="44" height="7" rx="3.5" fill="url(#'+g+'g)"/><rect x="10" y="50" width="44" height="7" rx="3.5" fill="url(#'+g+'g)"/></g>'+
+'<g transform="translate(47 44)"><circle r="9" fill="#ffd23f" stroke="#fff" stroke-width="1.6"/><text y="4" text-anchor="middle" font-size="11" font-family="Arial" font-weight="800" fill="#7a4600">🏆</text></g></svg>'}
+function help(n){var g='hp'+n;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+'<radialGradient id="'+g+'b" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#c3cbff"/><stop offset=".6" stop-color="#6b78e6"/><stop offset="1" stop-color="#3b45a8"/></radialGradient></defs><g filter="url(#'+g+'d)">'+
+'<path d="M32 6 a24 22 0 1 1 -12 41 L10 54 L13 43 A24 22 0 0 1 32 6Z" fill="url(#'+g+'b)"/><text x="32" y="38" text-anchor="middle" font-size="28" font-family="MCP,Arial" font-weight="800" fill="#fff">?</text><path d="M18 18 a18 16 0 0 1 12 -6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".6"/></g></svg>'}
+
+function MET(id){return '<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".4" stop-color="#cfd6e6"/><stop offset=".7" stop-color="#8d98b3"/><stop offset="1" stop-color="#5d6782"/></linearGradient>'}
+function TEAM(id,a,b,c){return '<linearGradient id="'+id+'" x1="0" y1="0" x2=".5" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset=".5" stop-color="'+b+'"/><stop offset="1" stop-color="'+c+'"/></linearGradient>'}
+/* Akıldan İşlem: düşünen şövalye */
+function thinker(n){var g='th'+n;
+var bub='M48 6 C54 0,66 1,70 6 C76 1,90 4,90 13 C96 16,95 27,88 29 C88 36,78 38,73 35 C68 40,56 39,53 34 C45 36,40 29,43 23 C37 19,40 9,48 6Z';
+return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+MET(g+'m')+TEAM(g+'t','#8fb4ff','#3b6cf0','#1d3a9e')+TEAM(g+'p','#ff9a9a','#e5484d','#9e1f2a')+GOLD(g+'g')+'</defs>'+
+'<ellipse cx="36" cy="93" rx="26" ry="3" fill="#1b2140" opacity=".14"/><g transform="translate(0 8) scale(.92)">'+
+// gövde (zırh + tabard)
+'<g filter="url(#'+g+'d)"><path d="M8 96 C8 80,16 72,36 72 C56 72,64 80,64 96Z" fill="url(#'+g+'m)"/>'+
+'<path d="M22 96 L24 76 H48 L50 96Z" fill="url(#'+g+'t)"/><path d="M36 79 L38.2 83.6 L43 84.2 L39.5 87.5 L40.4 92.3 L36 90 L31.6 92.3 L32.5 87.5 L29 84.2 L33.8 83.6Z" fill="url(#'+g+'g)"/>'+
+'<ellipse cx="13" cy="80" rx="9" ry="7" fill="url(#'+g+'m)"/><ellipse cx="59" cy="80" rx="9" ry="7" fill="url(#'+g+'m)"/>'+
+// kafa (eğilerek düşünür)
+'<g><animateTransform attributeName="transform" type="rotate" values="6 36 70;10 36 70;6 36 70" dur="3s" repeatCount="indefinite"/>'+
+'<path d="M30 30 C26 20,32 12,40 14 C36 18,38 22,42 22 C40 26,36 28,34 32Z" fill="url(#'+g+'p)"/>'+
+'<path d="M20 52 C20 36,27 28,36 28 C45 28,52 36,52 52 L52 64 C52 70,46 72,36 72 C26 72,20 70,20 64Z" fill="url(#'+g+'m)"/>'+
+'<path d="M25 40 C26 34,30 31,34 30" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".9"/>'+
+'<rect x="22" y="47" width="28" height="4.4" rx="2" fill="#262c44"/><rect x="34.2" y="47" width="3.6" height="18" rx="1.6" fill="#262c44"/>'+
+'<g fill="#262c44"><circle cx="27" cy="58" r="1.1"/><circle cx="27" cy="62" r="1.1"/><circle cx="45" cy="58" r="1.1"/><circle cx="45" cy="62" r="1.1"/></g>'+
+'<path d="M36 28 V72" stroke="#7d88a6" stroke-width=".8" opacity=".7"/></g>'+
+// çenedeki eldiven
+'<path d="M50 96 C52 86,54 80,52 74" stroke="url(#'+g+'m)" stroke-width="9" stroke-linecap="round" fill="none"/>'+
+'<rect x="44" y="64" width="13" height="11" rx="5" fill="url(#'+g+'m)"/><path d="M46 67 h9 M46 70 h9" stroke="#7d88a6" stroke-width="1"/></g></g>'+
+// düşünce balonu
+'<g filter="url(#'+g+'d)"><circle cx="45" cy="44" r="2.6" fill="#fff"/><circle cx="49" cy="38" r="3.6" fill="#fff"/><path d="'+bub+'" fill="#fff"/></g>'+
+'<text x="66" y="24.5" text-anchor="middle" font-family="MCP,Arial" font-weight="800" font-size="12" fill="#2f3a7a">3+5=<tspan fill="#1f9d55">8<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;.45;.55;.9;1" dur="3s" repeatCount="indefinite"/></tspan><tspan fill="#c27a00" dx="-7.4">?<animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;.45;.55;.9;1" dur="3s" repeatCount="indefinite"/></tspan></text>'+
+spark(89,40,1,'1.4s')+'</svg>'}
+/* Problemler: otantik parşömen + tüy kalem */
+function parch2(n){var g='pa'+n;
+var sh='M18 22 C30 20,44 23,58 21 C66 20,74 22,78 22 L77 40 C79 52,76 62,78 74 C66 76,52 73,40 75 C30 76,22 74,18 74 C20 62,17 50,19 38Z';
+return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+
+'<radialGradient id="'+g+'p" cx=".45" cy=".4" r=".75"><stop offset="0" stop-color="#fbefc9"/><stop offset=".6" stop-color="#ecd29a"/><stop offset=".9" stop-color="#c99a52"/><stop offset="1" stop-color="#9c6a2c"/></radialGradient>'+
+'<radialGradient id="'+g+'s" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#a87432" stop-opacity=".35"/><stop offset="1" stop-color="#a87432" stop-opacity="0"/></radialGradient>'+
+'<linearGradient id="'+g+'w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b07a43"/><stop offset=".45" stop-color="#7a4a1f"/><stop offset="1" stop-color="#4a2a10"/></linearGradient>'+
+'<radialGradient id="'+g+'x" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ff8a80"/><stop offset=".55" stop-color="#c62828"/><stop offset="1" stop-color="#7a1010"/></radialGradient>'+
+'<linearGradient id="'+g+'f" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#d9dde8"/></linearGradient></defs>'+
+'<ellipse cx="48" cy="90" rx="34" ry="3.4" fill="#1b2140" opacity=".14"/><g filter="url(#'+g+'d)">'+
+'<path d="'+sh+'" fill="url(#'+g+'p)"/><ellipse cx="62" cy="58" rx="9" ry="6" fill="url(#'+g+'s)"/><ellipse cx="30" cy="34" rx="7" ry="5" fill="url(#'+g+'s)"/>'+
+'<path d="M18 22 C30 20,44 23,58 21 C66 20,74 22,78 22" stroke="#9c6a2c" stroke-width="1" fill="none" opacity=".6"/>'+
+'<text x="46" y="42" text-anchor="middle" font-family="Georgia,\'Times New Roman\',serif" font-style="italic" font-weight="700" font-size="13" fill="#4a2a10">3 + 5 = ?</text>'+
+'<path d="M26 52 C34 50,42 53,50 51 M26 59 C36 57,46 60,58 58 M26 66 C32 64,38 66,44 65" stroke="#7a5022" stroke-width="1.4" fill="none" stroke-linecap="round" opacity=".55"/>'+
+// rulo + sap
+'<rect x="12" y="15" width="72" height="9" rx="4.5" fill="url(#'+g+'p)"/><path d="M14 17 H82" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/><rect x="5" y="17" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><rect x="82" y="17" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><circle cx="5" cy="19.5" r="3.4" fill="url(#'+g+'w)"/><circle cx="91" cy="19.5" r="3.4" fill="url(#'+g+'w)"/>'+
+'<rect x="12" y="72" width="72" height="9" rx="4.5" fill="url(#'+g+'p)"/><rect x="5" y="74" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><rect x="82" y="74" width="9" height="5" rx="2" fill="url(#'+g+'w)"/><circle cx="5" cy="76.5" r="3.4" fill="url(#'+g+'w)"/><circle cx="91" cy="76.5" r="3.4" fill="url(#'+g+'w)"/>'+
+// mühür + kurdele
+'<path d="M64 78 L60 92 L64 89 L67 93 L68 79Z" fill="#a61b1b"/><path d="M70 78 L72 92 L75 88 L79 91 L74 78Z" fill="#c62828"/>'+
+'<path d="M69 66 C75 64,79 69,78 74 C80 79,74 83,69 81 C63 83,59 78,61 73 C59 68,64 64,69 66Z" fill="url(#'+g+'x)"/><circle cx="69.5" cy="73.5" r="5" fill="none" stroke="#7a1010" stroke-width="1"/><text x="69.5" y="77" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="9" fill="#7a1010">M</text>'+
+'<ellipse cx="66" cy="69" rx="2.4" ry="1.4" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".2;.7;.2" dur="2s" repeatCount="indefinite"/></ellipse></g>'+
+// tüy kalem
+'<g><animateTransform attributeName="transform" type="rotate" values="0 76 60;-6 76 60;0 76 60;5 76 60;0 76 60" dur="2.6s" repeatCount="indefinite"/>'+
+'<path d="M64 62 C70 46,80 34,94 28 C90 40,82 52,67 61Z" fill="url(#'+g+'f)" stroke="#b9c0d0" stroke-width=".6"/><path d="M64 62 L90 32" stroke="#9aa3b8" stroke-width="1"/><path d="M61 66 L64 61" stroke="#3a2a1a" stroke-width="1.8" stroke-linecap="round"/></g>'+
+'</svg>'}
+/* Online Oyna: atlı şövalyeler mızrak düellosu */
+function rider(g,t,cx,dir){
+var s='<g transform="translate('+cx+' 0) scale('+dir+' 1)">';
+// kuyruk
+s+='<path d="M-22 46 C-30 48,-32 58,-28 64 C-26 58,-24 54,-20 52Z" fill="#5a3a1e"/>';
+// bacaklar
+s+='<g fill="#5a3a1e"><rect x="-18" y="62" width="4" height="12" rx="1.5"/><rect x="-10" y="62" width="4" height="12" rx="1.5"/><rect x="8" y="62" width="4" height="12" rx="1.5"/><rect x="15" y="62" width="4" height="12" rx="1.5"/></g><g fill="#2b1a0c"><rect x="-18.5" y="72" width="5" height="3" rx="1"/><rect x="-10.5" y="72" width="5" height="3" rx="1"/><rect x="7.5" y="72" width="5" height="3" rx="1"/><rect x="14.5" y="72" width="5" height="3" rx="1"/></g>';
+// boyun + baş (örtülü)
+s+='<path d="M12 44 L20 26 C23 20,30 20,33 24 L40 33 C42 36,39 39,36 37 L30 34 L24 46Z" fill="url(#'+g+t+')"/><circle cx="29" cy="27" r="1.6" fill="#fff"/><circle cx="29" cy="27" r=".9" fill="#1b1b1b"/><path d="M22 22 L19 16 L25 20Z" fill="url(#'+g+t+')"/>';
+// gövde örtüsü (fistolu)
+s+='<path d="M-24 48 C-24 38,-14 36,-6 36 L14 36 C24 36,26 42,26 48 L26 62 Q22 66,18 62 Q14 66,10 62 Q6 66,2 62 Q-2 66,-6 62 Q-10 66,-14 62 Q-18 66,-24 62Z" fill="url(#'+g+t+')"/>';
+s+='<path d="M-20 44 C-18 40,-12 39,-6 39" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none" stroke-linecap="round"/>';
+s+='<path d="M-4 46 L-2 50 L2.4 50.5 L-.8 53.5 L0 58 L-4 55.8 L-8 58 L-7.2 53.5 L-10.4 50.5 L-6 50Z" fill="url(#'+g+'g)"/>';
+// süvari
+s+='<path d="M-8 38 C-9 28,-6 20,0 19 C6 20,8 28,6 38Z" fill="url(#'+g+'m)"/>';
+s+='<path d="M-6 16 C-6 6,6 6,6 16 L6 22 C6 24,-6 24,-6 22Z" fill="url(#'+g+'m)"/><rect x="0" y="13" width="6.4" height="2.4" rx="1" fill="#262c44"/>';
+s+='<path d="M-2 7 C-10 2,-16 6,-16 12 C-12 9,-8 9,-4 10Z" fill="url(#'+g+t+')"/>';
+// kalkan
+s+='<path d="M-14 24 H-2 V31 C-2 36,-6 39,-8 40 C-10 39,-14 36,-14 31Z" fill="url(#'+g+t+')" stroke="#fff" stroke-width="1.2"/>';
+// mızrak
+s+='<g><path d="M-4 30 L52 16" stroke="#f3e6c8" stroke-width="3.4" stroke-linecap="round"/><path d="M8 27 L14 25.5 M20 24 L26 22.5 M32 21 L38 19.5 M44 18 L49 16.8" stroke="url(#'+g+t+')" stroke-width="3.6"/><path d="M52 16 L60 14" stroke="#8d98b3" stroke-width="2.4" stroke-linecap="round"/><path d="M4 25 L8 36 L10 26Z" fill="url(#'+g+'m)"/></g>';
+return s+'</g>'}
+function joust(n){var g='jo'+n;
+return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+MET(g+'m')+GOLD(g+'g')+TEAM(g+'r','#ff8a8a','#e5484d','#9e1f2a')+TEAM(g+'u','#8fb4ff','#3b6cf0','#1d3a9e')+
+'<radialGradient id="'+g+'k" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#ffe680"/><stop offset="1" stop-color="#ffb800" stop-opacity="0"/></radialGradient></defs>'+
+'<ellipse cx="48" cy="88" rx="44" ry="3.4" fill="#1b2140" opacity=".14"/>'+
+'<g filter="url(#'+g+'d)" transform="translate(0 10)"><g><animateTransform attributeName="transform" type="translate" values="-4 0;3 -1;-4 0" keyTimes="0;.5;1" dur="1.6s" repeatCount="indefinite"/><g transform="translate(0 12) scale(.72)">'+rider(g,'r',24,1)+'</g></g>'+
+'<g><animateTransform attributeName="transform" type="translate" values="4 0;-3 -1;4 0" keyTimes="0;.5;1" dur="1.6s" repeatCount="indefinite"/><g transform="translate(0 12) scale(.72)">'+rider(g,'u',109,-1)+'</g></g></g>'+
+'<circle cx="48" cy="33" r="0" fill="url(#'+g+'k)"><animate attributeName="r" values="0;0;12;0;0" keyTimes="0;.42;.52;.66;1" dur="1.6s" repeatCount="indefinite"/></circle>'+
+'<g transform="translate(48 33)"><path d="M0 -6 L1.4 -1.4 L6 0 L1.4 1.4 L0 6 L-1.4 1.4 L-6 0 L-1.4 -1.4Z" fill="#fff"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;.42;.52;.66;1" dur="1.6s" repeatCount="indefinite"/></path></g></svg>'}
+
+/* İşlemler: dörde bölünmüş arma kalkanı */
+function crest(n){var g='cr'+n,S='M14 12 H82 V44 C82 66,64 80,48 88 C32 80,14 66,14 44Z';
+function q(x,y,c1,c2,sym,b){return '<g><rect x="'+x+'" y="'+y+'" width="34" height="38" fill="url(#'+g+'q'+c1+')"/><text x="'+(y>40?(x<40?x+21:x+13):x+17)+'" y="'+(y>40?y+21:y+26)+'" text-anchor="middle" font-family="MCP,Arial" font-weight="800" font-size="20" fill="#fff" stroke="'+c2+'" stroke-width="1.2" paint-order="stroke">'+sym+'<animate attributeName="font-size" values="20;24;20;20" keyTimes="0;.1;.2;1" dur="3.2s" begin="'+b+'" repeatCount="indefinite"/></text></g>'}
+return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+
+TEAM(g+'qa','#7ee2a8','#2fb36b','#17804a')+TEAM(g+'qb','#ffc093','#f08a3c','#b8581a')+TEAM(g+'qc','#9ec2ff','#4b84f0','#2452b8')+TEAM(g+'qd','#cfb4ff','#9466ec','#6237b8')+
+'<linearGradient id="'+g+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+'<clipPath id="'+g+'c"><path d="'+S+'"/></clipPath></defs>'+
+'<ellipse cx="48" cy="92" rx="26" ry="3" fill="#1b2140" opacity=".14"/><g filter="url(#'+g+'d)">'+
+'<path d="'+S+'" transform="translate(0 3)" fill="#8a5a00"/>'+
+'<g clip-path="url(#'+g+'c)">'+q(14,12,'a','#0f5e35','+','0s')+q(48,12,'b','#8a3d0c','−','.8s')+q(14,50,'c','#163c8f','×','1.6s')+q(48,50,'d','#45238a','÷','2.4s')+
+'<path d="M48 10 V90 M12 50 H84" stroke="url(#'+g+'g)" stroke-width="4"/>'+
+'<rect x="-40" y="0" width="16" height="96" fill="url(#'+g+'s)" transform="skewX(-20)"><animate attributeName="x" values="-40;-40;110" keyTimes="0;.55;1" dur="3.2s" repeatCount="indefinite"/></rect></g>'+
+'<path d="'+S+'" fill="none" stroke="url(#'+g+'g)" stroke-width="4.4"/><path d="M18 16 H44" stroke="#fff" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"/>'+
+'<circle cx="48" cy="50" r="5" fill="url(#'+g+'g)" stroke="#fff8d6" stroke-width="1"/></g></svg>'}
+/* Online Oyna: turnuva arması — çapraz mızraklar, flamalar, ortada kırmızı-mavi kalkan ve taç */
+function tourney(n){var g='tn'+n;
+function lance(rot,c1,c2,flag,b){var f1='M0 0 C8 -2,14 2,24 0 L18 6 L24 12 C14 14,8 10,0 12Z',f2='M0 0 C8 2,14 -2,24 1 L19 6 L24 11 C14 10,8 14,0 12Z';
+return '<g transform="rotate('+rot+' 48 50)"><path d="M48 92 L48 8" stroke="#efe2c4" stroke-width="4.2" stroke-linecap="round"/><path d="M48 80 V72 M48 64 V56 M48 40 V32 M48 24 V18" stroke="'+c1+'" stroke-width="4.4"/>'+
+'<path d="M44.5 84 L48 70 L51.5 84Z" fill="url(#'+g+'m)"/><path d="M48 8 L48 2" stroke="#8d98b3" stroke-width="3" stroke-linecap="round"/>'+
+'<g transform="translate(49.6 12)"><path d="'+f1+'" fill="'+c1+'" stroke="'+c2+'" stroke-width=".8"><animate attributeName="d" values="'+f1+';'+f2+';'+f1+'" dur="1.3s" begin="'+b+'" repeatCount="indefinite"/></path></g></g>'}
+return '<svg viewBox="0 0 96 96" width="100%" height="100%" aria-hidden="true"><defs>'+DS(g)+GOLD(g+'g')+MET(g+'m')+TEAM(g+'r','#ff8a8a','#e5484d','#9e1f2a')+TEAM(g+'u','#8fb4ff','#3b6cf0','#1d3a9e')+
+'<clipPath id="'+g+'c"><path d="M30 40 H66 V56 C66 68,57 75,48 79 C39 75,30 68,30 56Z"/></clipPath>'+
+'<linearGradient id="'+g+'s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>'+
+'<ellipse cx="48" cy="92" rx="28" ry="3" fill="#1b2140" opacity=".14"/><g filter="url(#'+g+'d)">'+
+lance(-32,'#e5484d','#9e1f2a','r','0s')+lance(32,'#3b6cf0','#1d3a9e','u','.6s')+
+'<path d="M30 40 H66 V56 C66 68,57 75,48 79 C39 75,30 68,30 56Z" transform="translate(0 2.4)" fill="#7a4600"/>'+
+'<g clip-path="url(#'+g+'c)"><rect x="30" y="40" width="18" height="40" fill="url(#'+g+'r)"/><rect x="48" y="40" width="18" height="40" fill="url(#'+g+'u)"/>'+
+'<rect x="-20" y="30" width="10" height="60" fill="url(#'+g+'s)" transform="skewX(-18)"><animate attributeName="x" values="-20;-20;110" keyTimes="0;.6;1" dur="3s" repeatCount="indefinite"/></rect></g>'+
+'<path d="M30 40 H66 V56 C66 68,57 75,48 79 C39 75,30 68,30 56Z" fill="none" stroke="url(#'+g+'g)" stroke-width="3"/>'+
+'<path d="M48 50 L50.6 55.4 L56.4 56 L52 60 L53.2 65.8 L48 63 L42.8 65.8 L44 60 L39.6 56 L45.4 55.4Z" fill="url(#'+g+'g)" stroke="#fff8d6" stroke-width=".6"/>'+
+// taç
+'<path d="M36 38 L34 26 L41 32 L48 22 L55 32 L62 26 L60 38Z" fill="url(#'+g+'g)" stroke="#a86a08" stroke-width=".8"/><circle cx="34" cy="25.5" r="2" fill="url(#'+g+'g)"/><circle cx="48" cy="21.5" r="2.2" fill="url(#'+g+'g)"/><circle cx="62" cy="25.5" r="2" fill="url(#'+g+'g)"/>'+
+'<circle cx="48" cy="33" r="2" fill="#e5484d"/><circle cx="41" cy="34.5" r="1.4" fill="#3b6cf0"/><circle cx="55" cy="34.5" r="1.4" fill="#3b6cf0"/></g>'+
+spark(48,14,1,'.5s')+'</svg>'}
+
+
+return {bolt:bolt,key:key,castle:castle,scroll:scroll,help:help,thinker:thinker,crest:crest,parch:parch2,tourney:tourney};
+})();
+function mIco(k,anim){var h=MI[k]('m'+(++ICN));if(!anim||RMOT)h=h.replace(/<animate(Transform|Motion)?\b[^>]*\/>/g,'');return h}
+/* S66: Oyna kartındaki canavar — 4 sn'lik hareket döngüsü (bekler, göz kırpar, zıplar, güler, sağa sola bakar, sana bakar) */
+var HPMP=['idle','blink','cheer','happy','sidel','sider','look'],HPMS=[['idle',0],['blink',.22],['idle',.27],['cheer',.33],['happy',.5],['sidel',.66],['sider',.76],['look',.86]],HPMT=null;
+function hpmHtml(){return '<span class="hpm" aria-hidden="true">'+HPMP.map(function(k){return '<img data-k="'+k+'" class="'+(k==='idle'?'on':'')+'" src="'+monSrc(k)+'" alt="" draggable="false">'}).join('')+'</span>'}
+function hpmTick(){
+  var e=document.querySelector('.hpm');if(!e){clearInterval(HPMT);HPMT=null;return}
+  if(RMOT)return;
+  var a=e.getAnimations?e.getAnimations()[0]:null,t=((a&&a.currentTime!=null?a.currentTime:Date.now())%4000)/4000,k='idle';
+  HPMS.forEach(function(x){if(t>=x[1])k=x[0]});
+  if(e.dataset.k!==k){e.dataset.k=k;e.querySelectorAll('img').forEach(function(i){i.className=i.dataset.k===k?'on':''})}
+}
+function hpmStart(){if(!HPMT&&document.querySelector('.hpm'))HPMT=setInterval(hpmTick,90)}
 /* S65: 3B oda simgeleri (1'e 1 kılıçlar, Takım şövalyeler, Herkes Tek bayrak) */
 function swords(id){var g='sw'+id;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+
 '<linearGradient id="'+g+'b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f4f7ff"/><stop offset=".48" stop-color="#cfd8ea"/><stop offset=".52" stop-color="#8e9bb5"/><stop offset="1" stop-color="#b9c4da"/></linearGradient>'+
@@ -6135,8 +6338,8 @@ function render(){
     if(pp){var rx=rkGet(pp),nr=rx.r<6?rx.r+1:6,pc=rx.r>=6?100:Math.min(100,Math.round(rx.p*100/RKP[nr]));
       h+='<button class="hstrip" onclick="rkMyCard()" aria-label="Karakter Kartım">'+rkMini(rx.r)+'<span class="hsi"><b>'+esc(pp)+'</b><small>'+RKA.RANKS[rx.r].n+' · '+rx.p+' puan · '+rkLeft(rx)+'</small><span class="hbar"><i style="width:'+pc+'%"></i></span></span><span class="hgo">›</span></button>'}
     h+='<div class="pbox live rvbox" id="rv-box"'+(rvh?'':' style="display:none"')+'>'+rvh+'</div>';
-    h+='<button class="hplay" onclick="homePlay()"><span class="hpx"><span class="hpt">Oyna</span><small>'+(lg?gLabelL(lg.op,lg.lv,lg.tb):'Akıldan İşlem Oyunu')+'</small>'+(lg?'<small style="font-weight:500">Kaldığın yerden devam</small>':'')+'</span>'+monImg('idle','')+'</button>';
-    h+='<div class="hgrid"><button class="btn" onclick="go(\'gmenu\')"><span class="big">🎮</span>Akıldan İşlem<small>Hızlı cevapla</small></button><button class="btn" onclick="go(\'ops\')"><span class="big">🔢</span>İşlemler<small>Dört işlem</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="big">📖</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="onOpen()"><span class="big">🌍</span>Online Oyna<small>Açık odalar, kapışma, takım</small></button></div>';
+    h+='<button class="hplay" onclick="homePlay()"><span class="hpx"><span class="hpt">Oyna</span><small>'+(lg?gLabelL(lg.op,lg.lv,lg.tb):'Akıldan İşlem Oyunu')+'</small>'+(lg?'<small style="font-weight:500">Kaldığın yerden devam</small>':'')+'</span>'+hpmHtml()+'</button>';
+    h+='<div class="hgrid hgi"><button class="btn" onclick="go(\'gmenu\')"><span class="hico">'+mIco('thinker',1)+'</span>Akıldan İşlem<small>Hızlı cevapla</small></button><button class="btn" onclick="go(\'ops\')"><span class="hico">'+mIco('crest',1)+'</span>İşlemler<small>Dört işlem</small></button><button class="btn" onclick="go(\'pmenu\')"><span class="hico">'+mIco('parch',1)+'</span>Problemler<small>Hikâyeli sorular</small></button><button class="btn" onclick="onOpen()"><span class="hico">'+mIco('tourney',1)+'</span>Online Oyna<small>Açık odalar, kapışma, takım</small></button></div>';
     if(!pp){var np=profiles();h+=np.length?'<button class="next" onclick="startGo()">'+esc(nkShow(np[0]))+' olarak oyna</button>':'<div class="pbox" style="text-align:center"><small>Karakter seçersen puanların, rütben ve rekorların kaydedilir.</small><button class="next" onclick="peOpen(-1)">🐾 Karakterimi Seç</button><button class="ghost" onclick="go(\'hgir\')">🔑 Hesabım var (kodla gir)</button></div>';
       h+='<button class="ghost" onclick="go(\'hesap\')">⚙️ Ayarlar</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button>'}
   }else if(s==='gmenu'){
@@ -6335,7 +6538,7 @@ function render(){
   tabsUi();
   if(s==='home')setTimeout(homeMon,30);
   if(!document.getElementById('mm-btn')){var mb=document.createElement('button');mb.id='mm-btn';mb.className='mmbtn';mb.onclick=mmToggle;document.body.appendChild(mb)}
-  mmUpdate();kaUpdate();monScan();
+  mmUpdate();kaUpdate();monScan();hpmStart();
   if(s==='summary')drawReport(document.getElementById('card'));
   if(s==='gover')drawGame(document.getElementById('gcard'));
   if(s==='dover'){var dc0=document.getElementById('dcard');if(dc0)drawDuel(dc0);if(!(DU&&DU.tw))duOverUi()}
