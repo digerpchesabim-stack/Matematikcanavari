@@ -15,8 +15,8 @@ const prof=p=>p.evaluate(()=>{localStorage.setItem('mc_profiles',JSON.stringify(
 let p=await open('sepia');
 ok(await p.evaluate(()=>document.documentElement.getAttribute('data-theme')==='light'&&themeGet()==='light'),'eski Kum teması Açık oldu');
 ok(await p.evaluate(()=>THEMES.length===4&&THEMES.map(t=>t[0]).join()==='auto,light,dark,hc'),'3 tema + otomatik');
-ok(await p.evaluate(()=>getComputedStyle(document.body).backgroundColor==='rgb(245, 243, 251)'),'pastel zemin');
-await p.evaluate(()=>themeSet('dark'));ok(await p.evaluate(()=>getComputedStyle(document.body).backgroundColor==='rgb(27, 26, 43)'),'gece teması koyu pastel');
+ok(await p.evaluate(()=>getComputedStyle(document.documentElement).backgroundColor==='rgb(239, 229, 207)'&&getComputedStyle(document.body,'::before').backgroundImage.indexOf('svg')>0),'parşömen zemin + kale/doku katmanı');
+await p.evaluate(()=>themeSet('dark'));ok(await p.evaluate(()=>getComputedStyle(document.documentElement).backgroundColor==='rgb(21, 25, 37)'),'Kale Gecesi zemini');
 await p.evaluate(()=>{themeSet('light');closeModal()});
 // karşılama: canavar hazır karelerle (sabit çözünürlük)
 await sleep(1200);

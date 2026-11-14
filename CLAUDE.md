@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **66**
+Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **67**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -266,6 +266,12 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Kullanıcı kararları: ana sayfa şövalye/canavar konseptine uysun; Akıldan İşlem = düşünen şövalye (balonda 3+5=?→8), İşlemler = dörde bölünmüş arma kalkanı (+ − × ÷ renkli bölmeler), Problemler = otantik parşömen (tüy kalem, kırmızı mühür), Online Oyna = turnuva arması (çapraz mızraklar + kırmızı/mavi flamalar, ikiye bölünmüş kalkan, taç). Atlı şövalye düellosu "karışık" bulundu, oyun kolu konsepte uymadı. Online ekranı: Hemen Oyna ışıltılı yıldırım, Oda Kur **kale** (+ rozetli; kapı seçeneği reddedildi), Kodla Gir ışıltılı anahtar, küçük düğmeler parşömen (Yarış Geçmişim) ve soru balonu. Sıra: Hemen Oyna → Oda Kur + Kodla Gir büyük kartlar (`.obig/.obt`) → Açık odalar → `.omini`. Eski `.obar` (yapışkan alt çubuk) kalktı.
   - Hareket ve ışıltı (kullanıcı "sen öner" dedi, önerileri onaylayıp "yükle"): düşünen şövalye (balon daireleri sırayla, balon açılır, "?" → "8" + altın patlama, sorguç dalgalanır, siperde ışık), arma (çerçevede dönen ışık, düğme nabız, kıvılcım), parşömen (5 sn: açılır, yazı belirir, tüy kalem yazar, mavi çizgi çekilir, kapanır), turnuva (mızraklar sallanır, taç taşları sırayla ışıldar, kıvılcımlar), yıldırım (3 sn'de bir şimşek çakar + Hemen Oyna kartı `oqshk` titrer), kale (pencereler yanıp söner, kapıdan ışık), anahtar (sallanır, başta yıldız), küçük parşömen kupası parlar, "?" zıplar. "Hareketi azalt"ta hepsi durağan.
   - Kod: `MI` (IIFE içinde SVG çiziciler, global ad çakışması yok), `mIco(k,anim)` (anim yoksa / `RMOT` ise `<animate*>` çıkarılır). Ana sayfa `.hgrid.hgi .hico`. Oyna kartı canavarı `hpmHtml()` (7 poz üst üste) + `hpmTick` (CSS `hpact` 4 sn döngüsünün zamanına göre poz: bekler, göz kırpar, zıplar (cheer), güler, sağa/sola bakar, bakar), `render` sonunda `hpmStart()`.
+
+- 67 (14 Kasım 2026 yayında; kullanıcı "oyunu bir tema etrafında örelim… ortaçağ, Game of Thrones tarzı, soft ve göz yormayan" dedi, taslağı görüp "uygula ve yükle"): **Ortaçağ teması.**
+  - `<style>` sonunda "S67: ortaçağ teması" bloğu. Açık tema = **Parşömen** (krem kâğıt dokusu `--mbg` SVG feTurbulence, kenar kararması + üstte ışık `--mglow`, altta soluk bronz kale silueti `--mcs`; kartlar fildişi, bronz ince çerçeve `--bd:1px`, `--line` bronz; vurgu bordo `--accent:#8e2f2a`, seçili çip zemini `--acc-bg` bronz). Gece = **Kale Gecesi** (gece mavisi, hafif taş duvar dokusu, üstte yıldızlar `--msk`, altta koyu kale silueti, alt köşelerde meşale parıltısı; çizgiler/vurgu altın). Yüksek kontrast **değişmedi** (`:root:not([data-theme="hc"])`).
+  - Katmanlar `body::before` (fixed, z-index −1) ile; `html` zemin, `body` saydam. SVG veri adresleri **tam kodlanmalı** (`urllib.parse.quote(...,safe='')`; kısmi kodlamada görsel hiç yüklenmiyordu). Kale çizimi kaynağı scratch `mdv/castle.py` (`castle2.tpl`, maske ile pencere/kapı boşlukları).
+  - Yazı tipi: başlıklar **Lora Bold** (`MCL`, OFL, Türkçe alt küme, woff base64 ~17 KB): `.title, h1, h2, .hpt, .oqx b, .obt b, .oct2, .mmt, .tag`, ana sayfa kart adları (`.hgi .btn`, açıklama `small` Poppins). Gövde/soru/cevap Poppins kaldı. Büyük kartlarda içe çift çerçeve (`inset` gölge).
+  - Esin kaynağı adı/arma/yazı tipi kullanılmadı (telif/marka).
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
