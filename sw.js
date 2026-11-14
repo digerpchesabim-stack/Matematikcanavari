@@ -1,5 +1,5 @@
-var CACHE = 'mc-v62';
-var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3', './gizlilik.html', './aydinlatma.html', './veri-silme.html', './mc-idle.webp', './mc-happy.webp', './mc-look.webp', './mc-wait.webp', './mc-cheer.webp'];
+var CACHE = 'mc-v63';
+var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3', './gizlilik.html', './aydinlatma.html', './veri-silme.html', './mc-idle.webp', './mc-happy.webp', './mc-look.webp', './mc-wait.webp', './mc-cheer.webp', './mc-sad.webp', './mc-peek.webp', './mc-blink.webp', './mc-sidel.webp', './mc-sider.webp'];
 
 self.addEventListener('install', function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES.map(function (f) { return new Request(f, { cache: 'reload' }); })); }));
