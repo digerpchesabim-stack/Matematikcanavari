@@ -15,7 +15,7 @@ module.exports=function(opts){
       if(!old){
         if(Object.keys(d).some(k=>!ROOMK.includes(k)))return deny('room keys '+Object.keys(d));
         if(d.host!==uid||d.status!=='lobby')return deny('room create');
-        if('mode' in d&&!['duel','mm','tw','ta'].includes(d.mode))return deny('mode');
+        if('mode' in d&&!['duel','mm','tw','ta','sr'].includes(d.mode))return deny('mode');
         if('cap' in d&&!(Number.isInteger(d.cap)&&d.cap>=2&&d.cap<=10))return deny('cap');if('tm' in d&&![2,3,4].includes(d.tm))return deny('tm');
         if('win' in d&&![10,15,20].includes(d.win))return deny('win');
         return null;

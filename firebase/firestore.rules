@@ -25,7 +25,7 @@ service cloud.firestore {
         && (!('nb' in request.resource.data) || (request.resource.data.nb is int && request.resource.data.nb >= 0 && request.resource.data.nb <= 9))
         && (!('n' in request.resource.data) || request.resource.data.n is int)
         && (!('hb' in request.resource.data) || request.resource.data.hb is int)
-        && (!('mode' in request.resource.data) || request.resource.data.mode in ['duel', 'mm', 'tw', 'ta'])
+        && (!('mode' in request.resource.data) || request.resource.data.mode in ['duel', 'mm', 'tw', 'ta', 'sr'])
         && (!('win' in request.resource.data) || request.resource.data.win in [10, 15, 20])
         && (!('lv' in request.resource.data) || request.resource.data.lv in ['k', 'o', 'z'])
         && (!('tb' in request.resource.data) || (request.resource.data.tb is int && request.resource.data.tb >= 0 && request.resource.data.tb <= 10))

@@ -35,7 +35,7 @@ await shot(A,'oda_kur');
 await ev(A,()=>{ocSet('md','duel');ocSet('op','add');ocSet('lv','k');onCreate()});
 ok(await waitF(A,()=>st.screen==='lobby'&&!!RM.room&&RM.room.cap===2),'A 1’e 1 odası kurdu');
 const c1=await code(A);
-ok(S.store['rooms/'+c1].pub===1&&S.store['rooms/'+c1].qv===6&&S.store['rooms/'+c1].n===1,'oda belgesi: pub, qv 6, n 1');
+ok(S.store['rooms/'+c1].pub===1&&S.store['rooms/'+c1].qv===7&&S.store['rooms/'+c1].n===1,'oda belgesi: pub, qv 7, n 1');
 await ev(B,()=>onOpen());
 ok(await waitF(B,()=>ON.rows&&ON.rows.length===1),'B listede 1 oda görüyor');
 ok(await ev(B,()=>{var r=document.querySelector('.orow');return /1’e 1 Kapışma/.test(r.textContent)&&/1\/2/.test(r.textContent)&&!!r.querySelector('.optile.op-add')&&/Kolay/.test(document.querySelector('.osec').textContent)}),'satır: işlem karosu, tür, 1/2, Kolay başlığı');
@@ -105,22 +105,29 @@ ok(await waitF(A,()=>st.screen==='duel'&&DU&&DU.ids.length===2&&onIsBot(DU.oid),
 ok(await waitF(A,()=>st.screen==='dover',null,90000),'botla kapışma bitti');
 await stop(A);await home();
 
-// 5) yarış: 2 gerçek + 2 bot
-await ev(A,()=>{OC.md='race';OC.cap=4;OC.lv='k';OC.op='add';onCreate()});await waitF(A,()=>st.screen==='lobby'&&RM.host);
-const c5=await code(A);await ev(B,c=>onJoin(c),c5);ok(await waitF(B,()=>st.screen==='lobby'),'B yarış odasına girdi');
+// 5) yarış (hız): 2 gerçek + 2 bot; herkes aynı soruyu aynı anda görür, can yok, 3/2/1 puan
+await ev(A,()=>{OC.md='race';OC.cap=4;OC.lv='k';OC.op='add';OC.win=10;onCreate()});await waitF(A,()=>st.screen==='lobby'&&RM.host);
+const c5=await code(A);ok(S.store['rooms/'+c5].mode==='sr'&&S.store['rooms/'+c5].win===10,'yarış odası hız modunda (sr, 10 soru)');
+await ev(B,c=>onJoin(c),c5);ok(await waitF(B,()=>st.screen==='lobby'),'B yarış odasına girdi');
 await waitF(A,()=>onReal().length===2);await ev(A,()=>onBots(99));await sleep(300);
 ok(await ev(A,()=>onNb()===2),'yarışta 2 boş yer botla doldu');
+await autoDu(A,500);await autoDu(B,1400);
 await ev(A,()=>onStart());
-ok(await waitF(A,()=>st.screen==='game',null,20000)&&await waitF(B,()=>st.screen==='game',null,20000),'yarış başladı');
-ok(await waitF(B,()=>RM.players.filter(p=>p.bot).length===2),'B botları görüyor (sanal oyuncular)');
-await autoRace(A,500);await autoRace(B,900);
-ok(await waitF(B,()=>RM.players.some(p=>p.bot&&p.n>0),null,25000),'botlar soru çözüyor (puan değişiyor)');
-await sleep(4000);await ev(A,()=>endGame());await ev(B,()=>endGame());
-ok(await waitF(A,()=>st.screen==='rover'&&roverState().all,null,150000),'botlar da bitirince yarış sonuçlandı');
+ok(await waitF(A,()=>st.screen==='duel'&&DU&&DU.sm==='rank',null,20000)&&await waitF(B,()=>st.screen==='duel'&&DU&&DU.sm==='rank',null,20000),'yarış hız motorunda başladı (iki telefon)');
+ok(await ev(A,()=>DU.ids.length===4&&DU.ids.filter(onIsBot).length===2),'yarışta 4 oyuncu (2 bot)');
+ok(await ev(B,()=>!document.getElementById('g-hp')&&!/❤️/.test(document.getElementById('app').textContent)),'can yok');
+await shot(A,'yaris_oyun');
+ok(await waitF(A,()=>DU&&DU.k>=2,null,40000),'sorular ilerliyor');
+const rp=await ev(A,()=>{var o=DU.rp[0]||{};return Object.values(o).sort().join(',')});
+ok(/3/.test(rp)&&/2/.test(rp),'ilk soruda hız sıralı puan verildi: '+rp);
+ok(await ev(B,()=>DU.rp[0]&&DU.rp[0][DU.me]===2),'B (daha yavaş doğru) 2. olarak 2 puan aldı');
+ok(await waitF(A,()=>st.screen==='dover',null,120000)&&await waitF(B,()=>st.screen==='dover',null,30000),'10 soru bitince yarış sonucu');
+ok(await ev(A,()=>DU.k===9&&DU.won===true&&/Yarış bitti/.test(document.querySelector('.top').textContent)),'A en hızlı: kazandı');
+ok(await ev(B,()=>DU.won===false&&/oldun/.test(document.getElementById('app').textContent)),'B sıralamasını görüyor');
 await shot(A,'yaris_sonuc');
 await stop(A);await stop(B);await home();
 
-// 6) takım odası 2'ye 2: 3 gerçek + 1 bot, taraf seçimi ve otomatik denge
+// 6) takım odası 2'ye 2: 3 gerçek + 1 bot, aynı soru aynı anda, ilk bilen takıma 1 puan
 await ev(A,()=>{OC.md='ta';OC.tm=2;OC.cap=4;OC.lv='k';OC.op='add';OC.win=10;onCreate()});await waitF(A,()=>st.screen==='lobby'&&RM.host);
 const c6=await code(A);
 for(const k of ['B','C']){await ev(P[k],c=>onJoin(c),c6);await waitF(P[k],()=>st.screen==='lobby')}
@@ -130,17 +137,21 @@ const sides=await ev(A,()=>onReal().map(p=>p.tk|0).sort().join(''));
 ok(sides==='001'||sides==='011','giren oyuncu az olan tarafa geçti: '+sides);
 await shot(A,'takim_lobi');
 ok(await ev(A,()=>/Kırmızı/.test(document.getElementById('lb-list').textContent)&&/Mavi/.test(document.getElementById('lb-list').textContent)),'lobide Kırmızı / Mavi sütunları');
+await autoDu(A,400);await autoDu(B,1500);await autoDu(C,2600);
 await ev(A,()=>onStart());
-ok(await waitF(A,()=>st.screen==='game'&&st.g&&st.g.ta,null,20000),'takım oyunu başladı');
+ok(await waitF(A,()=>st.screen==='duel'&&DU&&DU.sm==='team',null,20000)&&await waitF(C,()=>st.screen==='duel'&&DU&&DU.sm==='team',null,20000),'takım oyunu hız motorunda başladı');
 const pa=S.store['rooms/'+c6].pa.split(',').map(x=>+x.split(':')[1]).sort().join('');
-ok(pa==='001'||pa==='011','eşleşme yazıldı: '+S.store['rooms/'+c6].pa.replace(/[^:,01]/g,'').slice(0,20));
-ok(await waitF(A,()=>{var t=taState();return t.T[0].length===2&&t.T[1].length===2&&t.T[0].concat(t.T[1]).filter(p=>p.bot).length===1}),'takımlar 2’ye 2, eksik yer botla doldu');
-ok(await ev(A,()=>/\/10/.test(document.getElementById('g-hp').textContent)&&!!document.querySelector('.tabar')),'can yerine soru sayacı ve takım çubuğu');
+ok(pa==='001'||pa==='011','eşleşme yazıldı');
+ok(await ev(A,()=>{var a=DU.ids.filter(u=>duSide(u)===0).length,b=DU.ids.filter(u=>duSide(u)===1).length;return a===2&&b===2&&DU.ids.filter(onIsBot).length===1}),'takımlar 2’ye 2, eksik yer botla doldu');
+ok(await ev(A,()=>!!document.querySelector('.dside.tsd')&&/\/10/.test(document.getElementById('dsc').textContent)),'skor: iki takım + soru sayacı');
 await shot(A,'takim_oyun');
-for(const k of ['A','B','C'])await autoRace(P[k],450);
-ok(await waitF(A,()=>st.screen==='rover',null,60000),'10 soru bitince sonuç ekranı');
-ok(await waitF(A,()=>RM.fin===true,null,120000),'herkes bitirdi, takım sonucu belli');
-ok(await ev(A,()=>/takım/.test(document.getElementById('r-list').textContent)&&/Kazandı|mücadele|Berabere/i.test(document.getElementById('r-me').textContent)),'takım sonuç ekranı: '+(await ev(A,()=>document.getElementById('r-me').innerText)).replace(/\n+/g,' | '));
+ok(await waitF(A,()=>DU&&DU.k>=1,null,30000),'sorular ilerliyor');
+ok(await ev(A,()=>{var w=DU.wk[0];return !!w&&DU.ts[duSide(w)]>=1}),'ilk soruda ilk bilenin takımı puan aldı');
+const same=await ev(A,()=>JSON.stringify([DU.ts,DU.wk.slice(0,3)])),same2=await ev(C,()=>JSON.stringify([DU.ts,DU.wk.slice(0,3)]));
+ok(await waitF(A,()=>st.screen==='dover',null,120000)&&await waitF(C,()=>st.screen==='dover',null,30000),'10 soru bitince takım sonucu');
+const ta=await ev(A,()=>DU.ts.join('-')),tc=await ev(C,()=>DU.ts.join('-'));
+ok(ta===tc,'iki telefonda takım skoru aynı: '+ta+' / '+tc);
+ok(await ev(A,()=>/Takım maçı bitti/.test(document.querySelector('.top').textContent)&&document.querySelectorAll('.tares').length===2),'takım sonuç ekranı: '+(await ev(A,()=>document.querySelector('.pbox').innerText)).replace(/\n+/g,' | '));
 await shot(A,'takim_sonuc');
 for(const k of ['A','B','C'])await stop(P[k]);await home();
 
