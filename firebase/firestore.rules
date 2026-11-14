@@ -19,7 +19,7 @@ service cloud.firestore {
         && (!('pub' in request.resource.data) || request.resource.data.pub in [0, 1])
         && (!('pw' in request.resource.data) || request.resource.data.pw in [0, 1])
         && (!('cap' in request.resource.data) || (request.resource.data.cap is int && request.resource.data.cap >= 2 && request.resource.data.cap <= 10))
-        && (!('tm' in request.resource.data) || request.resource.data.tm in [2, 3, 4])
+        && (!('tm' in request.resource.data) || request.resource.data.tm in [2, 3, 4, 5])
         && (!('rk' in request.resource.data) || (request.resource.data.rk is int && request.resource.data.rk >= 0 && request.resource.data.rk <= 6))
         && (!('hp' in request.resource.data) || (request.resource.data.hp is string && request.resource.data.hp.size() <= 10))
         && (!('nb' in request.resource.data) || (request.resource.data.nb is int && request.resource.data.nb >= 0 && request.resource.data.nb <= 9))

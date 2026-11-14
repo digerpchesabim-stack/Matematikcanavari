@@ -574,6 +574,13 @@ body.hastabs #toast{bottom:calc(104px + var(--safe-area-inset-bottom,env(safe-ar
 .dside.tsd.s0 .dnm{color:#b23a50}.dside.tsd.s1 .dnm{color:#2f5cc0}
 :root[data-theme="dark"] .dside.tsd.s0 .dnm{color:#f5a3b1}:root[data-theme="dark"] .dside.tsd.s1 .dnm{color:#a9c5ff}
 .tint{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}.tic{display:flex;flex-direction:column;gap:4px;align-items:center}.tic>b{font-size:18px}.tic .dn{font-size:19px}
+/* S64: takım seçimi */
+.tpk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:6px 0 4px}
+.tpick{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:110px;justify-content:center;border:0;border-radius:22px;font:inherit;cursor:pointer;box-shadow:var(--e1)}
+.tpick b{font-size:22px}.tpick small{font-size:14px;font-weight:600;opacity:.85}
+.tpick.s0{background:#fbe1e5;color:#8f2340}.tpick.s1{background:#d8e6ff;color:#1f4aa8}
+.tpick:active{transform:scale(.96)}.tpick:disabled{opacity:.45;cursor:default}
+:root[data-theme="dark"] .tpick.s0{background:#4a2330;color:#f5a3b1}:root[data-theme="dark"] .tpick.s1{background:#24365f;color:#a9c5ff}
 /* S63: hareketli sonuç canavarı */
 .rmon{transform-origin:50% 92%;will-change:transform}
 .rmon.mwin{animation:mwin 1.7s cubic-bezier(.3,.7,.4,1) both,mbob 1.8s ease-in-out 1.7s infinite}
@@ -1930,7 +1937,7 @@ function rmReset(){
   if(RM.chk){clearInterval(RM.chk);RM.chk=null}
   RM.ast=false;RM.gw=0;if(RM.gwt){clearTimeout(RM.gwt);RM.gwt=null}BOT.on=false;RM.seen={};RM.sig={};RM.me=null;RM.inv=null;RM.invs={};RM.ivs={};RM.ivg=0;RM.rcl=false;RM.pid=null;RM.jt=null;RM.rvd=false;if(RM.rvt){clearInterval(RM.rvt);RM.rvt=null}
   if(RM.hb){clearInterval(RM.hb);RM.hb=null}
-  RM.joined=false;RM.bs=null;RM.pwv=null;RM.ask=false;RM.pa=null;RM.sd=false;RM.hst=0;RM.taTxt='';RM.bsd=false;if(RM.bt2){clearInterval(RM.bt2);RM.bt2=null}if(RM.bp&&RM.bp.to)RM.bp.to.forEach(clearTimeout);RM.bp=null;
+  RM.joined=false;RM.tq=false;RM.bs=null;RM.pwv=null;RM.ask=false;RM.pa=null;RM.sd=false;RM.hst=0;RM.taTxt='';RM.bsd=false;if(RM.bt2){clearInterval(RM.bt2);RM.bt2=null}if(RM.bp&&RM.bp.to)RM.bp.to.forEach(clearTimeout);RM.bp=null;
   if(DU){duStop();DU=null}
 }
 function rmCreate(op,tbs){
@@ -2141,7 +2148,7 @@ function duIntroHtml(){
     return ht+'</div><div class="dwin mmw">'+DU.nq+' soru · ilk doğru bilen takımına 1 puan</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
   }
   if(DU&&DU.ids.length>2){
-    var h='<div class="dint"><div class="mmt">'+(DU.sm==='rank'?'🏁 HIZ YARIŞI':'⚔️ MEYDAN MUHAREBESİ')+'</div><div class="mmn'+(DU.ids.length>5?' n6':'')+'">';
+    var h='<div class="dint"><div class="mmt">'+(DU.sm==='rank'?'🏁 HERKES TEK':'⚔️ MEYDAN MUHAREBESİ')+'</div><div class="mmn'+(DU.ids.length>5?' n6':'')+'">';
     DU.ids.forEach(function(u,i){h+='<div class="dn dn'+(i%2?'2':'1')+'" style="animation-delay:'+(i*0.35)+'s">'+duRkE(u)+esc(nkShow(DU.nick[u]))+'</div>'});
     return h+'</div><div class="dsw mmsw"><span class="sw1">🗡️</span><span class="sw2">🗡️</span><i class="dfl"></i></div><div class="dwin mmw">'+(DU.sm==='rank'?DU.nq+' soru · en hızlı doğru 3, ikinci 2, üçüncü 1 puan':DU.win+' puana ulaşan kazanır')+'</div><div class="cdbox" id="dcd" style="visibility:hidden">Hazır ol! <span id="cdn">5</span></div></div>';
   }
@@ -2360,7 +2367,7 @@ function duOverHtml(){
   }
   if(DU.ids.length>2){
     var t=DU.won?(DU.left?'🏆 Herkes ayrıldı, kazandın!':'🏆 Kazandın!'):'İyi mücadele! 💪',s=DU.won?'Tebrikler, '+esc(RM.nick)+'!':DU.rank+'. oldun. Rövanşta sen kazanabilirsin!';
-    return topBar(DU.sm==='rank'?'🏁 Yarış bitti':'⚔️ Muharebe bitti')+'<div class="pbox" style="text-align:center">'+'<div class="rwin">'+(DU.won?coin3d('🏆'):'')+rMon(DU.won?'win':'lose')+'</div><div style="font-size:28px;font-weight:700;margin-bottom:6px">'+t+'</div><div class="sub">'+s+'</div></div>'+'<div id="dpod">'+duPodium()+'</div>'+duMsgHtml()+
+    return topBar(DU.sm==='rank'?'🏁 Oyun bitti':'⚔️ Muharebe bitti')+'<div class="pbox" style="text-align:center">'+'<div class="rwin">'+(DU.won?coin3d('🏆'):'')+rMon(DU.won?'win':'lose')+'</div><div style="font-size:28px;font-weight:700;margin-bottom:6px">'+t+'</div><div class="sub">'+s+'</div></div>'+'<div id="dpod">'+duPodium()+'</div>'+duMsgHtml()+
       '<div id="dre"></div><canvas id="dcard" class="card wide"></canvas><button class="ghost" onclick="shareCanvas(document.getElementById(\'dcard\'),\'matematik-canavari-muharebe.png\')">📷 Fotoğrafı Kaydet / Paylaş</button><button class="ghost" onclick="duExit()">🏠 Çık</button>';
   }
   var t2=DU.won?(DU.left?'🏆 Rakip ayrıldı, kazandın!':'🏆 Kazandın!'):'İyi mücadele! 💪';
@@ -2443,7 +2450,7 @@ function drawDuel(cv){
     return;
   }
   if(DU.ids.length>2){
-    c.fillText(DU.sm==='rank'?'🏁 Hız Yarışı':'⚔️ Meydan Muharebesi',W/2,320);
+    c.fillText(DU.sm==='rank'?'🏁 Herkes Tek':'⚔️ Meydan Muharebesi',W/2,320);
     var l=DU.ids.slice().sort(function(a,b){return (DU.pts[b]||0)-(DU.pts[a]||0)}).slice(0,5),md=['🥇','🥈','🥉','4.','5.'],rk=0,lv=-1;
     c.font='700 40px system-ui,sans-serif';
     l.forEach(function(u,i){var v=DU.pts[u]||0;if(v!==lv){rk=i;lv=v}c.fillStyle=u===DU.me?'#1f9d55':'#1d2433';c.fillText(md[rk]+' '+(u===DU.me?RM.nick:DU.nick[u])+'   '+v,W/2,410+i*56)});
@@ -3832,9 +3839,9 @@ function appShare(){
    Takım odası ('ta'): yarış motoru; herkes aynı sorular, can yok, win = soru sayısı, puanlar takıma toplanır; pa = "uid:taraf,…". */
 var ON={rows:null,t:0,busy:false,err:'',lock:{},tk:{},tr:{},p:null};
 var OC={md:'duel',cap:2,tm:2,lv:'k',op:'add',tb:0,win:10,pub:1,pwon:false,pw:''};
-var ONM={duel:['⚔️','1’e 1 Kapışma'],mm:['🛡️','Muharebe'],race:['🏁','Yarış'],ta:['👥','Takım']};
-var ONT={2:'2’ye 2',3:'3’e 3',4:'4’e 4'};
-var ONCAP={duel:[2],mm:[3,4,5],race:[4,6,8,10]};
+var ONM={duel:['⚔️','1’e 1 Kapışma'],mm:['🛡️','Muharebe'],race:['🏁','Herkes Tek'],ta:['👥','Takım']};
+var ONT={2:'2’ye 2',3:'3’e 3',4:'4’e 4',5:'5’e 5'};
+var ONCAP={duel:[2],mm:[3,4,5],race:[3,4,6,8,10]};
 var BOTN=['🤖 Robi','🤖 Zipzip','🤖 Pati','🤖 Mino','🤖 Tiko','🤖 Lobi','🤖 Vuvu','🤖 Kiki','🤖 Dodo'];
 function onMode(r){return r&&(r.mode==='duel'||r.mode==='mm'||r.mode==='ta')?r.mode:'race'}
 function onTitle(r){var m=onMode(r);return m==='ta'?'Takım '+(ONT[r.tm]||ONT[2]):ONM[m][1]}
@@ -3957,9 +3964,9 @@ function ocSet(k,v){
 function ocHtml(){
   var h=topBar('➕ Oda Kur'),m=OC.md;
   h+='<div class="tag">Ne oynayalım?</div><div class="ocg">';
-  ['duel','mm','race','ta'].forEach(function(k){h+='<button class="oct'+(m===k?' on':'')+'" onclick="ocSet(\'md\',\''+k+'\')"><span>'+ONM[k][0]+'</span>'+ONM[k][1]+'<small>'+{duel:'2 kişi · ilk bilen alır',mm:'3–5 kişi · ilk bilen alır',race:'4–10 kişi · hızlı olan çok alır',ta:'İlk bilen takıma puan'}[k]+'</small></button>'});
+  ['duel','ta','race'].forEach(function(k){h+='<button class="oct'+(m===k?' on':'')+'" onclick="ocSet(\'md\',\''+k+'\')"><span>'+ONM[k][0]+'</span>'+ONM[k][1]+'<small>'+{duel:'2 kişi · ilk bilen alır',mm:'3–5 kişi · ilk bilen alır',race:'3–10 kişi · en hızlı 3, 2, 1 puan',ta:'Kırmızı – Mavi · ilk bilen takıma puan'}[k]+'</small></button>'});
   h+='</div><div class="tag">Kaç kişi?</div><div class="chips">';
-  if(m==='ta')[2,3,4].forEach(function(t){h+='<button class="chip'+(OC.tm===t?' on':'')+'" onclick="ocSet(\'tm\','+t+')">'+ONT[t]+'</button>'});
+  if(m==='ta')[2,3,4,5].forEach(function(t){h+='<button class="chip'+(OC.tm===t?' on':'')+'" onclick="ocSet(\'tm\','+t+')">'+ONT[t]+'</button>'});
   else ONCAP[m].forEach(function(c){h+='<button class="chip'+(OC.cap===c?' on':'')+'" onclick="ocSet(\'cap\','+c+')">'+c+' kişi</button>'});
   h+='</div><div class="tag">Seviye</div><div class="chips">';
   ['k','o','z'].forEach(function(l){h+='<button class="chip'+(OC.lv===l&&!OC.tb?' on':'')+'" onclick="ocSet(\'lv\',\''+l+'\')">'+LVN[l]+'</button>'});
@@ -4017,7 +4024,7 @@ function onPlayersHtml(){
   if(onMode(r)==='ta'){
     var A=l.filter(function(p){return (p.tk|0)===0}),B=l.filter(function(p){return (p.tk|0)===1}),mine=RM.me?RM.me.tk|0:0;
     h+='<div class="tatm"><div class="tac s0"><div class="tah">🔴 Kırmızı</div>'+(A.map(row).join('')||'<p class="sub center">Boş</p>')+'</div><div class="tac s1"><div class="tah">🔵 Mavi</div>'+(B.map(row).join('')||'<p class="sub center">Boş</p>')+'</div></div>';
-    h+='<button class="ghost" onclick="onSide()">↔️ '+(mine?'Kırmızı':'Mavi')+' takıma geç</button>';
+    h+='<button class="ghost" onclick="onTeamAsk()">↔️ Takımını değiştir</button>';
     if(nb)h+='<p class="sub center">🤖 '+nb+' bot boş yerleri dolduracak. Takımlar başlarken eşitlenir.</p>';
     return h;
   }
@@ -4069,6 +4076,26 @@ function onBotGo(){
   var m=onMode(r),n=onReal().length,want={duel:1,mm:2,race:3,ta:Math.max(1,r.cap-n)}[m];
   if(onNb()<want){r.nb=Math.min(r.cap-n,want);RM.fb.updateDoc(RM.fb.doc(CL.db,'rooms',RM.code),{nb:r.nb}).catch(function(){})}
   onStart();
+}
+/* S64: takım odasına giren herkes (kurucu dahil) Kırmızı ya da Mavi'yi kendisi seçer */
+function onTeamAsk(){
+  if(!taOn()||!RM.me||st.screen!=='lobby'||RM.room.status!=='lobby')return;
+  var me=CL.user.uid,c=[0,0],T=RM.room.tm||2;onReal().forEach(function(p){if(p.uid!==me)c[p.tk|0]++});
+  st.modal=true;var ov=document.getElementById('ov');ov.className='';
+  var b=function(sd){var full=c[sd]>=T;return '<button class="tpick s'+sd+'" id="tp-'+sd+'"'+(full?' disabled':'')+'><b>'+DTN[sd]+'</b><small>'+c[sd]+'/'+T+(full?' · dolu':' oyuncu')+'</small></button>'};
+  ov.innerHTML='<div class="box"><p><b style="font-size:21px">Hangi takımda oynamak istersin?</b></p><div class="tpk">'+b(0)+b(1)+'</div><button class="ghost" id="mn" style="display:none"></button></div>';ov.hidden=false;
+  [0,1].forEach(function(sd){var e=document.getElementById('tp-'+sd);if(e)e.onclick=function(){closeModal();onSideSet(sd)}});
+  document.getElementById('mn').onclick=function(){closeModal()};
+}
+function onSideSet(sd){
+  if(!RM.me||!RM.fb||!RM.room||RM.room.status!=='lobby')return;
+  var me=CL.user.uid,T=RM.room.tm||2,c=0;onReal().forEach(function(p){if(p.uid!==me&&(p.tk|0)===sd)c++});
+  if(c>=T){toast(DTN[sd]+' takım dolu');return}
+  RM.sd=true;if((RM.me.tk|0)===sd){var e0=document.getElementById('lb-list');if(e0)e0.innerHTML=onPlayersHtml();return}
+  RM.me.tk=sd;RM.me.ts=Date.now();
+  RM.fb.setDoc(RM.fb.doc(CL.db,'rooms',RM.code,'players',me),RM.me).catch(function(){});
+  RM.players.forEach(function(p){if(p.uid===me)p.tk=sd});
+  var e=document.getElementById('lb-list');if(e)e.innerHTML=onPlayersHtml();
 }
 function onSide(){
   if(!RM.me||!RM.fb||!RM.room||RM.room.status!=='lobby')return;
@@ -4442,7 +4469,7 @@ function duPvHtml(){var o=duPvOld();if(!o.length)return '';return '<div class="p
 function rmRefresh(){
   var s=st.screen,e;
   if(RM.room&&RM.room.status==='playing'&&!RM.started)rmGo();
-  if(onCapRoom()&&RM.room.status==='lobby'){onHostSync();if(taOn()&&!RM.sd&&RM.me&&!RM.host){var A9=0,B9=0;onReal().forEach(function(p){if(p.tk|0)B9++;else A9++});if(A9>B9+1){RM.sd=true;onSide()}}}
+  if(onCapRoom()&&RM.room.status==='lobby'){onHostSync();if(taOn()&&RM.me&&!RM.tq&&st.screen==='lobby'&&!st.modal){RM.tq=true;onTeamAsk()}}
   e=document.getElementById('du-pv');if(e)e.innerHTML=duPvHtml();
   if(duOn()&&RM.room.status==='lobby'){
     var two=duPlayers(),me=CL.user?CL.user.uid:null;
@@ -5343,7 +5370,7 @@ var GUIDE=[
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li><li><b>🔊 Sesli okuma:</b> Sorunun köşesindeki <b>🔊</b> düğmesi problemi sesli okur, <b>🐢</b> yavaş okur. Tekrar dokununca durur. <b>👤 Hesabım → Sesli okuma</b>dan her soruyu kendiliğinden okutabilirsin.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
  {id:'friends',t:'👫 Arkadaşlarım',h:'<ul><li>Ana menü → <b>Arkadaşlarım</b>. Profil ile girmen ve internet gerekir.</li><li>Her profilin bir <b>oyuncu kodu</b> var (örn. ABCDEFG). Kodunu arkadaşına ver.</li><li>Arkadaşının kodunu yazıp <b>Arkadaş Ekle</b>ye bas. O kabul edince arkadaş olursunuz.</li><li>Listede 🟢 olanlar şu an uygulamada. ⚪ olanların en son ne zaman girdiği yazar.</li><li>Bir arkadaşının adına dokununca <b>karakter kartı</b> açılır. Karttaki <b>Aranızdaki kapışmalar</b> düğmesi skorunuzu ve son maçlarınızı gösterir.</li><li><b>⚔️ Çağır</b>: seviye, maç puanı ve işlemi seç. Arkadaşın uygulamadaysa davet hemen ekranına gelir; kabul edince 1’e 1 kapışma başlar. Uygulaması kapalıysa davet 10 dakika bekler; davet linkini WhatsApp\'tan da gönderebilirsin.</li><li><b>Davet gelince üç seçenek var:</b> <b>⚔️ Kabul et</b> (hemen oynarsınız), <b>⏳ Meşgulüm</b> (arkadaşına haber gider, beklemez), <b>🕐 Daha sonra oynayalım</b> (15-60 dakika sonrası için zamanlı oyun isteği gönderirsin).</li><li>Davet eden de bekleme ekranında görür: <b>👀 gördü</b>, <b>✅ geliyor</b>, <b>⏳ meşgul</b> ya da <b>🕐 sonra</b>. 2 dakika cevap gelmezse beklemeye devam edebilir ya da vazgeçebilir.</li><li><b>📣 Çevrim içi herkesi çağır:</b> Şu an uygulamada olan (🟢) bütün arkadaşlarına tek dokunuşla davet gider. Oyunu seç (1’e 1, Muharebe ya da Yarış), ilk kabul edenlerle oynarsın. Oyun dolunca ya da başlayınca diğer davetler geri çekilir. 3 dakikada bir kullanılabilir.</li><li><b>💬 Mesaj:</b> Arkadaşının yanındaki 💬 düğmesine dokun, hazır mesajlardan birini ya da bir emoji seç. Yazı yazılmaz, sadece hazır mesajlar gider. Aynı arkadaşına 30 saniyede bir mesaj gönderebilirsin. Gelen mesaj ekranında <b>⚔️ Çağır</b> ya da <b>💬 Cevap ver</b> düğmeleri çıkar. Arkadaş listesinde son mesaj görünür.</li><li>Kod ya da linkle oynadığın biri arkadaşın değilse, oyun bitince sonuç ekranında <b>➕ arkadaş ekle</b> düğmesi çıkar.</li><li><b>🔔 Bildirimler:</b> Arkadaşlarım sayfasındaki <b>Bildirimleri aç</b> düğmesine bas, izin ver. Uygulama kapalıyken bir arkadaşın seni kapışmaya ya da muharebeye çağırınca, ya da arkadaşlık isteği gönderince telefonuna bildirim gelir. Bildirime dokununca uygulama açılır ve <b>doğrudan kapışmaya girersin</b>. iPhone’da önce uygulamayı <b>ana ekrana eklemen</b> gerekir.</li><li>Arkadaşlıkların otomatik yedeğe dahildir. Telefon değişirse yedek koduyla geri gelir.</li></ul>'},
- {id:'online',t:'🌍 Online Oyna (açık odalar)',h:'<p>Ana menüdeki <b>🌍 Online Oyna</b> ile arkadaşını beklemeden, o an oyunda olan herkesle oynayabilirsin. Karakterin olması gerekir; misafirler sadece arkadaşının verdiği kodla girebilir.</p><ul><li><b>⚡ Hemen Oyna:</b> Rütbesi sana yakın, uygun bir odaya girersin. Oda yoksa senin için bir oda açılır.</li><li><b>Oda listesi:</b> Odalar <b>Kolay → Orta → Zor</b> sırasıyla gelir. Soldaki renkli kare işlemi gösterir: <b>+</b> yeşil, <b>−</b> turuncu, <b>×</b> mavi, <b>÷</b> mor. Sağda kaç kişi olduğu yazar; 🔒 şifreli oda demektir. Listeyi <b>🔄 Yenile</b> ile tazelersin.</li><li><b>➕ Oda Kur:</b> Oyunu (1’e 1, Muharebe 3–5 kişi, Yarış 4–10 kişi, Takım 2’ye 2 / 3’e 3 / 4’e 4), seviyeyi ve işlemi seç. Oda <b>herkese açık</b> ya da <b>sadece kodla</b> olabilir. İstersen <b>4 rakamlı şifre</b> koyarsın.</li><li><b>🤖 Botlar:</b> Kimse gelmezse <b>Botla Oyna</b>ya basabilirsin. Kurucu boş yerlere bot ekleyebilir. Gerçek oyuncu gelirse botun yerini alır. Botlara karşı kazanınca rütbe puanı verilmez.</li><li><b>Hepsi hız kapışması:</b> Online odalarda can yoktur. Herkes aynı soruyu aynı anda görür; hızlı olan kazanır.</li><li><b>🏁 Yarış (4–10 kişi):</b> Her soruda en hızlı doğru cevap 3, ikinci 2, üçüncü 1 puan alır. Sorular bitince en çok puanı olan kazanır.</li><li><b>👥 Takım odası:</b> Kırmızı ya da Mavi takımı seçersin. Her soruda ilk doğru basan oyuncunun takımı 1 puan alır. Takımlar başlarken eşitlenir, eksik yer botla dolar.</li><li><b>Kurucu</b> istemediği oyuncuyu <b>✖ Çıkar</b> ile odadan çıkarabilir. Engellediğin kişilerin odalarını görmezsin.</li><li>Rütbesi senden çok farklı olanların odaları listede görünmez; böylece oyunlar dengeli olur.</li></ul>'},
+ {id:'online',t:'🌍 Online Oyna (açık odalar)',h:'<p>Ana menüdeki <b>🌍 Online Oyna</b> ile arkadaşını beklemeden, o an oyunda olan herkesle oynayabilirsin. Karakterin olması gerekir; misafirler sadece arkadaşının verdiği kodla girebilir.</p><ul><li><b>⚡ Hemen Oyna:</b> Rütbesi sana yakın, uygun bir odaya girersin. Oda yoksa senin için bir oda açılır.</li><li><b>Oda listesi:</b> Odalar <b>Kolay → Orta → Zor</b> sırasıyla gelir. Soldaki renkli kare işlemi gösterir: <b>+</b> yeşil, <b>−</b> turuncu, <b>×</b> mavi, <b>÷</b> mor. Sağda kaç kişi olduğu yazar; 🔒 şifreli oda demektir. Listeyi <b>🔄 Yenile</b> ile tazelersin.</li><li><b>➕ Oda Kur:</b> Oyunu (1’e 1, Takım 2’ye 2 – 5’e 5, Herkes Tek 3–10 kişi), seviyeyi ve işlemi seç. Oda <b>herkese açık</b> ya da <b>sadece kodla</b> olabilir. İstersen <b>4 rakamlı şifre</b> koyarsın.</li><li><b>🤖 Botlar:</b> Kimse gelmezse <b>Botla Oyna</b>ya basabilirsin. Kurucu boş yerlere bot ekleyebilir. Gerçek oyuncu gelirse botun yerini alır. Botlara karşı kazanınca rütbe puanı verilmez.</li><li><b>Hepsi hız kapışması:</b> Online odalarda can yoktur. Herkes aynı soruyu aynı anda görür; hızlı olan kazanır.</li><li><b>🏁 Herkes Tek (3–10 kişi):</b> Herkes kendisi için oynar. Her soruda en hızlı doğru cevap 3, ikinci 2, üçüncü 1 puan alır. Sorular bitince en çok puanı olan kazanır.</li><li><b>👥 Takım odası:</b> Odaya girince Kırmızı ya da Mavi takımı sen seçersin; dolu takıma giremezsin. Her soruda ilk doğru basan oyuncunun takımı 1 puan alır. Takımlar başlarken eşitlenir, eksik yer botla dolar.</li><li><b>Kurucu</b> istemediği oyuncuyu <b>✖ Çıkar</b> ile odadan çıkarabilir. Engellediğin kişilerin odalarını görmezsin.</li><li>Rütbesi senden çok farklı olanların odaları listede görünmez; böylece oyunlar dengeli olur.</li></ul>'},
  {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Yarış Odası → <b>1’e 1 Kapışma Kur</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Tek başına oynamak için:</b> Yarış Odası → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (kolay sayılar), 👾 Canavar (orta sayılar) ya da 🐉 Dev Canavar (zor sayılar) seç, sonra işlemi seç. İnternet gerekmez.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
  {id:'mm',t:'🛡️ Meydan Muharebesi',h:'<ul><li>Yarış Odası → <b>Meydan Muharebesi Kur</b>. 3 ya da 4 kişi oynar.</li><li>Seviyeyi, maç puanını (10, 15, 20) ve işlemi seç. Kodu ya da davet linkini gönder; lobide <b>📨 Çağır</b> ile arkadaşlarını da çağırabilirsin.</li><li>En az 3 kişi olunca kurucu <b>Muharebeyi Başlat</b>a basar. Başlayınca yeni kişi giremez.</li><li>Kural 1’e 1 Kapışma ile aynı: her soruda <b>önce doğru basan</b> 1 puan alır, yanlış basan o soruda kilitlenir.</li><li>Seçilen puana ilk ulaşan kazanır. Sonuçta 🥇🥈🥉 sıralaması çıkar.</li><li>Biri ayrılırsa muharebe kalanlarla sürer. Herkes <b>Rövanş</b>a basınca yeniden başlar.</li></ul>'},
  {id:'team',t:'👥 Takımlar ve Takım Kapışması',h:'<ul><li>Ana menü → <b>👥 Takımım</b>. Profil ile girmen ve internet gerekir.</li><li><b>Takım kur:</b> listeden bir takım adı seç (örn. 🦅 Kartallar). Her ad tek bir takımındır. Takımı kuran ilk kaptandır.</li><li>Takımlar <b>en çok 4 kişi</b>dir. Her öğrencinin tek takımı olur. <b>📨 Çağır</b> ile arkadaşlarını takıma davet et; kabul edince takıma girerler. İstediğin zaman <b>🚪 Takımdan ayrıl</b>abilirsin. Kimse seni takımdan çıkaramaz.</li><li><b>👑 Kaptanlık Maçı:</b> takımda en az 2 kişi olunca yapılır (2 kişi 1’e 1, 3-4 kişi Meydan Muharebesi). Kazanan kaptan olur. Haftada bir yapılabilir; yeni biri takıma katılınca beklemeden yapılabilir. Rütbe puanı vermez.</li><li><b>⚔️ Takım Kapışması:</b> rakip takımı seç, soru sayısını (10, 15, 20), seviyeyi ve işlemi seç. İki takıma da davet gider.</li><li>Her takımdan <b>en az 2 kişi</b> gelince başlatılır. Bir takım eksikse <b>👾 Takım Canavarı</b> tamamlar; ama canavar sayısı oyuncu sayısını geçemez.</li><li>Oyun başlayınca herkes karşı takımda <b>rütbesine yakın biriyle</b> eşleşir. Her çift kendi arasında 1’e 1 kapışır: önce doğru basan puanı alır. Bütün çiftlerin puanları takıma eklenir; üstte takım skoru görünür.</li><li>Sonuçta kazanan takım, çiftlerin skorları ve <b>⭐ Takımın yıldızı</b> (takımına en çok puan getiren) görünür.</li><li><b>Rütbe puanı:</b> çiftini kazanırsan 1’e 1 gibi puan alırsın (Kolay 1, Orta 2, Zor 3). Takımın kazanırsa takımdaki herkese ayrıca +1 / +2 / +3. Canavarla kapışan çift puan almaz ama puanı takıma sayılır.</li><li><b>🤝 Takım Oyuncusu madalyası:</b> 5 / 15 / 30 takım galibiyeti.</li><li><b>👾 Canavar Takımına Karşı:</b> rakip takım yoksa takımın canavarlara karşı oynar. Alıştırmadır, rütbe puanı vermez.</li></ul>'},
@@ -6093,7 +6120,7 @@ function render(){
   }else if(s==='dintro'){
     h=duIntroHtml();
   }else if(s==='duel'){
-    h=topBar((DU.sm==='team'?'👥 Takım · ':(DU.sm==='rank'?'🏁 Yarış · ':(DU.ids.length>2?'⚔️ Muharebe · ':'⚔️ Kapışma · ')))+gLabelL(DU.qg.op,DU.qg.lv,DU.qg.tb))+'<div class="dsc'+(DU.ids.length>2&&DU.sm!=='team'?' n4':'')+'" id="dsc">'+duScoreHtml()+'</div>'+(DU.sm==='team'?'<div class="dvs4">İlk doğru bilen takımına 1 puan</div>':(DU.sm==='rank'?'<div class="dvs4">En hızlı doğru 3 · ikinci 2 · üçüncü 1 puan</div>':(DU.ids.length>2?'<div class="dvs4">'+DU.win+' puana ulaşan kazanır</div>':'')))+'<div class="tbar"><div id="tfill"></div></div><div class="qm"><div class="q" id="dq"></div>'+qMon()+'</div><div class="agrid" id="dgrid"></div><div class="msg" id="dmsg"></div><button class="ghost" onclick="duQuit()">🏳️ '+(DU.sm?'Oyundan':DU.ids.length>2?'Muharebeden':'Kapışmadan')+' Çık</button>';
+    h=topBar((DU.sm==='team'?'👥 Takım · ':(DU.sm==='rank'?'🏁 Herkes Tek · ':(DU.ids.length>2?'⚔️ Muharebe · ':'⚔️ Kapışma · ')))+gLabelL(DU.qg.op,DU.qg.lv,DU.qg.tb))+'<div class="dsc'+(DU.ids.length>2&&DU.sm!=='team'?' n4':'')+'" id="dsc">'+duScoreHtml()+'</div>'+(DU.sm==='team'?'<div class="dvs4">İlk doğru bilen takımına 1 puan</div>':(DU.sm==='rank'?'<div class="dvs4">En hızlı doğru 3 · ikinci 2 · üçüncü 1 puan</div>':(DU.ids.length>2?'<div class="dvs4">'+DU.win+' puana ulaşan kazanır</div>':'')))+'<div class="tbar"><div id="tfill"></div></div><div class="qm"><div class="q" id="dq"></div>'+qMon()+'</div><div class="agrid" id="dgrid"></div><div class="msg" id="dmsg"></div><button class="ghost" onclick="duQuit()">🏳️ '+(DU.sm?'Oyundan':DU.ids.length>2?'Muharebeden':'Kapışmadan')+' Çık</button>';
   }else if(s==='fprof'){
     h=frProfHtml();
   }else if(s==='friends'){

@@ -27,8 +27,9 @@ await ev(A,()=>{onOpen()});await sleep(600);
 ok(await ev(A,()=>st.screen==='online'&&/Şu an açık oda yok/.test(document.getElementById('on-list').textContent)),'liste boşken "ilk odayı sen aç" yazıyor');
 await shot(A,'liste_bos');
 await ev(A,()=>{onNew()});await sleep(200);
-ok(await ev(A,()=>st.screen==='ocreate'&&document.querySelectorAll('.oct').length===4&&document.querySelectorAll('.ocop').length===5),'Oda Kur: 4 oyun türü, 5 işlem karosu');
-await ev(A,()=>{ocSet('md','mm')});ok(await ev(A,()=>OC.cap===4&&/5 kişi/.test(document.getElementById('app').textContent)),'Muharebe: 3–5 kişi seçenekleri');
+ok(await ev(A,()=>st.screen==='ocreate'&&document.querySelectorAll('.oct').length===3&&document.querySelectorAll('.ocop').length===5&&/Herkes Tek/.test(document.getElementById('app').textContent)&&!/Muharebe/.test(document.querySelector('.ocg').textContent)),'Oda Kur: 3 oyun türü (1’e 1, Takım, Herkes Tek), 5 işlem karosu');
+await ev(A,()=>{ocSet('md','race')});ok(await ev(A,()=>OC.cap===4&&/3 kişi/.test(document.getElementById('app').textContent)&&/10 kişi/.test(document.getElementById('app').textContent)),'Herkes Tek: 3–10 kişi seçenekleri');
+await ev(A,()=>{ocSet('md','ta')});ok(await ev(A,()=>/5’e 5/.test(document.getElementById('app').textContent)),'Takım: 5’e 5’e kadar');
 await ev(A,()=>{ocSet('md','ta');ocSet('tm',3)});ok(await ev(A,()=>OC.cap===6),'Takım 3’e 3 = 6 kişilik oda');
 await ev(A,()=>{ocSet('op','mul')});ok(await ev(A,()=>/Tablo çalış/.test(document.getElementById('app').textContent)),'çarpmada tablo seçeneği');
 await shot(A,'oda_kur');
@@ -122,7 +123,7 @@ const rp=await ev(A,()=>{var o=DU.rp[0]||{};return Object.values(o).sort().join(
 ok(/3/.test(rp)&&/2/.test(rp),'ilk soruda hız sıralı puan verildi: '+rp);
 ok(await ev(B,()=>DU.rp[0]&&DU.rp[0][DU.me]===2),'B (daha yavaş doğru) 2. olarak 2 puan aldı');
 ok(await waitF(A,()=>st.screen==='dover',null,120000)&&await waitF(B,()=>st.screen==='dover',null,30000),'10 soru bitince yarış sonucu');
-ok(await ev(A,()=>DU.k===9&&DU.won===true&&/Yarış bitti/.test(document.querySelector('.top').textContent)),'A en hızlı: kazandı');
+ok(await ev(A,()=>DU.k===9&&DU.won===true&&/Oyun bitti/.test(document.querySelector('.top').textContent)),'A en hızlı: kazandı');
 ok(await ev(B,()=>DU.won===false&&/oldun/.test(document.getElementById('app').textContent)),'B sıralamasını görüyor');
 await shot(A,'yaris_sonuc');
 await stop(A);await stop(B);await home();
@@ -130,11 +131,20 @@ await stop(A);await stop(B);await home();
 // 6) takım odası 2'ye 2: 3 gerçek + 1 bot, aynı soru aynı anda, ilk bilen takıma 1 puan
 await ev(A,()=>{OC.md='ta';OC.tm=2;OC.cap=4;OC.lv='k';OC.op='add';OC.win=10;onCreate()});await waitF(A,()=>st.screen==='lobby'&&RM.host);
 const c6=await code(A);
-for(const k of ['B','C']){await ev(P[k],c=>onJoin(c),c6);await waitF(P[k],()=>st.screen==='lobby')}
+ok(await waitF(A,()=>st.modal&&document.querySelectorAll('.tpick').length===2),'kurucuya takım seçimi soruldu');
+await shot(A,'takim_sec');
+await ev(A,()=>document.getElementById('tp-0').click());
+for(const k of ['B','C']){await ev(P[k],c=>onJoin(c),c6);await waitF(P[k],()=>st.screen==='lobby');ok(await waitF(P[k],()=>st.modal&&!!document.getElementById('tp-1')),k+' girince takım seçimi soruldu')}
+await ev(B,()=>document.getElementById('tp-1').click());await sleep(1500);
+ok(await ev(C,()=>{onTeamAsk();return true})&&await waitF(C,()=>{var r=document.getElementById('tp-1');return !!r&&!!document.getElementById('tp-0')}),'C seçim penceresi açık');
+await ev(C,()=>document.getElementById('tp-1').click());
 ok(await waitF(A,()=>onReal().length===3),'takım odasında 3 kişi');
 await sleep(1500);
 const sides=await ev(A,()=>onReal().map(p=>p.tk|0).sort().join(''));
-ok(sides==='001'||sides==='011','giren oyuncu az olan tarafa geçti: '+sides);
+ok(sides==='011','herkes kendi seçtiği takımda (Kırmızı 1, Mavi 2): '+sides);
+await ev(A,()=>{if(st.modal)closeModal();onTeamAsk()});await sleep(200);
+ok(await ev(A,()=>document.getElementById('tp-1').disabled&&/dolu/.test(document.getElementById('tp-1').textContent)),'dolu takım seçilemiyor');
+await ev(A,()=>closeModal());
 await shot(A,'takim_lobi');
 ok(await ev(A,()=>/Kırmızı/.test(document.getElementById('lb-list').textContent)&&/Mavi/.test(document.getElementById('lb-list').textContent)),'lobide Kırmızı / Mavi sütunları');
 await autoDu(A,400);await autoDu(B,1500);await autoDu(C,2600);

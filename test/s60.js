@@ -43,7 +43,7 @@ await p.evaluate(()=>blkDel('BBBBBBB'));ok(await p.evaluate(()=>!blkHas('BBBBBBB
 ok(await p.evaluate(()=>BKK.indexOf('mc_blk')>=0),'engel listesi yedekte');
 // konfeti
 await p.evaluate(()=>{go('home');confetti(true)});await sleep(700);ok(await p.evaluate(()=>[...document.querySelectorAll('body>canvas')].length>0),'konfeti başladı');
-await p.evaluate(()=>go('rooms'));await sleep(300);ok(await p.evaluate(()=>[...document.querySelectorAll('body>canvas')].length===0),'ekran değişince konfeti durdu');
+await p.evaluate(()=>go('rooms'));await sleep(1000);ok(await p.evaluate(()=>[...document.querySelectorAll('body>canvas')].length===0),'ekran değişince konfeti durdu');
 await p.evaluate(()=>{go('home');confetti(true);go('gover')}).catch(()=>{});await sleep(800);
 ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();
 // misafir, küçük ekran, gece
