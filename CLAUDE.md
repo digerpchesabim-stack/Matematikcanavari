@@ -49,6 +49,12 @@ Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **67**
 - Büyük yazı (`data-fs`): oyun ekranında cevap kutuları küçülür (iki sıra ekrana sığsın).
 - Paylaşılan görsellerde (canvas) mor tonlar kobalta çevrildi.
 
+### 4.3 Karakter kuralı (15 Kasım 2026, kullanıcı: "Bundan sonra bütün karakterlerimiz 3B olacak. Bunu unutma")
+- **Uygulamadaki bütün karakterler 3B modellenir** (maskot gibi: SDF ışın izleme, ışık/gölge/doku; uygulamaya hazır poz resimleri `webp` olarak). El çizimi/düz vektör karakter kullanılmaz. (Simgeler/arayüz süsleri SVG kalabilir.)
+- Tek sevimli karakter Matematik Canavarı (yol arkadaşı). Düşmanlar "Sis Yaratıkları": gerçekçi ama fantastik ve ciddi (kullanıcı: "daha korkutucu değil, daha gerçekçi… çizimler daha ciddi"), kan/ölüm yok, yenilince ışığa dönüşüp dağılır.
+- Kaynak: scratch `r3d/` (yaratık başına HTML + parça gölgelendirici; SwiftShader ile 640 px çizilir).
+- Onaylanan/taslak kadro (15 Kasım 2026): Dev Örümcek (+), Dev Engerek (−), Taş Dev (×), Kara Şövalye (÷) onaylı; Sis Ejderi reddedildi → final **Sis Kralı** (kapüşonlu yırtık cüppe, paslı taç, kemik eller); ek olarak **Derin Sis Krakeni** ve **Sis Gözü** (kullanıcı: "bunları da kullanalım"; haritadaki yerleri henüz kararlaştırılmadı). `harness.py` `#define DARKM <mat>` = o malzeme ışık almaz (kapüşon içi).
+
 ### 4.2 3B maskot (S59)
 - Kullanıcı kararları (10 Kasım 2026): maskot gerçek 3B; ilk model (böğürtlen gibi tüylü gövde, sivri boynuz) "sempatik değil" bulundu → yeniden tasarım, **C (perçemli)** seçildi (`M3.v=2`; A sade=0, B tüy yakalı=1 kodda duruyor, `M3V`). Sahnede gezsin, simgeleri yesin, dokununca gıdıklanıp zıplasın, telefon titresin, sayılar/semboller de 3B olsun. Uygulama simgesi de bu modelden (kobalt zemin, `icon-192/512.png`).
 - Model: `M3FS` (WebGL1 parça gölgelendirici, ışın izlemeli SDF; kitaplık/dosya yok): tombul pürüzsüz gövde, açık karın, büyük parlak gözler (göz bebeği `look`, verilmezse kameraya bakar), kısa yuvarlak sarı boynuz, perçem, tek diş, pembe yanak; ağız `m` ile gerçek oyuk + dil; `happy` kapalı gülen göz; `blink`; `walk/ph` ayak ve kol; `sq` esneme. Işık görüş uzayında sabit (sol üst), yumuşak gölge + AO + kenar ışığı.
