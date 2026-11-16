@@ -309,6 +309,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Test notu: mockfb oturum kimliği `u1` → örnek rekor satırlarına `u1` verme (kendi satırın sanılır).
   - Yapılmadı / sırada: dikey 9:16 kesit, 1024×500 öne çıkan görsel, mağaza ekran görüntüleri. **menu.mp3 lisansı bilinmiyor** (YouTube telif talebi riski; kullanıcıya soruldu).
 - Bunun dışında yayınlanmamış kod yok (eski `yasal` dalı s60'a dahil edildi, silinebilir). (Gerçek telefonda denenecekler: S59 3B canavarın akıcılığı/kademesi ve Android titreşimi, sade mod sınırı gevşedikten sonra 2–3 GB'lık telefonlarda S58 efektleri, sesli okuma, büyük yazıda Akıldan İşlem, iki cihaz eşitleme, iPhone müzik kapat/aç, zamanlı oyun bildirimleri ve 5 dk hatırlatması, toplu çağırma ve mesaj bildirimleri, S58 3D efektlerin eski telefonlarda akıcılığı ve telefonu eğince kartın eğilmesi.)
+- **Hikâye/harita ses kaynakları (Play öncesi lisans listesi):** seslendirme = kullanıcının kendi sesi (16 Kasım 2026, 26 parça A1–E3, scratch `voice/kayitlar`); rüzgâr = "Cemetery Wind" (Pixabay, DRAGON-STUDIO, id 467488; 12,6 sn, stereo). Ezgi ve diğer efektler kodla üretiliyor.
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
