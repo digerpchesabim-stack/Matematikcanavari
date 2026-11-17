@@ -15,7 +15,21 @@ await p.evaluate(()=>{localStorage.setItem('mc_profiles',JSON.stringify(['🦁 K
 await sleep(300);
 ok(await p.evaluate(()=>!!document.querySelector('.guhome')),'ana sayfada Güneş Ülkesi kartı');
 await shot('01_home');
-await p.click('.guhome');
+await p.click('.guhome');await sleep(400);
+ok(await p.evaluate(()=>st.screen==='guintro'&&!!document.querySelector('#guvid')),'ilk açılışta hikâye videosu');
+ok(await p.evaluate(()=>{var v=document.getElementById('guvid');return v.src.indexOf('gu/hikaye.mp4')>0}),'video kaynağı gu/hikaye.mp4');
+for(let i=0;i<30;i++){if(await p.evaluate(()=>{var v=document.getElementById('guvid');return v&&v.readyState>=1}))break;await sleep(150)}
+ok(await p.evaluate(()=>{var v=document.getElementById('guvid');return v.readyState>=1&&Math.abs(v.duration-105.5)<0.6}),'video yüklendi (105 sn)');
+ok(await p.evaluate(()=>getComputedStyle(document.getElementById('tabs')||document.body).display==='none'||!document.getElementById('tabs')||document.body.classList.contains('gufull')),'hikâyede sekmeler gizli');
+await shot('01b_story');
+await p.click('.guvb');await sleep(300);
+ok(await p.evaluate(()=>st.screen==='gumap'&&guD().h===1),'Geç → harita, izlendi kaydı');
+await p.evaluate(()=>go('home'));await sleep(200);await p.click('.guhome');await sleep(300);
+ok(await p.evaluate(()=>st.screen==='gumap'),'ikinci açılışta doğrudan harita');
+await p.click('.gsto');await sleep(300);
+ok(await p.evaluate(()=>st.screen==='guintro'),'📜 ile hikâye yeniden');
+await p.evaluate(()=>back());await sleep(300);
+ok(await p.evaluate(()=>st.screen==='gumap'&&!document.getElementById('guvid')),'geri → harita, video kapandı');
 for(let i=0;i<40;i++){if(await p.evaluate(()=>!!document.querySelector('#gmw canvas.gbase')))break;await sleep(150)}
 ok(await p.evaluate(()=>st.screen==='gumap'&&!!document.querySelector('#gmw canvas.gbase')),'harita açıldı, parşömen çizildi');
 ok(await p.evaluate(()=>document.querySelectorAll('.gst').length===49),'49 durak');
@@ -85,13 +99,13 @@ for(let i=0;i<40;i++){if(await p.evaluate(()=>GD&&GD.ph==='lose'))break;await sl
 ok(await p.evaluate(()=>GD&&GD.ph==='lose'&&GD.me===0&&__GU.st().d.c===11),'3 can gitti → kayıp, ilerleme yok');
 await sleep(400);await shot('12_lose');
 // Kule Kapısı: ışık az
-await p.evaluate(()=>{__GU.set({c:47,s:{12:1}});GD=null;guOpen()});await sleep(1200);
+await p.evaluate(()=>{__GU.set({c:47,s:{12:1},h:1});GD=null;guOpen()});await sleep(1200);
 ok(await p.evaluate(()=>/Kule Kapısı/.test(document.getElementById('gcard').textContent)),'48: kapı kartı');
 await p.evaluate(()=>guPlay(48));await sleep(200);
 ok(await p.evaluate(()=>st.screen==='gumap'),'ışık azken kapı açılmaz');
 await shot('13_gate');
 var S={};for(let n=1;n<=47;n++)S[n]=3;
-await p.evaluate(S=>{__GU.set({c:47,s:S});guToMap()},S);await sleep(1200);
+await p.evaluate(S=>{__GU.set({c:47,s:S,h:1});guToMap()},S);await sleep(1200);
 ok(await p.evaluate(()=>__GU.st().light>=40),'ışık 40+: '+await p.evaluate(()=>__GU.st().light));
 await p.evaluate(()=>guPlay(48));
 for(let i=0;i<40;i++){if(await p.evaluate(()=>GD&&GD.ph==='enc'))break;await sleep(150)}
