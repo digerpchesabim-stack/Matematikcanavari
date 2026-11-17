@@ -1,4 +1,6 @@
 var CACHE = 'mc-v67';
+/* Güneş Ülkesi dosyaları (gu/): ilk kullanılınca indirilir, sürümler arasında saklanır */
+var GUC = 'mc-gu1';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3', './gizlilik.html', './aydinlatma.html', './veri-silme.html', './mc-idle.webp', './mc-happy.webp', './mc-look.webp', './mc-wait.webp', './mc-cheer.webp', './mc-sad.webp', './mc-peek.webp', './mc-blink.webp', './mc-sidel.webp', './mc-sider.webp'];
 
 self.addEventListener('install', function (e) {
@@ -9,7 +11,7 @@ self.addEventListener('install', function (e) {
 self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
-      return Promise.all(keys.filter(function (k) { return k !== CACHE; }).map(function (k) { return caches.delete(k); }));
+      return Promise.all(keys.filter(function (k) { return k !== CACHE && k !== GUC; }).map(function (k) { return caches.delete(k); }));
     })
   );
   self.clients.claim();
@@ -48,6 +50,19 @@ self.addEventListener('fetch', function (e) {
     return;
   }
   if (u.indexOf(self.location.origin) !== 0) return;
+  if (u.indexOf('/gu/') > 0) {
+    var key = u.split('#')[0].split('?')[0];
+    e.respondWith(caches.open(GUC).then(function (c) {
+      return c.match(key).then(function (hit) {
+        if (hit) return e.request.headers.get('range') ? rangeResponse(e.request, hit) : hit;
+        return fetch(key).then(function (r) {
+          if (r && r.ok && r.status === 200) c.put(key, r.clone());
+          return e.request.headers.get('range') && r.ok ? rangeResponse(e.request, r) : r;
+        });
+      });
+    }));
+    return;
+  }
   if (e.request.headers.get('range')) {
     e.respondWith(caches.match(u.split('#')[0], { ignoreSearch: true }).then(function (hit) {
       return hit ? rangeResponse(e.request, hit) : fetch(e.request);
