@@ -658,6 +658,10 @@ body.hastabs #toast{bottom:calc(104px + var(--safe-area-inset-bottom,env(safe-ar
 /* kartlarda içe çift çerçeve */
 :root:not([data-theme="hc"]) .hgi .btn,:root:not([data-theme="hc"]) .obt,:root:not([data-theme="hc"]) .occ{box-shadow:inset 0 0 0 4px var(--card),inset 0 0 0 5px var(--line),var(--e1)}
 
+/* S68: alt menü ortaçağ simgeleri */
+.tabs button span.tico2{width:30px;height:30px;font-size:0;display:block;filter:saturate(.55) opacity(.82);transition:transform .2s,filter .2s}
+.tabs button.on span.tico2{filter:drop-shadow(0 0 6px rgba(255,200,80,.55));transform:translateY(-2px) scale(1.14)}
+:root[data-theme="hc"] .tabs button span.tico2{filter:none}
 /* S68: Güneş Ülkesi (harita + düello); tema dışı: parşömen harita, karanlık sisli düello */
 body.gufull .mmbtn,body.gufull #tabs{display:none!important}
 .guhome{display:flex;align-items:center;gap:12px;width:100%;margin:10px 0 2px;padding:12px 14px;border-radius:18px;border:1px solid #8a6a3c;text-align:left;cursor:pointer;color:#f4ead6;
@@ -7250,7 +7254,112 @@ function infoFull(){legalOpen('gizlilik')}
 var LGN=[['gizlilik','Gizlilik'],['aydinlatma','KVKK Aydınlatma'],['veri-silme','Veri silme']];
 function legalOpen(k){if(st.screen!=='legal')st.lgFrom=st.screen;st.lg=k;if(st.screen==='legal'){render();return}go('legal')}
 /* S60: alt sekme çubuğu: Oyna / Arkadaşlar / Kartım / Ayarlar (sadece karakterle, ana ekranlarda) */
-var TABS=[['🏠','Oyna'],['👫','Arkadaşlar'],['🪪','Kartım'],['⚙️','Ayarlar']];
+/* Alt menü simgeleri taslak: ortaçağ/şövalye konsepti. TI[k](id) → svg */
+/* S68: alt menü simgeleri (ortaçağ): Oyna kılıç-kalkan, Arkadaşlar iki miğfer, Kartım portre, Ayarlar örs-çekiç */
+var TI=(function(){
+function G(id,a,b,c,d){return '<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+a+'"/><stop offset=".4" stop-color="'+b+'"/><stop offset=".75" stop-color="'+c+'"/><stop offset="1" stop-color="'+d+'"/></linearGradient>'}
+function GOLD(id){return G(id,'#fff3b0','#ffd24a','#f0a30f','#b56d00')}
+function STEEL(id){return G(id,'#ffffff','#dfe6f0','#9aa7bb','#5b6679')}
+function RED(id){return G(id,'#ff8a7a','#d8392c','#a8221c','#6e130e')}
+function BLUE(id){return G(id,'#9cc2ff','#3d6fd9','#2a4fa8','#18306e')}
+function WOOD(id){return G(id,'#e8c48c','#b98245','#8a5a2b','#5a3818')}
+function PARCH(id){return G(id,'#fffaf0','#f3e3bd','#e1c98f','#b8955a')}
+function DS(id){return '<filter id="'+id+'" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2" stdDeviation="1.4" flood-color="#1b1408" flood-opacity=".35"/></filter>'}
+function SV(inner,defs){return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+defs+'</defs>'+inner+'</svg>'}
+function shine(id,clip){return '<g clip-path="url(#'+clip+')"><rect x="-40" y="0" width="14" height="64" fill="url(#'+id+')" transform="skewX(-20)"><animate attributeName="x" values="-40;-40;90" keyTimes="0;.6;1" dur="3.2s" repeatCount="indefinite"/></rect></g>'}
+function SH(id){return '<linearGradient id="'+id+'" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'}
+var SHIELD='M32 6 L52 12 V30 C52 44 43 53 32 58 C21 53 12 44 12 30 V12 Z';
+/* OYNA A: kalkan + çapraz kılıç */
+function playA(n){var g='pa'+n;return SV(
+ '<g filter="url(#'+g+'d)">'+
+ '<g transform="rotate(-38 32 32)"><rect x="30" y="2" width="4" height="40" rx="1" fill="url(#'+g+'s)" stroke="#4d5668" stroke-width=".8"/><path d="M30 2 L32 -3 L34 2Z" fill="#eef2f8"/><rect x="24" y="41" width="16" height="4" rx="2" fill="url(#'+g+'g)"/><rect x="30.5" y="45" width="3" height="10" fill="#6b4422"/><circle cx="32" cy="57" r="2.6" fill="url(#'+g+'g)"/></g>'+
+ '<g transform="rotate(38 32 32)"><rect x="30" y="2" width="4" height="40" rx="1" fill="url(#'+g+'s)" stroke="#4d5668" stroke-width=".8"/><path d="M30 2 L32 -3 L34 2Z" fill="#eef2f8"/><rect x="24" y="41" width="16" height="4" rx="2" fill="url(#'+g+'g)"/><rect x="30.5" y="45" width="3" height="10" fill="#6b4422"/><circle cx="32" cy="57" r="2.6" fill="url(#'+g+'g)"/></g>'+
+ '<g transform="translate(14 16) scale(.56)"><path d="'+SHIELD+'" fill="url(#'+g+'r)" stroke="url(#'+g+'g)" stroke-width="4"/><path d="M32 6 V58" stroke="#ffd24a" stroke-width="3" opacity=".8"/><path d="M12 28 H52" stroke="#ffd24a" stroke-width="3" opacity=".8"/>'+
+ '<path d="M22 16 L25 22 L32 22 L26.5 26 L28.5 33 L22 29 L15.5 33 L17.5 26 L12 22 L19 22Z" transform="translate(10 8) scale(.9)" fill="#fff4c8"/></g>'+
+ '</g>'+shine(g+'h',g+'c'),
+ GOLD(g+'g')+STEEL(g+'s')+RED(g+'r')+DS(g+'d')+SH(g+'h')+'<clipPath id="'+g+'c"><path transform="translate(14 16) scale(.56)" d="'+SHIELD+'"/></clipPath>')}
+/* OYNA B: kale kapısı + sancak */
+function playB(n){var g='pb'+n;return SV(
+ '<g filter="url(#'+g+'d)"><path d="M10 58 V24 H16 V19 H21 V24 H27 V19 H32 V24 H37 V19 H43 V24 H48 V19 H54 V24 V58Z" fill="url(#'+g+'p)" stroke="#6d5634" stroke-width="1.6" stroke-linejoin="round"/>'+
+ '<path d="M24 58 V42 C24 36 40 36 40 42 V58Z" fill="#3a2a1a"/><path d="M26 58 V43 C26 39 38 39 38 43 V58" fill="none" stroke="url(#'+g+'g)" stroke-width="1.5"/>'+
+ '<rect x="14" y="31" width="5" height="7" rx="2.5" fill="#3a2a1a"/><rect x="45" y="31" width="5" height="7" rx="2.5" fill="#3a2a1a"/>'+
+ '<path d="M32 19 V3" stroke="#6b4422" stroke-width="2"/><path d="M33 4 Q41 2 48 6 Q41 9 33 12Z" fill="url(#'+g+'r)"><animate attributeName="d" values="M33 4 Q41 2 48 6 Q41 9 33 12Z;M33 4 Q41 6 48 5 Q41 11 33 12Z;M33 4 Q41 2 48 6 Q41 9 33 12Z" dur="1.6s" repeatCount="indefinite"/></path><circle cx="32" cy="3" r="1.8" fill="url(#'+g+'g)"/></g>'+
+ '<path d="M24 58 V42 C24 36 40 36 40 42 V58Z" fill="#ffd77a" opacity=".0"><animate attributeName="opacity" values="0;.35;0" dur="2.4s" repeatCount="indefinite"/></path>',
+ GOLD(g+'g')+RED(g+'r')+DS(g+'d')+G(g+'p','#f4e6c4','#dcc394','#bfa06a','#8d6f43'))}
+/* ARKADAŞLAR A: iki miğfer yan yana (kırmızı ve mavi sorguç) */
+function helm(x,flip,plume,g){return '<g transform="translate('+(flip?31:1)+' 14) rotate('+(flip?8:-8)+' 16 26) scale(.62)">'+
+ '<path d="M26 6 C18 -6 34 -10 40 -2 C34 -2 30 1 28 6Z" fill="'+plume+'"><animateTransform attributeName="transform" type="rotate" values="0 27 6;'+(flip?6:-6)+' 27 6;0 27 6" dur="2s" repeatCount="indefinite"/></path>'+
+ '<path d="M8 24 C8 11 16 4 26 4 C36 4 44 11 44 24 V46 C44 52 40 56 34 56 H18 C12 56 8 52 8 46Z" fill="url(#'+g+'s)" stroke="#3d4555" stroke-width="1.6"/>'+
+ '<path d="M12 27 H40" stroke="#1c2130" stroke-width="4.5" stroke-linecap="round"/><path d="M26 6 V55" stroke="#e2a83a" stroke-width="4"/>'+
+ '<path d="M8 22 H44" stroke="#e2a83a" stroke-width="2.4"/><path d="M8 46 H44" stroke="#e2a83a" stroke-width="2"/>'+
+ '<circle cx="18" cy="38" r="1.4" fill="#1c2130"/><circle cx="18" cy="43" r="1.4" fill="#1c2130"/><circle cx="34" cy="38" r="1.4" fill="#1c2130"/><circle cx="34" cy="43" r="1.4" fill="#1c2130"/>'+
+ '<path d="M13 10 C16 7 20 6 22 6" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8" fill="none"/></g>'}
+function friendsA(n){var g='fa'+n;return SV('<g filter="url(#'+g+'d)">'+helm(-2,0,'url(#'+g+'r)',g)+helm(28,1,'url(#'+g+'b)',g)+'</g>'+
+ '<path d="M32 8 L33.2 11 L36 12 L33.2 13 L32 16 L30.8 13 L28 12 L30.8 11Z" fill="#fff4b0"><animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/></path>',
+ GOLD(g+'g')+STEEL(g+'s')+RED(g+'r')+BLUE(g+'b')+DS(g+'d'))}
+/* ARKADAŞLAR B: iki kalkan omuz omuza (kırmızı + mavi), üstte kalp */
+function friendsB(n){var g='fb'+n,s=function(x,f,r){return '<g transform="translate('+x+' 14) scale(.62) rotate('+r+' 32 32)"><path d="'+SHIELD+'" fill="url(#'+f+')" stroke="url(#'+g+'g)" stroke-width="4"/><path d="M32 12 V52 M18 30 H46" stroke="#fff3c4" stroke-width="3" opacity=".7"/></g>'};
+ return SV('<g filter="url(#'+g+'d)">'+s(3,g+'r',-10)+s(21,g+'b',10)+'</g>'+
+ '<path d="M32 13 C29 8 22 9 23 15 C24 19 32 23 32 23 C32 23 40 19 41 15 C42 9 35 8 32 13Z" fill="url(#'+g+'g)" stroke="#fff4c8" stroke-width="1"><animateTransform attributeName="transform" type="scale" values="1;1.08;1" additive="sum" dur="1.4s" repeatCount="indefinite"/></path>',
+ GOLD(g+'g')+RED(g+'r')+BLUE(g+'b')+DS(g+'d'))}
+/* KARTIM A: mühürlü parşömen kimlik kartı (arma + satırlar + kırmızı mühür) */
+function cardA(n){var g='ca'+n;return SV('<g filter="url(#'+g+'d)">'+
+ '<rect x="6" y="12" width="52" height="40" rx="5" fill="url(#'+g+'p)" stroke="#8a6a3c" stroke-width="1.6"/><rect x="9" y="15" width="46" height="34" rx="3" fill="none" stroke="#b8955a" stroke-width="1" stroke-dasharray="2 2"/>'+
+ '<g transform="translate(10 18) scale(.42)"><path d="'+SHIELD+'" fill="url(#'+g+'b)" stroke="url(#'+g+'g)" stroke-width="5"/><path d="M22 16 L25 22 L32 22 L26.5 26 L28.5 33 L22 29 L15.5 33 L17.5 26 L12 22 L19 22Z" transform="translate(10 8) scale(.9)" fill="#ffe08a"/></g>'+
+ '<path d="M38 23 H52 M38 29 H50 M38 35 H47" stroke="#6d5634" stroke-width="2.4" stroke-linecap="round"/>'+
+ '<circle cx="48" cy="47" r="7" fill="url(#'+g+'r)" stroke="#5a0f0b" stroke-width=".8"/><path d="M45 47 L47.5 49.5 L51.5 44.5" fill="none" stroke="#ffd9c8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></g>'+shine(g+'h',g+'c'),
+ GOLD(g+'g')+BLUE(g+'b')+RED(g+'r')+PARCH(g+'p')+DS(g+'d')+SH(g+'h')+'<clipPath id="'+g+'c"><rect x="6" y="12" width="52" height="40" rx="5"/></clipPath>')}
+/* KARTIM B: rütbe nişanı (kurdeleli madalyon) */
+function cardB(n){var g='cb'+n;return SV('<g filter="url(#'+g+'d)">'+
+ '<path d="M20 4 L30 26 L24 28 Z" fill="url(#'+g+'r)"/><path d="M44 4 L34 26 L40 28 Z" fill="url(#'+g+'b)"/><path d="M20 4 H28 L34 18 M44 4 H36 L30 18" fill="none" stroke="#5a3818" stroke-width=".6" opacity=".4"/>'+
+ '<circle cx="32" cy="40" r="18" fill="url(#'+g+'g)" stroke="#9a5c00" stroke-width="1.4"/><circle cx="32" cy="40" r="13" fill="none" stroke="#fff3b0" stroke-width="1.2" opacity=".8"/>'+
+ '<path d="M32 30 L35 37 L42 37 L36.5 41.5 L38.5 49 L32 44.5 L25.5 49 L27.5 41.5 L22 37 L29 37Z" fill="#fff8d8" stroke="#c98a10" stroke-width=".8"/></g>'+shine(g+'h',g+'c'),
+ GOLD(g+'g')+RED(g+'r')+BLUE(g+'b')+DS(g+'d')+SH(g+'h')+'<clipPath id="'+g+'c"><circle cx="32" cy="40" r="18"/></clipPath>')}
+/* AYARLAR A: örs + çekiç (demirci) */
+function setA(n){var g='sa'+n;return SV('<g filter="url(#'+g+'d)">'+
+ '<path d="M6 34 H44 C52 34 58 30 60 26 C56 38 48 40 44 42 V46 H50 V52 H18 V46 H24 V42 C16 42 8 40 6 34Z" fill="url(#'+g+'s)" stroke="#3d4555" stroke-width="1.4" stroke-linejoin="round"/>'+
+ '<path d="M8 36 H44" stroke="#fff" stroke-width="1.2" opacity=".6"/>'+
+ '<g><animateTransform attributeName="transform" type="rotate" values="0 40 26;-28 40 26;0 40 26;0 40 26" keyTimes="0;.35;.5;1" dur="1.8s" repeatCount="indefinite"/>'+
+ '<rect x="38" y="6" width="4" height="26" rx="1.5" fill="url(#'+g+'w)" transform="rotate(-35 40 26)"/><rect x="28" y="2" width="16" height="9" rx="2" fill="url(#'+g+'s)" stroke="#3d4555" stroke-width="1" transform="rotate(-35 40 26)"/></g>'+
+ '<g><path d="M34 32 L31 27 M38 31 L38 25 M42 32 L45 27" stroke="#ffcf5a" stroke-width="1.6" stroke-linecap="round"><animate attributeName="opacity" values="0;0;1;0" keyTimes="0;.48;.52;.7" dur="1.8s" repeatCount="indefinite"/></path></g></g>',
+ STEEL(g+'s')+WOOD(g+'w')+DS(g+'d'))}
+/* AYARLAR B: bronz dişli çark, ortasında arma */
+function setB(n){var g='sb'+n,t='',i;for(i=0;i<10;i++){t+='<rect x="28.5" y="4" width="7" height="10" rx="1.5" transform="rotate('+(i*36)+' 32 32)"/>'}
+ return SV('<g filter="url(#'+g+'d)"><g fill="url(#'+g+'g)" stroke="#8a5300" stroke-width="1"><animateTransform attributeName="transform" type="rotate" values="0 32 32;36 32 32" dur="6s" repeatCount="indefinite"/>'+t+'<circle cx="32" cy="32" r="20"/></g>'+
+ '<circle cx="32" cy="32" r="13" fill="url(#'+g+'r)" stroke="#fff3b0" stroke-width="1.4"/><path d="M27 32 L31 36 L38 28" fill="none" stroke="#fff3d6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0"/>'+
+ '<path d="M32 23 L34 29 L40 29 L35 33 L37 39 L32 35.5 L27 39 L29 33 L24 29 L30 29Z" fill="#fff4c8"/></g>',
+ GOLD(g+'g')+RED(g+'r')+DS(g+'d'))}
+
+/* KARTIM C1: kişisel sancak (asılı flama, arma + yıldız) */
+function cardC1(n){var g='c1'+n;return SV('<g filter="url(#'+g+'d)">'+
+ '<rect x="10" y="6" width="44" height="4" rx="2" fill="url(#'+g+'w)"/><circle cx="10" cy="8" r="3.2" fill="#e2a83a"/><circle cx="54" cy="8" r="3.2" fill="#e2a83a"/>'+
+ '<path d="M15 10 H49 V50 L32 59 L15 50Z" fill="url(#'+g+'r)" stroke="#e2a83a" stroke-width="1.8" stroke-linejoin="round"><animate attributeName="d" values="M15 10 H49 V50 L32 59 L15 50Z;M15 10 H49 V51 L32 58 L15 51Z;M15 10 H49 V50 L32 59 L15 50Z" dur="2.4s" repeatCount="indefinite"/></path>'+
+ '<path d="M19 10 V49 M45 10 V49" stroke="#ffd98a" stroke-width="1" opacity=".55"/>'+
+ '<g transform="translate(19 15) scale(.41)"><path d="'+SHIELD+'" fill="url(#'+g+'b)" stroke="#ffd24a" stroke-width="4"/><path d="M22 16 L25 22 L32 22 L26.5 26 L28.5 33 L22 29 L15.5 33 L17.5 26 L12 22 L19 22Z" transform="translate(10 8) scale(.9)" fill="#fff1b8"/></g>'+
+ '<path d="M24 47 H40" stroke="#ffd98a" stroke-width="2" stroke-linecap="round"/></g>'+shine(g+'h',g+'c'),
+ GOLD(g+'g')+RED(g+'r')+BLUE(g+'b')+WOOD(g+'w')+DS(g+'d')+SH(g+'h')+'<clipPath id="'+g+'c"><path d="M15 10 H49 V50 L32 59 L15 50Z"/></clipPath>')}
+/* KARTIM C2: altın çerçeveli portre (miğferli şövalye silueti) */
+function cardC2(n){var g='c2'+n;return SV('<g filter="url(#'+g+'d)">'+
+ '<path d="M32 3 C40 3 46 6 50 10 C56 12 58 18 58 24 V44 C58 54 48 60 32 60 C16 60 6 54 6 44 V24 C6 18 8 12 14 10 C18 6 24 3 32 3Z" fill="url(#'+g+'g)" stroke="#9a5c00" stroke-width="1.2"/>'+
+ '<path d="M32 9 C39 9 44 12 47 15 C51 17 52 21 52 26 V43 C52 50 44 54 32 54 C20 54 12 50 12 43 V26 C12 21 13 17 17 15 C20 12 25 9 32 9Z" fill="url(#'+g+'p)" stroke="#b5832a" stroke-width="1"/>'+
+ '<path d="M20 54 C20 46 24 42 32 42 C40 42 44 46 44 54Z" fill="#3b4a78"/>'+
+ '<path d="M23 30 C23 22 27 18 32 18 C37 18 41 22 41 30 V36 C41 39 39 41 36 41 H28 C25 41 23 39 23 36Z" fill="url(#'+g+'s)" stroke="#3d4555" stroke-width="1"/><path d="M25 29 H39" stroke="#1c2130" stroke-width="2.4" stroke-linecap="round"/><path d="M32 18 V41" stroke="#e2a83a" stroke-width="2"/>'+
+ '<path d="M32 18 C29 12 35 9 39 11 C36 12 34 14 33 18Z" fill="#d8392c"/>'+
+ '<circle cx="32" cy="5" r="3" fill="#d8392c" stroke="#fff3b0" stroke-width="1"/></g>'+shine(g+'h',g+'c'),
+ GOLD(g+'g')+STEEL(g+'s')+PARCH(g+'p')+DS(g+'d')+SH(g+'h')+'<clipPath id="'+g+'c"><path d="M32 3 C40 3 46 6 50 10 C56 12 58 18 58 24 V44 C58 54 48 60 32 60 C16 60 6 54 6 44 V24 C6 18 8 12 14 10 C18 6 24 3 32 3Z"/></clipPath>')}
+/* KARTIM C3: deri ciltli şövalye defteri (kapakta arma, kırmızı kurdele) */
+function cardC3(n){var g='c3'+n;return SV('<g filter="url(#'+g+'d)">'+
+ '<rect x="14" y="8" width="40" height="50" rx="3" fill="#f3e3bd" stroke="#8a6a3c" stroke-width="1"/><path d="M16 10 V56" stroke="#d8c39a" stroke-width="1"/>'+
+ '<rect x="10" y="5" width="40" height="50" rx="4" fill="url(#'+g+'w)" stroke="#4a2c12" stroke-width="1.4"/><path d="M15 5 V55" stroke="#4a2c12" stroke-width="1.2" opacity=".5"/>'+
+ '<rect x="19" y="10" width="26" height="40" rx="2" fill="none" stroke="#e2a83a" stroke-width="1.2" stroke-dasharray="3 2"/>'+
+ '<g transform="translate(20 15) scale(.38)"><path d="'+SHIELD+'" fill="url(#'+g+'r)" stroke="#ffd24a" stroke-width="5"/><path d="M22 16 L25 22 L32 22 L26.5 26 L28.5 33 L22 29 L15.5 33 L17.5 26 L12 22 L19 22Z" transform="translate(10 8) scale(.9)" fill="#fff1b8"/></g>'+
+ '<path d="M38 55 V62 L41 59 L44 62 V55" fill="#c8302a"/></g>'+shine(g+'h',g+'c'),
+ GOLD(g+'g')+RED(g+'r')+WOOD(g+'w')+DS(g+'d')+SH(g+'h')+'<clipPath id="'+g+'c"><rect x="10" y="5" width="40" height="50" rx="4"/></clipPath>')}
+return {cardC1:cardC1,cardC2:cardC2,cardC3:cardC3,playA:playA,playB:playB,friendsA:friendsA,friendsB:friendsB,cardA:cardA,cardB:cardB,setA:setA,setB:setB};
+})();
+
+var TABS=[['playA','Oyna'],['friendsA','Arkadaşlar'],['cardC2','Kartım'],['setA','Ayarlar']];
+function tabIco(i,on){var h=TI[TABS[i][0]]('t'+(++ICN));if(!on||RMOT)h=h.replace(/<animate(Transform|Motion)?\b[^>]*\/>/g,'');return h}
 function tabOn(){
   var s=st.screen;if(!st.profile)return -1;
   if(s==='home')return 0;if(s==='friends')return 1;if((s==='kart'||s==='rozet')&&!st.kc)return 2;if(s==='history')return 2;if(s==='hesap')return 3;
@@ -7259,8 +7368,9 @@ function tabOn(){
 function tabsUi(){
   var t=document.getElementById('tabs'),on=tabOn();
   if(!t){t=document.createElement('nav');t.id='tabs';t.className='tabs';t.setAttribute('aria-label','Ana bölümler');
-    t.innerHTML=TABS.map(function(x,i){return '<button onclick="tabGo('+i+')"><span>'+x[0]+'</span>'+x[1]+(i===1?'<i id="tab-frb"></i>':'')+'</button>'}).join('');document.body.appendChild(t)}
+    t.innerHTML=TABS.map(function(x,i){return '<button onclick="tabGo('+i+')"><span class="tico2"></span>'+x[1]+(i===1?'<i id="tab-frb"></i>':'')+'</button>'}).join('');t._on=-2;document.body.appendChild(t)}
   t.hidden=on<0;document.body.classList.toggle('hastabs',on>=0);
+  if(t._on!==on){t._on=on;[].forEach.call(t.children,function(b,i){var sp=b.querySelector('.tico2');if(sp)sp.innerHTML=tabIco(i,i===on)})}
   [].forEach.call(t.children,function(b,i){b.classList.toggle('on',i===on);if(i===on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
   tabBadge();
 }
