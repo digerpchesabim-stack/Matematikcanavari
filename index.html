@@ -685,6 +685,7 @@ body.gufull .mmbtn,body.gufull #tabs{display:none!important}
 .guvb{position:absolute;right:14px;top:calc(14px + var(--safe-area-inset-top,env(safe-area-inset-top,0px)));padding:9px 16px;border-radius:999px;border:1px solid rgba(255,226,160,.6);background:rgba(20,12,4,.55);color:#ffe9b0;font:700 16px MCL,Lora,Georgia,serif;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .guvp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:16px 26px;border-radius:999px;border:1.5px solid #e9b949;background:rgba(30,18,6,.75);color:#ffe9b0;font:700 20px MCL,Lora,Georgia,serif;cursor:pointer}
 .gsto{width:42px;height:42px;border-radius:10px;background:#efe0bb;color:#3b2a18;border:1.5px solid #3b2a18;font-size:19px;display:grid;place-items:center;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.3)}
+.gtest{position:fixed;left:50%;transform:translateX(-50%);top:calc(64px + var(--safe-area-inset-top,env(safe-area-inset-top,0px)));z-index:7;padding:4px 12px;border-radius:999px;background:rgba(142,47,42,.9);color:#fff;font-size:13px;font-weight:700;pointer-events:none;white-space:nowrap}
 /* harita */
 .gum{position:fixed;inset:0;padding-bottom:200px;overflow-y:auto;overflow-x:hidden;background:#2a2016;-webkit-overflow-scrolling:touch;z-index:5}
 .gmw{position:relative;width:100%;max-width:480px;margin:0 auto;overflow:hidden}
@@ -6748,6 +6749,8 @@ var GUK={spider:['Dev Örümcek',1,1],viper:['Dev Engerek',1,0],golem:['Taş Dev
   bat:['Sis Yarasası',0,0],crow:['Sis Kargası',0,0],wolf:['Sis Kurdu',0,0],vine:['Diken Sarmaşık',0,0],scorp:['Taş Akrep',0,0],lizard:['Kaya Kertenkelesi',0,0],guard:['Gölge Muhafız',0,1],rat:['Dikenli Fare',0,0]};
 var GUS={4:'bat',8:'crow',12:'spider',16:'wolf',20:'vine',24:'viper',27:'scorp',30:'kraken',33:'lizard',36:'golem',40:'guard',44:'rat',47:'wizard',48:'eye',49:'knight'};
 var GUP={4:'Sis Çalılığı',8:'Kuru Ağaç',12:'Örümcek Mağarası',16:'Kurt Geçidi',20:'Dikenli Patika',24:'Engerek Bataklığı',27:'Kayalık',30:'Kara Göl',33:'Sıcak Taşlar',36:'Taş Geçit',40:'Gölge Kapısı',44:'Eski Mahzen',47:'Büyücü Kulesi',48:'Kule Kapısı',49:'Güneş Kulesi'};
+/* ön izleme (claude.ai test bağlantısı): bütün duraklar açık, kapı ışık istemez; asıl sitede ve Android'de kapalı */
+var GUT=(function(){try{return !NATIVE&&location.protocol==='https:'&&!/github\.io$/.test(location.hostname)}catch(e){return false}})();
 var GUGATE=40,GUQN=10,GU={sel:0,walk:null,amb:null,ambN:'',tk:null};
 function guReg(n){for(var i=0;i<5;i++)if(n<=GUR[i].b)return i;return 4}
 function guLv(n){if(n>=48)return 'o';var r=GUR[guReg(n)],f=(n-r.a)/(r.b-r.a);return f<0.34?'k':(f<0.67?'o':'z')}
@@ -6955,13 +6958,13 @@ function guBase(cb){
     GUM.cv=cv;GUM.sc=s;cb(cv);
   },30);
 }
-function guFogY(d){var nx=Math.min(49,d.c+1),r=guReg(nx);return r>=4?-1:GUM.regY(r)}
+function guFogY(d){if(GUT)return -1;var nx=Math.min(49,d.c+1),r=guReg(nx);return r>=4?-1:GUM.regY(r)}
 function guNodeHtml(n,d,s){
   var p=GUM.ST[n-1],k=guKind(n),c=GUS[n],done=n<=d.c,nxt=n===d.c+1,cls='gst',inner,fy=guFogY(d),fogd=fy>0&&p[1]<fy;
   if(k===2){cls+=' boss';inner='<img src="gu/'+c+'-p.webp" alt="" draggable="false"><i class="gsb">'+(done?'✓':n)+'</i>'}
   else if(k===1){cls+=' sur';inner=done?'<img src="gu/'+c+'-p.webp" alt="" draggable="false"><i class="gsb">✓</i>':'<b>?</b>'}
   else inner='<b>'+n+'</b>';
-  if(done)cls+=' done';else if(nxt)cls+=' nxt';else cls+=' lock';
+  if(done)cls+=' done';else if(nxt)cls+=' nxt';else if(!GUT)cls+=' lock';
   if(fogd)cls+=' fogd';if(GU.sel===n)cls+=' sel';
   return '<button class="'+cls+'" id="gst'+n+'" style="left:'+(p[0]*s).toFixed(1)+'px;top:'+(p[1]*s).toFixed(1)+'px" onclick="guTap('+n+')" aria-label="Durak '+n+'">'+inner+(done&&k===0?guStars(d.s[n]|0):'')+'</button>';
 }
@@ -6972,14 +6975,14 @@ function guMapHtml(){
   h+='<div class="gum" id="gum"><div class="gmw" id="gmw" style="height:'+Math.round(GUM.H*s)+'px"><div class="gload" id="gload">🗺️ Harita açılıyor…</div><canvas class="gfog" id="gfog"></canvas>';
   for(n=1;n<=49;n++)h+=guNodeHtml(n,d,s);
   h+=monImg('idle','gmon')+'</div></div>';
-  h+='<div class="gtop"><button class="gbk" onclick="back()" aria-label="Geri">←</button><span class="gch" id="gch">'+r.s+' '+r.n+'</span><span class="gch gl" id="glight">☀️ '+L+'</span><button class="gsto" onclick="guStory()" aria-label="Hikâyeyi izle">📜</button></div>';
+  h+='<div class="gtop"><button class="gbk" onclick="back()" aria-label="Geri">←</button><span class="gch" id="gch">'+r.s+' '+r.n+'</span><span class="gch gl" id="glight">☀️ '+L+'</span><button class="gsto" onclick="guStory()" aria-label="Hikâyeyi izle">📜</button></div>'+(GUT?'<div class="gtest">🧪 Ön izleme: bütün duraklar açık</div>':'');
   h+='<div class="gcard" id="gcard">'+guCardHtml(sel,d)+'</div>';
   return h;
 }
 function guCardHtml(n,d){
-  var k=guKind(n),c=GUS[n],r=GUR[guReg(n)],lv=guLv(n),done=n<=d.c,open=n<=d.c+1,L=guLight(d),t,p,b;
+  var k=guKind(n),c=GUS[n],r=GUR[guReg(n)],lv=guLv(n),done=n<=d.c,open=GUT||n<=d.c+1,L=guLight(d),t,p,b;
   var LVT={k:'Kolay',o:'Orta',z:'Zor'};
-  if(n===48&&open&&L<GUGATE){
+  if(n===48&&open&&L<GUGATE&&!GUT){
     return '<h3>🚪 Kule Kapısı</h3><p>Kapıyı açmak için <b>'+GUGATE+' güneş ışığı</b> gerekiyor. Yaratık yendikçe ve durakları üç yıldızla geçtikçe ışık toplarsın.</p><div class="gpr"><i style="width:'+Math.round(L*100/GUGATE)+'%"></i></div><p class="gsm">'+L+' / '+GUGATE+' ☀️ · '+(GUGATE-L)+' ışık daha</p><button class="gbtn" onclick="guGate()">🚪 Kapıyı dene</button>';
   }
   if(k===2){t='👑 '+GUP[n]+' · '+GUK[c][0];p='Bölgenin bekçisi. Önce doğru bilen vurur: bekçinin 5, senin 3 canın var.'}
@@ -6990,7 +6993,7 @@ function guCardHtml(n,d){
 }
 function guTap(n){
   var d=guD();sndPop();
-  if(n>d.c+1){toast('Önce '+(d.c+1)+'. durağı geç');}
+  if(n>d.c+1&&!GUT){toast('Önce '+(d.c+1)+'. durağı geç');}
   var o=document.getElementById('gst'+GU.sel);if(o)o.classList.remove('sel');
   GU.sel=n;var e=document.getElementById('gst'+n);if(e)e.classList.add('sel');
   var c=document.getElementById('gcard');if(c)c.innerHTML=guCardHtml(n,d);
@@ -6998,8 +7001,8 @@ function guTap(n){
 }
 function guGate(){var d=guD();guS('gate-locked',.9);buzz([60,80,60]);toast('Kapı kapalı. '+(GUGATE-guLight(d))+' güneş ışığı daha topla')}
 function guPlay(n){
-  var d=guD();if(n>d.c+1)return guTap(n);
-  if(n===48&&guLight(d)<GUGATE)return guGate();
+  var d=guD();if(n>d.c+1&&!GUT)return guTap(n);
+  if(n===48&&guLight(d)<GUGATE&&!GUT)return guGate();
   guAmbStop();
   if(guKind(n))return guDuelOpen(n);
   guStopOpen(n);
