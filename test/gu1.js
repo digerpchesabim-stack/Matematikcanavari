@@ -112,7 +112,9 @@ await p.evaluate(()=>{GD.pc=1;Math.random=()=>0.01});
 await p.evaluate(()=>guFight());
 await sleep(700);
 await p.evaluate(()=>{var q=GD.q,i=q.opts.findIndex(o=>o.v!==q.ans);guAns(i,document.querySelectorAll('#gd-a .ani')[i])});
-ok(await p.evaluate(()=>GD.lock===true),'yanlışta soruda kilit');
+ok(await p.evaluate(()=>GD.res===true&&GD.lock===true),'yanlış cevap → tur bitti');
+await sleep(700);
+ok(await p.evaluate(()=>GD.me===2&&/fırsatı kaçırmadı/.test(document.getElementById('gd-m').textContent)),'yanlışta yaratık hemen vurdu (1 can gitti)');
 await sleep(500);await shot('11_foehit');
 for(let i=0;i<40;i++){if(await p.evaluate(()=>GD&&GD.ph==='lose'))break;await sleep(300)}
 ok(await p.evaluate(()=>GD&&GD.ph==='lose'&&GD.me===0&&__GU.st().d.c===11),'3 can gitti → kayıp, ilerleme yok');
