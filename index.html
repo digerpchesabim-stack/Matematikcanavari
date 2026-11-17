@@ -1127,12 +1127,22 @@ function genQuestion(){
   var q=rnd(Math.ceil(lo/b),Math.floor(hi/b));
   return {text:(b*q)+' ÷ '+b+' = ?',ans:q,a:b*q,b:b,sym:'÷'};
 }
+/* seçenekler: cevap ≥10 ise en az bir yanlış seçenek aynı rakamla biter (son basamağa bakıp seçilmesin).
+   Rastgele sayı çekmez: kapışmalarda soru sırası değişmez. keep = dokunulmayacak seçenekler */
+function optEnd(vals,ans,keep){
+  if(!(ans>=10))return vals;var d=ans%10,i,k=keep||[];
+  for(i=0;i<vals.length;i++)if(vals[i]!==ans&&vals[i]%10===d)return vals;
+  var c=[ans-10,ans+10,ans+20,ans-20].filter(function(v){return v>0&&vals.indexOf(v)<0})[0];if(c==null)return vals;
+  for(i=vals.length-1;i>=0;i--)if(vals[i]!==ans&&k.indexOf(vals[i])<0){vals[i]=c;return vals}
+  for(i=vals.length-1;i>=0;i--)if(vals[i]!==ans){vals[i]=c;return vals}
+  return vals;
+}
 function choices(ans){
   var set=[ans],deltas=[-10,-1,1,10,-100,100,2,-2,-9,9,11,-11],tries=0;
   while(set.length<4&&tries<200){tries++;var c=ans+deltas[rnd(0,deltas.length-1)];if(c>=0&&set.indexOf(c)<0)set.push(c)}
   var n=1;while(set.length<4){if(set.indexOf(ans+n)<0)set.push(ans+n);n++}
   for(var i=set.length-1;i>0;i--){var j=rnd(0,i),t=set[i];set[i]=set[j];set[j]=t}
-  return set;
+  return optEnd(set,ans);
 }
 function newQ(){
   var q,i;
@@ -1325,7 +1335,7 @@ function choicesK(ans,extras){
   while(set.length<4&&tries<300){tries++;var c=ans+deltas[rnd(0,deltas.length-1)];if(c>0&&set.indexOf(c)<0)set.push(c)}
   var n=1;while(set.length<4){if(set.indexOf(ans+n)<0)set.push(ans+n);n++}
   for(i=set.length-1;i>0;i--){var j=rnd(0,i),t=set[i];set[i]=set[j];set[j]=t}
-  return set;
+  return optEnd(set,ans,extras);
 }
 
 /* ---------- internet: Firebase (sadece yarış odaları için, girişsiz) ---------- */
@@ -1958,6 +1968,7 @@ function gQ0(){
   for(i=pool.length-1;i>0;i--){var j=rnd(0,i),tmp=pool[i];pool[i]=pool[j];pool[j]=tmp}
   var vals=pool.slice(0,3);vals.push(ans);
   for(i=vals.length-1;i>0;i--){var k=rnd(0,i),t2=vals[i];vals[i]=vals[k];vals[k]=t2}
+  optEnd(vals,ans);
   return {txt:txt,ans:ans,opts:vals.map(function(v){return {v:v}})};
 }
 function gOptsHtml(q){
