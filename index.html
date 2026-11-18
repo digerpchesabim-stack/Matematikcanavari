@@ -3894,8 +3894,23 @@ function frWipe(p,mx){
   }).then(function(){return Promise.all(['from','to'].map(function(k){return fb.getDocs(fb.query(fb.collection(CL.db,'ms'),fb.where(k,'==',me.id))).then(function(qs){var ps=[];qs.forEach(function(d){ps.push(fb.deleteDoc(fb.doc(CL.db,'ms',d.id)).catch(function(){}))});return Promise.all(ps)}).catch(function(){})}))}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'iv',me.id)).catch(function(){})}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'ps',me.id)).catch(function(){})}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pl',me.id))}).then(function(){return fb.deleteDoc(fb.doc(CL.db,'pk',me.id))}).catch(function(){});
 }
 
-/* ---------- karşılama: canavar rakam ve sembolleri kovalar (S59: 3B canavar + 3B semboller) ---------- */
-var CH={raf:0,t:0,W:480,H:440,m:null,it:[],cr:[],tgt:null,sp:{},spn:0};
+/* ---------- karşılama: canavar rakam ve sembolleri kovalar (S59: 3B canavar + 3B semboller) ----------
+   S70: yemek yerine ateş topuyla yakar; arka plan ortaçağ talim kampı (wel-bg.webp, talim sahnesiyle aynı çizim) */
+var CH={raf:0,t:0,W:480,H:440,m:null,it:[],cr:[],tgt:null,sp:{},spn:0,fb:null,bg:null};
+/* ateş sesi: alçak geçiren gürültü "fuuş" + gövde + çıtırtılar; isabet: "puf" */
+function chNoise(c){if(!AU.nb2){AU.nb2=c.createBuffer(1,Math.floor(c.sampleRate*1.2),c.sampleRate);var d=AU.nb2.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1}return AU.nb2}
+function sndFire(){sfxPlay(function(t){var c=AU.ctx,nb=chNoise(c),out=c.createGain();out.gain.value=1.1;out.connect(AU.sg);
+  var n=c.createBufferSource();n.buffer=nb;var lp=c.createBiquadFilter();lp.type='lowpass';lp.Q.value=0.8;lp.frequency.setValueAtTime(350,t);lp.frequency.exponentialRampToValueAtTime(3200,t+0.12);lp.frequency.exponentialRampToValueAtTime(700,t+0.7);
+  var g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.8,t+0.05);g.gain.setValueAtTime(0.8,t+0.16);g.gain.exponentialRampToValueAtTime(0.0001,t+0.75);n.connect(lp);lp.connect(g);g.connect(out);n.start(t);n.stop(t+0.8);
+  var o=c.createOscillator();o.type='sawtooth';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(55,t+0.45);var ol=c.createBiquadFilter();ol.type='lowpass';ol.frequency.value=420;var og=c.createGain();og.gain.setValueAtTime(0.0001,t);og.gain.exponentialRampToValueAtTime(0.3,t+0.04);og.gain.exponentialRampToValueAtTime(0.0001,t+0.5);o.connect(ol);ol.connect(og);og.connect(out);o.start(t);o.stop(t+0.55);
+  for(var i=0;i<8;i++){var ct=t+0.06+Math.random()*0.55,k=c.createBufferSource();k.buffer=nb;var hp=c.createBiquadFilter();hp.type='highpass';hp.frequency.value=2500+Math.random()*2500;var kg=c.createGain();kg.gain.setValueAtTime(0.0001,ct);kg.gain.exponentialRampToValueAtTime(0.25+Math.random()*0.2,ct+0.004);kg.gain.exponentialRampToValueAtTime(0.0001,ct+0.05);k.connect(hp);hp.connect(kg);kg.connect(out);k.start(ct,Math.random()*0.5);k.stop(ct+0.08)}})}
+function sndPuff(){sfxPlay(function(t){var c=AU.ctx,n=c.createBufferSource();n.buffer=chNoise(c);var lp=c.createBiquadFilter();lp.type='lowpass';lp.frequency.setValueAtTime(2400,t);lp.frequency.exponentialRampToValueAtTime(300,t+0.3);var g=c.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.7,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+0.35);n.connect(lp);lp.connect(g);g.connect(AU.sg);n.start(t,0.3);n.stop(t+0.4);
+  tone(150,t,0.22,'sine',0.35,AU.sg);[880,1175].forEach(function(f,i){tone(f,t+0.05+i*0.06,0.35,'triangle',0.12,AU.sg)})})}
+/* ateş topu: ağızdan çıkar, hedefin o anki yerine kavisli uçar; isabette sembol alev ve kıvılcımla dağılır */
+function chFire(t){var m=CH.m;if(!m||CH.fb||!t)return;
+  t.eat=1;m.food=t;m.eat=0.001;m.vx*=0.2;m.vy*=0.2;CH.tgt=null;
+  m.fy=-Math.max(-1,Math.min(1,(t.x-m.x)/150))*0.9;
+  CH.fb={t:-0.16,tg:t,x:m.x,y:m.y,lift:40+Math.random()*30}}
 var CHSYM=['0','1','2','3','4','5','6','7','8','9','+','−','×','÷','='];
 function chNew(edge){
   var W=CH.W,H=CH.H,x,y,a=Math.random()*Math.PI*2,sp=16+Math.random()*20;
@@ -3924,6 +3939,7 @@ function chSym(c,it,k,ds){
 }
 function chStart(){
   var cv=document.getElementById('mon');if(!cv)return;
+  if(!CH.bg){CH.bg=new Image();CH.bg.src='wel-bg.webp'}
   if(!CH.m){CH.m={x:CH.W/2,y:CH.H/2,vx:0,vy:0,r:78,eat:0,food:null,hop:0,dir:1,yaw:0,pit:0,wk:0,bt:1.5,bl:0,tk:0,land:0,joy:0};CH.it=[];for(var i=0;i<7;i++)CH.it.push(chNew(false))}
   /* tuval ekran çözünürlüğünde (en çok 2 kat) çizilir; 3B canavar ve semboller net görünsün */
   try{var bw=cv.getBoundingClientRect().width,k=!bw?1:Math.max(1,Math.min(2,Math.round((window.devicePixelRatio||1)*bw/CH.W*4)/4));if(cv.width!==CH.W*k){cv.width=CH.W*k;cv.height=CH.H*k}}catch(e){}
@@ -3941,7 +3957,7 @@ function chTap(ev){
     m.tk=0.8;buzz([18,45,18,45,18,45,30]);return;
   }
   for(i=0;i<CH.it.length;i++){var it=CH.it[i];if(it.eat)continue;d=Math.hypot(it.x-x,it.y-y);if(d<bd){bd=d;b=it}}
-  if(b&&bd<64){CH.tgt=b;b.vx*=0.3;b.vy*=0.3}
+  if(b&&bd<64){if(!CH.fb&&!m.eat&&!m.hop&&!(m.tk>0))chFire(b);else{CH.tgt=b;b.vx*=0.3;b.vy*=0.3}}
 }
 function chFrame(now){
   CH.raf=0;
@@ -3963,12 +3979,21 @@ function chFrame(now){
   }
   /* canavar: yeme süreci (gıdıklanırken de sürer) */
   if(m.eat){
-    m.eat+=dt;var f=m.food;
-    if(f){var u=Math.min(1,m.eat/0.25);f.x+=(m.x-f.x)*u*0.5;f.y+=(m.y-m.r*0.42-f.y)*u*0.5;f.s=Math.max(0,1-m.eat/0.3)}
-    if(m.eat<0.3)o.m=Math.min(1,m.eat/0.15);
-    else if(m.eat<1.0){var cu=(m.eat-0.3)/0.7;o.m=Math.abs(Math.cos(cu*Math.PI*3))*0.5;if(f&&!f.done){f.done=1;CH.it.splice(CH.it.indexOf(f),1);sndCrunch()}
-      if(Math.random()<0.25)CH.cr.push({x:m.x+(Math.random()-0.5)*50,y:m.y+m.r*0.35,vx:(Math.random()-0.5)*120,vy:-Math.random()*120-40,s:4+Math.random()*4,l:0.7,col:f?f.col:'#f59e0b'})}
-    else if(m.eat<1.4){o.happy=true;m.joy=1}
+    /* ateş: 0,16 sn nişan (ağız açılır), ateş topu uçar; isabetten sonra sevinir */
+    m.eat+=dt;var fb=CH.fb,f=m.food;
+    if(fb){
+      var R0=m.r*dsc(m.y),mx=m.x-Math.sin(m.yaw)*R0*0.5,my=m.y-R0*0.45;
+      if(fb.t<0){fb.t+=dt;fb.x=mx;fb.y=my;o.m=0.6;if(fb.t>=0){fb.x0=mx;fb.y0=my;fb.dur=0.3+Math.hypot(f.x-mx,f.y-my)/1100;sndFire();buzz(15);
+        for(i=0;i<(LITE?3:8);i++)CH.cr.push({x:mx,y:my,vx:(Math.random()-0.5)*90,vy:-Math.random()*90-10,s:2+Math.random()*2.5,l:0.4,col:'#ffcf6b',g:60,add:1})}}
+      else{o.m=Math.max(0,0.9-fb.t*1.5);fb.t+=dt/fb.dur;var uu=Math.min(1,fb.t),aa=1-uu,cx=(fb.x0+f.x)/2,cy=Math.min(fb.y0,f.y)-fb.lift;
+        fb.x=aa*aa*fb.x0+2*aa*uu*cx+uu*uu*f.x;fb.y=aa*aa*fb.y0+2*aa*uu*cy+uu*uu*f.y;
+        if(!LITE&&!RMOT)for(i=0;i<2;i++)CH.cr.push({x:fb.x+(Math.random()-0.5)*6,y:fb.y+(Math.random()-0.5)*6,vx:(Math.random()-0.5)*40,vy:(Math.random()-0.5)*40,s:2+Math.random()*3.5,l:0.32,col:Math.random()<0.5?'#ffb347':'#ff7a2f',g:1,add:1});
+        if(fb.t>=1){CH.fb=null;sndPuff();buzz([20,40,20]);m.eat=Math.max(m.eat,0.6);
+          var nP=RMOT?8:(LITE?14:30),cols=[f.col,'#ffe27a','#ffb347','#fff'];
+          for(i=0;i<nP;i++){var an=Math.random()*6.28,vv=60+Math.random()*190;CH.cr.push({x:f.x,y:f.y,vx:Math.cos(an)*vv,vy:Math.sin(an)*vv-40,s:2+Math.random()*4,l:0.5+Math.random()*0.5,col:cols[i%4],g:140,add:1})}
+          for(i=0;i<5;i++)CH.cr.push({x:f.x+(Math.random()-0.5)*20,y:f.y+(Math.random()-0.5)*14,vx:(Math.random()-0.5)*24,vy:-20-Math.random()*20,s:8+Math.random()*7,l:0.9+Math.random()*0.4,col:'rgba(90,80,70,.32)',g:-10,smoke:1});
+          f.done=1;var ix=CH.it.indexOf(f);if(ix>=0)CH.it.splice(ix,1);m.food=null}}
+    }else if(m.eat<1.3){o.happy=true;m.joy=1}
     else{m.eat=0;m.food=null;m.joy=0;CH.it.push(chNew(true))}
   }
   if(m.tk>0){
@@ -3982,7 +4007,7 @@ function chFrame(now){
       dx=t.x-m.x;dy=t.y-m.y;d=Math.hypot(dx,dy)||1;
       m.vx+=(dx/d*125-m.vx)*Math.min(1,dt*3);m.vy+=(dy/d*125-m.vy)*Math.min(1,dt*3);
       if(Math.abs(m.vx)>8)m.dir=m.vx>0?1:-1;
-      if(d<m.r*0.8){t.eat=1;m.eat=0.001;m.food=t;m.vx*=0.2;m.vy*=0.2;CH.tgt=null}
+      if(d<210&&!CH.fb)chFire(t)
     }
   }else{m.vx*=Math.pow(0.05,dt);m.vy*=Math.pow(0.05,dt)}
   if(!m.eat||m.tk>0||m.hop){m.x+=m.vx*dt;m.y+=m.vy*dt}
@@ -3993,13 +4018,13 @@ function chFrame(now){
   /* poz: koştuğu yöne döner ve yatar, hedefe bakar, göz kırpar */
   var tk=m.tk>0,hp=m.hop||0,walk=!m.eat&&!tk&&!hp&&Math.hypot(m.vx,m.vy)>20,ds=dsc(m.y),R=m.r*ds;
   var bob=walk?Math.abs(Math.sin(now/90))*-10:(m.joy&&!tk?Math.abs(Math.sin(now/110))*-7:0),hop=hp?-Math.sin(hp*Math.PI)*52:0;
-  var ty=(m.eat||tk||hp)?0:-cl(m.vx/105)*0.82,tp=(m.eat||tk||hp)?0.04:-cl(m.vy/105)*0.2,tg=CH.tgt;
-  m.yaw+=(ty-m.yaw)*Math.min(1,dt*(tk?12:6));m.pit+=(tp-m.pit)*Math.min(1,dt*6);m.wk+=((walk?1:0)-m.wk)*Math.min(1,dt*8);
+  var ty=(m.eat&&CH.fb)?m.fy:(m.eat||tk||hp)?0:-cl(m.vx/105)*0.82,tp=(m.eat||tk||hp)?0.04:-cl(m.vy/105)*0.2,tg=CH.tgt;
+  m.yaw+=(ty-m.yaw)*Math.min(1,dt*(tk?12:(CH.fb?18:6)));m.pit+=(tp-m.pit)*Math.min(1,dt*6);m.wk+=((walk?1:0)-m.wk)*Math.min(1,dt*8);
   m.bt-=dt;if(m.bt<0){m.bl=0.17;m.bt=1.8+Math.random()*3.2}
   if(m.bl>0){m.bl-=dt;o.blink=Math.sin(Math.PI*cl(1-m.bl/0.17))}
   var roll=walk?(-cl(m.vx/125)*0.07+Math.sin(now/120)*0.05):0,sq=1+(walk?Math.abs(Math.sin(now/90))*0.05-0.02:Math.sin(now/650)*0.012);
   o.live=true;o.nosh=true;o.yaw=m.yaw;o.pitch=m.pit;o.walk=m.wk;o.ph=now/90;
-  o.look=m.eat?[0,-0.3]:(tg&&!hp&&!tk?[cl((tg.x-m.x)/170)*0.3,-cl((tg.y-m.y)/170)*0.5]:null);
+  o.look=m.eat?(m.food?[cl((m.food.x-m.x)/170)*0.3,-cl((m.food.y-m.y)/170)*0.5]:[0,-0.3]):(tg&&!hp&&!tk?[cl((tg.x-m.x)/170)*0.3,-cl((tg.y-m.y)/170)*0.5]:null);
   if(tk){var en=Math.min(1,m.tk/0.12)*Math.min(1,(0.8-m.tk)/0.08+0.4);
     roll=Math.sin(now/36)*0.15*en;sq=1+Math.sin(now/44)*0.055*en;o.happy=true;o.m=0.4+0.3*Math.abs(Math.sin(now/62));o.walk=en;o.ph=now/42;o.look=null}
   if(hp){o.yaw=m.yaw+hp*hp*(3-2*hp)*Math.PI*2;sq+=Math.sin(hp*Math.PI)*0.09-(hp<0.12?(0.12-hp)*0.9:0);o.happy=true;o.m=0.5;o.walk=0}
@@ -4008,6 +4033,7 @@ function chFrame(now){
   if(M3.lf){M3.lf=false;m3dPerf(raw)}
   /* çizim: aşağıdaki nesneler önde (derinlik), önce arkadaki semboller, sonra canavar, sonra öndekiler */
   c.setTransform(kk,0,0,kk,0,0);c.clearRect(0,0,W,H);
+  if(CH.bg&&CH.bg.complete&&CH.bg.naturalWidth)c.drawImage(CH.bg,0,0,W,H);
   var gy=m.y+R*0.55,front=[];
   for(i=0;i<CH.it.length;i++){it=CH.it[i];if(it===m.food||it.y+it.sz*0.3>gy){front.push(it);continue}chSym(c,it,kk,dsc(it.y))}
   var shs=1+hop/170;
@@ -4015,7 +4041,11 @@ function chFrame(now){
   c.save();c.translate(m.x,m.y+bob+hop);c.rotate(roll);
   drawMonster(c,0,0,R,o);c.restore();
   for(i=0;i<front.length;i++)chSym(c,front[i],kk,dsc(front[i].y));
-  for(i=0;i<CH.cr.length;i++){var q=CH.cr[i];c.globalAlpha=Math.max(0,Math.min(1,q.l*2));circ(c,q.x,q.y,q.s,q.col);c.globalAlpha=1}
+  for(i=0;i<CH.cr.length;i++){var q=CH.cr[i];if(!q.smoke)continue;c.globalAlpha=Math.max(0,Math.min(1,q.l));circ(c,q.x,q.y,q.s*(1.6-q.l*0.5),q.col);c.globalAlpha=1}
+  c.save();c.globalCompositeOperation='lighter';
+  for(i=0;i<CH.cr.length;i++){var q2=CH.cr[i];if(q2.smoke)continue;if(!q2.add)c.globalCompositeOperation='source-over';c.globalAlpha=Math.max(0,Math.min(1,q2.l*2));circ(c,q2.x,q2.y,q2.s,q2.col);c.globalCompositeOperation='lighter'}
+  if(CH.fb&&CH.fb.t>=0){var F=CH.fb,fg=c.createRadialGradient(F.x,F.y,0,F.x,F.y,20);fg.addColorStop(0,'rgba(255,255,240,1)');fg.addColorStop(0.3,'rgba(255,220,120,.95)');fg.addColorStop(0.6,'rgba(255,140,40,.6)');fg.addColorStop(1,'rgba(255,90,20,0)');c.globalAlpha=1;c.fillStyle=fg;c.beginPath();c.arc(F.x,F.y,20,0,7);c.fill()}
+  c.restore();c.globalAlpha=1;
   CH.raf=requestAnimationFrame(chFrame);
 }
 /* ---------- menü müziği ---------- */
@@ -6680,7 +6710,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Canavar rakamları kovalıyor. Bir rakama dokun, canavar ona koşsun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+(NATIVE?(NUP.av?' <button class="vupd" onclick="natUpdGo()">🔄 Güncelle</button>':''):' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button>')+'</div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Talim kampında canavar rakamları kovalıyor. Bir rakama dokun, canavar ateş topuyla vursun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+(NATIVE?(NUP.av?' <button class="vupd" onclick="natUpdGo()">🔄 Güncelle</button>':''):' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button>')+'</div></div>';
   }else if(s==='profiles'){
     h=startHtml();
   }else if(s==='mig'){
