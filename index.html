@@ -625,8 +625,8 @@ body.hastabs #toast{bottom:calc(104px + var(--safe-area-inset-bottom,env(safe-ar
 .oquick{animation:oqshk 3s infinite}@keyframes oqshk{0%,67%{transform:none}69%{transform:translate(-1.5px,.5px)}71%{transform:translate(1.5px,-.5px)}73%{transform:translate(-1px,0)}75%,100%{transform:none}}@media (prefers-reduced-motion:reduce){.oquick{animation:none}}
 /* S66: konsept simgeleri */
 .hgi .btn .hico{display:block;width:78px;height:78px;margin:-4px 0 4px}.hgi .btn .hico svg{display:block}
-.hplay .hpm{position:relative;display:block;width:168px;height:168px;flex:none;margin:-6px -6px -6px 0;animation:hpact 4s ease-in-out infinite;pointer-events:none}
-.hplay .hpm img{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;animation:none}
+.hplay .hpm{position:relative;display:block;width:168px;height:168px;flex:none;margin:-6px -6px -6px 0;pointer-events:none}
+.hplay .hpm img,.hplay .hpm canvas{position:absolute;inset:0;width:100%;height:100%;margin:0;animation:none}
 .hplay .hpm img.on{opacity:1}
 @keyframes hpact{0%,30%{transform:none}36%{transform:translateY(-22px) rotate(-6deg)}42%{transform:translateY(0) scale(1.04,.93)}47%{transform:translateY(-12px) rotate(5deg)}53%{transform:none}70%{transform:translateX(-5px)}78%{transform:translateX(5px)}86%,100%{transform:none}}
 .oqsv{width:64px;height:64px;background:none;border-radius:0;margin:-6px 0}.oqsv svg{display:block}
@@ -900,6 +900,15 @@ html[data-fs="2"] .gcard p,html[data-fs="2"] .gdrule{font-size:17.5px}html[data-
 :root[data-theme="dark"] .kcard:not(.fire) .kc-rays{background:repeating-conic-gradient(rgba(232,190,100,.12) 0 9deg,transparent 9deg 22.5deg)}
 :root[data-theme="dark"] .kcard:not(.fire) .rkbar{background:rgba(0,0,0,.35);border-color:rgba(214,170,82,.5)}
 @media (prefers-color-scheme:dark){:root:not([data-theme]) .kcard:not(.fire) .kc-n,:root[data-theme="auto"] .kcard:not(.fire) .kc-n,:root:not([data-theme]) .kcard:not(.fire) .kc-s b,:root[data-theme="auto"] .kcard:not(.fire) .kc-s b{color:#f3e6c8}:root:not([data-theme]) .kcard:not(.fire) .kc-r,:root[data-theme="auto"] .kcard:not(.fire) .kc-r{color:#e8b85a}:root:not([data-theme]) .kcard:not(.fire) .kc-t,:root[data-theme="auto"] .kcard:not(.fire) .kc-t{color:#d6aa52}:root:not([data-theme]) .kcard:not(.fire) small,:root[data-theme="auto"] .kcard:not(.fire) small,:root:not([data-theme]) .kcard:not(.fire) .kc-c,:root[data-theme="auto"] .kcard:not(.fire) .kc-c{color:#c9b791}:root:not([data-theme]) .kcard:not(.fire) .kc-s div,:root[data-theme="auto"] .kcard:not(.fire) .kc-s div{background:rgba(0,0,0,.28);border-color:rgba(214,170,82,.35);box-shadow:none}}
+
+/* S69: ejder yavrusu — düelloda dövüşen ejder ve kıvılcım topu */
+.gdcw canvas.gdf{position:absolute;left:-31%;bottom:4%;width:40%;height:40%;z-index:3;-webkit-mask-image:none!important;mask-image:none!important;pointer-events:none;filter:drop-shadow(0 6px 5px rgba(0,0,0,.35))}
+.gspk{position:absolute;left:-6%;top:58%;width:30px;height:30px;margin:-15px;border-radius:50%;z-index:4;pointer-events:none;opacity:0;background:radial-gradient(circle,#fff 0 18%,#ffe27a 30%,#ff9b2f 55%,rgba(255,120,30,0) 72%);box-shadow:0 0 18px 6px rgba(255,190,80,.55)}
+.gspk.go{animation:gspk .42s cubic-bezier(.3,.1,.6,1) forwards}
+@keyframes gspk{0%{opacity:0;transform:translate(0,0) scale(.4)}15%{opacity:1}85%{opacity:1;transform:translate(min(34vw,140px),-14%) scale(1.15)}100%{opacity:0;transform:translate(min(36vw,150px),-16%) scale(2.2)}}
+.gmon,.gdme0,.gdme1{object-fit:contain}
+canvas.gdme0{height:auto;aspect-ratio:1}canvas.gdme1{height:auto;aspect-ratio:1}
+@media (prefers-reduced-motion:reduce){.gspk.go{animation:none}}
 </style>
 </head>
 <body>
@@ -3955,7 +3964,7 @@ function chFrame(now){
   /* canavar: yeme süreci (gıdıklanırken de sürer) */
   if(m.eat){
     m.eat+=dt;var f=m.food;
-    if(f){var u=Math.min(1,m.eat/0.25);f.x+=(m.x-f.x)*u*0.5;f.y+=(m.y+m.r*0.3-f.y)*u*0.5;f.s=Math.max(0,1-m.eat/0.3)}
+    if(f){var u=Math.min(1,m.eat/0.25);f.x+=(m.x-f.x)*u*0.5;f.y+=(m.y-m.r*0.42-f.y)*u*0.5;f.s=Math.max(0,1-m.eat/0.3)}
     if(m.eat<0.3)o.m=Math.min(1,m.eat/0.15);
     else if(m.eat<1.0){var cu=(m.eat-0.3)/0.7;o.m=Math.abs(Math.cos(cu*Math.PI*3))*0.5;if(f&&!f.done){f.done=1;CH.it.splice(CH.it.indexOf(f),1);sndCrunch()}
       if(Math.random()<0.25)CH.cr.push({x:m.x+(Math.random()-0.5)*50,y:m.y+m.r*0.35,vx:(Math.random()-0.5)*120,vy:-Math.random()*120-40,s:4+Math.random()*4,l:0.7,col:f?f.col:'#f59e0b'})}
@@ -3977,7 +3986,7 @@ function chFrame(now){
     }
   }else{m.vx*=Math.pow(0.05,dt);m.vy*=Math.pow(0.05,dt)}
   if(!m.eat||m.tk>0||m.hop){m.x+=m.vx*dt;m.y+=m.vy*dt}
-  m.x=Math.max(m.r,Math.min(W-m.r,m.x));m.y=Math.max(m.r*1.2,Math.min(H-m.r*1.3,m.y));
+  m.x=Math.max(m.r,Math.min(W-m.r,m.x));m.y=Math.max(m.r*1.45,Math.min(H-m.r*1.3,m.y));
   if(m.hop){m.hop+=dt*1.35;if(m.hop>=1){m.hop=0;m.land=0.26;for(i=0;i<6;i++)CH.cr.push({x:m.x+(Math.random()-0.5)*m.r*1.4,y:m.y+m.r*1.08,vx:(Math.random()-0.5)*160,vy:-Math.random()*50-10,s:5+Math.random()*5,l:0.45,col:'rgba(150,160,200,.55)',g:60})}}
   if(m.land>0)m.land=Math.max(0,m.land-dt);
   for(i=CH.cr.length-1;i>=0;i--){var p=CH.cr[i];p.vy+=(p.g||420)*dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.l-=dt;if(p.l<=0)CH.cr.splice(i,1)}
@@ -5963,9 +5972,56 @@ function monShadow(c,x,y,w,h,a){
 }
 /* Maskot: önce 3B model denenir (S59); WebGL yoksa, derleme sürüyorsa ya da cihaz yavaşsa aşağıdaki 2B çizim kullanılır.
    o: {m ağız 0..1, happy, yaw, pitch, roll, look:[x,y], blink, walk, ph, sq, live (canlı sahne), nosh (gölgeyi çizme), flat (2B zorla)} */
+/* S69: ejder yavrusu — hazır 3B kareler. Atlas mc-atlas.webp: 9 yön (0, -π/8 … -π) × 6 durum (düz, yürüme A/B, ağız açık, mutlu, göz kırpma), kare 288 px;
+   pozitif yön = negatif yönün aynası. Durağan çizim mc-idle/mc-happy (384 px). */
+var DRG={};
+try{setTimeout(function(){drgImg('idle');drgImg('happy');drgImg('atlas')},50)}catch(e){}
+function drgImg(k){var i=DRG[k];if(!i){i=new Image();i.decoding='async';i.src=k==='atlas'?'mc-atlas.webp':k.indexOf('a:')===0?'mca-'+k.slice(2)+'.webp':'mc-'+k+'.webp';DRG[k]=i}return i.complete&&i.naturalWidth?i:null}
+/* hareket şeritleri (mca-<ad>.webp, 6 sütun, kare 256 px, 12 kare/sn) */
+var DRA={idle:24,hop:8,cheer:16,sad:16,sneeze:16,'k-idle':24,'k-hop':8,'k-cheer':16,'k-attack':12,'k-block':10},DRAR=0,DRAT=0;
+function draHtml(a,cls,id){return '<canvas class="dra'+(cls?' '+cls:'')+'"'+(id?' id="'+id+'"':'')+' width="256" height="256" data-a="'+a+'" aria-hidden="true"></canvas>'}
+function draPlay(el,a,then){if(typeof el==='string')el=document.getElementById(el);if(!el||!DRA[a]){if(then)then();return}draInit(el);var d=el._d;d.a=a;d.f=0;d.loop=false;d.then=then||null;drgImg('a:'+a);draStart()}
+function draBase(el,a){if(typeof el==='string')el=document.getElementById(el);if(!el)return;draInit(el);var d=el._d;var was=d.base;d.base=a;if(d.loop&&was!==a){d.a=a;d.f=0}drgImg('a:'+a);draStart()}
+function draInit(el){if(!el._d){var a=el.dataset.a||'idle';el._d={a:a,base:a,f:0,loop:true,then:null,last:-1};drgImg('a:'+a)}}
+function draStart(){if(!DRAR){DRAT=performance.now();DRAR=requestAnimationFrame(draTick)}}
+function draTick(now){
+  DRAR=0;var L=document.querySelectorAll('canvas.dra');if(!L.length)return;
+  var dt=Math.min(0.1,(now-DRAT)/1000);DRAT=now;
+  for(var i=0;i<L.length;i++){var el=L[i];draInit(el);var d=el._d,n=DRA[d.a]||1,im=drgImg('a:'+d.a);
+    if(!RMOT||!d.loop)d.f+=dt*12;
+    if(d.f>=n){if(d.loop)d.f%=n;else{var th=d.then;d.then=null;d.a=d.base;d.loop=true;d.f=0;n=DRA[d.a]||1;im=drgImg('a:'+d.a);if(th)try{th()}catch(e){}}}
+    var fi=RMOT&&d.loop?0:Math.floor(d.f)%n;
+    if(!im){if(d.last!==-2){var st=drgImg(d.a.indexOf('k-')===0?'k-idle':'idle');if(st){var g0=el.getContext('2d');g0.clearRect(0,0,256,256);g0.drawImage(st,0,0,256,256);d.last=-2}}continue}
+    var key=d.a+fi;if(key===d.last)continue;d.last=key;
+    var g=el.getContext('2d');g.clearRect(0,0,256,256);g.drawImage(im,(fi%6)*256,Math.floor(fi/6)*256,256,256,0,0,256,256);
+  }
+  DRAR=requestAnimationFrame(draTick);
+}
+function drgDraw(c,cx,cy,r,o){
+  var sq=o.sq||1,im,sx,sy,S,B,fy,flip=false,st;
+  if(o.live){
+    im=drgImg('atlas');if(!im)im=null;
+    if(im){
+      var y=(o.yaw||0)%(Math.PI*2);if(y>Math.PI)y-=Math.PI*2;if(y<-Math.PI)y+=Math.PI*2;
+      if(y>0){flip=true;y=-y}
+      var di=Math.max(0,Math.min(8,Math.round(-y/(Math.PI/8))));
+      st=o.happy?4:(o.m||0)>0.3?3:(o.blink||0)>0.5?5:(o.walk||0)>0.5?(Math.sin(o.ph||0)>0?1:2):0;
+      S=288;sx=di*S;sy=st*S;B=r*3.2;fy=0.917;
+    }
+  }
+  if(!im){im=drgImg(o.happy?'happy':'idle');if(!im)return false;S=im.naturalWidth;sx=0;sy=0;B=r*2.94;fy=0.93;flip=(o.yaw||0)>0.15}
+  c.save();c.translate(cx,cy+r*1.12);if(flip)c.scale(-1,1);c.scale(1/Math.sqrt(sq),sq);
+  c.drawImage(im,sx,sy,S,S,-B/2,-B*fy,B,B);c.restore();return true;
+}
+function sndSneeze(){sfxPlay(function(t){var c=auCtx();if(!c||!AU.nb)return;
+  tone(520,t,0.22,'sine',0.10,AU.sg);tone(700,t+0.12,0.18,'sine',0.08,AU.sg);
+  var n=c.createBufferSource();n.buffer=AU.nb;n.loop=true;var f=c.createBiquadFilter();f.type='bandpass';f.frequency.setValueAtTime(2600,t+0.32);f.frequency.exponentialRampToValueAtTime(900,t+0.6);f.Q.value=0.8;
+  var g=c.createGain();g.gain.setValueAtTime(0,t+0.3);g.gain.linearRampToValueAtTime(0.5,t+0.34);g.gain.exponentialRampToValueAtTime(0.001,t+0.62);n.connect(f);f.connect(g);g.connect(AU.sg);n.start(t+0.3);n.stop(t+0.7);
+  for(var i=0;i<6;i++)tone(1800+Math.random()*1600,t+0.36+i*0.04,0.05,'triangle',0.05,AU.sg)})}
 function drawMonster(c,cx,cy,r,o){
   o=o||{};var body='#8b5cf6',dark='#7040e0',i,a,m=o.m||0;
-  if(!o.flat&&m3dReady(!o.live)){
+  if(!o.flat){if(!o.nosh)monShadow(c,cx,cy+r*1.14,r*1.05,r*0.2,0.30);drgDraw(c,cx,cy,r,o);return}
+  if(false){
     if(!o.nosh)monShadow(c,cx,cy+r*1.14,r*1.05,r*0.2,0.30);
     /* S61: canlı sahne her cihazda hazır karelerle çizilir (sabit kalite; çözünürlük düşürme yok) */
     if(o.live){if(m3dSprite(c,cx,cy,r,o))return}
@@ -6120,7 +6176,9 @@ function cardMon(c,x,y,r,emo,light){
   c.textAlign='center';c.textBaseline='middle';c.font=Math.round(r*1.05)+'px system-ui,"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';c.fillText(emo,x,y+r*0.06);c.restore();
 }
 function shareCanvas(cv,name){
-  if(cv._rd&&!CARDMON){try{m3dReady(true)}catch(e){}CARDMON=true;try{cv._rd()}catch(e){}CARDMON=false;var rd=cv._rd;setTimeout(function(){try{rd()}catch(e){}},1200)}
+  if(cv._rd&&!CARDMON){CARDMON=true;try{cv._rd()}catch(e){}CARDMON=false;var rd=cv._rd;setTimeout(function(){try{rd()}catch(e){}},1200)}
+  /* görsel dışa verilemiyorsa (ör. file:// açılışında resim kirliliği) canavarsız kartla paylaş */
+  try{cv.getContext('2d').getImageData(0,0,1,1)}catch(e){if(cv._rd){try{cv._rd()}catch(e2){}}else{toast('Görsel oluşturulamadı');return}}
   cv.toBlob(function(b){
     if(!b){toast('Görsel oluşturulamadı');return}
     var f=null;
@@ -6491,15 +6549,18 @@ return {bolt:bolt,key:key,castle:castle,scroll:scroll,help:help,thinker:thinker,
 function mIco(k,anim){var h=MI[k]('m'+(++ICN));if(!anim||RMOT)h=h.replace(/<animate(Transform|Motion)?\b[^>]*\/>/g,'');return h}
 /* S66: Oyna kartındaki canavar — 4 sn'lik hareket döngüsü (bekler, göz kırpar, zıplar, güler, sağa sola bakar, sana bakar) */
 var HPMP=['idle','blink','cheer','happy','sidel','sider','look'],HPMS=[['idle',0],['blink',.22],['idle',.27],['cheer',.33],['happy',.5],['sidel',.66],['sider',.76],['look',.86]],HPMT=null;
-function hpmHtml(){return '<span class="hpm" aria-hidden="true">'+HPMP.map(function(k){return '<img data-k="'+k+'" class="'+(k==='idle'?'on':'')+'" src="'+monSrc(k)+'" alt="" draggable="false">'}).join('')+'</span>'}
+function hpmHtml(){return '<span class="hpm" aria-hidden="true">'+draHtml('idle','','hpmd')+'</span>'}
+var HPMN=0;
 function hpmTick(){
-  var e=document.querySelector('.hpm');if(!e){clearInterval(HPMT);HPMT=null;return}
-  if(RMOT)return;
-  var a=e.getAnimations?e.getAnimations()[0]:null,t=((a&&a.currentTime!=null?a.currentTime:Date.now())%4000)/4000,k='idle';
-  HPMS.forEach(function(x){if(t>=x[1])k=x[0]});
-  if(e.dataset.k!==k){e.dataset.k=k;e.querySelectorAll('img').forEach(function(i){i.className=i.dataset.k===k?'on':''})}
+  var e=document.getElementById('hpmd');if(!e){clearInterval(HPMT);HPMT=null;return}
+  if(RMOT||document.hidden)return;
+  if(e._d&&!e._d.loop)return;
+  if(++HPMN<5+Math.floor(Math.random()*4))return;HPMN=0;
+  var k=Math.random()<0.55?'cheer':'sneeze';
+  if(k==='sneeze')setTimeout(function(){if(document.getElementById('hpmd'))sndSneeze()},500);
+  draPlay(e,k);
 }
-function hpmStart(){if(!HPMT&&document.querySelector('.hpm'))HPMT=setInterval(hpmTick,90)}
+function hpmStart(){if(document.getElementById('hpmd'))draStart();if(!HPMT&&document.getElementById('hpmd'))HPMT=setInterval(hpmTick,1000)}
 /* S65: 3B oda simgeleri (1'e 1 kılıçlar, Takım şövalyeler, Herkes Tek bayrak) */
 function swords(id){var g='sw'+id;return '<svg viewBox="0 0 64 64" width="100%" height="100%" aria-hidden="true"><defs>'+
 '<linearGradient id="'+g+'b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f4f7ff"/><stop offset=".48" stop-color="#cfd8ea"/><stop offset=".52" stop-color="#8e9bb5"/><stop offset="1" stop-color="#b9c4da"/></linearGradient>'+
@@ -6853,7 +6914,7 @@ function render(){
   tabsUi();
   if(s==='home')setTimeout(homeMon,30);
   if(!document.getElementById('mm-btn')){var mb=document.createElement('button');mb.id='mm-btn';mb.className='mmbtn';mb.onclick=mmToggle;document.body.appendChild(mb)}
-  mmUpdate();kaUpdate();monScan();hpmStart();guAfter(s);
+  mmUpdate();kaUpdate();monScan();hpmStart();guAfter(s);if(document.querySelector('canvas.dra'))draStart();
   if(s==='summary')drawReport(document.getElementById('card'));
   if(s==='gover')drawGame(document.getElementById('gcard'));
   if(s==='dover'){var dc0=document.getElementById('dcard');if(dc0)drawDuel(dc0);if(!(DU&&DU.tw))duOverUi()}
@@ -7140,7 +7201,7 @@ function guMapHtml(){
   var sel=GU.sel,r=GUR[guReg(sel)];
   h+='<div class="gum" id="gum"><div class="gmw" id="gmw" style="height:'+Math.round(GUM.H*s)+'px"><div class="gload" id="gload">🗺️ Harita açılıyor…</div><canvas class="gfog" id="gfog"></canvas>';
   for(n=1;n<=49;n++)h+=guNodeHtml(n,d,s);
-  h+=monImg('k-idle','gmon')+'</div></div>';
+  h+=draHtml('k-idle','gmon')+'</div></div>';
   h+='<div class="gtop"><button class="gbk" onclick="back()" aria-label="Geri">←</button><span class="gch" id="gch">'+r.s+' '+r.n+'</span><span class="gch gl" id="glight">☀️ '+L+(d.c<48?' / '+GUGATE:'')+'</span><button class="gsto" onclick="guStory()" aria-label="Hikâyeyi izle">📜</button></div>'+(GUT?'<div class="gtest">🧪 Ön izleme: bütün duraklar açık</div>':'');
   h+='<div class="gcard" id="gcard">'+guCardHtml(sel,d)+'</div>';
   return h;
@@ -7224,14 +7285,14 @@ function guMonAt(n,s){var m=document.querySelector('.gmon'),p=GUM.ST[n-1];if(!m)
 function guWalk(a,b){
   var s=guScale(),m=document.querySelector('.gmon'),sc=document.getElementById('gum');if(!m)return;
   var d0=GUM.STL[a-1],d1=GUM.STL[b-1],t0=0,dur=1600,lx=null;
-  m.classList.add('walk');
+  m.classList.add('walk');draBase(m,'k-hop');
   function step(ts){
     if(!document.body.contains(m))return;
     if(!t0)t0=ts;var u=Math.min(1,(ts-t0)/dur),e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2,p=GUM.at(d0+(d1-d0)*e);
     m.style.left=(p[0]*s)+'px';m.style.top=(p[1]*s)+'px';
     if(lx!==null&&Math.abs(p[0]-lx)>.2)m.classList.toggle('flip',p[0]<lx);lx=p[0];
     if(sc){var want=p[1]*s-60-(sc.clientHeight-240)*0.5;sc.scrollTop+=(want-sc.scrollTop)*0.12}
-    if(u<1)requestAnimationFrame(step);else{m.classList.remove('walk','flip');sndBoing();var e2=document.getElementById('gst'+b);if(e2){e2.classList.add('pop')}}
+    if(u<1)requestAnimationFrame(step);else{m.classList.remove('walk','flip');draBase(m,'k-idle');sndBoing();var e2=document.getElementById('gst'+b);if(e2){e2.classList.add('pop')}}
   }
   requestAnimationFrame(step);
 }
@@ -7409,7 +7470,7 @@ function guPips(){
   var hn=document.getElementById('gd-hn');if(hn)hn.textContent=GD.hp+' / 5';
 }
 function guMeHit(){
-  if(!GD)return;GD.hp--;guS('sword-hit',1);guAva('cheer');guMsg('⚔️ Önce sen bildin!','ok');buzz(30);
+  if(!GD)return;GD.hp--;guS('sword-hit',1);guAva('cheer');draPlay('gd-dr','k-attack');setTimeout(function(){var k=document.getElementById('gd-spk');if(k&&!RMOT){k.classList.remove('go');void k.offsetWidth;k.classList.add('go')}},380);guMsg('⚔️ Önce sen bildin!','ok');buzz(30);
   var sl=document.getElementById('gd-sl');if(sl){sl.classList.remove('go');void sl.offsetWidth;sl.classList.add('go')}
   var dm=document.getElementById('gd-dm');if(dm){dm.classList.remove('go');void dm.offsetWidth;dm.classList.add('go')}
   GD.fl=Date.now();var cw=document.getElementById('gd-cw');if(cw){cw.classList.remove('hit');void cw.offsetWidth;cw.classList.add('hit')}
@@ -7423,7 +7484,7 @@ function guMeHit(){
   setTimeout(function c2(){if(!GD||GD.ph!=='fight')return;if(GD.pz)return setTimeout(c2,250);if(GD.hp<=0)guWin();else guNext()},1100);
 }
 function guFoeHit(msg){
-  if(!GD)return;GD.res=true;GD.me--;GD.an={m:'atk',t0:Date.now()};
+  if(!GD)return;GD.res=true;GD.me--;GD.an={m:'atk',t0:Date.now()};setTimeout(function(){draPlay('gd-dr','k-block')},120);
   var c=GD.c;guS(c==='knight'&&GD.qi%2?'king-attack2':guAtkN(c),.95);
   setTimeout(function(){
     if(!GD)return;guS('creature-hit',.9);buzz([90,40,60]);
@@ -7461,7 +7522,7 @@ function guDuelHtml(){
   if(g.ph==='enc'){
     h+='<div class="gdt"><small>'+guRole(g.n)+'</small><b>'+nm+'</b></div>';
     h+='<div class="gdcw big" id="gd-cw"><canvas id="gdc"></canvas></div><div class="gfg f3"></div>';
-    h+='<div class="gdvs">'+monImg('k-look','gdme0')+'<div class="gvs">VS</div></div>';
+    h+='<div class="gdvs">'+draHtml('k-idle','gdme0')+'<div class="gvs">VS</div></div>';
     h+='<div class="gdinfo"><span class="gpill">👾 5 can</span><span class="gpill">❤️ '+g.mx+' can</span></div>';
     if(g.mx>3)h+='<p class="gdrule gsh">🛡️ Canavar arkadaşın sana kalkan verdi: <b>+1 can!</b></p>';
     h+='<p class="gdrule">Önce sen bil, sen vur! ⚔️<br>Yanlış ya da geç kalırsan o vurur.</p>';
@@ -7470,7 +7531,7 @@ function guDuelHtml(){
   }
   if(g.ph==='fight'){
     h+='<div class="gdhud"><img class="gdav" src="gu/'+c+'-p.webp" alt=""><div class="gdhw"><div class="gdhn">'+nm+'<span id="gd-hn">'+g.hp+' / 5</span></div><div class="ghp" id="gd-hp"></div></div></div>';
-    h+='<div class="gdcw" id="gd-cw"><canvas id="gdc"></canvas><div class="gsl" id="gd-sl"></div><div class="gdm" id="gd-dm">−1</div></div>';
+    h+='<div class="gdcw" id="gd-cw"><canvas id="gdc"></canvas><div class="gsl" id="gd-sl"></div><div class="gdm" id="gd-dm">−1</div>'+draHtml('k-idle','gdf','gd-dr')+'<i class="gspk" id="gd-spk"></i></div>';
     h+='<div class="gdq"><small>KAÇ EDER?</small><b id="gd-q"></b><div class="gdtm"><i id="gd-t"></i></div></div>';
     h+='<div class="agrid gda" id="gd-a"></div><div class="gdmsg" id="gd-m"></div>';
     h+='<div class="gdhud me"><img class="gdav" id="gd-me" src="'+monSrc('look')+'" alt=""><div class="gdhw"><div class="gdhn">Sen<span>'+r.s+' '+guOpLabel(g.n)+'</span></div><div class="ghp g" id="gd-hm"></div></div></div>';
@@ -7481,7 +7542,7 @@ function guDuelHtml(){
     var res=g.res2||{};
     h+='<div class="gray"></div><div class="gdcw big" id="gd-cw"><canvas id="gdc"></canvas></div>';
     h+='<div class="gdwin"><b>✨ '+nm+' ışığa dönüştü!</b><span>'+guWinSub(g.n)+'</span></div>';
-    h+=monImg('k-cheer','gdme1')+'<div class="gdinfo">'+(res.gain?'<span class="gpill">☀️ +'+res.gain+' güneş ışığı</span>':'')+'</div>';
+    h+=draHtml('k-cheer','gdme1')+'<div class="gdinfo">'+(res.gain?'<span class="gpill">☀️ +'+res.gain+' güneş ışığı</span>':'')+'</div>';
     h+='<button class="gbtn gold" onclick="guToMap()">'+(g.n===49?'🏰 Haritaya dön':'🗺️ Yola devam')+'</button></div>';
     return h;
   }

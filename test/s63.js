@@ -1,9 +1,11 @@
 // S63: sonuç sayfasında tek, hareketli canavar; sayfadaki kartta canavar yok, paylaşılan resimde var; kazanınca konfeti.
 // Kullanım: node test/s63.js [görüntü klasörü]
 const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
-const U='file://'+path.resolve(__dirname,'../index.html');const out=process.argv[2];
+const out=process.argv[2];const http=require('http');let U;
+const MIME={'.html':'text/html','.js':'text/javascript','.json':'application/json','.png':'image/png','.webp':'image/webp','.mp3':'audio/mpeg','.mp4':'video/mp4'};
+const SRV=http.createServer((q,r)=>{let f=path.resolve(__dirname,'..'+decodeURIComponent(q.url.split('?')[0]));if(f.endsWith('/'))f+='index.html';fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);return r.end()}r.writeHead(200,{'Content-Type':MIME[path.extname(f)]||'application/octet-stream'});r.end(d)})});
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));let fail=0;const ok=(c,m)=>{console.log((c?'✓ ':'✗ ')+m);if(!c)fail++};
-(async()=>{if(out)fs.mkdirSync(out,{recursive:true});
+(async()=>{await new Promise(r=>SRV.listen(0,r));U='http://127.0.0.1:'+SRV.address().port+'/index.html';if(out)fs.mkdirSync(out,{recursive:true});
 const b=await chromium.launch();
 const ctx=await b.newContext({viewport:{width:390,height:844},deviceScaleFactor:out?2:1});const p=await ctx.newPage();const errs=[];
 p.on('pageerror',e=>errs.push(String(e.message||e)));
@@ -32,9 +34,9 @@ await strip('kazan',[0,250,500,800,1100,1400,1800,2600]);
 const seenW=await p.evaluate(()=>new Promise(r=>{var e=document.querySelector('img.rmon'),s=new Set();var t=setInterval(()=>s.add(e.getAttribute('src')),60);setTimeout(()=>{clearInterval(t);r([...s])},2400)}));
 ok(seenW.some(x=>/happy/.test(x))&&seenW.some(x=>/cheer/.test(x)),'kazanınca sevinç kareleri değişiyor: '+seenW.join(' '));
 // sayfadaki kart canavarsız, paylaşırken canavarlı
-const cardPix=()=>p.evaluate(()=>{var c=document.getElementById('dcard'),d=c.getContext('2d').getImageData(c.width/2-60,90,120,120).data,n=0;for(var i=0;i<d.length;i+=4)if(d[i+2]>150&&d[i]>90&&d[i]<190&&d[i+1]<120)n++;return n});
+const cardPix=()=>p.evaluate(()=>{var c=document.getElementById('dcard'),d=c.getContext('2d').getImageData(c.width/2-60,90,120,120).data,n=0;for(var i=0;i<d.length;i+=4)if(d[i+1]>120&&d[i+2]>100&&d[i]<110&&d[i+1]-d[i]>50)n++;return n});
 const before=await cardPix();
-await p.evaluate(()=>{window.__px=null;var c=document.getElementById('dcard');var o=c.toBlob.bind(c);c.toBlob=function(cb,t){var d=c.getContext('2d').getImageData(c.width/2-60,90,120,120).data,n=0;for(var i=0;i<d.length;i+=4)if(d[i+2]>150&&d[i]>90&&d[i]<190&&d[i+1]<120)n++;window.__px=n;return o(function(){},t)};shareCanvas(c,'x.png')});
+await p.evaluate(()=>{window.__px=null;var c=document.getElementById('dcard');var o=c.toBlob.bind(c);c.toBlob=function(cb,t){var d=c.getContext('2d').getImageData(c.width/2-60,90,120,120).data,n=0;for(var i=0;i<d.length;i+=4)if(d[i+1]>120&&d[i+2]>100&&d[i]<110&&d[i+1]-d[i]>50)n++;window.__px=n;return o(function(){},t)};shareCanvas(c,'x.png')});
 await sleep(200);
 const during=await p.evaluate(()=>window.__px);await sleep(1500);const after=await cardPix();
 ok(before<200&&during>800&&after<200,'kart: sayfada canavarsız ('+before+'), paylaşılan resimde canavarlı ('+during+'), sonra yine canavarsız ('+after+')');

@@ -20,9 +20,9 @@ await p.evaluate(()=>themeSet('dark'));ok(await p.evaluate(()=>getComputedStyle(
 await p.evaluate(()=>{themeSet('light');closeModal()});
 // karşılama: canavar hazır karelerle (sabit çözünürlük)
 await sleep(1200);
-ok(await p.evaluate(()=>{var k=Object.keys(M3S.c);return M3.st<0||(k.length>0&&k.every(x=>/\|(416|288|320)\|/.test(x)))}),'karşılama canavarı hazır karelerle çiziliyor: '+await p.evaluate(()=>Object.keys(M3S.c).slice(0,2).join(' ')));
+ok(await p.evaluate(()=>!!(DRG.atlas&&DRG.atlas.complete&&DRG.atlas.naturalWidth===2592)),'karşılama: ejder atlası yüklü (hazır kareler)');
 await prof(p);await sleep(300);
-ok(await p.evaluate(()=>{var i=document.querySelector('.hplay img');return !!i&&i.complete&&i.naturalWidth>=300}),'ana menü: Oyna düğmesinde canavar');
+ok(await p.evaluate(()=>{var c=document.querySelector('.hplay canvas.dra');return !!c&&!!c._d}),'ana menü: Oyna düğmesinde hareketli ejder');
 ok(await p.evaluate(()=>{var t=document.getElementById('tabs'),c=getComputedStyle(t);return !t.hidden&&parseFloat(c.borderRadius)>=20&&/blur/.test(c.backdropFilter||c.webkitBackdropFilter||'')}),'alt sekme çubuğu yüzen cam');
 if(out)await p.screenshot({path:path.join(out,'home.png')});
 // menü: üst başlıkta küçük canavar
