@@ -909,6 +909,27 @@ html[data-fs="2"] .gcard p,html[data-fs="2"] .gdrule{font-size:17.5px}html[data-
 .gmon,.gdme0,.gdme1{object-fit:contain}
 canvas.gdme0{height:auto;aspect-ratio:1}canvas.gdme1{height:auto;aspect-ratio:1}
 @media (prefers-reduced-motion:reduce){.gspk.go{animation:none}}
+
+/* S70: karşılama = eski masal kitabı (kullanıcı seçimi, 18 Kasım 2026) */
+.wbk{position:relative;max-width:440px;margin:0 auto;padding:30px 20px 18px;border-radius:6px 16px 16px 6px;background:linear-gradient(90deg,#d9c79c 0,#f4e7c6 6%,#f8eed6 50%,#efe0bb 100%);box-shadow:inset 7px 0 12px rgba(80,50,20,.22),0 8px 26px rgba(40,25,10,.35);color:#3a2614}
+.wbk::after{content:"";position:absolute;inset:8px;border:1.5px solid rgba(138,90,42,.55);border-radius:4px 12px 12px 4px;pointer-events:none}
+.wrib{position:absolute;top:0;left:34px;width:18px;height:78px;background:#8e2f2a;clip-path:polygon(0 0,100% 0,100% 100%,50% 82%,0 100%);box-shadow:inset -3px 0 0 rgba(0,0,0,.15)}
+.wbk .wttl{margin:6px 0 12px;text-align:center;font:700 34px/1.05 MCL,Lora,Georgia,serif;color:#5a1a12!important;text-shadow:none!important;letter-spacing:.2px}
+.wbk .wttl i{display:block;font-style:italic;font-size:26px;color:#8a5a2a!important;margin-top:4px}
+.wdc{display:inline-block;width:50px;height:56px;margin-right:2px;vertical-align:-12px;border:2px solid #8a5a2a;border-radius:5px;background:linear-gradient(#a93a2c,#7a2418);color:#f6d887;font-size:42px;line-height:54px;box-shadow:inset 0 0 0 2px #e0b45a}
+.wpic{position:relative;border:4px double #8a5a2a;border-radius:4px;box-shadow:0 3px 10px rgba(80,50,20,.3);overflow:hidden;line-height:0}
+.wbk .wpic canvas,.hero2.wbk canvas{border-radius:0;background:#cbbd96;width:100%;height:auto;display:block;filter:sepia(.14) saturate(.96)}
+.worn{text-align:center;color:#8a5a2a;font-size:16px;letter-spacing:8px;margin:10px 0 8px}
+.wbk .next{display:block;width:100%;max-width:none;margin:0 0 6px;background:linear-gradient(#a93a2c,#7a2418);color:#f8eed6;border:1px solid #5a1a12;border-radius:8px;box-shadow:inset 0 0 0 2px rgba(224,180,90,.6),0 3px 6px rgba(0,0,0,.25);font:700 21px MCL,Lora,Georgia,serif;padding:15px}
+.wbk .next:active{transform:translateY(1px)}
+.wbk .ghost{display:flex;align-items:center;gap:8px;width:100%;max-width:none;min-height:46px;margin:0;padding:0 6px;background:none!important;border:0!important;border-bottom:1px dashed rgba(138,90,42,.6)!important;border-radius:0;box-shadow:none!important;color:#5a3a1a;font-size:15.5px;font-weight:600;text-align:left}
+.wbk .ghost:active{background:rgba(138,90,42,.08)!important}
+.wbk .vtag{color:#8a5a2a;background:none;text-align:center;margin-top:12px!important}
+.wbk .vupd{color:#8e2f2a!important;background:rgba(138,90,42,.12)!important;border:0!important}
+:root[data-theme="hc"] .wbk{background:#fff;color:#000;box-shadow:none;border:2px solid #000}
+:root[data-theme="hc"] .wbk::after,:root[data-theme="hc"] .wrib{display:none}
+:root[data-theme="hc"] .wttl,:root[data-theme="hc"] .wttl i,:root[data-theme="hc"] .wbk .ghost{color:#000}
+@media (max-width:360px){.wbk{padding:26px 14px 14px}.wttl{font-size:29px}.wttl i{font-size:22px}.wdc{width:42px;height:48px;font-size:36px;line-height:46px}}
 </style>
 </head>
 <body>
@@ -6710,7 +6731,7 @@ function render(){
   if(st.screen!=='game')musStop();
   var o=OPS[st.op],h='',s=st.screen;
   if(s==='welcome'){
-    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Talim kampında canavar rakamları kovalıyor. Bir rakama dokun, canavar ateş topuyla vursun. Canavara dokun, gıdıklansın."></canvas><div class="logow"><div class="cube c1"><i>+</i><i>×</i><i>−</i><i>÷</i><i>=</i><i>?</i></div><h1 class="logo3d" aria-label="Matematik Canavarı">Matematik<span>Canavarı</span></h1><div class="cube c2"><i>7</i><i>3</i><i>9</i><i>5</i><i>2</i><i>8</i></div></div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+(NATIVE?(NUP.av?' <button class="vupd" onclick="natUpdGo()">🔄 Güncelle</button>':''):' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button>')+'</div></div>';
+    h='<button class="thbtn" onclick="themeOpen()" aria-label="Tema seç">🎨</button><div class="hero2 wbk"><span class="wrib" aria-hidden="true"></span><h1 class="wttl" aria-label="Matematik Canavarı"><span aria-hidden="true"><span class="wdc">M</span>atematik<i>Canavarı</i></span></h1><div class="wpic"><canvas id="mon" width="480" height="440" onpointerdown="chTap(event)" aria-label="Talim kampında canavar rakamları kovalıyor. Bir rakama dokun, canavar ateş topuyla vursun. Canavara dokun, gıdıklansın."></canvas></div><div class="worn" aria-hidden="true">❧ ✦ ☙</div><button class="next" onclick="startGo()">Haydi Başlayalım!</button>'+(profiles().length===1?'<button class="ghost welg" onclick="guest()">👤 Misafir olarak oyna</button>':'')+'<button class="ghost" onclick="guideOpen()">📖 Uygulama Kılavuzu</button><button class="ghost" onclick="appShare()">📲 Uygulamayı Paylaş</button><div class="tag vtag" style="margin-top:10px">Sürüm '+APPV+(NATIVE?(NUP.av?' <button class="vupd" onclick="natUpdGo()">🔄 Güncelle</button>':''):' <button class="vupd" onclick="appUpd()">🔄 Güncelle</button>')+'</div></div>';
   }else if(s==='profiles'){
     h=startHtml();
   }else if(s==='mig'){
