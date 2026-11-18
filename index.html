@@ -7104,8 +7104,8 @@ function guIntroStop(){var v=document.getElementById('guvid');if(v){try{v.pause(
 function guIntroEnd(fail){
   if(st.screen!=='guintro')return;
   guIntroStop();
-  var d=guD();if(!fail&&!d.h){d.h=1;guPut(d)}
-  go(d.t?'gumap':'gutalim');
+  var d=guD(),first=!d.h;if(!fail&&!d.h){d.h=1;guPut(d)}
+  go(first&&!d.t?'gutalim':'gumap');
 }
 
 /* ---------- ses: döngü (rüzgâr, kral müziği) + tek seferlik ---------- */

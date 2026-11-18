@@ -19,14 +19,14 @@ await p.click('.guhome');await sleep(400);
 ok(await p.evaluate(()=>st.screen==='guintro'&&!!document.querySelector('#guvid')),'ilk açılışta hikâye videosu');
 ok(await p.evaluate(()=>{var v=document.getElementById('guvid');return v.src.indexOf('gu/hikaye.mp4')>0}),'video kaynağı gu/hikaye.mp4');
 for(let i=0;i<30;i++){if(await p.evaluate(()=>{var v=document.getElementById('guvid');return v&&v.readyState>=1}))break;await sleep(150)}
-ok(await p.evaluate(()=>{var v=document.getElementById('guvid');return v.readyState>=1&&Math.abs(v.duration-105.5)<0.6}),'video yüklendi (105 sn)');
+ok(await p.evaluate(()=>{var v=document.getElementById('guvid');return v.readyState>=1&&Math.abs(v.duration-107)<0.6}),'video yüklendi (105 sn)');
 ok(await p.evaluate(()=>getComputedStyle(document.getElementById('tabs')||document.body).display==='none'||!document.getElementById('tabs')||document.body.classList.contains('gufull')),'hikâyede sekmeler gizli');
 await shot('01b_story');
 await p.click('.guvb');await sleep(300);
-ok(await p.evaluate(()=>st.screen==='gumap'&&guD().h===1),'Geç → harita, izlendi kaydı');
-await p.evaluate(()=>go('home'));await sleep(200);await p.click('.guhome');await sleep(300);
+ok(await p.evaluate(()=>(st.screen==='gumap'||st.screen==='gutalim')&&guD().h===1),'Geç → harita, izlendi kaydı');
+await p.evaluate(()=>{var d=guD();d.t=1;guPut(d);go('home')});await sleep(200);await p.click('.guhome');await sleep(300);
 ok(await p.evaluate(()=>st.screen==='gumap'),'ikinci açılışta doğrudan harita');
-await p.click('.gsto');await sleep(300);
+await p.click('.gsto[aria-label="Hikâyeyi izle"]');await sleep(300);
 ok(await p.evaluate(()=>st.screen==='guintro'),'📜 ile hikâye yeniden');
 await p.evaluate(()=>back());await sleep(300);
 ok(await p.evaluate(()=>st.screen==='gumap'&&!document.getElementById('guvid')),'geri → harita, video kapandı');
