@@ -5733,7 +5733,8 @@ var M3FS=[
 "precision highp float;",
 "uniform vec2 uRes;uniform mat3 uR;uniform vec4 uF;uniform vec4 uA;uniform vec4 uS;uniform vec4 uV;",
 "const float D=7.0;const float HH=1.62;",
-"float gB;float gArm;float gFoot;float gHorn;float gEye;float gTon;float gTooth;float gCav;float gG;float gFm;float gTuft;",
+"float gB;float gArm;float gFoot;float gHorn;float gEye;float gTon;float gTooth;float gCav;float gG;float gFm;float gTuft;float gHelm;float gBand;float gEmb;float gPl;float gSh;",
+"const vec3 SHC=vec3(-1.05,-0.40,0.36);const vec3 SHN=vec3(-0.70,0.0,0.714);",
 "float smin(float a,float b,float k){float h=clamp(0.5+0.5*(b-a)/k,0.0,1.0);return mix(b,a,h)-k*h*(1.0-h);}",
 "float sdEll(vec3 p,vec3 r){float k0=length(p/r);float k1=length(p/(r*r));return k0*(k0-1.0)/max(k1,1e-4);}",
 "float sdRC(vec3 p,vec3 a,vec3 b,float r1,float r2){vec3 ba=b-a;float l2=dot(ba,ba);float rr=r1-r2;float a2=l2-rr*rr;float il2=1.0/l2;vec3 pa=p-a;float y=dot(pa,ba);float z=y-l2;vec3 xv=pa*l2-ba*y;float x2=dot(xv,xv);float y2=y*y*l2;float z2=z*z*l2;float k=sign(rr)*rr*rr*x2;if(sign(z)*a2*z2>k)return sqrt(x2+z2)*il2-r2;if(sign(y)*a2*y2<k)return sqrt(x2+y2)*il2-r1;return (sqrt(x2*a2*il2)+y*rr)*il2-r1;}",
@@ -5760,7 +5761,17 @@ var M3FS=[
 " gFoot=sdEll(a-vec3(0.37,-1.0+lift,0.20+fw),vec3(0.245,0.145,0.31));",
 " gTuft=1e3;",
 " if(uV.y>0.5){gTuft=min(sdRC(p,vec3(0.0,0.82,0.02),vec3(0.03,1.10,0.10),0.085,0.03),min(sdRC(p,vec3(-0.07,0.82,0.0),vec3(-0.17,1.03,0.04),0.07,0.028),sdRC(p,vec3(0.08,0.82,0.0),vec3(0.19,1.01,0.02),0.065,0.026)));}",
-" float d=min(min(body,gHorn),min(gEye,gFoot));d=min(d,min(min(gTon,gTooth),gTuft));",
+" gHelm=1e3;gBand=1e3;gEmb=1e3;gPl=1e3;gSh=1e3;",
+" if(uV.w>0.5){gHelm=max(sdEll(p,vec3(0.94,0.95,0.905)),0.53-p.y);",
+"  gBand=max(sdEll(p,vec3(0.97,0.975,0.935)),abs(p.y-0.535)-0.055);",
+"  gEmb=sdEll(p-vec3(0.0,0.545,0.79),vec3(0.085,0.085,0.06));}",
+" if(uV.w>1.5){",
+"  float pa=max(sdEll(a-vec3(0.90,-0.25,0.15),vec3(0.245,0.19,0.225)),-(a.y+0.31));",
+"  float pl=max(sdEll(p-vec3(0.0,-0.36,0.0),vec3(1.005,0.655,0.925)),max(p.y+0.50,-0.84-p.y));",
+"  gPl=min(pa,pl);",
+"  vec3 v=p-SHC;float dn=dot(v,SHN);vec3 pp=v-dn*SHN;float pr=length(pp);",
+"  gSh=max(abs(dn-0.07*(1.0-pr*pr/0.1225))-0.03,pr-0.35)*0.8;}",
+" float d=min(min(body,gHorn),min(gEye,gFoot));d=min(d,min(min(gTon,gTooth),gTuft));d=min(d,min(min(gHelm,gBand),min(gEmb,min(gPl,gSh))));",
 " return d*min(uS.x,uS.y)*mix(0.9,0.8,step(0.5,uV.x));}",
 "vec3 nrm(vec3 p){vec2 e=vec2(0.0025,-0.0025);return normalize(e.xyy*map(p+e.xyy)+e.yyx*map(p+e.yyx)+e.yxy*map(p+e.yxy)+e.xxx*map(p+e.xxx));}",
 "void main(){",
@@ -5778,8 +5789,19 @@ var M3FS=[
 " vec3 L=normalize(vec3(-0.45,0.80,0.62))*uR;vec3 L2=normalize(vec3(0.75,0.15,-0.55))*uR;vec3 V=-md;vec3 UP=vec3(0.0,1.0,0.0)*uR;",
 " vec3 BODY=vec3(0.615,0.455,1.0);vec3 DARK=vec3(0.50,0.33,0.95);vec3 INK=vec3(0.13,0.10,0.30);",
 " vec3 base=BODY;float gloss=0.0;float fuzz=1.0;float glow=0.0;",
-" float mn=min(min(gB,gHorn),min(gEye,gFoot));mn=min(mn,min(min(gTon,gTooth),gTuft));",
-" if(mn==gTooth){base=vec3(1.0);gloss=0.4;fuzz=0.0;glow=0.5;}",
+" float mn=min(min(gB,gHorn),min(gEye,gFoot));mn=min(mn,min(min(gTon,gTooth),gTuft));mn=min(mn,min(min(gHelm,gBand),min(gEmb,min(gPl,gSh))));",
+" if(mn==gEmb){base=vec3(1.0,0.80,0.28);gloss=0.9;fuzz=0.0;glow=0.18;}",
+" else if(mn==gBand){base=vec3(0.80,0.56,0.26);gloss=0.75;fuzz=0.0;float rv=1.0-smoothstep(0.035,0.05,length(vec2(fract(atan(q.x,q.z)*1.91+0.5)-0.5,(q.y-0.535)*2.2)));base=mix(base,vec3(1.0,0.86,0.5),rv*0.8);}",
+" else if(mn==gHelm){base=vec3(0.52,0.31,0.17);fuzz=0.15;gloss=0.25;float an=atan(q.x,q.z);float sm=1.0-smoothstep(0.01,0.03,abs(fract(an*0.955+0.5)-0.5)/max(0.2,1.0-q.y));base=mix(base,vec3(0.32,0.18,0.09),sm*0.8);base*=0.92+0.08*sin(q.x*40.0)*sin(q.z*37.0);}",
+" else if(mn==gPl){base=vec3(0.56,0.61,0.70);gloss=0.9;fuzz=0.0;glow=0.08;float ln=1.0-smoothstep(0.006,0.016,min(abs(q.y+0.63),abs(q.y+0.74)));base=mix(base,vec3(0.25,0.27,0.34),ln*0.85);",
+"  float ed=1.0-smoothstep(0.02,0.045,min(abs(q.y+0.50),abs(q.y+0.84)));base=mix(base,vec3(0.86,0.62,0.26),ed*0.95);if(q.y>-0.36){base=vec3(0.62,0.66,0.76);}",
+"  float bk=1.0-smoothstep(0.07,0.085,length(vec2(q.x,q.y+0.66)));base=mix(base,vec3(1.0,0.80,0.28),bk*step(0.0,q.z));}",
+" else if(mn==gSh){vec3 v=q-SHC;float dn=dot(v,SHN);vec3 pp=v-dn*SHN;float pr=length(pp);fuzz=0.0;",
+"  vec3 ux=normalize(cross(vec3(0.0,1.0,0.0),SHN));float ang=atan(dot(pp,vec3(0.0,1.0,0.0)),dot(pp,ux));",
+"  base=vec3(0.62,0.13,0.12);gloss=0.35;",
+"  float sun=max(1.0-smoothstep(0.085,0.10,pr),(1.0-smoothstep(0.15,0.20,pr))*smoothstep(0.10,0.11,pr)*step(0.55,abs(cos(ang*5.0))));",
+"  base=mix(base,vec3(1.0,0.80,0.28),sun);if(pr>0.29||dn<0.0){base=vec3(0.86,0.64,0.28);gloss=0.8;}}",
+" else if(mn==gTooth){base=vec3(1.0);gloss=0.4;fuzz=0.0;glow=0.5;}",
 " else if(mn==gTon){base=vec3(1.0,0.50,0.68);gloss=0.3;fuzz=0.0;glow=0.15;}",
 " else if(mn==gTuft){base=mix(DARK,BODY,0.5);}",
 " else if(mn==gEye){",
@@ -5832,7 +5854,7 @@ var M3FS=[
 "}"].join('\n');
 /* görünüm: [tüy halkası, perçem, göz ölçeği] */
 var M3V=[[0,0,1],[1,0,1],[0,1,1.08]];
-var M3={v:2,st:0,gl:null,cv:null,pr:null,u:{},n:512,q:1,live:true,lf:false,ft:0,fc:0,slow:0,off:false,t0:0};
+var M3={gear:1,v:2,st:0,gl:null,cv:null,pr:null,u:{},n:512,q:1,live:true,lf:false,ft:0,fc:0,slow:0,off:false,t0:0};
 (function(){try{var v=JSON.parse(localStorage.getItem('mc_m3'));if(v&&v.v===1){if(v.q>=0.4&&v.q<=1)M3.q=v.q;if(v.l===0)M3.live=false}}catch(e){}})();
 function m3dInit(){
   if(M3.st)return;M3.st=1;M3.t0=Date.now();
@@ -5899,7 +5921,7 @@ function m3dRender(n,o){
   gl.uniform4f(u.uF,Math.max(0,Math.min(1,o.m||0)),o.happy?1:0,o.blink||0,o.t||0);
   gl.uniform4f(u.uA,lx,ly,o.walk||0,o.ph||0);
   gl.uniform4f(u.uS,sqy,1/Math.sqrt(sqy),0,0);
-  var vv=M3V[o.v==null?M3.v:o.v]||M3V[0];gl.uniform4f(u.uV,vv[0],vv[1],vv[2],0);
+  var vv=M3V[o.v==null?M3.v:o.v]||M3V[0];gl.uniform4f(u.uV,vv[0],vv[1],vv[2],o.gear==null?M3.gear:o.gear);
   gl.drawArrays(gl.TRIANGLES,0,3);
   return n;
 }
@@ -7118,7 +7140,7 @@ function guMapHtml(){
   var sel=GU.sel,r=GUR[guReg(sel)];
   h+='<div class="gum" id="gum"><div class="gmw" id="gmw" style="height:'+Math.round(GUM.H*s)+'px"><div class="gload" id="gload">🗺️ Harita açılıyor…</div><canvas class="gfog" id="gfog"></canvas>';
   for(n=1;n<=49;n++)h+=guNodeHtml(n,d,s);
-  h+=monImg('idle','gmon')+'</div></div>';
+  h+=monImg('k-idle','gmon')+'</div></div>';
   h+='<div class="gtop"><button class="gbk" onclick="back()" aria-label="Geri">←</button><span class="gch" id="gch">'+r.s+' '+r.n+'</span><span class="gch gl" id="glight">☀️ '+L+(d.c<48?' / '+GUGATE:'')+'</span><button class="gsto" onclick="guStory()" aria-label="Hikâyeyi izle">📜</button></div>'+(GUT?'<div class="gtest">🧪 Ön izleme: bütün duraklar açık</div>':'');
   h+='<div class="gcard" id="gcard">'+guCardHtml(sel,d)+'</div>';
   return h;
@@ -7439,7 +7461,7 @@ function guDuelHtml(){
   if(g.ph==='enc'){
     h+='<div class="gdt"><small>'+guRole(g.n)+'</small><b>'+nm+'</b></div>';
     h+='<div class="gdcw big" id="gd-cw"><canvas id="gdc"></canvas></div><div class="gfg f3"></div>';
-    h+='<div class="gdvs">'+monImg('look','gdme0')+'<div class="gvs">VS</div></div>';
+    h+='<div class="gdvs">'+monImg('k-look','gdme0')+'<div class="gvs">VS</div></div>';
     h+='<div class="gdinfo"><span class="gpill">👾 5 can</span><span class="gpill">❤️ '+g.mx+' can</span></div>';
     if(g.mx>3)h+='<p class="gdrule gsh">🛡️ Canavar arkadaşın sana kalkan verdi: <b>+1 can!</b></p>';
     h+='<p class="gdrule">Önce sen bil, sen vur! ⚔️<br>Yanlış ya da geç kalırsan o vurur.</p>';
@@ -7459,12 +7481,12 @@ function guDuelHtml(){
     var res=g.res2||{};
     h+='<div class="gray"></div><div class="gdcw big" id="gd-cw"><canvas id="gdc"></canvas></div>';
     h+='<div class="gdwin"><b>✨ '+nm+' ışığa dönüştü!</b><span>'+guWinSub(g.n)+'</span></div>';
-    h+=monImg('cheer','gdme1')+'<div class="gdinfo">'+(res.gain?'<span class="gpill">☀️ +'+res.gain+' güneş ışığı</span>':'')+'</div>';
+    h+=monImg('k-cheer','gdme1')+'<div class="gdinfo">'+(res.gain?'<span class="gpill">☀️ +'+res.gain+' güneş ışığı</span>':'')+'</div>';
     h+='<button class="gbtn gold" onclick="guToMap()">'+(g.n===49?'🏰 Haritaya dön':'🗺️ Yola devam')+'</button></div>';
     return h;
   }
   h+='<div class="gdcw big" id="gd-cw"><canvas id="gdc"></canvas></div><div class="gfg f3"></div>';
-  h+='<div class="gdwin lose"><b>İyi mücadele! 💪</b><span>'+nm+' bu sefer hızlıydı. Bir daha dene, yanındayım!</span></div>'+monImg('peek','gdme1 glm');
+  h+='<div class="gdwin lose"><b>İyi mücadele! 💪</b><span>'+nm+' bu sefer hızlıydı. Bir daha dene, yanındayım!</span></div>'+monImg('k-peek','gdme1 glm');
   h+='<button class="gbtn gold" onclick="guDuelOpen('+g.n+')">⚔️ Tekrar Kapış</button><button class="gbtn ghost2" onclick="guPractice()">'+r.s+' '+guOpLabel(g.n)+' pratiği yap</button><button class="gbtn ghost2" onclick="guToMap()">🗺️ Haritaya dön</button></div>';
   return h;
 }
