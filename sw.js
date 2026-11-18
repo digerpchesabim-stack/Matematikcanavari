@@ -1,6 +1,6 @@
 var CACHE = 'mc-v68';
 /* Güneş Ülkesi dosyaları (gu/): ilk kullanılınca indirilir, sürümler arasında saklanır */
-var GUC = 'mc-gu1';
+var GUC = 'mc-gu2';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3', './gizlilik.html', './aydinlatma.html', './veri-silme.html', './mc-idle.webp', './mc-happy.webp', './mc-look.webp', './mc-wait.webp', './mc-cheer.webp', './mc-sad.webp', './mc-peek.webp', './mc-blink.webp', './mc-sidel.webp', './mc-sider.webp'];
 
 self.addEventListener('install', function (e) {
@@ -60,7 +60,7 @@ self.addEventListener('fetch', function (e) {
         return fetch(key).then(function (r) {
           if (r && r.ok && r.status === 200) c.put(key, r.clone());
           return e.request.headers.get('range') && r.ok ? rangeResponse(e.request, r) : r;
-        });
+        }).catch(function () { return Response.error(); });
       });
     }));
     return;

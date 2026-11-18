@@ -49,11 +49,11 @@ await sleep(300);
 ok(await p.evaluate(()=>GQ.end&&GQ.stars===3),'10 doğru → 3 yıldız');
 ok(await p.evaluate(()=>{var d=__GU.st();return d.d.c===1&&d.d.s[1]===3&&d.light===1}),'kayıt: c=1, ışık 1');
 await shot('04_stopend');
-await p.click('text=Haritaya dön');await sleep(2600);
+await p.click('text=Yola devam');await sleep(2600);
 ok(await p.evaluate(()=>document.querySelector('#gst1').classList.contains('done')&&document.querySelector('#gst2').classList.contains('nxt')),'haritada 1 geçildi, 2 açık');
 // 2. durak: 5 doğru → geçemez
 await p.evaluate(()=>guPlay(2));await sleep(150);
-for(let i=0;i<10;i++){await p.evaluate(k=>{var q=GQ.q,i=q.opts.findIndex(o=>k<5?o.v===q.ans:o.v!==q.ans);guStopAns(i,document.querySelectorAll('#gs-a .ani')[i])},i);await sleep(i<5?700:1550)}
+for(let i=0;i<10;i++){await p.evaluate(k=>{var q=GQ.q,i=q.opts.findIndex(o=>k<5?o.v===q.ans:o.v!==q.ans);guStopAns(i,document.querySelectorAll('#gs-a .ani')[i])},i);await sleep(i<5?700:2700)}
 await sleep(300);
 ok(await p.evaluate(()=>GQ.end&&GQ.stars===0&&__GU.st().d.c===1),'5 doğru → geçemedi, ilerleme değişmedi');
 ok(await p.evaluate(()=>/İyi mücadele/.test(document.getElementById('app').textContent)),'moral bozmayan mesaj');
@@ -61,19 +61,27 @@ ok(await p.evaluate(()=>/İyi mücadele/.test(document.getElementById('app').tex
 await p.evaluate(()=>guStopOpen(2));await sleep(150);
 ok(await p.evaluate(()=>!!document.getElementById('gs-t')&&guQLim()===12000),'durakta süre çubuğu (Kolay 12 sn)');
 await p.evaluate(()=>{GQ.t0-=guQLim()+50});await sleep(400);
-ok(await p.evaluate(()=>GQ.i===1&&GQ.ok===0&&/Süre doldu/.test(document.getElementById('gs-m').textContent)),'süre bitti → yanlış sayıldı');
-await sleep(1500);
+ok(await p.evaluate(()=>GQ.i===0&&!GQ.lock&&/Acele etme/.test(document.getElementById('gs-m').textContent)),'ilk süre dolması affedildi, aynı soru');
+await p.evaluate(()=>{GQ.t0-=guQLim()+50});await sleep(400);
+ok(await p.evaluate(()=>GQ.i===1&&GQ.ok===0&&/Süre doldu/.test(document.getElementById('gs-m').textContent)),'ikinci süre dolması yanlış sayıldı');
+await sleep(2800);
 ok(await p.evaluate(()=>!GQ.lock&&!!GU.qt&&GQ.i===1),'sonraki soruda süre yeniden başladı');
-await p.evaluate(()=>{guQPause(true);GQ.t0-=60000});await sleep(300);
+await p.evaluate(()=>{guQPause(true,'hm');GQ.t0-=60000});await sleep(300);
 ok(await p.evaluate(()=>GQ.i===1),'duraklatılınca süre işlemez');
-await p.evaluate(()=>{GQ.t0+=60000;guQPause(false);guToMap()});await sleep(300);
+await p.evaluate(()=>{GQ.t0+=60000;guQPause(false,'hm')});await sleep(200);
+// cevap sonrası arada pencere açılırsa sonraki soru beklemeli
+await p.evaluate(()=>{var q=GQ.q;guStopAns(q.opts.findIndex(o=>o.v===q.ans),document.querySelector('#gs-a .ani'));back()});await sleep(1500);
+ok(await p.evaluate(()=>GQ.i===2&&GQ.lock===true),'pencere açıkken sonraki soru başlamadı');
+await p.evaluate(()=>{var y=[...document.querySelectorAll('#ov button')].find(b=>/Devam/.test(b.textContent));if(y)y.click()});await sleep(900);
+ok(await p.evaluate(()=>!GQ.lock&&!!GU.qt),'Devam et → sonraki soru başladı');
+await p.evaluate(()=>guToMap());await sleep(300);
 ok(await p.evaluate(()=>!GU.qt),'haritaya dönünce süre durdu');
 // geri tuşu: durak ortasında soru sorar
 await p.evaluate(()=>guStopOpen(2));await sleep(100);
 await p.evaluate(()=>{var q=GQ.q;guStopAns(q.opts.findIndex(o=>o.v===q.ans),document.querySelector('#gs-a .ani'))});await sleep(700);
 await p.evaluate(()=>back());await sleep(150);
 ok(await p.evaluate(()=>st.screen==='gustop'&&!!document.querySelector('#ov.on, #ov[style*="flex"]')||st.screen==='gustop'),'durakta geri → onay sorusu');
-await p.evaluate(()=>{var y=[...document.querySelectorAll('#ov button')].find(b=>/Evet/.test(b.textContent));if(y)y.click()});await sleep(300);
+await p.evaluate(()=>{var y=[...document.querySelectorAll('#ov button')].find(b=>b.textContent.trim()==='Çık');if(y)y.click()});await sleep(300);
 ok(await p.evaluate(()=>st.screen==='gumap'),'onaylayınca haritaya döndü');
 // düello (4. durak, Sis Yarasası): hızlı doğru → kazan
 await p.evaluate(()=>{__GU.set({c:3,s:{1:3,2:2,3:3}})});
@@ -85,10 +93,10 @@ for(let i=0;i<40;i++){if(await p.evaluate(()=>GD&&GD.ph==='enc'))break;await sle
 ok(await p.evaluate(()=>st.screen==='guduel'&&GD.ph==='enc'&&GD.c==='bat'),'kart olmadan doğrudan Sis Yarasası karşılaşması');
 ok(await p.evaluate(()=>!!GU.et2),'karşılaşmada yaratık sesi tekrarı kurulu');
 await sleep(5600);
-ok(await p.evaluate(()=>__vib.filter(x=>Array.isArray(x)&&x.join()==GUV.bat.join()).length>=2),'yaratık sesiyle birlikte titreşim tekrarlandı');
+ok(await p.evaluate(()=>__vib.filter(x=>Array.isArray(x)&&x.join()==GUV.bat.join()).length===1),'titreşim sadece ilk seste (tekrarda yok)');
 await p.evaluate(()=>{window.__cl=0;window.__wh=0;var a=sndClang,b=sndWhistle;sndClang=function(){__cl++;a()};sndWhistle=function(){__wh++;b()}});
 await sleep(1300);await shot('05_enc');
-await p.click('.gud .gbtn.gold');await sleep(800);
+await p.click('.gud .gbtn.gold',{force:true});await sleep(800);
 ok(await p.evaluate(()=>GD.ph==='fight'&&!!GD.q),'düello başladı');
 ok(await p.evaluate(()=>__cl===1&&__wh===0&&!GU.et2&&__vib[__vib.length-1]===0),'kılıç sesiyle başladı (düdük yok), ses/titreşim durdu');
 await sleep(300);await shot('06_fight');
@@ -100,7 +108,7 @@ for(let k=0;k<5;k++){
 ok(await p.evaluate(()=>GD&&GD.ph==='win'&&GD.hp===0&&GD.stars===3),'5 vuruş → zafer, 3 yıldız');
 ok(await p.evaluate(()=>{var d=__GU.st();return d.d.c===4&&d.light===4}),'yarasa +2 ışık (toplam 4)');
 await sleep(900);await shot('08_dissolve');await sleep(1600);await shot('09_win');
-await p.click('.gud .gbtn.gold');await sleep(2800);
+await p.click('.gud .gbtn.gold',{force:true});await sleep(2800);
 ok(await p.evaluate(()=>st.screen==='gumap'&&document.querySelector('#gst4').classList.contains('done')),'haritada yarasa yenildi');
 await shot('10_map_after');
 // düello kaybı: yaratık hep önce bilir
@@ -114,7 +122,7 @@ await sleep(700);
 await p.evaluate(()=>{var q=GD.q,i=q.opts.findIndex(o=>o.v!==q.ans);guAns(i,document.querySelectorAll('#gd-a .ani')[i])});
 ok(await p.evaluate(()=>GD.res===true&&GD.lock===true),'yanlış cevap → tur bitti');
 await sleep(700);
-ok(await p.evaluate(()=>GD.me===2&&/fırsatı kaçırmadı/.test(document.getElementById('gd-m').textContent)),'yanlışta yaratık hemen vurdu (1 can gitti)');
+ok(await p.evaluate(()=>GD.me===2&&/vurdu! Sıradaki soruda sen vur/.test(document.getElementById('gd-m').textContent)),'yanlışta yaratık hemen vurdu (1 can gitti)');
 await sleep(500);await shot('11_foehit');
 for(let i=0;i<40;i++){if(await p.evaluate(()=>GD&&GD.ph==='lose'))break;await sleep(300)}
 ok(await p.evaluate(()=>GD&&GD.ph==='lose'&&GD.me===0&&__GU.st().d.c===11),'3 can gitti → kayıp, ilerleme yok');
