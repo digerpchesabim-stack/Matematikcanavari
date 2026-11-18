@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **67**
+Son güncelleme: 19 Kasım 2026 · Yayındaki sürüm: **68**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -25,6 +25,7 @@ Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **67**
 ## 3. Yayın hattı
 - **Dosyalar:** `index.html` (tüm uygulama), `sw.js` (önbellek), `manifest.json`, `icon-192.png`, `icon-512.png` (S59: 3B canavardan üretildi). Ayrıca `firebase/` (kurallar) ve `.github/workflows/firestore-rules.yml`.
 - **Her sürümde:** `index.html` içinde `var APPV=N` (karşılama ekranındaki `Sürüm N` buradan gelir, S51) ve `sw.js` içindeki `var CACHE = 'mc-vN'` değerini artır. Service worker cache-first çalışır; yeni sürümde sayfa kendini yeniler (`controllerchange`/`PENDRELOAD`). Telefonda eski sürüm görünüyorsa uygulama kapatılıp açılır.
+- **gu/ önbelleği:** `sw.js` `GUC` (mc-guN) sürümler arasında silinmez; `gu/` içindeki bir dosya değişirse GUC'yi artır.
 - **GitHub Pages:** main'e push → "pages build and deployment" çalışır. Kontrol: `gh run list --limit 3`. (Canlı siteye WebFetch izinli değil.)
 - **Firestore kuralları:** `firebase/firestore.rules` değişip push edilince Actions kuralları otomatik yükler (secret `FIREBASE_SA`, servis hesabında "Firebase Rules Admin" rolü). Elle tetikleme: `gh api -X POST repos/digerpchesabim-stack/Matematikcanavari/actions/workflows/firestore-rules.yml/dispatches -f ref=main` (GraphQL engelli, `gh workflow run` çalışmaz).
 - **Sıra:** Kural değişikliği gerekiyorsa önce kurallar (geriye uyumlu/ek), sonra uygulama.
@@ -282,6 +283,8 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
   - Katmanlar `body::before` (fixed, z-index −1) ile; `html` zemin, `body` saydam. SVG veri adresleri **tam kodlanmalı** (`urllib.parse.quote(...,safe='')`; kısmi kodlamada görsel hiç yüklenmiyordu). Kale çizimi kaynağı scratch `mdv/castle.py` (`castle2.tpl`, maske ile pencere/kapı boşlukları).
   - Yazı tipi: başlıklar **Lora Bold** (`MCL`, OFL, Türkçe alt küme, woff base64 ~17 KB): `.title, h1, h2, .hpt, .oqx b, .obt b, .oct2, .mmt, .tag`, ana sayfa kart adları (`.hgi .btn`, açıklama `small` Poppins). Gövde/soru/cevap Poppins kaldı. Büyük kartlarda içe çift çerçeve (`inset` gölge).
   - Esin kaynağı adı/arma/yazı tipi kullanılmadı (telif/marka).
+
+- 68 (19 Kasım 2026 yayında; kullanıcı "programı yayınlıyoruz, ajanlarla sına, onar, yükle" dedi): **☀️ Güneş Ülkesi + 🎯 Talim Alanı + yeni ejder maskot + masal kitabı karşılama.** Ayrıntılar §9'daki "Güneş Ülkesi kodu" ve "Yeni maskot" notlarında (o notlar artık yayında). Karşılamada ejder sembolleri ateş topuyla vurur (otomatik ~5 sn arayla, %30 ıska → üzgün yüz; dokununca hemen), arka plan `wel-bg.webp`. Talim (`gutalim`, `tlRun`): ilk hikâyeden sonra bir kez, haritada 🎯; `mc_gu.t`. Yayın öncesi 4 denetçi ajan (QA, kod, özel eğitim UX, görsel) — düzeltmeler: `mca-*.webp` Android/önbellek, acMerge `t`, guFree bellek, draTick ~15 fps, harita üst çubuğu 320 px, hc düğme, tema adları Parşömen/Kale Gecesi, İşlemler cevapları 2×2, düelloda "Doğrusu", durakta kalınca "🎯 Önce talim yap", Akıldan İşlem Kolay süre 8/7/6/6 sn ve "Olmadı! Doğrusu:", kılavuz yolları sekmelere göre güncellendi. Eski testler (fr1, s55, th, ui22, v36, v40, s60 tek kontrol) arayüz değiştiği için düşüyor.
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
