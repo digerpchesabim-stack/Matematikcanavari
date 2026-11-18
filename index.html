@@ -7086,7 +7086,7 @@ function guOpen(){GU.sel=0;if(!guD().h)return guStory();go('gumap')}
 /* giriş hikâyesi: ilk açılışta oynar, Geç ile atlanır, haritadaki 📜 ile yeniden izlenir */
 function guStory(){go('guintro')}
 function guIntroHtml(){
-  return '<div class="guv" id="guv"><video id="guvid" src="gu/hikaye.mp4?v=4" playsinline webkit-playsinline preload="auto"></video><button class="guvb" onclick="guIntroEnd()">Geç ›</button></div>';
+  return '<div class="guv" id="guv"><video id="guvid" src="gu/hikaye.mp4?v=5" playsinline webkit-playsinline preload="auto"></video><button class="guvb" onclick="guIntroEnd()">Geç ›</button></div>';
 }
 function guIntroAfter(){
   var v=document.getElementById('guvid');if(!v)return;
