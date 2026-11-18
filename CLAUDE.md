@@ -18,7 +18,8 @@ Son güncelleme: 14 Kasım 2026 · Yayındaki sürüm: **67**
 4. **Yayın onaylanınca:** uygula → test et → hataları düzelt → yeniden test et → yükle → Pages derlemesini doğrula → kullanıcıyı kısa mesajla "dürt" (🔔 Sürüm N yayında).
 5. **Dil hassasiyeti:** Öğrencileri incitebilecek ifadeler kullanma (ör. "Arkadaşın yok mu?" kaldırıldı). Kaybedene moral bozmayan mesaj ("İyi mücadele! 💪").
 6. **Güvenlik:** Firebase servis hesabı JSON anahtarını asla isteme/gösterme. Kullanıcı bir kez şifresini sohbete yazmıştı; değiştirmesi önerildi.
-8. **Pro ajan döngüsü (18 Kasım 2026 kullanıcı kararı, bütün işler için):** verilen iş → o işe uygun profesyonel uzman ajan (alt ajan) yarat → işi yap → ajana sun/denetlet → düzeltme ya da onay al (düzeltme varsa uygula, yeniden denetlet) → ajan onaylayınca kullanıcıya sun. Kullanıcıya sunarken ajanın neyi düzelttirdiğini kısaca söyle.
+8. **Pro ajan döngüsü (18 Kasım 2026 kullanıcı kararı, bütün işler için):** verilen iş → o işe uygun profesyonel uzman ajan (alt ajan) yarat → işi yap → ajana sun/denetlet → düzeltme ya da onay al (düzeltme varsa uygula, yeniden denetlet) → ajan onaylayınca kullanıcıya sun. Kullanıcıya sunarken ajanın neyi düzelttirdiğini kısaca söyle. **Her zaman, istisnasız (kullanıcı: "unutma, her zaman uygula"): hiçbir iş bağımsız denetçi ajan onayı olmadan kullanıcıya sunulmaz.**
+9. **Siyasi simge yok (18 Kasım 2026):** Türkiye'de siyasi parti simgelerini çağrıştıran motif kullanma (ör. mavi bayrak üstünde ışınlı güneş). Güneş motifleri hep otantik, gülen yüzlü ortaçağ güneşi olsun.
 7. Commit mesajı sonuna oturumun verdiği `Co-Authored-By` / `Claude-Session` satırlarını ekle.
 
 ## 3. Yayın hattı
