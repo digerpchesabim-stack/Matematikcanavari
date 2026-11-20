@@ -338,6 +338,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
     - Testler: s61/s63 güncellendi (s63 artık yerel http sunucusuyla, file:// resim kirliliği yüzünden), `test/welshot.js` karşılama görüntüleri.
   - Kılavuzda `gu`. Test `test/gu1.js` (32 kontrol: harita, kilit, durak geç/geçeme, geri onayı, yarasa düellosu kazan, örümcek kaybet, kapı ışıkla açılır, 320 px).
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
+- **Güncellenecekler listesi (20 Kasım 2026, kullanıcı "şimdilik dursun ama listeye ekle"):** Güneş Ülkesi durak ve düello doğruları Soru Ustası + Azim sayacına yazılsın (`guStopEnd` ve düello sonunda `rkQ(sid,ok)`, tur başına ayrı `sid`; rütbe puanı/rekor/yıldız-ışık değişmez; süre dolan/yanlış sayılmaz). Önce ön izleme, onaysız yayın yok; sürüm 68 kalacak mı kullanıcıya sor.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
