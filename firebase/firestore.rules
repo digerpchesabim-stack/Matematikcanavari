@@ -16,6 +16,8 @@ service cloud.firestore {
         && request.resource.data.host == request.auth.uid
         && request.resource.data.keys().hasOnly(['host', 'hostNick', 'op', 'status', 'seed', 'created', 'qv', 'lv', 'tb', 'mode', 'win', 'at', 'ka', 'kb', 'cm', 'pub', 'cap', 'pw', 'tm', 'rk', 'hp', 'nb', 'n', 'hb'])
         && (!('at' in request.resource.data) || request.resource.data.at is int)
+        && request.resource.data.created is int
+        && (!('hostNick' in request.resource.data) || (request.resource.data.hostNick is string && request.resource.data.hostNick.size() <= 60))
         && (!('pub' in request.resource.data) || request.resource.data.pub in [0, 1])
         && (!('pw' in request.resource.data) || request.resource.data.pw in [0, 1])
         && (!('cap' in request.resource.data) || (request.resource.data.cap is int && request.resource.data.cap >= 2 && request.resource.data.cap <= 10))
@@ -81,6 +83,7 @@ service cloud.firestore {
         // bs = kurucunun yönettiği botların durumu (en çok 9)
         allow update: if signedIn() && request.auth.uid == uid
           && request.resource.data.keys().hasOnly(['nick', 'score', 'hearts', 'ok', 'bad', 'n', 'tt', 'done', 'ts', 'rid', 'm', 'r', 'pr', 'pid', 'jt', 'rk', 'pv', 'tk', 'br', 'bs'])
+          && request.resource.data.nick is string && request.resource.data.nick.size() <= 60
           && (!('bs' in request.resource.data) || (request.resource.data.bs is list && request.resource.data.bs.size() <= 9));
         // kurucu lobideyken oyuncuyu çıkarabilir
         allow delete: if signedIn() && (request.auth.uid == uid
@@ -135,6 +138,8 @@ service cloud.firestore {
       // S55: toplu davet (g) başkasının açık davetinin üzerine yazamaz
       allow create, update: if request.resource.data.keys().hasOnly(['from', 'nick', 'room', 'op', 'lv', 'win', 'ts', 'md', 'g'])
         && owns(request.resource.data.from)
+        && (!('nick' in request.resource.data) || (request.resource.data.nick is string && request.resource.data.nick.size() <= 60))
+        && (!('room' in request.resource.data) || (request.resource.data.room is string && request.resource.data.room.size() <= 10))
         && (!('g' in request.resource.data) || resource == null
           || resource.data.from == request.resource.data.from
           || request.time.toMillis() - resource.data.ts > 600000
@@ -177,6 +182,7 @@ service cloud.firestore {
         && resource.data.m.hasAll(request.resource.data.m)
         && !(request.resource.data.by in request.resource.data.m)
         && request.resource.data.cap in request.resource.data.m
+        && (request.resource.data.cap == resource.data.cap || resource.data.cap == request.resource.data.by || !(resource.data.cap in resource.data.m))
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['m', 'by', 'cap', 'ts']);
       // kaptan, galibiyet/yenilgi (en çok 1 artar)
       allow update: if request.resource.data.keys().hasOnly(['m', 'cap', 'by', 'w', 'l', 'ct', 'jn', 'lm', 'ts', 'v'])
@@ -194,6 +200,7 @@ service cloud.firestore {
       allow get: if owns(to) || (resource != null && owns(resource.data.from));
       allow create, update: if request.resource.data.keys().hasOnly(['t', 'from', 'nick', 'ts'])
         && request.resource.data.t is int && request.resource.data.ts is int
+        && (!('nick' in request.resource.data) || (request.resource.data.nick is string && request.resource.data.nick.size() <= 60))
         && owns(request.resource.data.from)
         && request.resource.data.from in tmM(string(request.resource.data.t))
         && get(/databases/$(database)/documents/fr/$(frId(request.resource.data.from, to))).data.st == 'ok';
@@ -204,6 +211,8 @@ service cloud.firestore {
       allow read: if signedIn();
       allow create, update: if request.resource.data.keys().hasOnly(['by', 'nick', 'room', 'a', 'b', 'ts', 'cm'])
         && request.resource.data.a is int && request.resource.data.b is int
+        && (!('nick' in request.resource.data) || (request.resource.data.nick is string && request.resource.data.nick.size() <= 60))
+        && (!('room' in request.resource.data) || (request.resource.data.room is string && request.resource.data.room.size() <= 10))
         && owns(request.resource.data.by)
         && request.resource.data.by in tmM(string(request.resource.data.a))
         && (int(k) == request.resource.data.a || int(k) == request.resource.data.b);
