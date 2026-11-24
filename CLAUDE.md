@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 19 Kasım 2026 · Yayındaki sürüm: **68**
+Son güncelleme: 25 Kasım 2026 · Yayındaki sürüm: **69**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -286,6 +286,8 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 
 - 68 (19 Kasım 2026 yayında; kullanıcı "programı yayınlıyoruz, ajanlarla sına, onar, yükle" dedi): **☀️ Güneş Ülkesi + 🎯 Talim Alanı + yeni ejder maskot + masal kitabı karşılama.** Ayrıntılar §9'daki "Güneş Ülkesi kodu" ve "Yeni maskot" notlarında (o notlar artık yayında). Karşılamada ejder sembolleri ateş topuyla vurur (otomatik ~5 sn arayla, %30 ıska → üzgün yüz; dokununca hemen), arka plan `wel-bg.webp`. Talim (`gutalim`, `tlRun`): ilk hikâyeden sonra bir kez, haritada 🎯; `mc_gu.t`. Yayın öncesi 4 denetçi ajan (QA, kod, özel eğitim UX, görsel) — düzeltmeler: `mca-*.webp` Android/önbellek, acMerge `t`, guFree bellek, draTick ~15 fps, harita üst çubuğu 320 px, hc düğme, tema adları Parşömen/Kale Gecesi, İşlemler cevapları 2×2, düelloda "Doğrusu", durakta kalınca "🎯 Önce talim yap", Akıldan İşlem Kolay süre 8/7/6/6 sn ve "Olmadı! Doğrusu:", kılavuz yolları sekmelere göre güncellendi. Eski testler (fr1, s55, th, ui22, v36, v40, s60 tek kontrol) arayüz değiştiği için düşüyor.
 
+- 69 (25 Kasım 2026 yayında; kullanıcı "ön izleme tamam, yükle" dedi): **Denetim düzeltmeleri + Güneş Ülkesi kartı büyük/canlı (YENİ rozeti, ilk girişte "Yeni macera burada!" baloncuğu `mc_guhint`).** Kurallar → Worker → uygulama sırasıyla yayınlandı. Sürüm 68→69 çünkü sw.js cache-first (aynı ad eski index.html'i sunardı). Ayrıntı §9 "Denetim turları".
+
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
   - Ana menü "A+B": karakter şeridi (`.hstrip`, rkMini + rkLeft + çubuk → rkMyCard), büyük altın Oyna (`.hplay`, canavar `homeMon`, `homePlay` → son Akıldan İşlem oyunu `mc_glast` {profil|'~': {op,lv,tb}}, yoksa gmenu), 4 kare (Akıldan İşlem, İşlemler, Problemler, Yarış Odası). "Şu an oyunda" kutusu ana menüden kalktı.
@@ -338,6 +340,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
     - Testler: s61/s63 güncellendi (s63 artık yerel http sunucusuyla, file:// resim kirliliği yüzünden), `test/welshot.js` karşılama görüntüleri.
   - Kılavuzda `gu`. Test `test/gu1.js` (32 kontrol: harita, kilit, durak geç/geçeme, geri onayı, yarasa düellosu kazan, örümcek kaybet, kapı ışıkla açılır, 320 px).
 - Ertelenenler (kullanıcı "şimdilik ertele"): problem çözme adımları yardımcısı, Hatalarım, Rahat mod. İsteğe bağlı fikir: Müsait/Meşgul durum düğmesi.
+- **Denetim turları (25 Kasım 2026, kullanıcı "limit bitene kadar ajanlarla denetle/onar" dedi; ajan askısı kalktı, yayın yine onaya bağlı):** Tur 1–5 **69 ile yayınlandı** (kurallar → Worker → uygulama). Değişen: `firebase/firestore.rules` (6 geriye uyumlu sıkılaştırma → yayında ÖNCE kurallar), `worker/index.js` (fetch zaman aşımı, 8 KB gövde sınırı, KV/cron sağlamlığı → kurallardan sonra Worker), `sw.js` (addAll çekirdek+tek tek, mc-gu2 korunur, çevrimdışı fallback), `manifest.json` (id), index.html (hikâye/düello zamanlayıcı jetonları, `rkFix`/`ls()` bozuk veri, fr/tm çift dokunuş, Talim çift döngü, Android yakınlaştırma/arka plan). Şüpheliler: `ps` `gone` istemci tarafı, `duWatch` farklı kazanan, `lb` pid taklidi, 4 haneli şifre deneme.
 - **Güncellenecekler listesi (20 Kasım 2026, kullanıcı "şimdilik dursun ama listeye ekle"):** Güneş Ülkesi durak ve düello doğruları Soru Ustası + Azim sayacına yazılsın (`guStopEnd` ve düello sonunda `rkQ(sid,ok)`, tur başına ayrı `sid`; rütbe puanı/rekor/yıldız-ışık değişmez; süre dolan/yanlış sayılmaz). Önce ön izleme, onaysız yayın yok; sürüm 68 kalacak mı kullanıcıya sor.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)

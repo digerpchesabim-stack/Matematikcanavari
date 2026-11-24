@@ -1,10 +1,17 @@
-var CACHE = 'mc-v68';
+var CACHE = 'mc-v69';
 /* Güneş Ülkesi dosyaları (gu/): ilk kullanılınca indirilir, sürümler arasında saklanır */
 var GUC = 'mc-gu2';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3', './gizlilik.html', './aydinlatma.html', './veri-silme.html', './mc-idle.webp', './mc-happy.webp', './mc-look.webp', './mc-wait.webp', './mc-cheer.webp', './mc-sad.webp', './mc-peek.webp', './mc-blink.webp', './mc-sidel.webp', './mc-sider.webp', './mc-atlas.webp', './wel-bg.webp', './mc-k-idle.webp', './mc-k-look.webp', './mc-k-cheer.webp', './mc-k-peek.webp', './mca-idle.webp', './mca-hop.webp', './mca-cheer.webp', './mca-sad.webp', './mca-sneeze.webp', './mca-k-idle.webp', './mca-k-hop.webp', './mca-k-cheer.webp', './mca-k-attack.webp', './mca-k-block.webp'];
 
 self.addEventListener('install', function (e) {
-  e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES.map(function (f) { return new Request(f, { cache: 'reload' }); })); }));
+  /* çekirdek dosyalar zorunlu; görsel/ses dosyaları tek tek eklenir (biri inmezse kurulum bozulmaz) */
+  e.waitUntil(caches.open(CACHE).then(function (c) {
+    var core = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png'];
+    return Promise.all(FILES.map(function (f) {
+      var p = c.add(new Request(f, { cache: 'reload' }));
+      return core.indexOf(f) >= 0 ? p : p.catch(function () {});
+    }));
+  }));
   self.skipWaiting();
 });
 
@@ -12,9 +19,8 @@ self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (keys) {
       return Promise.all(keys.filter(function (k) { return k !== CACHE && k !== GUC; }).map(function (k) { return caches.delete(k); }));
-    })
+    }).then(function () { return self.clients.claim(); })
   );
-  self.clients.claim();
 });
 
 /* iPhone (Safari) ses dosyalarını parça parça (Range) ister; önbellekten 206 cevabı üret */
@@ -24,6 +30,7 @@ function rangeResponse(req, res) {
   return res.arrayBuffer().then(function (buf) {
     var size = buf.byteLength, start = m[1] ? parseInt(m[1], 10) : 0, end = m[2] ? parseInt(m[2], 10) : size - 1;
     if (!m[1] && m[2]) { start = Math.max(0, size - parseInt(m[2], 10)); end = size - 1; }
+    if (isNaN(start) || isNaN(end)) return res;
     end = Math.min(end, size - 1);
     if (start > end || start >= size) return new Response(null, { status: 416, headers: { 'Content-Range': 'bytes */' + size } });
     return new Response(buf.slice(start, end + 1), {
@@ -44,7 +51,7 @@ self.addEventListener('fetch', function (e) {
   if (u.indexOf('https://www.gstatic.com/firebasejs/') === 0) {
     e.respondWith(caches.open(CACHE).then(function (c) {
       return c.match(e.request).then(function (hit) {
-        return hit || fetch(e.request).then(function (r) { if (r && r.ok) c.put(e.request, r.clone()); return r; });
+        return hit || fetch(e.request).then(function (r) { if (r && r.ok) c.put(e.request, r.clone()); return r; }).catch(function () { return Response.error(); });
       });
     }));
     return;
@@ -68,12 +75,15 @@ self.addEventListener('fetch', function (e) {
   if (e.request.headers.get('range')) {
     e.respondWith(caches.match(u.split('#')[0], { ignoreSearch: true }).then(function (hit) {
       return hit ? rangeResponse(e.request, hit) : fetch(e.request);
-    }));
+    }).catch(function () { return Response.error(); }));
     return;
   }
   e.respondWith(
     caches.match(e.request).then(function (hit) {
-      return hit || fetch(e.request).catch(function () { return caches.match('./index.html'); });
+      return hit || fetch(e.request).catch(function () {
+        /* internet yokken sadece sayfa gezintisi index.html'e düşer; görsel/ses için temiz hata */
+        return (e.request.mode === 'navigate' ? caches.match('./index.html') : Promise.resolve(null)).then(function (x) { return x || Response.error(); });
+      });
     })
   );
 });
@@ -90,5 +100,5 @@ self.addEventListener('notificationclick', function (e) {
   e.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (l) {
     for (var i = 0; i < l.length; i++) { if ('focus' in l[i]) { try { l[i].postMessage({ mc: 'open', u: u }); } catch (x) {} return l[i].focus(); } }
     return self.clients.openWindow(u);
-  }));
+  }).catch(function () {}));
 });

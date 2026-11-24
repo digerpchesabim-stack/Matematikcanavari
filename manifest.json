@@ -2,6 +2,7 @@
   "name": "Matematik Canavarı",
   "short_name": "Mat. Canavarı",
   "description": "4 işlem pratik uygulaması",
+  "id": "./index.html",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
