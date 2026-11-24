@@ -7,6 +7,8 @@ const FS = 'https://firestore.googleapis.com/v1/projects/' + PROJECT + '/databas
 const SUB = 'https://digerpchesabim-stack.github.io/Matematikcanavari/';
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'POST, GET, OPTIONS', 'Access-Control-Allow-Headers': 'content-type' };
 const enc = new TextEncoder();
+// fetch zaman aşımı (8 sn): askıda kalan istek Worker'ı bekletmesin
+function tf(url, o, ms) { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms || 8000); return fetch(url, Object.assign({}, o, { signal: ac.signal })).finally(() => clearTimeout(t)); }
 
 function b64u(buf) { let s = ''; const b = new Uint8Array(buf); for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
 function ub64(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; const r = atob(s), o = new Uint8Array(r.length); for (let i = 0; i < r.length; i++) o[i] = r.charCodeAt(i); return o; }
@@ -41,19 +43,19 @@ async function vapid(env, endpoint) {
 }
 // Firestore belgesini, çağıranın oturumuyla oku (kurallar uygulanır)
 async function doc(path, tok) {
-  const r = await fetch(FS + path, { headers: { Authorization: 'Bearer ' + tok } });
+  const r = await tf(FS + path, { headers: { Authorization: 'Bearer ' + tok } });
   if (!r.ok) return null;
   const j = await r.json(), o = {};
-  for (const [k, v] of Object.entries(j.fields || {})) o[k] = 'stringValue' in v ? v.stringValue : 'integerValue' in v ? Number(v.integerValue) : 'doubleValue' in v ? v.doubleValue : 'booleanValue' in v ? v.booleanValue : null;
+  for (const [k, v] of Object.entries(j.fields || {})) o[k] = !v ? null : 'stringValue' in v ? v.stringValue : 'integerValue' in v ? Number(v.integerValue) : 'doubleValue' in v ? v.doubleValue : 'booleanValue' in v ? v.booleanValue : null;
   return o;
 }
 const ID = /^[A-Z0-9]{7}$/;
 // dizi alanlarını da okuyan sürüm (takım üyeleri)
 async function docRaw(path, tok) {
-  const r = await fetch(FS + path, { headers: { Authorization: 'Bearer ' + tok } });
+  const r = await tf(FS + path, { headers: { Authorization: 'Bearer ' + tok } });
   if (!r.ok) return null;
   const j = await r.json(), o = {};
-  for (const [k, v] of Object.entries(j.fields || {})) o[k] = v.arrayValue ? (v.arrayValue.values || []).map(x => x.stringValue) : ('stringValue' in v ? v.stringValue : null);
+  for (const [k, v] of Object.entries(j.fields || {})) o[k] = !v ? null : v.arrayValue ? (v.arrayValue.values || []).map(x => x.stringValue) : ('stringValue' in v ? v.stringValue : null);
   return o;
 }
 function json(o, s) { return new Response(JSON.stringify(o), { status: s || 200, headers: Object.assign({ 'content-type': 'application/json' }, CORS) }); }
@@ -73,7 +75,7 @@ async function fcmToken(env) {
   const der = ub64(sa.private_key.replace(/-----[A-Z ]+-----/g, '').replace(/\s/g, ''));
   const key = await crypto.subtle.importKey('pkcs8', der, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign']);
   const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, enc.encode(h + '.' + c));
-  const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=' + h + '.' + c + '.' + b64u(sig) });
+  const r = await tf('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded' }, body: 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=' + h + '.' + c + '.' + b64u(sig) });
   const j = await r.json();
   if (!j.access_token) throw new Error('fcm oturum');
   FCMT = { t: j.access_token, exp: Date.now() + (j.expires_in || 3600) * 1000 };
@@ -84,27 +86,28 @@ async function sendFcm(env, f, msg) {
   const t = await fcmToken(env);
   const message = { token: f, notification: { title: msg.t, body: msg.b || '' }, data: { u: msg.u || SUB, g: msg.g || '' },
     android: { priority: 'high', ttl: '900s', notification: { channel_id: 'mc', tag: msg.g || 'mc', icon: 'ic_stat_mc', color: '#2f6bff' } } };
-  return fetch('https://fcm.googleapis.com/v1/projects/' + PROJECT + '/messages:send', { method: 'POST', headers: { Authorization: 'Bearer ' + t, 'content-type': 'application/json' }, body: JSON.stringify({ message }) });
+  return tf('https://fcm.googleapis.com/v1/projects/' + PROJECT + '/messages:send', { method: 'POST', headers: { Authorization: 'Bearer ' + t, 'content-type': 'application/json' }, body: JSON.stringify({ message }) });
 }
 async function sendPush(env, ps, msg) {
   if (ps.f) return sendFcm(env, ps.f, msg);
   const body = await encrypt(ps, JSON.stringify(msg));
-  return fetch(ps.e, { method: 'POST', body, headers: { Authorization: await vapid(env, ps.e), 'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: '900', Urgency: 'high' } });
+  return tf(ps.e, { method: 'POST', body, headers: { Authorization: await vapid(env, ps.e), 'Content-Encoding': 'aes128gcm', 'Content-Type': 'application/octet-stream', TTL: '900', Urgency: 'high' } });
 }
 function sub(ps) { return ps && ps.f ? { f: ps.f } : ps && ps.e && ps.k && ps.a ? { e: ps.e, k: ps.k, a: ps.a } : null; }
 // S54: 5 dk kala hatırlatma. KV'de dakika kovası: m<dakika> = [{k: oyuncu|oda, s: abonelik, m: mesaj}]
 const mkey = t => 'm' + Math.floor((t - 300000) / 60000);
+function kvList(v) { try { const a = JSON.parse(v || '[]'); return Array.isArray(a) ? a : []; } catch (e) { return []; } }
 async function remAdd(env, rv, list) {
   if (!env.MCR) return 'kv yok';
-  if (rv.at - 300000 < Date.now() + 60000) return 'gec';
-  const key = mkey(rv.at), cur = JSON.parse((await env.MCR.get(key)) || '[]');
+  if (typeof rv.at !== 'number' || !isFinite(rv.at) || rv.at - 300000 < Date.now() + 60000) return 'gec';
+  const key = mkey(rv.at), cur = kvList(await env.MCR.get(key));
   for (const x of list) { if (!x.s) continue; const i = cur.findIndex(y => y.k === x.k); if (i >= 0) cur[i] = x; else cur.push(x); }
   await env.MCR.put(key, JSON.stringify(cur), { expirationTtl: Math.max(120, Math.ceil((rv.at - Date.now()) / 1000) + 3600) });
   return 'ok';
 }
 async function remDel(env, rv, f) {
-  if (!env.MCR) return;
-  const key = mkey(rv.at), cur = JSON.parse((await env.MCR.get(key)) || '[]'), nx = cur.filter(x => !f(x));
+  if (!env.MCR || typeof rv.at !== 'number' || !isFinite(rv.at)) return;
+  const key = mkey(rv.at), cur = kvList(await env.MCR.get(key)), nx = cur.filter(x => !f(x));
   if (nx.length === cur.length) return;
   if (nx.length) await env.MCR.put(key, JSON.stringify(nx), { expirationTtl: 3600 * 3 }); else await env.MCR.delete(key);
 }
@@ -112,9 +115,8 @@ export async function cron(env) {
   if (!env.MCR) return 0;
   const m = Math.floor(Date.now() / 60000); let n = 0;
   for (const k of ['m' + (m - 2), 'm' + (m - 1), 'm' + m]) {
-    const v = await env.MCR.get(k); if (!v) continue;
-    await env.MCR.delete(k);
-    for (const x of JSON.parse(v)) { try { await sendPush(env, x.s, x.m); n++; } catch (e) {} }
+    let v; try { v = await env.MCR.get(k); if (!v) continue; await env.MCR.delete(k); } catch (e) { continue; }
+    for (const x of kvList(v).slice(0, 200)) { try { if (x && x.s && x.m) { await sendPush(env, x.s, x.m); n++; } } catch (e) {} }
   }
   return n;
 }
@@ -129,7 +131,9 @@ export async function handle(req, env) {
   const u = new URL(req.url);
   if (req.method === 'GET' && u.pathname === '/key') return json({ k: env.VAPID_PUB, kv: !!env.MCR, fcm: !!env.FCM_SA });
   if (req.method !== 'POST' || u.pathname !== '/push') return json({ err: 'yok' }, 404);
-  let b; try { b = JSON.parse(await req.text()); } catch (e) { return json({ err: 'istek' }, 400); }
+  if (Number(req.headers.get('content-length') || 0) > 8192) return json({ err: 'büyük' }, 413);
+  let b; try { const tx = await req.text(); if (tx.length > 8192) return json({ err: 'büyük' }, 413); b = JSON.parse(tx); } catch (e) { return json({ err: 'istek' }, 400); }
+  if (!b || typeof b !== 'object') return json({ err: 'istek' }, 400);
   const tok = String(b.t || ''), to = String(b.to || ''), from = String(b.from || '');
   if (b.k === 'ti') {
     // S56: takım çağrısı: ti/{takım} belgesi gönderen üye tarafından yazılmış olmalı; takımın diğer üyelerine gider
@@ -209,7 +213,8 @@ export async function handle(req, env) {
   if (!ps) return json({ ok: false, why: 'kapali' });
   msg.u = msg.u || SUB;
   const r = await sendPush(env, ps, msg);
-  return json({ ok: r.ok, s: r.status });
+  // 404/410: abonelik ölü (Worker ps'yi silemez, kurallar sahibine ait); istemci bilgilensin
+  return json({ ok: r.ok, s: r.status, gone: r.status === 404 || r.status === 410 });
 }
 export default {
   fetch: (req, env) => handle(req, env).catch(e => json({ err: 'hata', m: String(e && e.message || e) }, 500)),
