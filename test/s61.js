@@ -22,8 +22,8 @@ await p.evaluate(()=>{themeSet('light');closeModal()});
 await sleep(1200);
 ok(await p.evaluate(()=>!!(DRG.atlas&&DRG.atlas.complete&&DRG.atlas.naturalWidth===2592)),'karşılama: ejder atlası yüklü (hazır kareler)');
 await prof(p);await sleep(300);
-ok(await p.evaluate(()=>{var c=document.querySelector('.hplay canvas.dra');return !!c&&!!c._d}),'ana menü: Oyna düğmesinde hareketli ejder');
-ok(await p.evaluate(()=>{var t=document.getElementById('tabs'),c=getComputedStyle(t);return !t.hidden&&parseFloat(c.borderRadius)>=20&&/blur/.test(c.backdropFilter||c.webkitBackdropFilter||'')}),'alt sekme çubuğu yüzen cam');
+ok(await p.evaluate(()=>{var c=document.querySelector('.hm-play canvas.dra');return !!c&&!!c._d}),'ana menü: Oyna şeridinde hareketli ejder');
+ok(await p.evaluate(()=>{var t=document.getElementById('tabs'),c=getComputedStyle(t),r=t.getBoundingClientRect();return !t.hidden&&r.left===0&&Math.abs(r.right-innerWidth)<1&&r.bottom===innerHeight&&parseFloat(c.borderTopWidth)>=1}),'alt sekme çubuğu: tam genişlik parşömen şerit');
 if(out)await p.screenshot({path:path.join(out,'home.png')});
 // menü: üst başlıkta küçük canavar
 await p.evaluate(()=>go('gmenu'));await sleep(200);

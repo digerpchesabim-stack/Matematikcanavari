@@ -13,16 +13,16 @@ const open=async(vp,theme)=>{const ctx=await b.newContext({viewport:vp||{width:3
 const shot=async(p,n,full)=>{if(out)await p.screenshot({path:path.join(out,n+'.png'),fullPage:!!full})};
 const prof=p=>p.evaluate(()=>{localStorage.setItem('mc_profiles',JSON.stringify(['🦊 Kurnaz Tilki']));NMS.busy=true;st.profile='🦊 Kurnaz Tilki';var R=rkGet(st.profile);R.p=70;R.r=2;rkPut(st.profile,R);go('home');if(st.modal)closeModal();RK.q=[]});
 let p=await open();await prof(p);await sleep(700);await p.evaluate(()=>{if(st.modal)closeModal()});
-ok(await p.evaluate(()=>!!document.querySelector('.hstrip')&&!!document.querySelector('.hplay')&&document.querySelectorAll('#app .hgrid .btn').length===4),'ana menü: şerit + Oyna + 4 kare');
+ok(await p.evaluate(()=>!!document.querySelector('.hm-me')&&!!document.querySelector('.hm-play')&&!!document.querySelector('.hm-gu')&&document.querySelectorAll('#app .hm-g .hm-q').length===3),'ana sayfa: profil satırı + Güneş Ülkesi + Oyna + 3 kare');
 ok(await p.evaluate(()=>{var t=document.getElementById('tabs');return t&&!t.hidden&&t.children[0].classList.contains('on')}),'alt sekme çubuğu görünür, Oyna seçili');
-ok(await p.evaluate(()=>/Akıldan İşlem Oyunu/.test(document.querySelector('.hplay').textContent)),'ilk açılışta Oyna → Akıldan İşlem');
+ok(await p.evaluate(()=>/Akıldan işlem$/.test(document.querySelector('.hm-play .hm-sub').textContent)),'ilk açılışta Oyna → Akıldan işlem');
 await sleep(500);
-ok(await p.evaluate(()=>{var i=document.querySelector('.hplay img');return !!i&&/mc-idle\.webp$/.test(i.getAttribute('src'))&&i.complete&&i.naturalWidth>=300}),'Oyna düğmesinde canavar (hazır kare) yüklendi');
+ok(await p.evaluate(()=>{var c=document.querySelector('.hm-play canvas.dra#hpmd'),g=document.querySelector('.hm-gu canvas.dra');return !!c&&!!c._d&&!!g&&c.getBoundingClientRect().width>=150}),'Oyna ve Güneş Ülkesi şeritlerinde hareketli ejder');
 await shot(p,'01_ana_menu');
 ok(await p.evaluate(()=>document.documentElement.scrollWidth<=390),'taşma yok');
 await p.evaluate(()=>homePlay());await sleep(300);ok(await p.evaluate(()=>st.screen==='gmenu'&&document.getElementById('tabs').hidden),'Oyna (ilk) → oyun menüsü, sekmeler gizli');
 await p.evaluate(()=>{gStart('mul','o',0)});await sleep(300);await p.evaluate(()=>{go('home')});await sleep(300);
-ok(await p.evaluate(()=>/Çarpma · Orta/.test(document.querySelector('.hplay').textContent)&&/Kaldığın yerden devam/.test(document.querySelector('.hplay').textContent)),'Oyna: Çarpma · Orta, kaldığın yerden devam');
+ok(await p.evaluate(()=>/Akıldan işlem · Çarpma · Orta/.test(document.querySelector('.hm-play .hm-sub').textContent)),'Oyna: Akıldan işlem · Çarpma · Orta');
 await p.evaluate(()=>homePlay());await sleep(300);ok(await p.evaluate(()=>st.g&&st.g.op==='mul'&&st.g.lv==='o'),'Oyna son oyunu başlatır');
 await p.evaluate(()=>go('home'));await sleep(300);
 await p.evaluate(()=>tabGo(1));await sleep(600);ok(await p.evaluate(()=>st.screen==='friends'&&!!document.getElementById('tm-home')&&document.getElementById('tabs').children[1].classList.contains('on')),'Arkadaşlar sekmesi + Takımım');await shot(p,'02_arkadaslar');
@@ -48,7 +48,7 @@ await p.evaluate(()=>{go('home');confetti(true);go('gover')}).catch(()=>{});awai
 ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();
 // misafir, küçük ekran, gece
 p=await open({width:320,height:568},'dark');await p.evaluate(()=>{guest()});await sleep(500);
-ok(await p.evaluate(()=>document.getElementById('tabs').hidden&&!document.querySelector('.hstrip')&&/Ayarlar/.test(document.getElementById('app').textContent)),'misafir: sekme yok, Ayarlar düğmesi var');await shot(p,'05_misafir_320');
+ok(await p.evaluate(()=>document.getElementById('tabs').hidden&&!document.querySelector('button.hm-me')&&/Ayarlar/.test(document.getElementById('app').textContent)),'misafir: sekme yok, Ayarlar düğmesi var');await shot(p,'05_misafir_320');
 await prof(p);await sleep(700);await p.evaluate(()=>{if(st.modal)closeModal()});ok(await p.evaluate(()=>document.documentElement.scrollWidth<=320),'320 px taşma yok');await shot(p,'06_gece_320');
 const ov=await p.evaluate(()=>{var t=document.getElementById('tabs').getBoundingClientRect(),l=[...document.querySelectorAll('#app button')].pop();window.scrollTo(0,1e5);var r=l.getBoundingClientRect();return r.bottom<=t.top+1});ok(ov,'son düğme sekme çubuğunun altında kalmıyor');
 ok(p.errs.length===0,'sayfa hatası yok '+JSON.stringify(p.errs.slice(0,3)));await p.context().close();

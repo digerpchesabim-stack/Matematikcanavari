@@ -13,9 +13,9 @@ await p.goto(U);await sleep(900);
 const shot=async n=>{if(out)await p.screenshot({path:path.join(out,n+'.png')})};
 await p.evaluate(()=>{localStorage.setItem('mc_profiles',JSON.stringify(['🦁 Kral Aslan']));NMS.busy=true;st.profile='🦁 Kral Aslan';go('home');if(st.modal)closeModal();RK.q=[]});
 await sleep(300);
-ok(await p.evaluate(()=>!!document.querySelector('.guhome')),'ana sayfada Güneş Ülkesi kartı');
+ok(await p.evaluate(()=>!!document.querySelector('.hm-gu .hm-go')),'ana sayfada Güneş Ülkesi kartı');
 await shot('01_home');
-await p.click('.guhome');await sleep(400);
+await p.click('.hm-gu .hm-go');await sleep(400);
 ok(await p.evaluate(()=>st.screen==='guintro'&&!!document.querySelector('#guvid')),'ilk açılışta hikâye videosu');
 ok(await p.evaluate(()=>{var v=document.getElementById('guvid');return v.src.indexOf('gu/hikaye.mp4')>0}),'video kaynağı gu/hikaye.mp4');
 for(let i=0;i<30;i++){if(await p.evaluate(()=>{var v=document.getElementById('guvid');return v&&v.readyState>=1}))break;await sleep(150)}
@@ -24,7 +24,7 @@ ok(await p.evaluate(()=>getComputedStyle(document.getElementById('tabs')||docume
 await shot('01b_story');
 await p.click('.guvb');await sleep(300);
 ok(await p.evaluate(()=>(st.screen==='gumap'||st.screen==='gutalim')&&guD().h===1),'Geç → harita, izlendi kaydı');
-await p.evaluate(()=>{var d=guD();d.t=1;guPut(d);go('home')});await sleep(200);await p.click('.guhome');await sleep(300);
+await p.evaluate(()=>{var d=guD();d.t=1;guPut(d);go('home')});await sleep(200);await p.click('.hm-gu .hm-go');await sleep(300);
 ok(await p.evaluate(()=>st.screen==='gumap'),'ikinci açılışta doğrudan harita');
 await p.click('.gsto[aria-label="Hikâyeyi izle"]');await sleep(300);
 ok(await p.evaluate(()=>st.screen==='guintro'),'📜 ile hikâye yeniden');

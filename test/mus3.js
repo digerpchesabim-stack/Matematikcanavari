@@ -8,11 +8,11 @@ for(const ios of [true,false]){
   await p.addInitScript(fs.readFileSync(__dirname+'/mockfb.js','utf8'));
   if(ios)await p.addInitScript(()=>{Object.defineProperty(HTMLMediaElement.prototype,'volume',{get(){return 1},set(v){},configurable:true})});
   await p.goto(U);await sleep(500);await p.click('canvas#mon',{force:true});await sleep(1500);
-  const S=()=>p.evaluate(()=>({p:MM.el?MM.el.paused:null,on:MM.on,vol:MM.vol,btn:(document.getElementById('mm-btn')||{}).textContent}));
+  const S=()=>p.evaluate(()=>({p:MM.el?MM.el.paused:null,on:MM.on,vol:MM.vol,btn:((document.getElementById('mm-btn')||{}).getAttribute||function(){return ''}).call(document.getElementById('mm-btn'),'aria-label')}));
   const n=ios?'iPhone':'Android';
   let s=await S();console.log(' ',n,JSON.stringify(s));ok(s.p===false,n+': müzik çalıyor');ok(s.vol===!ios,n+': ses seviyesi ayarlanabilir mi = '+!ios);
-  await p.click('#mm-btn');await sleep(800);s=await S();ok(s.p===true&&s.on===false&&s.btn==='🔇',n+': 🔇 müziği durdurdu '+JSON.stringify(s));
-  await p.click('#mm-btn');await sleep(800);s=await S();ok(s.p===false&&s.on===true&&s.btn==='🎵',n+': 🎵 yeniden çaldı '+JSON.stringify(s));
+  await p.click('#mm-btn');await sleep(800);s=await S();ok(s.p===true&&s.on===false&&s.btn==='Müziği aç',n+': 🔇 müziği durdurdu '+JSON.stringify(s));
+  await p.click('#mm-btn');await sleep(800);s=await S();ok(s.p===false&&s.on===true&&s.btn==='Müziği kapat',n+': 🎵 yeniden çaldı '+JSON.stringify(s));
   await p.click('#mm-btn');await sleep(300);await p.click('#mm-btn');await sleep(800);s=await S();ok(s.p===false&&s.on===true,n+': hızlı kapat-aç sonrası çalıyor');
   await p.evaluate(()=>{st.screen='quiz';mmUpdate()});await sleep(800);s=await S();ok(s.p===true,n+': oyun ekranında sustu');
   await p.evaluate(()=>{st.screen='home';mmUpdate()});await sleep(800);s=await S();ok(s.p===false,n+': menüye dönünce yeniden çaldı');
