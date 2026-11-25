@@ -1646,7 +1646,7 @@ function acMerge(R,dirty){
     ['mc_dhist','mc_rhist'].forEach(function(k){var u={};ls(k,[]).concat(J(k,[])).forEach(function(x){if(x&&x.t){var z=x.t+'|'+x.p;if(!u[z])u[z]=x}});lsSet(k,Object.keys(u).map(function(z){return u[z]}).sort(function(a,b){return b.t-a.t}).slice(0,100))});
     ['mc_best','mc_rbest'].forEach(function(k){var A=ls(k,{}),B=J(k,{}),q;for(p in B){if(!A[p])A[p]={};for(q in B[p])if(!(A[p][q]>=B[p][q]))A[p][q]=B[p][q]}lsSet(k,A)});
     var RA=ls('mc_rk',{}),RB=J('mc_rk',{});for(p in RB)RA[p]=RA[p]?rkMerge1(RA[p],RB[p]):RB[p];lsSet('mc_rk',RA);
-    var GA=ls('mc_gu',{}),GB=J('mc_gu',{}),gq;for(p in GB){var ga=GA[p],gb=GB[p];if(!ga||typeof ga!=='object')ga={s:{},c:0};if(!gb||typeof gb!=='object')gb={};if(!ga.s||typeof ga.s!=='object'||Array.isArray(ga.s))ga.s={};if(!gb.s||typeof gb.s!=='object')gb.s={};ga.c=Math.max(ga.c|0,gb.c|0);if(gb.h)ga.h=1;if(gb.t)ga.t=1;for(gq in (gb.s||{}))ga.s[gq]=Math.max(ga.s[gq]|0,gb.s[gq]|0);GA[p]=ga}lsSet('mc_gu',GA);
+    var GA=ls('mc_gu',{}),GB=J('mc_gu',{}),gq;for(p in GB){var ga=GA[p],gb=GB[p];if(!ga||typeof ga!=='object')ga={s:{},c:0};if(!gb||typeof gb!=='object')gb={};if(!ga.s||typeof ga.s!=='object'||Array.isArray(ga.s))ga.s={};if(!gb.s||typeof gb.s!=='object')gb.s={};ga.c=Math.max(ga.c|0,gb.c|0);if(gb.h)ga.h=1;if(gb.t)ga.t=1;for(gq in (gb.s||{}))ga.s[gq]=Math.max(ga.s[gq]|0,gb.s[gq]|0);if(gb.f&&typeof gb.f==='object'&&!Array.isArray(gb.f)){if(!ga.f||typeof ga.f!=='object'||Array.isArray(ga.f))ga.f={};for(gq in gb.f)if(!(ga.s[gq]>0))ga.f[gq]=Math.max(ga.f[gq]|0,gb.f[gq]|0)}if(ga.f&&typeof ga.f==='object')for(gq in ga.f)if(ga.s[gq]>0)delete ga.f[gq];GA[p]=ga}lsSet('mc_gu',GA);
     var LA=ls('mc_lbpid',{}),LB=J('mc_lbpid',{});for(p in LB)LA[p]=LA[p]||LB[p];lsSet('mc_lbpid',LA);
     var NB=J('mc_nmnew',[]);lsSet('mc_nmnew',ls('mc_nmnew',[]).filter(function(x){return NB.indexOf(x)>=0}));
     ['mc_nm','mc_pid','mc_tm'].forEach(function(k){var A=ls(k,{}),B=J(k,{});for(p in B)if(!A[p]||!dirty)A[p]=B[p];lsSet(k,A)});
@@ -7536,7 +7536,7 @@ var GD=null;
 function guDuelOpen(n){
   var c=GUS[n],r=GUR[guReg(n)];
   var f0=guD().f||{},fl0=f0[n]|0,mx=fl0>=4?4:3;
-  GD={n:n,c:c,boss:!!GUK[c][1],op:r.op,lv:guLv(n),hp:5,me:mx,mx:mx,lost:fl0,ph:'load',times:[],tm:{},last:'',img:null,an:{m:'idle',t0:0},fl:0,pz:0};
+  GD={n:n,c:c,boss:!!GUK[c][1],op:r.op,lv:guLv(n),hp:5,hx:5,sub:'q',timers:[],me:mx,mx:mx,lost:fl0,ph:'load',times:[],tm:{},last:'',img:null,an:{m:'idle',t0:0},fl:0,pz:0};
   go('guduel');
   var g0=GD,im=new Image();im.onload=function(){if(GD===g0&&GD.ph==='load'){GD.img=im;guEnc()}};im.onerror=function(){if(GD===g0){toast('Yaratık yüklenemedi. İnterneti kontrol edip tekrar dene');guToMap()}};im.src='gu/'+c+'.webp';
   ['creature-hit','sword-hit','light-dissolve','sun-gain',guAtkN(c),c+'-fade'].forEach(guLoad);if(c==='knight')guLoad('king-attack2');
@@ -7575,7 +7575,7 @@ function guFight(){
   guEncStop();smpStop('gu/boss-intro-short.mp3');smpStop('gu/king-intro.mp3');smpStop('gu/'+GD.c+'-appear.mp3');smpStop('gu/'+guAtkN(GD.c)+'.mp3');if(GD.c==='knight')smpStop('gu/king-attack2.mp3');
   GD.ph='fight';render();
   if(GD.c==='knight')guAmb('king-theme',0.45);
-  sndClang();setTimeout(guNext,500);
+  sndClang();guT(guNext,500);
 }
 /* süreler işleme göre (OPF); yaratık hızı çocuğun bu işlemdeki ortanca hızına uyar (ajan simülasyonu: ~%60–65 tur kazanma) */
 function guLim(){var q=GD.q;return ({k:12000,o:15000,z:20000}[(q&&q.lv)||GD.lv]||15000)*(OPF[(q&&q.op)||GD.op]||1)}
@@ -7589,7 +7589,8 @@ function guPlan(){
 function guTime(t){var q=GD.q,op=(q&&q.op)||GD.op;(GD.tm[op]=GD.tm[op]||[]).push(t);GD.times.push(t)}
 function guNext(){
   if(!GD||GD.ph!=='fight')return;
-  if(GD.pz)return setTimeout(guNext,250);
+  if(GD.pz)return guT(guNext,0);
+  GD.sub='q';
   var q=guQ(GD.op,GD.lv,GD.last,GD.n);GD.last=q.txt;GD.q=q;GD.res=false;GD.lock=false;GD.miss=false;GD.t0=Date.now();GD.L=guLim();GD.T=guPlan();GD.pc=Math.random()<(GD.boss?0.75:0.65);GD.qi=(GD.qi|0)+1;
   var e=document.getElementById('gd-q');if(e)e.textContent=q.txt+' = ?';
   var a=document.getElementById('gd-a');if(a)a.innerHTML=guOptsHtml(q,'guAns');
@@ -7603,7 +7604,7 @@ function guTick(){
   if(GD.pz)return;
   var el=Date.now()-GD.t0,b=document.getElementById('gd-t');
   if(b)b.style.width=Math.max(0,100-el*100/GD.L)+'%';
-  if(GD.res)return;
+  if(GD.res||GD.sub!=='q')return;
   if(el>=GD.T&&!GD.miss){
     if(GD.pc){guTime(GD.T*1.2);return guFoeHit()}
     GD.miss=true;guMsg('😮 '+GUK[GD.c][0]+' yanıldı! Hâlâ bilebilirsin','mid');
@@ -7612,7 +7613,7 @@ function guTick(){
 }
 function guShow(){if(!GD||!GD.q)return;var q=GD.q,bs=document.querySelectorAll('#gd-a .ani'),x;for(x=0;x<bs.length;x++)if(q.opts[x].v===q.ans)bs[x].classList.add('ok')}
 function guAns(i,el){
-  if(!GD||GD.ph!=='fight'||GD.res||GD.lock||GD.pz)return;
+  if(!GD||GD.ph!=='fight'||GD.res||GD.lock||GD.pz||GD.sub!=='q')return;
   var q=GD.q,ok=q.opts[i].v===q.ans,t=Date.now()-GD.t0;
   if(ok){GD.res=true;guTime(t);el.classList.add('ok');guMeHit()}
   else{
@@ -7620,17 +7621,17 @@ function guAns(i,el){
     GD.res=true;GD.lock=true;el.classList.add('bad');buzz(60);
     sfxPlay(function(t){tone(220,t,0.18,'triangle',0.5,AU.sg);tone(165,t+0.14,0.3,'triangle',0.5,AU.sg)});
     guShow();guAva('wait');guMsg('Doğrusu: '+q.ans,'bad');
-    setTimeout(function(){if(GD&&GD.ph==='fight')guFoeHit('💥 '+GUK[GD.c][0]+' vurdu! Doğrusu: '+q.ans+'. Sıradaki soruda sen vur!')},600);
+    guT(function(){if(GD.ph==='fight')guFoeHit('💥 '+GUK[GD.c][0]+' vurdu! Doğrusu: '+q.ans+'. Sıradaki soruda sen vur!')},600);
   }
 }
 function guPips(){
   var h=document.getElementById('gd-hp'),m=document.getElementById('gd-hm'),i,s='';
-  if(h){for(i=0;i<5;i++)s+='<i'+(i<GD.hp?'':' class="e"')+'></i>';h.innerHTML=s}
+  if(h){for(i=0;i<(GD.hx||5);i++)s+='<i'+(i<GD.hp?'':' class="e"')+'></i>';h.innerHTML=s}
   if(m){s='';for(i=0;i<(GD.mx||3);i++)s+='<i'+(i<GD.me?'':' class="e"')+'></i>';m.innerHTML=s}
-  var hn=document.getElementById('gd-hn');if(hn)hn.textContent=GD.hp+' / 5';
+  var hn=document.getElementById('gd-hn');if(hn)hn.textContent=GD.hp+' / '+(GD.hx||5);
 }
 function guMeHit(){
-  if(!GD)return;GD.hp--;guS('sword-hit',1);guAva('cheer');draPlay('gd-dr','k-attack');setTimeout(function(){var k=document.getElementById('gd-spk');if(k&&!RMOT){k.classList.remove('go');void k.offsetWidth;k.classList.add('go')}},380);guMsg('⚔️ Önce sen bildin!','ok');buzz(30);
+  if(!GD)return;GD.hp--;guS('sword-hit',1);guAva('cheer');draPlay('gd-dr','k-attack');guT(function(){var k=document.getElementById('gd-spk');if(k&&!RMOT){k.classList.remove('go');void k.offsetWidth;k.classList.add('go')}},380);guMsg('⚔️ Önce sen bildin!','ok');buzz(30);
   var sl=document.getElementById('gd-sl');if(sl){sl.classList.remove('go');void sl.offsetWidth;sl.classList.add('go')}
   var dm=document.getElementById('gd-dm');if(dm){dm.classList.remove('go');void dm.offsetWidth;dm.classList.add('go')}
   GD.fl=Date.now();var cw=document.getElementById('gd-cw');if(cw){cw.classList.remove('hit');void cw.offsetWidth;cw.classList.add('hit')}
@@ -7638,22 +7639,22 @@ function guMeHit(){
   if(GD.hp<=0){
     /* son vuruş: kılıç çınlar, ekran parlar ve sarsılır, yaratık bir an donar */
     if(GU.tk){clearInterval(GU.tk);GU.tk=null}
-    setTimeout(function(){if(!GD||GD.ph!=='fight')return;sndClang();buzz([80,40,160]);guFlash(1)},120);
-    var g1=GD;setTimeout(function w(){if(GD!==g1||GD.ph!=='fight')return;if(GD.pz)return setTimeout(w,250);guWin()},750);return;
+    guT(function(){if(GD.ph!=='fight')return;sndClang();buzz([80,40,160]);guFlash(1)},120);
+    guT(function(){if(GD.ph==='fight')guWin()},750);return;
   }
-  var g2=GD;setTimeout(function c2(){if(GD!==g2||GD.ph!=='fight')return;if(GD.pz)return setTimeout(c2,250);if(GD.hp<=0)guWin();else guNext()},1100);
+  guT(function(){if(GD.ph!=='fight')return;if(GD.hp<=0)guWin();else guNext()},1100);
 }
 function guFoeHit(msg){
-  if(!GD)return;GD.res=true;GD.me--;GD.an={m:'atk',t0:Date.now()};setTimeout(function(){draPlay('gd-dr','k-block')},120);
-  var c=GD.c;guS(c==='knight'&&GD.qi%2?'king-attack2':guAtkN(c),.95);
-  setTimeout(function(){
-    if(!GD)return;guS('creature-hit',.9);buzz([90,40,60]);
+  if(!GD)return;GD.res=true;GD.me--;GD.an={m:'atk',t0:Date.now()};guT(function(){draPlay('gd-dr','k-block')},120);
+  var c=GD.c;guVoice(c==='knight'&&GD.qi%2?'king-attack2':guAtkN(c),.95);
+  guT(function(){
+    guS('creature-hit',.9);buzz([90,40,60]);
     var f=document.getElementById('gd-fx');if(f){f.classList.remove('go');void f.offsetWidth;f.classList.add('go')}
     var w=document.querySelector('.gud');if(w){w.classList.remove('shk');void w.offsetWidth;w.classList.add('shk')}
     guPips();
   },330);
   guShow();guAva('sad');guMsg(msg||('⚡ '+GUK[c][0]+' önce bildi!'),'bad');
-  var g3=GD;setTimeout(function c3(){if(GD!==g3||GD.ph!=='fight')return;if(GD.pz)return setTimeout(c3,250);if(GD.me<=0)guLose();else guNext()},1900);
+  guT(function(){if(GD.ph!=='fight')return;if(GD.me<=0)guLose();else guNext()},1900);
 }
 function guFlash(shake){
   if(RMOT)return;var w=document.querySelector('.gud');if(!w)return;
@@ -7662,18 +7663,22 @@ function guFlash(shake){
 }
 /* yok olma: çatlaklar (ses: son haykırış + çıtırtılar) → ışık patlaması + halka → parçacıklar toplanır → güneş ışığı */
 function guWin(){
-  if(!GD)return;clearInterval(GU.tk);GU.tk=null;guAmbStop();
+  if(!GD)return;guTClear();clearInterval(GU.tk);GU.tk=null;guAmbStop();
   GD.ph='win';GD.stars=Math.min(3,GD.me);GD.res2=guPass(GD.n,GD.stars);GD.dt0=0;GD.ps=null;GD.cr=null;
   var dl=guD();if(dl.f&&dl.f[GD.n]){delete dl.f[GD.n];guPut(dl)}
   var B=GD.boss,T1=B?2.0:1.4,c=GD.c;GD.T1=T1;
   render();
   guS(c+'-fade',1);
-  (B?[200,650,1100,1550]:[200,600,1000]).forEach(function(ms,i){setTimeout(function(){if(GD&&GD.ph==='win'){sndCrack();buzz([30+i*15])}},ms)});
-  setTimeout(function(){if(!GD||GD.ph!=='win')return;sndBurst(B);guS('light-dissolve',1);buzz(B?[220,60,380]:[260]);guFlash(1)},T1*1000);
-  setTimeout(function(){if(GD&&GD.ph==='win'){guS('sun-gain',.9);confetti(B,'guduel')}},T1*1000+1300);
+  (B?[200,650,1100,1550]:[200,600,1000]).forEach(function(ms,i){guT(function(){if(GD.ph==='win'){sndCrack();buzz([30+i*15])}},ms)});
+  guT(function(){if(GD.ph!=='win')return;sndBurst(B);guS('light-dissolve',1);buzz(B?[220,60,380]:[260]);guFlash(1)},T1*1000);
+  guT(function(){if(GD.ph==='win'){guS('sun-gain',.9);confetti(B,'guduel')}},T1*1000+1300);
 }
-function guLose(){if(!GD)return;clearInterval(GU.tk);GU.tk=null;guAmbStop();var d=guD();d.f=d.f||{};d.f[GD.n]=(d.f[GD.n]|0)+1;guPut(d);GD.ph='lose';render();sndEnd()}
-function guDuelStop(){if(GU.tk){clearInterval(GU.tk);GU.tk=null}guEncStop()}
+function guLose(){if(!GD)return;guTClear();clearInterval(GU.tk);GU.tk=null;guAmbStop();var d=guD();d.f=d.f||{};d.f[GD.n]=(d.f[GD.n]|0)+1;guPut(d);GD.ph='lose';render();sndEnd()}
+function guDuelStop(){if(GU.tk){clearInterval(GU.tk);GU.tk=null}guEncStop();guTClear();if(GU.vc){smpStop('gu/'+GU.vc+'.mp3');GU.vc=''}}
+/* F0: düello zamanlayıcıları tek yerden (GD kimliği + duraklatma), test hızı GU.spd; yaratık sesleri tek kanal (guVoice) */
+function guT(fn,ms,g){g=g||GD;if(!g||!g.timers)return 0;var id;function run(){var i=g.timers.indexOf(id);if(i>=0)g.timers.splice(i,1);if(GD!==g)return;if(g.pz){id=setTimeout(run,250);g.timers.push(id);return}fn()}id=setTimeout(run,Math.max(0,ms*(GU.spd||1)));g.timers.push(id);return id}
+function guTClear(g){g=g||GD;if(g&&g.timers){g.timers.forEach(clearTimeout);g.timers.length=0}}
+function guVoice(n,v){if(GU.vc&&GU.vc!==n)smpStop('gu/'+GU.vc+'.mp3');GU.vc=n;guS(n,v)}
 function guDuelHtml(){
   var g=GD;if(!g)return '';
   var c=g.c,nm=GUK[c][0],r=GUR[guReg(g.n)],top='<div class="gdtop"><button class="gbk" onclick="back()" aria-label="Geri">'+(g.ph==='fight'?'⏸':'←')+'</button><span class="gch">'+r.s+' '+r.n+'</span><span class="gdn">'+g.n+'/49</span></div>';
@@ -7690,7 +7695,7 @@ function guDuelHtml(){
     return h;
   }
   if(g.ph==='fight'){
-    h+='<div class="gdhud"><img class="gdav" src="gu/'+c+'-p.webp" alt=""><div class="gdhw"><div class="gdhn">'+nm+'<span id="gd-hn">'+g.hp+' / 5</span></div><div class="ghp" id="gd-hp"></div></div></div>';
+    h+='<div class="gdhud"><img class="gdav" src="gu/'+c+'-p.webp" alt=""><div class="gdhw"><div class="gdhn">'+nm+'<span id="gd-hn">'+g.hp+' / '+(g.hx||5)+'</span></div><div class="ghp" id="gd-hp"></div></div></div>';
     h+='<div class="gdcw" id="gd-cw"><canvas id="gdc"></canvas><div class="gsl" id="gd-sl"></div><div class="gdm" id="gd-dm">−1</div>'+draHtml('k-idle','gdf','gd-dr')+'<i class="gspk" id="gd-spk"></i></div>';
     h+='<div class="gdq"><small>KAÇ EDER?</small><b id="gd-q"></b><div class="gdtm"><i id="gd-t"></i></div></div>';
     h+='<div class="agrid gda" id="gd-a"></div><div class="gdmsg" id="gd-m"></div>';
@@ -8057,7 +8062,7 @@ function guBack(){
   }
 }
 function guFree(){
-  for(var dk in DRG)if(/^(a:)?k-/.test(dk))delete DRG[dk];if(typeof TLI!=='undefined'){TLI.bg=null;TLI.at=null}if(!GD||!GD.ph||GD.ph!=='fight'){GD=null;GQ=null}
+  for(var dk in DRG)if(/^(a:)?k-/.test(dk))delete DRG[dk];if(typeof TLI!=='undefined'){TLI.bg=null;TLI.at=null}guTClear();GD=null;GQ=null;
   if(GUM.cv){GUM.cv.width=GUM.cv.height=0;GUM.cv=null;GUM.sc=0}
   for(var k in SMP)if(k.indexOf('gu/')===0)delete SMP[k];
 }
