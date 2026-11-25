@@ -31,7 +31,7 @@ Son güncelleme: 25 Kasım 2026 · Yayındaki sürüm: **69**
 ## 3. Yayın hattı
 - **Dosyalar:** `index.html` (tüm uygulama), `sw.js` (önbellek), `manifest.json`, `icon-192.png`, `icon-512.png` (S59: 3B canavardan üretildi). Ayrıca `firebase/` (kurallar) ve `.github/workflows/firestore-rules.yml`.
 - **Her sürümde:** `index.html` içinde `var APPV=N` (karşılama ekranındaki `Sürüm N` buradan gelir, S51) ve `sw.js` içindeki `var CACHE = 'mc-vN'` değerini artır. Service worker cache-first çalışır; yeni sürümde sayfa kendini yeniler (`controllerchange`/`PENDRELOAD`). Telefonda eski sürüm görünüyorsa uygulama kapatılıp açılır.
-- **gu/ önbelleği:** `sw.js` `GUC` (mc-guN) sürümler arasında silinmez; `gu/` içindeki bir dosya değişirse GUC'yi artır.
+- **gu/ önbelleği:** `sw.js` `GUC` (mc-guN) sürümler arasında silinmez; `gu/` içindeki bir dosya değişirse GUC'yi artır **ve index.html `GUCN` aynı değere** (Güncelle düğmesinin yedek temizliği sadece bunu korur; eski mc-gu* silinir). Şu an `mc-gu3`.
 - **GitHub Pages:** main'e push → "pages build and deployment" çalışır. Kontrol: `gh run list --limit 3`. (Canlı siteye WebFetch izinli değil.)
 - **Firestore kuralları:** `firebase/firestore.rules` değişip push edilince Actions kuralları otomatik yükler (secret `FIREBASE_SA`, servis hesabında "Firebase Rules Admin" rolü). Elle tetikleme: `gh api -X POST repos/digerpchesabim-stack/Matematikcanavari/actions/workflows/firestore-rules.yml/dispatches -f ref=main` (GraphQL engelli, `gh workflow run` çalışmaz).
 - **Sıra:** Kural değişikliği gerekiyorsa önce kurallar (geriye uyumlu/ek), sonra uygulama.
@@ -60,7 +60,7 @@ Son güncelleme: 25 Kasım 2026 · Yayındaki sürüm: **69**
 - Paylaşılan görsellerde (canvas) mor tonlar kobalta çevrildi.
 
 ### 4.3 Karakter kuralı (15 Kasım 2026, kullanıcı: "Bundan sonra bütün karakterlerimiz 3B olacak. Bunu unutma")
-- **Uygulamadaki bütün karakterler 3B modellenir** (maskot gibi: SDF ışın izleme, ışık/gölge/doku; uygulamaya hazır poz resimleri `webp` olarak). El çizimi/düz vektör karakter kullanılmaz. (Simgeler/arayüz süsleri SVG kalabilir.)
+- **Karakter görsel kuralı (25 Kasım 2026 güncellemesi):** yeni/yenilenen karakterler **2B RPG tarzında, 2 pozlu yatay şerit** (`<ad>.webp` en = 2 × boy, RGBA: kare 0 bekleme, kare 1 saldırı; `guDraw` kendiliğinden tanır; kılıç/alev için `GU2[ad].bl`) + 160×160 RGBA portre `<ad>-p.webp`. Eski 3B yaratıklar (5×4 şerit) kademeli olarak geçirilecek. İlk örnek: Sis Kralı (`knight`). (Simgeler/arayüz süsleri SVG kalabilir.)
 - Tek sevimli karakter Matematik Canavarı (yol arkadaşı). Düşmanlar "Sis Yaratıkları": gerçekçi ama fantastik ve ciddi (kullanıcı: "daha korkutucu değil, daha gerçekçi… çizimler daha ciddi"), kan/ölüm yok, yenilince ışığa dönüşüp dağılır.
 - Kaynak: scratch `r3d/` (yaratık başına HTML + parça gölgelendirici; SwiftShader ile 640 px çizilir).
 - Onaylanan/taslak kadro (15 Kasım 2026): Dev Örümcek (+), Dev Engerek (−), Taş Dev (×), Sis Büyücüsü (÷; sivri kapüşonlu yırtık cüppe, asa, taç yok, kemik eller) onaylı; final **Sis Kralı** = eski Kara Şövalye modeli (kullanıcı: "kraldan daha ciddi durmuş"); Sis Ejderi reddedildi; ek olarak **Derin Sis Krakeni** ve **Sis Gözü** (kullanıcı: "bunları da kullanalım"; haritadaki yerleri henüz kararlaştırılmadı). `harness.py` `#define DARKM <mat>` = o malzeme ışık almaz (kapüşon içi).

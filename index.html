@@ -4915,6 +4915,7 @@ function rmBeat(){
 }
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
+var GUCN='mc-gu3'; /* sw.js GUC ile aynı tutulmalı */
 var PV=2,APPV=69;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
@@ -4927,7 +4928,7 @@ function appUpd(){
     var done=false,rl=function(){if(done)return;done=true;location.reload()};
     navigator.serviceWorker.addEventListener('controllerchange',rl);
     navigator.serviceWorker.getRegistration().then(function(g){if(g)return g.update()}).catch(function(){});
-    setTimeout(function(){if(done)return;(window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!=='mc-v'+v&&k.indexOf('mc-gu')!==0}).map(function(k){return caches.delete(k)}))}):Promise.resolve()).then(rl,rl)},8000);
+    setTimeout(function(){if(done)return;(window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!=='mc-v'+v&&k!==GUCN}).map(function(k){return caches.delete(k)}))}):Promise.resolve()).then(rl,rl)},8000);
   }).catch(function(){toast('Güncelleme kontrol edilemedi, internetini kontrol et')});
 }
 function rmGo(){
