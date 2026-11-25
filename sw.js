@@ -1,6 +1,6 @@
 var CACHE = 'mc-v69';
 /* Güneş Ülkesi dosyaları (gu/): ilk kullanılınca indirilir, sürümler arasında saklanır */
-var GUC = 'mc-gu2';
+var GUC = 'mc-gu3';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3', './gizlilik.html', './aydinlatma.html', './veri-silme.html', './mc-idle.webp', './mc-happy.webp', './mc-look.webp', './mc-wait.webp', './mc-cheer.webp', './mc-sad.webp', './mc-peek.webp', './mc-blink.webp', './mc-sidel.webp', './mc-sider.webp', './mc-atlas.webp', './wel-bg.webp', './mc-k-idle.webp', './mc-k-look.webp', './mc-k-cheer.webp', './mc-k-peek.webp', './mca-idle.webp', './mca-hop.webp', './mca-cheer.webp', './mca-sad.webp', './mca-sneeze.webp', './mca-k-idle.webp', './mca-k-hop.webp', './mca-k-cheer.webp', './mca-k-attack.webp', './mca-k-block.webp'];
 
 self.addEventListener('install', function (e) {

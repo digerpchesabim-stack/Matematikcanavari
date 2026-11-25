@@ -4927,7 +4927,7 @@ function appUpd(){
     var done=false,rl=function(){if(done)return;done=true;location.reload()};
     navigator.serviceWorker.addEventListener('controllerchange',rl);
     navigator.serviceWorker.getRegistration().then(function(g){if(g)return g.update()}).catch(function(){});
-    setTimeout(function(){if(done)return;(window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!=='mc-v'+v&&k!=='mc-gu2'}).map(function(k){return caches.delete(k)}))}):Promise.resolve()).then(rl,rl)},8000);
+    setTimeout(function(){if(done)return;(window.caches?caches.keys().then(function(ks){return Promise.all(ks.filter(function(k){return k!=='mc-v'+v&&k.indexOf('mc-gu')!==0}).map(function(k){return caches.delete(k)}))}):Promise.resolve()).then(rl,rl)},8000);
   }).catch(function(){toast('Güncelleme kontrol edilemedi, internetini kontrol et')});
 }
 function rmGo(){
@@ -7725,10 +7725,13 @@ function guDuelAfter(){
   function loop(){if(!GD||GD.rf!==id||!document.body.contains(cv))return;try{guDraw(cv)}catch(e){}requestAnimationFrame(loop)}
   requestAnimationFrame(loop);
 }
+/* 2 pozlu yeni şeritlerde saldırı karesindeki kılıç: [kabza x,y, uç x,y] (0–1) — alev yayı buraya çizilir */
+var GU2={knight:{bl:[.62,.41,.12,.675]}};
 function guDraw(cv){
-  var g=cv.getContext('2d'),W=cv.width,im=GD.img,now=Date.now(),FS=360;
+  /* iki biçim: eski 5×4 şerit (360 px kare, 0–11 bekleme, 12–18 saldırı) ya da yeni 2 pozlu şerit (en = 2 × boy: 0 bekleme, 1 saldırı) */
+  var g=cv.getContext('2d'),W=cv.width,im=GD.img,now=Date.now(),two=im.width===im.height*2,FS=two?im.height:360;
   g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,W,W);g.globalCompositeOperation='source-over';g.globalAlpha=1;
-  function fr(i,a){if(a<=0)return;g.globalAlpha=a;g.drawImage(im,(i%5)*FS,((i/5)|0)*FS,FS,FS,0,0,W,W);g.globalAlpha=1}
+  function fr(i,a){if(a<=0)return;g.globalAlpha=a;if(two)g.drawImage(im,i?FS:0,0,FS,FS,0,0,W,W);else g.drawImage(im,(i%5)*FS,((i/5)|0)*FS,FS,FS,0,0,W,W);g.globalAlpha=1}
   if(GD.ph==='win'){
     if(!GD.dt0)GD.dt0=now;var tt=(now-GD.dt0)/1000,T1=GD.T1||1.4,B=GD.boss,rs=17,rr=function(){rs=(rs*16807)%2147483647;return (rs-1)/2147483646};
     if(!GD.ps){var tc=document.createElement('canvas');tc.width=tc.height=120;var x0=tc.getContext('2d');x0.drawImage(im,0,0,FS,FS,0,0,120,120);var dd=x0.getImageData(0,0,120,120).data,a=[],yy,xx,o;
@@ -7761,6 +7764,17 @@ function guDraw(cv){
   if(an.m==='atk'){
     var u=(now-an.t0)/900;
     if(u>=1){GD.an={m:'idle',t0:0}}
+    else if(two){
+      /* 2 poz: geri çekilir → ileri atılır (yakınlaşma) → toparlanır; saldırı pozu yumuşak geçişle */
+      var e=u<.22?u/.22:u<.72?1:1-(u-.72)/.28,lg=RMOT?0:(u<.22?-.025*u/.22:u<.42?-.025+.1*(u-.22)/.2:u<.72?.075:.075*(1-(u-.72)/.28)),zm=1+Math.max(0,lg)*1.1;
+      g.translate(W/2,W*.95);g.scale(zm,zm);g.translate(-W/2-lg*W*.12,-W*.95+lg*W*.35);fr(0,1-e);fr(1,e);
+      var bl=(GU2[GD.c]||{}).bl;
+      if(bl&&u>.3&&u<.66){var pr=Math.min(1,(u-.3)/.12),fd=Math.max(0,1-(u-.46)/.2),j,x1=bl[0]*W,y1=bl[1]*W,x2=x1+(bl[2]*W-x1)*pr,y2=y1+(bl[3]*W-y1)*pr,fk=Math.sin(now/40)*W*.004;
+        g.globalCompositeOperation='lighter';g.lineCap='round';
+        for(j=0;j<3;j++){g.strokeStyle=['rgba(255,90,10,','rgba(255,170,40,','rgba(255,240,180,'][j]+(fd*(.5+j*.17))+')';g.lineWidth=[30,15,5][j]*W/480;g.beginPath();g.moveTo(x1,y1);g.quadraticCurveTo((x1+x2)/2+fk,(y1+y2)/2-W*.02+fk,x2,y2);g.stroke()}
+        g.globalCompositeOperation='source-over'}
+      g.setTransform(1,0,0,1,0,0);return;
+    }
     else{
       var f=u<.3?u/.3:u<.38?1+(u-.3)/.08*2:u<.7?3+(u-.38)/.32:4+(u-.7)/.3*2,i0=Math.min(6,Math.floor(f)),i1=Math.min(6,i0+1),q=f-i0,zm=1+(u>.3&&u<.7?.08*Math.max(0,1-(u-.3)/.4):0);
       g.translate(W/2,W/2);g.scale(zm,zm);g.translate(-W/2,-W/2);fr(12+i0,1);fr(12+i1,q);g.setTransform(1,0,0,1,0,0);
@@ -7768,6 +7782,13 @@ function guDraw(cv){
         for(j=0;j<3;j++){g.strokeStyle=['rgba(255,90,10,','rgba(255,170,40,','rgba(255,240,180,'][j]+(fd*(.55+j*.15))+')';g.lineWidth=[34,18,6][j]*W/480;g.beginPath();g.arc(W/2,W*.52,W*.49,-.9,-.9-pr*2.9,true);g.stroke()}g.restore()}
       return;
     }
+  }
+  if(two){
+    /* bekleme: ayaklar sabit, ~%1,5 nefes + çok hafif salınım */
+    var br=RMOT?0:Math.sin(now/1000*2.42),sw=RMOT?0:Math.sin(now/1700)*W*.004;
+    g.translate(W/2+sw,W*.95);g.scale(1-br*.004,1+br*.015);g.translate(-W/2,-W*.95);fr(0,1);
+    if(GD.fl&&now-GD.fl<260){g.globalCompositeOperation='lighter';fr(0,.55*(1-(now-GD.fl)/260));g.globalCompositeOperation='source-over'}
+    g.setTransform(1,0,0,1,0,0);return;
   }
   var fl=(now/1200*12)%12,k0=Math.floor(fl),k1=(k0+1)%12;
   fr(k0,1);fr(k1,fl-k0);
