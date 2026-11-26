@@ -5045,7 +5045,7 @@ function rmBeat(){
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
 var GUCN='mc-gu5'; /* sw.js GUC ile aynı tutulmalı */
-var PV=2,APPV=72;
+var PV=2,APPV=73;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
@@ -7302,7 +7302,7 @@ function guOpen(){GU.sel=0;if(!guD().h)return guStory();go('gumap')}
 /* giriş hikâyesi: ilk açılışta oynar, Geç ile atlanır, haritadaki 📜 ile yeniden izlenir */
 function guStory(){go('guintro')}
 function guIntroHtml(){
-  return '<div class="guv" id="guv"><video id="guvid" src="gu/hikaye.mp4?v=5" playsinline webkit-playsinline preload="auto"></video><button class="guvb" onclick="guIntroEnd()">Geç ›</button></div>';
+  return '<div class="guv" id="guv"><video id="guvid" src="gu/hikaye.mp4?v=6" playsinline webkit-playsinline preload="auto"></video><button class="guvb" onclick="guIntroEnd()">Geç ›</button></div>';
 }
 function guIntroAfter(){
   var v=document.getElementById('guvid');if(!v)return;

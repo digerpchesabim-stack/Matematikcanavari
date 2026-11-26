@@ -1,4 +1,4 @@
-var CACHE = 'mc-v72';
+var CACHE = 'mc-v73';
 /* Güneş Ülkesi dosyaları (gu/): ilk kullanılınca indirilir, sürümler arasında saklanır */
 var GUC = 'mc-gu5';
 var FILES = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.png', './lose.mp3', './pass.mp3', './top.mp3', './win.mp3', './tur.mp3', './menu.mp3', './gizlilik.html', './aydinlatma.html', './veri-silme.html', './mc-idle.webp', './mc-happy.webp', './mc-look.webp', './mc-wait.webp', './mc-cheer.webp', './mc-sad.webp', './mc-peek.webp', './mc-blink.webp', './mc-sidel.webp', './mc-sider.webp', './mc-atlas.webp', './wel-sun.webp', './gu-card.webp', './mc-wave.webp', './mc-wow.webp', './mc-trophy.webp', './mc-thumb.webp', './mc-sleep.webp', './mc-point.webp', './mc-think.webp', './mc-clap.webp', './mc-front.webp', './mc-k-ready.webp', './mc-k-sad.webp', './mc-k-bow.webp', './mc-p.webp', './mc-k-p.webp', './mc-k-idle.webp', './mc-k-look.webp', './mc-k-cheer.webp', './mc-k-peek.webp', './mca-idle.webp', './mca-hop.webp', './mca-cheer.webp', './mca-sad.webp', './mca-sneeze.webp', './mca-k-idle.webp', './mca-k-hop.webp', './mca-k-cheer.webp', './mca-k-attack.webp', './mca-k-block.webp'];
