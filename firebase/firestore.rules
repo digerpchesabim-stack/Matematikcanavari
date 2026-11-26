@@ -184,6 +184,16 @@ service cloud.firestore {
         && request.resource.data.cap in request.resource.data.m
         && (request.resource.data.cap == resource.data.cap || resource.data.cap == request.resource.data.by || !(resource.data.cap in resource.data.m))
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['m', 'by', 'cap', 'ts']);
+      // kaptan bir üyeyi takımdan çıkarır (kendisi hariç; kaptanlık değişmez)
+      allow update: if request.resource.data.keys().hasOnly(['m', 'cap', 'by', 'w', 'l', 'ct', 'jn', 'lm', 'ts', 'v'])
+        && owns(request.resource.data.by)
+        && request.resource.data.by == resource.data.cap
+        && request.resource.data.by in resource.data.m
+        && request.resource.data.by in request.resource.data.m
+        && request.resource.data.m.size() == resource.data.m.size() - 1
+        && resource.data.m.hasAll(request.resource.data.m)
+        && request.resource.data.cap == resource.data.cap
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['m', 'by', 'ts']);
       // kaptan, galibiyet/yenilgi (en çok 1 artar)
       allow update: if request.resource.data.keys().hasOnly(['m', 'cap', 'by', 'w', 'l', 'ct', 'jn', 'lm', 'ts', 'v'])
         && owns(request.resource.data.by)
