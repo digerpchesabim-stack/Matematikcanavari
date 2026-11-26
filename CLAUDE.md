@@ -198,6 +198,8 @@ Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm
   - Testler `test/zk1.js`, `test/s74.js`; gu1 güncellendi. Not: `acc1` "Çok büyük yazı zoom 1.3" kontrolü 72'de de düşüyordu (test eskimiş).
   - Bekleyen küçükler (oyuncu ajan): ❓ durak simgesi koyu, talim ekranı 390×844'te boşluk, karakter kartı paylaşım resminde Güneş madalyası yok.
 - (20 Kasım listesi: Güneş Ülkesi doğruları sayaçlara — S74'te yapıldı.)
+- **Sıradaki güncelleme listesi (26 Kasım 2026, kullanıcı "sıraya al, bir sonraki güncellemede yap"):**
+  1. **Problemlerde eşya–kap uyumu (A7):** kap şu an yalnız basamağa göre (`pickC`: d≤2 `CT1`, büyük `CT2`, para `CTM`) → "her palete 2 boncuk" gibi anlamsız cümleler. Her `IT` kaydına uygun kap listesi: elma/ceviz → sepet, torba, kasa (büyükte çuval); bilye/boncuk/şeker → kutu, kavanoz, torba, poşet; kalem → kutu, kalemlik, çanta (büyükte koli); kitap → kutu, raf, çanta (büyükte koli); çıkartma → paket, zarf, albüm; kâğıt → paket, dosya, koli; balon → paket, poşet; tuğla → palet, kamyon, el arabası; fidan → saksı, sıra, bahçe; TL → CTM (değişmez). Yeni kaplar için `CN` hâl ekleri doğru yazılacak. Yalnız Problemler etkilenir; test + ön izleme, yayın onayla.
 
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
