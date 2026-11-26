@@ -15,14 +15,14 @@ const prof=p=>p.evaluate(()=>{localStorage.setItem('mc_profiles',JSON.stringify(
 let p=await open();await prof(p);await sleep(700);await p.evaluate(()=>{if(st.modal)closeModal()});
 ok(await p.evaluate(()=>!!document.querySelector('.hm-me')&&!!document.querySelector('.hm-play')&&!!document.querySelector('.hm-gu')&&document.querySelectorAll('#app .hm-g .hm-q').length===3),'ana sayfa: profil satırı + Güneş Ülkesi + Oyna + 3 kare');
 ok(await p.evaluate(()=>{var t=document.getElementById('tabs');return t&&!t.hidden&&t.children[0].classList.contains('on')}),'alt sekme çubuğu görünür, Oyna seçili');
-ok(await p.evaluate(()=>/Akıldan işlem$/.test(document.querySelector('.hm-play .hm-sub').textContent)),'ilk açılışta Oyna → Akıldan işlem');
+ok(await p.evaluate(()=>/Hemen başla$/.test(document.querySelector('.hm-play .hm-sub').textContent)&&/Hızlı Oyun/.test(document.querySelector('.hm-play .hm-t').textContent)),'ilk açılışta Hızlı Oyun → Hemen başla');
 await sleep(500);
 ok(await p.evaluate(()=>{var c=document.querySelector('.hm-play canvas.dra#hpmd'),g=document.querySelector('.hm-gu canvas.dra');return !!c&&!!c._d&&!!g&&c.getBoundingClientRect().width>=150}),'Oyna ve Güneş Ülkesi şeritlerinde hareketli ejder');
 await shot(p,'01_ana_menu');
 ok(await p.evaluate(()=>document.documentElement.scrollWidth<=390),'taşma yok');
 await p.evaluate(()=>homePlay());await sleep(300);ok(await p.evaluate(()=>st.screen==='gmenu'&&document.getElementById('tabs').hidden),'Oyna (ilk) → oyun menüsü, sekmeler gizli');
 await p.evaluate(()=>{gStart('mul','o',0)});await sleep(300);await p.evaluate(()=>{go('home')});await sleep(300);
-ok(await p.evaluate(()=>/Akıldan işlem · Çarpma · Orta/.test(document.querySelector('.hm-play .hm-sub').textContent)),'Oyna: Akıldan işlem · Çarpma · Orta');
+ok(await p.evaluate(()=>/Çarpma · Orta/.test(document.querySelector('.hm-play .hm-sub').textContent)),'Hızlı Oyun: Çarpma · Orta');
 await p.evaluate(()=>homePlay());await sleep(300);ok(await p.evaluate(()=>st.g&&st.g.op==='mul'&&st.g.lv==='o'),'Oyna son oyunu başlatır');
 await p.evaluate(()=>go('home'));await sleep(300);
 await p.evaluate(()=>tabGo(1));await sleep(600);ok(await p.evaluate(()=>st.screen==='friends'&&!!document.getElementById('tm-home')&&document.getElementById('tabs').children[1].classList.contains('on')),'Arkadaşlar sekmesi + Takımım');await shot(p,'02_arkadaslar');
