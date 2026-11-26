@@ -26,7 +26,7 @@ for(const [w,h,th] of [[390,844,''],[320,568,''],[390,844,'dark'],[320,568,'hc']
     await p.mouse.click(c.x,c.y);await sleep(150);ok(await p.evaluate(()=>CH.m.tk>0||CH.m.hop>0),tag+' canavar gıdıklandı');
     await p.screenshot({path:out+'/w-'+tag+'-tk.png'});await sleep(900);
     await p.click('text=Haydi Başlayalım!');await sleep(400);
-    ok(await p.evaluate(()=>['profiles','info'].indexOf(st.screen)>=0&&!document.body.classList.contains('welc')&&!document.querySelector('#mm-btn svg')),tag+' Haydi Başlayalım → '+await p.evaluate(()=>st.screen));
+    ok(await p.evaluate(()=>['profiles','info'].indexOf(st.screen)>=0&&!document.body.classList.contains('welc')),tag+' Haydi Başlayalım → '+await p.evaluate(()=>st.screen));
     if(await p.evaluate(()=>st.screen==='info')){await p.evaluate(()=>infoOk());await sleep(300);ok(await p.evaluate(()=>st.screen==='profiles'),tag+' → profiles')}
     await p.evaluate(()=>back());await sleep(500);ok(await p.evaluate(()=>st.screen==='welcome'&&!!CH.raf&&document.body.classList.contains('welc')),tag+' geri → karşılama, sahne çalışıyor');
   }

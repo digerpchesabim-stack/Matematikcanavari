@@ -29,8 +29,7 @@ await ev(B,d=>{frCall(d)},pid.D);await sleep(200);await ev(B,()=>frCallGo('sub')
 await waitF(D,()=>st.modal&&!!document.getElementById('m3-2'));
 await ev(A,()=>go('friends'));await sleep(600);
 ok(await ev(A,()=>/Çevrim içi herkesi çağır/.test(document.getElementById('app').innerText)),'Arkadaşlarım\'da "Çevrim içi herkesi çağır"');
-const hl=await ev(A,()=>{go('home');return document.getElementById('fr-live').innerText});
-ok(/Hepsini çağır/.test(hl),'ana menü kutusunda "Hepsini çağır"');
+/* S60: ana menüdeki "Şu an oyunda" kutusu (#fr-live) kaldırıldı; toplu çağırma Arkadaşlar sekmesinde (yukarıda denetlendi) */
 // 1) 1'e 1 toplu
 await ev(A,()=>frAllOpen());await sleep(300);
 const fc=await ev(A,()=>document.getElementById('app').innerText);

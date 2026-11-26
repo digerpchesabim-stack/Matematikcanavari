@@ -79,7 +79,7 @@ Son güncelleme: 25 Kasım 2026 · Yayındaki sürüm: **69**
 4 işlem, eldeli/eldesiz, 1–4 basamak, sınırsız soru, yanlışta 2. deneme (puansız), "Sonucu Gör" adımlı çözüm, yan yana/alt alta format, 1 mola hakkı, detaylı rapor kartı (fotoğraf olarak paylaşılır). Problemler: şablonlu sonsuz problem + karma (iki işlem).
 
 ### 5.2 Akıldan İşlem Oyunu
-- Seviye: Kolay/Orta/Zor (`GT`, `gTime`): Kolay 8/6/5/4 sn, Orta 10/8/6/5, Zor 12/10/8/7 (10'ar soruda azalır). 3 can. Puan hıza göre 3/2/1. Seçenekler sade kutular; renk cevaptan sonra.
+- Seviye: Kolay/Orta/Zor (`GT`, `gTime`): Kolay 8/7/6/6 sn, Orta 10/8/6/5, Zor 12/10/8/7 (10'ar soruda azalır; seviye kartında "8 sn'den başlar, gittikçe hızlanır"). 3 can. Puan hıza göre 3/2/1. Seçenekler sade kutular; renk cevaptan sonra.
 - Çarpma/bölmede **📚 Tablo çalış** (2–9): rekor tablosuna yazılmaz, tabloya özel yerel rekor.
 - Mod anahtarı `gMk(op,lv,tb)`: `add`, `add_o`, `add_z`, `mul_t6`.
 - **Başlangıç kartı:** zirve bilgisi gelene kadar bekler (en çok 7 sn), sonra 5 sn sayım + zirve kartı (👑 Zirve, 🎯 İlk hedef), düdükle başlar (`zPre`, `cdRun`).
