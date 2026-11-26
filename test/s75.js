@@ -38,6 +38,7 @@ await shot('02_hist');
 // 5) mühürlü sandık
 await E(()=>{guOpen()});await sleep(1200);
 ok(await E(()=>document.querySelectorAll('.gsd').length===4&&document.querySelectorAll('.gsd.open').length===1),'haritada 4 sandık, 1’i açık (bekçi 12 yenildi)');
+ok(await E(()=>{for(var r=0;r<4;r++){var q=guSidePos(r);for(var j=0;j<GUM.ST.length;j++)if(Math.hypot(GUM.ST[j][0]-q[0],GUM.ST[j][1]-q[1])<44)return false}return true}),'sandıklar duraklarla çakışmaz');
 ok(await E(()=>{var a=document.querySelector('.gsd.lock');a.click();return /bekçisi yenilince/.test(document.getElementById('toast').textContent)}),'kilitli sandık uyarısı');
 await E(()=>{guSideOpen(0)});await sleep(300);
 ok(await E(()=>st.screen==='gustop'&&GQ.side===1&&/3/.test(document.getElementById('gs-i').textContent)),'sandık: 3 soru');

@@ -15,7 +15,7 @@ const prof=p=>p.evaluate(()=>{localStorage.setItem('mc_profiles',JSON.stringify(
 let p=await open();await prof(p);await sleep(700);await p.evaluate(()=>{if(st.modal)closeModal()});
 ok(await p.evaluate(()=>!!document.querySelector('.hm-me')&&!!document.querySelector('.hm-play')&&!!document.querySelector('.hm-gu')&&document.querySelectorAll('#app .hm-g .hm-q').length===3),'ana sayfa: profil satırı + Güneş Ülkesi + Oyna + 3 kare');
 ok(await p.evaluate(()=>{var t=document.getElementById('tabs');return t&&!t.hidden&&t.children[0].classList.contains('on')}),'alt sekme çubuğu görünür, Oyna seçili');
-ok(await p.evaluate(()=>/Hemen başla$/.test(document.querySelector('.hm-play .hm-sub').textContent)&&/Hızlı Oyun/.test(document.querySelector('.hm-play .hm-t').textContent)),'ilk açılışta Hızlı Oyun → Hemen başla');
+ok(await p.evaluate(()=>/İşlemini seç, başla$/.test(document.querySelector('.hm-play .hm-sub').textContent)&&/Hızlı Oyun/.test(document.querySelector('.hm-play .hm-t').textContent)),'ilk açılışta Hızlı Oyun → Hemen başla');
 await sleep(500);
 ok(await p.evaluate(()=>{var c=document.querySelector('.hm-play canvas.dra#hpmd'),g=document.querySelector('.hm-gu canvas.dra');return !!c&&!!c._d&&!!g&&c.getBoundingClientRect().width>=150}),'Oyna ve Güneş Ülkesi şeritlerinde hareketli ejder');
 await shot(p,'01_ana_menu');
