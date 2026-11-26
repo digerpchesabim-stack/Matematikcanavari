@@ -962,6 +962,23 @@ html[data-fs] body.welc{zoom:1}
 /* S71: yayın öncesi görsel düzeltmeler */
 .gtop #gch{min-width:0;flex:0 1 auto;overflow:hidden;text-overflow:ellipsis}
 .gtop .gl,.gtop .gbk,.gtop .gsto{flex:none}
+/* S74 zafer sayfası, madalyalar */
+.gshuf{animation:gshuf .45s ease-out}@keyframes gshuf{0%{opacity:.2;transform:scale(.94) rotate(-1.5deg)}100%{opacity:1;transform:none}}
+.gmd{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;border-radius:999px;font:700 14px MCP,Poppins,sans-serif;color:#3b2a1a;background:linear-gradient(#fbe7a8,#e8bf5a);border:2px solid #9a6b2c;box-shadow:0 3px 0 #7a5420}
+.gmd i{font-style:normal;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff3c4;color:#c8861a;font-size:16px}
+.gmd-k{background:linear-gradient(#f3d9b0,#d6a86a)}.gmd-o{background:linear-gradient(#fbe7a8,#e8bf5a)}.gmd-z{background:linear-gradient(#f6d2c4,#c8574a);color:#fff8e6;border-color:#6b1f18}.gmd-z i{color:#a8342b}
+.kc-gu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.gend{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;padding:4px 4px 0}
+.gend-r{position:absolute;left:50%;top:0;width:520px;height:520px;margin-left:-260px;margin-top:-90px;border-radius:50%;pointer-events:none;background:repeating-conic-gradient(rgba(255,206,92,.22) 0 7deg,transparent 7deg 18deg);-webkit-mask:radial-gradient(circle,#000 15%,transparent 62%);mask:radial-gradient(circle,#000 15%,transparent 62%);animation:gendr 40s linear infinite}
+@keyframes gendr{to{transform:rotate(360deg)}}
+.gend-m{position:relative;width:min(52vw,200px);filter:drop-shadow(0 0 24px rgba(255,214,110,.6));animation:gdin .8s both}
+.gend-t{position:relative;font:700 28px/1.15 MCL,Lora,serif;color:#ffe9b0;text-shadow:0 0 18px rgba(255,200,90,.6);margin-top:6px;animation:gdin .8s .3s both}
+.gend-s{position:relative;color:#e9dfc8;font-size:15px;margin:6px 0 12px;animation:gdin .8s .5s both}
+.gend-md{position:relative;animation:gdin .8s .8s both}
+.gend-st{position:relative;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 14px;color:#f3e6c8;font-weight:700;font-size:14px;animation:gdin .8s 1s both}.gend-st span{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,.08);box-shadow:inset 0 0 0 1px rgba(226,182,92,.3)}
+.gend .gbtn.gold{margin-top:auto;animation:gdin .6s 1.2s both}
+.ph-win .gbtn.gshr{animation:gdin .6s 2.9s both}.gud.boss.ph-win .gbtn.gshr{animation-delay:3.5s}
+@media (prefers-reduced-motion:reduce){.gend-r{animation:none}}
 /* S74 zorluk kademeleri */
 .gzs{display:inline-flex;gap:1px;font-style:normal;line-height:1}.gzs i{font-style:normal;font-size:13px}.gzs i.e{opacity:.22}
 .gz-k{color:#2f8a4c}.gz-o{color:#b07d12}.gz-z{color:#8e2a24}
@@ -974,7 +991,7 @@ html[data-fs] body.welc{zoom:1}
 .gzc:active{transform:translateY(3px);box-shadow:0 1px 0 #b48a48}
 .gzc .gzs{grid-row:1/3}.gzc .gzs i{font-size:20px}.gzc b{font-size:18px}.gzc span:not(.gzs){grid-column:2;font-size:13px;color:#5a4a34}.gzc small{grid-column:2;font-size:12px;font-weight:700;color:#6b4a26}
 .gzc.gz-k{border-color:#5fae74}.gzc.gz-o{border-color:#d9a83a}.gzc.gz-z{border-color:#a8433a}.gzc.on{outline:3px solid #2f6bff;outline-offset:1px}
-.gzdn .gzs i{font-size:12px}
+.gzdn .gzs i,.gend .gzs i{font-size:13px}.gend .gzs{color:#e8c36a}
 :root[data-theme="hc"] .gzp,:root[data-theme="hc"] .gzc{background:#fff;color:#000;border-color:#000}
 @media (max-width:360px){.gtop{gap:6px;padding-left:8px;padding-right:8px}.gtop .gch{padding:8px 8px;font-size:13px}}
 @media (max-height:620px){.ani{min-height:84px}.ani .an{font-size:38px}.q{padding:14px 10px;margin-bottom:12px}}
@@ -2201,6 +2218,7 @@ function gQ(){
   if(g.race)RNG=mulb(g.race.seed*7919+g.log.length*104729+13);
   try{return gQ0()}finally{RNG=null}
 }
+function gSeenK(op,txt){if(op==='add'||op==='mul'){var m=txt.match(/^(\d+) . (\d+)$/);if(m)return op+Math.min(+m[1],+m[2])+'_'+Math.max(+m[1],+m[2])}return txt}
 function gQ0(){
   var g=st.g,lv=g.lv||'k',op=g.op==='rnd'?['add','sub','mul','div'][rnd(0,3)]:g.op,tbl=(op==='mul'||op==='div')?(g.tb||0):0,a,b,ans,txt,alt,i,t,sw;
   var ALT=function(){alt=[ans+1,ans-1,ans+2,ans-2,ans+10,ans-10,ans+9]};
@@ -2227,9 +2245,11 @@ function gQ0(){
       else if(lv==='z'){b=rnd(2,9);ans=rnd(10,30);a=b*ans;txt=a+' ÷ '+b;alt=[ans+1,ans-1,ans+2,ans-2,ans+10,ans-10,b]}
       else{b=rnd(2,9);ans=rnd(2,9);a=b*ans;txt=a+' ÷ '+b;alt=[ans+1,ans-1,ans+2,ans-2,b,a-b]}
     }
-    if(txt!==g.lastTxt)break;
+    if(txt!==g.lastTxt&&!(g.seen&&g.seen[gSeenK(op,txt)]))break;
   }
   g.lastTxt=txt;
+  /* S74: oyun içinde aynı soru tekrar gelmesin (g.seen yalnızca tek kişilik oyunda ve Güneş Ülkesi'nde; tohumlu yarış/kapışma dizileri değişmez) */
+  if(g.seen){if(t>=50)g.seen={};g.seen[gSeenK(op,txt)]=1}
   var pool=[];alt.forEach(function(v){if(v>=0&&v!==ans&&pool.indexOf(v)<0)pool.push(v)});
   var n=3;while(pool.length<3){if(ans+n!==ans&&pool.indexOf(ans+n)<0)pool.push(ans+n);n++}
   for(i=pool.length-1;i>0;i--){var j=rnd(0,i),tmp=pool[i];pool[i]=pool[j];pool[j]=tmp}
@@ -2339,7 +2359,7 @@ function gStart(op,lv,tb){
   lv=lv||'k';tb=tb||0;if(op!=='mul'&&op!=='div')tb=0;if(tb)lv='k';
   try{var gl0=ls('mc_glast',{});gl0[st.profile||'~']={op:op,lv:lv,tb:tb};lsSet('mc_glast',gl0)}catch(e){}
   var mk=gMk(op,lv,tb);
-  st.g={op:op,lv:lv,tb:tb,mk:mk,sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:gTime(0,lv),lt:99,rem:gTime(0,lv),el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:bestGet(mk),newBest:false};
+  st.g={seen:{},op:op,lv:lv,tb:tb,mk:mk,sid:Date.now(),t:new Date().toISOString(),score:0,ok:0,bad:0,streak:0,bestStreak:0,hearts:GHEARTS,log:[],tm:gTime(0,lv),lt:99,rem:gTime(0,lv),el:0,last:Date.now(),lock:false,done:false,lastTxt:'',to:null,bestOld:bestGet(mk),newBest:false};
   st.g.q=gQ();musTempo(st.g.tm);
   zPre('solo',op,lv,tb);
   go('gcount');
@@ -5786,7 +5806,8 @@ var RKS=[['⚔️','1\'e 1 galibiyet',2],['🛡️','Muharebe 1.\'liği',3],['�
 function rkCardHtml(d){
   var sp=nkSplit(d.nick),h='<div class="kcard kshine'+(d.r===6?' fire':'')+'"><div class="kc-rays"></div>'+['a','b','c','d'].map(function(k){return '<i class="kc-co '+k+'"><svg viewBox="0 0 30 30"><path d="M2 28V8Q2 2 8 2h20" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 24V10q0-4 4-4h14" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="6" cy="6" r="2.4" fill="currentColor"/><path d="M14 6q2 4 0 8q-2-4 0-8z" fill="currentColor" opacity=".7"/></svg></i>'}).join('')+'<div class="kc-e">'+RKA.emblem(d.r)+'</div><div class="kc-n">'+esc(sp[0]+' '+sp[1])+'</div><div class="kc-r">'+RKA.RANKS[d.r].n+(d.s?' · '+d.s[0]+' puan':'')+'</div>';
   if(d.own&&d.x)h+='<div class="kc-pg">'+(d.r<6?'<span class="rkbar"><i style="width:'+Math.min(100,Math.round(d.x.p*100/RKP[d.r+1]))+'%"></i></span>':'')+'<small>'+rkLeft(d.x)+'</small></div>';
-  var md=rkMdHtml(d.m);
+  var md=rkMdHtml(d.m),gm=d.own&&st.profile?guMedals(st.profile):[];
+  if(gm.length)h+='<div class="kc-t">Güneş Ülkesi</div><div class="kc-m kc-gu">'+gm.map(guMedalHtml).join('')+'</div>';
   h+='<div class="kc-t">Madalyalar</div><div class="kc-m">'+(md||'<small>Henüz madalya yok</small>')+'</div>';
   if(d.s){h+='<div class="kc-s">';RKS.forEach(function(k){h+='<div><b>'+Number(d.s[k[2]]||0).toLocaleString('tr-TR')+'</b><small>'+k[0]+' '+k[1]+'</small></div>'});h+='</div>'}
   else if(!d.own)h+='<p class="kc-old">'+(d.old?'Bu oyuncu uygulamayı henüz güncellemedi. Güncelleyince kartı dolar.':'İstatistikler bir sonraki oyunundan sonra görünür.')+'</p>';
@@ -6010,7 +6031,7 @@ var GUIDE=[
  {id:'ops',t:'🔢 İşlemler',h:'<ul><li>İşlemi seç. Toplama ve çıkarmada <b>eldeli</b> (elde ya da onluk bozma var) veya <b>eldesiz</b> seçersin.</li><li>Kaç basamaklı sayılarla çalışacağını seç.</li><li>Her soruda 4 seçenek var. Doğru olana dokun.</li><li><b>İlk denemede doğru:</b> 10 puan.</li><li><b>Yanlış:</b> Bir kez daha denersin ama o soruda puan yok.</li><li>İkinci deneme de yanlışsa <b>Sonucu Gör</b> düğmesiyle çözümü adım adım görürsün.</li><li>Süre sınırı yok. Ne kadar sürede çözdüğün skor kartında görünür.</li><li><b>Acil Mola:</b> Her oturumda 1 kez kullanılır, süre durur.</li><li>Bitirince <b>skor kartın</b> çıkar. Fotoğrafını kaydedip öğretmenine gönderebilirsin.</li><li>İşlemler yan yana ya da alt alta görünebilir. Düğmeyle değiştirirsin.</li></ul>'},
  {id:'prob',t:'📖 Problemler',h:'<ul><li>Hikâyeli sorulardır. Soruyu oku, hangi işlemi yapacağını düşün.</li><li>İşlem seçersin ya da <b>karma</b> problemleri seçersin.</li><li>Puan ve ikinci deneme kuralı İşlemler bölümüyle aynıdır.</li><li><b>🔊 Sesli okuma:</b> Sorunun köşesindeki <b>🔊</b> düğmesi problemi sesli okur, <b>🐢</b> yavaş okur. Tekrar dokununca durur. <b>👤 Hesabım → Sesli okuma</b>dan her soruyu kendiliğinden okutabilirsin.</li></ul>'},
  {id:'game',t:'🎮 Akıldan İşlem Oyunu',h:'<ul><li>Ekrandaki işlemi aklından çöz, <b>doğru cevaba</b> dokun.</li><li>İşlemi seçtikten sonra <b>seviyeni</b> seçersin: <b>Kolay</b> (1 basamaklı sayılar), <b>Orta</b> ve <b>Zor</b> (daha büyük sayılar, daha uzun süre).</li><li>Çarpma ve bölmede seviyelerin altında <b>📚 Tablo çalış</b> var: tek bir tabloyu (2, 3, 4… 9) çalışabilirsin. Tablo çalışmasında puanın Rekorlar Tablosuna yazılmaz, ama tabloya özel rekorun saklanır.</li><li>Süre sınırlıdır. Kolay seviyede ilk 10 soruda 8 saniye, sonra 6, 5 ve 4 saniye olur. Orta ve Zor seviyede süreler daha uzundur.</li><li><b>3 canın</b> var ❤️. Yanlış cevap ya da süre bitmesi 1 can götürür. Canın bitince oyun biter.</li><li>Ne kadar hızlı cevap verirsen o kadar çok puan alırsın: <b>3, 2 ya da 1</b>.</li><li>Üst üste doğru bilirsen <b>Seri</b> artar.</li><li>Oyun başlamadan önce önce zirve bilgisi alınır, sonra <b>5 saniye</b> sayılır ve zirve kartı ekranda durur: <b>👑 Zirve</b> (tablodaki en yüksek puan ve sahibi) ve ilk hedefin. Düdük çalınca oyun başlar. Oyun sırasında birini geçersen <b>alkış sesi</b> gelir ve "Bravo! Geçtin" kartı çıkar; kartta sıradaki hedefin ve kalan puan yazar. Zirveyi geçersen "Zirveye çıktın!" yazar. Bu bilgi için internet gerekir.</li><li>Rekorun seviye ekranında yazar.</li><li>Oyun bitince puanın <b>Rekorlar Tablosu</b>na gider.</li><li>Ses ve müzik düğmeleriyle sesi açıp kapatabilirsin.</li></ul>'},
- {id:'gu',t:'☀️ Güneş Ülkesi',h:'<p><b>1) Durakları sırayla geç. 2) Yaratıkları yen. 3) ☀️ topla, kuleye ulaş.</b></p><p><b>Zorluk:</b> Hikâyeden sonra <b>Kolay</b>, <b>Orta</b> ya da <b>Zor</b> seçersin (⚔, ⚔⚔, ⚔⚔⚔). Her zorluğun yolu ayrıdır; hangisinde kaldıysan oradan devam edersin. Haritanın üstündeki kılıç düğmesiyle istediğin zaman değiştirebilirsin.</p><p>Ana menüdeki <b>☀️ Güneş Ülkesi</b> bir macera haritasıdır. Sis Yaratıkları ülkeyi sisle kaplamış; yolu izleyip sisi dağıtırsın.</p><ul><li>Yol <b>49 duraktır</b>: Toplama Vadisi, Çıkarma Ormanı, Çarpma Dağları, Bölme Kalesi ve Güneş Kulesi. Duraklar sırayla açılır.</li><li><b>Normal durak:</b> 10 soru. Her sorunun süresi var (çarpma ve bölmede daha uzun). İlk süre dolmasında ceza yok, aynı soru tekrar gelir; sonrakiler yanlış sayılır. Kolay’da en az 6, Orta’da 7, Zor’da 8 doğru ile geçersin. Zor’da süreler daha kısadır ve ilk süre dolması da yanlış sayılır. Çarpma ve bölmede duraklar tablo tablo ilerler (2’ler, 5’ler, 10’lar…). 10 doğru 3 yıldız.</li><li><b>❓ Sürpriz durak</b> ve <b>👑 bekçi:</b> Durağa dokununca sisin içinden bir Sis Yaratığı çıkar; onunla düello yaparsın. Soruyu yaratıktan önce doğru bilirsen vurursun. Senin 3 canın var. Yaratığın canı zorluğa göre 5–7 arasıdır. Yanlış basarsan ya da süre biterse yaratık sana vurur.</li><li>Kaybedersen ceza yok; yeniden kapışabilir ya da önce pratik yapabilirsin. Birkaç kez kaybedersen canavar arkadaşın sana kalkan verir (+1 can; Zor’da yok). İki kez kaybedersen bir alt zorluğu deneyebilirsin.</li><li><b>☀️ Güneş ışığı:</b> Yol yaratığını yenmek 2, bekçiyi yenmek 3, normal durağı 3 yıldızla geçmek 1 ışık verir. <b>Kule Kapısı Kolay’da 40, Orta’da 45, Zor’da 50 ışıkla açılır.</b> Işık azsa geçtiğin durakları yeniden oynayıp yıldızlarını artır.</li><li>Yenilen yaratıklar ışığa dönüşüp dağılır.</li><li>İlk girişte macera hikâyesi oynar (<b>Geç ›</b> ile atlayabilirsin). Haritada sağ üstteki <b>📜</b> ile yeniden izleyebilirsin.</li><li><b>🎯 Talim Alanı:</b> Hikâyeden sonra canavar arkadaşınla talim yaparsın. Doğru cevaba dokun, canavar ateş topuyla vursun. 5 doğrudan sonra haritaya geçersin. Haritada üstteki <b>🎯</b> ile istediğin zaman yeniden talim yapabilirsin.</li></ul>'},
+ {id:'gu',t:'☀️ Güneş Ülkesi',h:'<p><b>1) Durakları sırayla geç. 2) Yaratıkları yen. 3) ☀️ topla, kuleye ulaş.</b></p><p><b>Zorluk:</b> Hikâyeden sonra <b>Kolay</b>, <b>Orta</b> ya da <b>Zor</b> seçersin (⚔, ⚔⚔, ⚔⚔⚔). Her zorluğun yolu ayrıdır; hangisinde kaldıysan oradan devam edersin. Haritanın üstündeki kılıç düğmesiyle istediğin zaman değiştirebilirsin.</p><p>Ana menüdeki <b>☀️ Güneş Ülkesi</b> bir macera haritasıdır. Sis Yaratıkları ülkeyi sisle kaplamış; yolu izleyip sisi dağıtırsın.</p><ul><li>Yol <b>49 duraktır</b>: Toplama Vadisi, Çıkarma Ormanı, Çarpma Dağları, Bölme Kalesi ve Güneş Kulesi. Duraklar sırayla açılır.</li><li><b>Normal durak:</b> 10 soru. Her sorunun süresi var (çarpma ve bölmede daha uzun). İlk süre dolmasında ceza yok, aynı soru tekrar gelir; sonrakiler yanlış sayılır. Kolay’da en az 6, Orta’da 7, Zor’da 8 doğru ile geçersin. Zor’da süreler daha kısadır ve ilk süre dolması da yanlış sayılır. Çarpma ve bölmede duraklar tablo tablo ilerler (2’ler, 5’ler, 10’lar…). 10 doğru 3 yıldız.</li><li><b>❓ Sürpriz durak</b> ve <b>👑 bekçi:</b> Durağa dokununca sisin içinden bir Sis Yaratığı çıkar; onunla düello yaparsın. Soruyu yaratıktan önce doğru bilirsen vurursun. Senin 3 canın var. Yaratığın canı zorluğa göre 5–7 arasıdır. Yanlış basarsan ya da süre biterse yaratık sana vurur.</li><li>Kaybedersen ceza yok; yeniden kapışabilir ya da önce pratik yapabilirsin. Birkaç kez kaybedersen canavar arkadaşın sana kalkan verir (+1 can; Zor’da yok). İki kez kaybedersen bir alt zorluğu deneyebilirsin.</li><li><b>☀️ Güneş ışığı:</b> Yol yaratığını yenmek 2, bekçiyi yenmek 3, normal durağı 3 yıldızla geçmek 1 ışık verir. <b>Kule Kapısı Kolay’da 40, Orta’da 45, Zor’da 50 ışıkla açılır.</b> Işık azsa geçtiğin durakları yeniden oynayıp yıldızlarını artır.</li><li>Yenilen yaratıklar ışığa dönüşüp dağılır. Zafer ekranındaki <b>📷 Zafer kartını paylaş</b> ile kartını arkadaşlarına gönderebilirsin.</li><li><b>Bekçilerin hileleri (Orta ve Zor):</b> Taş Dev zırh giyer, ilk vuruşun zırhı kırar. Sis Büyücüsü bazen şıkların yerini değiştirir. Sis Kralı canı yarıya inince öfkelenir ve hızlanır.</li><li><b>Sis Kralı’nı yenince</b> zafer sayfası açılır; <b>hikâye kartını</b> paylaşabilirsin. Her zorluğu bitirince karakter kartına madalya eklenir: Güneş Yolcusu, Güneş Muhafızı, Güneş Şövalyesi.</li><li>İlk girişte macera hikâyesi oynar (<b>Geç ›</b> ile atlayabilirsin). Haritada sağ üstteki <b>📜</b> ile yeniden izleyebilirsin.</li><li><b>🎯 Talim Alanı:</b> Hikâyeden sonra canavar arkadaşınla talim yaparsın. Doğru cevaba dokun, canavar ateş topuyla vursun. 5 doğrudan sonra haritaya geçersin. Haritada üstteki <b>🎯</b> ile istediğin zaman yeniden talim yapabilirsin.</li></ul>'},
  {id:'friends',t:'👫 Arkadaşlarım',h:'<ul><li>Alttaki <b>Arkadaşlar</b> sekmesi. Profil ile girmen ve internet gerekir.</li><li>Her profilin bir <b>oyuncu kodu</b> var (örn. ABCDEFG). Kodunu arkadaşına ver.</li><li>Arkadaşının kodunu yazıp <b>Arkadaş Ekle</b>ye bas. O kabul edince arkadaş olursunuz.</li><li>Listede 🟢 olanlar şu an uygulamada. ⚪ olanların en son ne zaman girdiği yazar.</li><li>Bir arkadaşının adına dokununca <b>karakter kartı</b> açılır. Karttaki <b>Aranızdaki kapışmalar</b> düğmesi skorunuzu ve son maçlarınızı gösterir.</li><li><b>⚔️ Çağır</b>: seviye, maç puanı ve işlemi seç. Arkadaşın uygulamadaysa davet hemen ekranına gelir; kabul edince 1’e 1 kapışma başlar. Uygulaması kapalıysa davet 10 dakika bekler; davet linkini WhatsApp\'tan da gönderebilirsin.</li><li><b>Davet gelince üç seçenek var:</b> <b>⚔️ Kabul et</b> (hemen oynarsınız), <b>⏳ Meşgulüm</b> (arkadaşına haber gider, beklemez), <b>🕐 Daha sonra oynayalım</b> (15-60 dakika sonrası için zamanlı oyun isteği gönderirsin).</li><li>Davet eden de bekleme ekranında görür: <b>👀 gördü</b>, <b>✅ geliyor</b>, <b>⏳ meşgul</b> ya da <b>🕐 sonra</b>. 2 dakika cevap gelmezse beklemeye devam edebilir ya da vazgeçebilir.</li><li><b>📣 Çevrim içi herkesi çağır:</b> Şu an uygulamada olan (🟢) bütün arkadaşlarına tek dokunuşla davet gider. Oyunu seç (1’e 1, Muharebe ya da Yarış), ilk kabul edenlerle oynarsın. Oyun dolunca ya da başlayınca diğer davetler geri çekilir. 3 dakikada bir kullanılabilir.</li><li><b>💬 Mesaj:</b> Arkadaşının yanındaki 💬 düğmesine dokun, hazır mesajlardan birini ya da bir emoji seç. Yazı yazılmaz, sadece hazır mesajlar gider. Aynı arkadaşına 30 saniyede bir mesaj gönderebilirsin. Gelen mesaj ekranında <b>⚔️ Çağır</b> ya da <b>💬 Cevap ver</b> düğmeleri çıkar. Arkadaş listesinde son mesaj görünür.</li><li>Kod ya da linkle oynadığın biri arkadaşın değilse, oyun bitince sonuç ekranında <b>➕ arkadaş ekle</b> düğmesi çıkar.</li><li><b>🔔 Bildirimler:</b> Arkadaşlar sekmesindeki <b>Bildirimleri aç</b> düğmesine bas, izin ver. Uygulama kapalıyken bir arkadaşın seni kapışmaya ya da muharebeye çağırınca, ya da arkadaşlık isteği gönderince telefonuna bildirim gelir. Bildirime dokununca uygulama açılır ve <b>doğrudan kapışmaya girersin</b>. iPhone’da önce uygulamayı <b>ana ekrana eklemen</b> gerekir.</li><li>Arkadaşlıkların otomatik yedeğe dahildir. Telefon değişirse yedek koduyla geri gelir.</li></ul>'},
  {id:'online',t:'🌍 Online Oyna (açık odalar)',h:'<p>Ana sayfadaki <b>🌍 Online Oyna</b> ile arkadaşını beklemeden, o an oyunda olan herkesle oynayabilirsin. Karakterin olması gerekir; misafirler sadece arkadaşının verdiği kodla girebilir.</p><ul><li><b>⚡ Hemen Oyna:</b> Rütbesi sana yakın, uygun bir odaya girersin. Oda yoksa senin için bir oda açılır.</li><li><b>Oda listesi:</b> Odalar <b>Kolay → Orta → Zor</b> sırasıyla gelir. Soldaki renkli kare işlemi gösterir: <b>+</b> yeşil, <b>−</b> turuncu, <b>×</b> mavi, <b>÷</b> mor. Sağda kaç kişi olduğu yazar; 🔒 şifreli oda demektir. Listeyi <b>🔄 Yenile</b> ile tazelersin.</li><li><b>➕ Oda Kur:</b> Oyunu (1’e 1, Takım 2’ye 2 – 5’e 5, Herkes Tek 3–10 kişi), seviyeyi ve işlemi seç. Oda <b>herkese açık</b> ya da <b>sadece kodla</b> olabilir. İstersen <b>4 rakamlı şifre</b> koyarsın.</li><li><b>🤖 Botlar:</b> Kimse gelmezse <b>Botla Oyna</b>ya basabilirsin. Kurucu boş yerlere bot ekleyebilir. Gerçek oyuncu gelirse botun yerini alır. Botlara karşı kazanınca rütbe puanı verilmez.</li><li><b>Hepsi hız kapışması:</b> Online odalarda can yoktur. Herkes aynı soruyu aynı anda görür; hızlı olan kazanır.</li><li><b>🏁 Herkes Tek (3–10 kişi):</b> Herkes kendisi için oynar. Her soruda en hızlı doğru cevap 3, ikinci 2, üçüncü 1 puan alır. Sorular bitince en çok puanı olan kazanır.</li><li><b>👥 Takım odası:</b> Odaya girince Kırmızı ya da Mavi takımı sen seçersin; dolu takıma giremezsin. Her soruda ilk doğru basan oyuncunun takımı 1 puan alır. Takımlar başlarken eşitlenir, eksik yer botla dolar.</li><li><b>Kurucu</b> istemediği oyuncuyu <b>✖ Çıkar</b> ile odadan çıkarabilir. Engellediğin kişilerin odalarını görmezsin.</li><li>Rütbesi senden çok farklı olanların odaları listede görünmez; böylece oyunlar dengeli olur.</li></ul>'},
  {id:'duel',t:'⚔️ 1’e 1 Kapışma',h:'<ul><li>Arkadaşlar → arkadaşının yanındaki <b>⚔️ Çağır</b>. Ya da <b>🌍 Online Oyna</b> → <b>Oda Kur</b> → <b>1’e 1</b>.</li><li>Seviyeyi, maçın kaç puanda biteceğini (<b>10, 15 ya da 20</b>) ve işlemi seç. Çarpma ve bölmede istersen 📚 Tablo çalış.</li><li>Davet linkini ya da kodu arkadaşına gönder. O girince kapışma kendiliğinden başlar.</li><li>Her soruda <b>önce doğru basan</b> 1 puan alır. Yanlış basan o soruda kilitlenir.</li><li>Hız her telefonda ayrı ölçülür. İnterneti yavaş olan haksızlığa uğramaz.</li><li>Her soru için süre: Kolay ve tablo 10, Orta 12, Zor 15 saniye.</li><li>Seçilen puana ilk ulaşan kazanır. Bitince <b>Rövanş</b> ile hemen tekrar oynayabilirsiniz.</li><li>Kapışmadan çıkan yenilmiş sayılır.</li><li><b>Tek başına oynamak için:</b> Akıldan İşlem → <b>👾 Canavara Karşı Savaş</b>. 🐣 Yavru Canavar (kolay sayılar), 👾 Canavar (orta sayılar) ya da 🐉 Dev Canavar (zor sayılar) seç, sonra işlemi seç. İnternet gerekmez.</li><li>Sonuçların <b>Yarış Geçmişim → Kapışmalarım</b> bölümünde görünür. İnternet gerekir.</li></ul>'},
@@ -7275,9 +7296,9 @@ var GUTB={25:[2],26:[5],27:[10],28:[3],29:[4],30:[2,5,10],31:[6],32:[7],33:[8],3
   37:[2],38:[5],39:[10],40:[2,5,10],41:[3],42:[4],43:[6],44:[7],45:[8],46:[9],47:[2,3,4,5,6,7,8,9]};
 var OPF={add:1,sub:1.15,mul:1.4,div:1.6,rnd:1.3};
 /* S74 zorluk kademeleri: Kolay = eski oyun, Orta bir tık üstü, Zor gerçekten zor; ilerleme kademe başına ayrı (Orta = kök kayıt, Kolay = e, Zor = x) */
-var GUZ={k:{n:'Kolay',sw:1,gate:40,tf:1,fto:1,pass:6,s2:8,hp:5,bhp:5,khp:5,sp:[1.35,.5],bsp:[1.15,.35],pc:.65,bpc:.75,bf:1,mer:3,d:'Rahat başla, adım adım ilerle.'},
-  o:{n:'Orta',sw:2,gate:45,tf:.85,fto:1,pass:7,s2:9,hp:5,bhp:6,khp:6,sp:[1.15,.4],bsp:[1,.3],pc:.72,bpc:.82,bf:.9,mer:3,d:'Daha büyük sayılar, daha hızlı yaratıklar.'},
-  z:{n:'Zor',sw:3,gate:50,tf:.7,fto:0,pass:8,s2:9,hp:6,bhp:6,khp:7,sp:[1.05,.3],bsp:[.95,.25],pc:.85,bpc:.9,bf:.8,mer:2,d:'Gerçek şövalyeler için. Pes etmek yok!'}};
+var GUZ={k:{n:'Kolay',sw:1,gate:40,tf:1,fto:1,pass:6,s2:8,hp:5,bhp:5,khp:5,sp:[1.35,.5],bsp:[1.15,.35],pc:.65,bpc:.75,bf:1,mer:3,d:'Rahat başla, adım adım ilerle.',md:'Güneş Yolcusu'},
+  o:{n:'Orta',sw:2,gate:45,tf:.85,fto:1,pass:7,s2:9,hp:5,bhp:6,khp:6,sp:[1.15,.4],bsp:[1,.3],pc:.72,bpc:.82,bf:.9,mer:3,d:'Daha büyük sayılar, daha hızlı yaratıklar.',md:'Güneş Muhafızı'},
+  z:{n:'Zor',sw:3,gate:50,tf:.7,fto:0,pass:8,s2:9,hp:6,bhp:6,khp:7,sp:[1.05,.3],bsp:[.95,.25],pc:.85,bpc:.9,bf:.8,mer:2,d:'Gerçek şövalyeler için. Pes etmek yok!',md:'Güneş Şövalyesi'}};
 var GUZSL={k:'e',z:'x'},GUZ2=[35,36,46,47];
 function guRaw(){var a=ls('mc_gu',{}),d=a[guKey()];if(!d||typeof d!=='object'||Array.isArray(d))d={};return d}
 function guZ(){var z=guRaw().zk;return GUZ[z]?z:'o'}
@@ -7311,11 +7332,11 @@ function guPass(n,stars){
   if(first){d.c=n;GU.walk={a:n,b:Math.min(49,n+1)};GU.sel=Math.min(49,n+1)}
   guPut(d);return {gain:gain,first:first,light:guLight(d)};
 }
-function guQ(op,lv,last,n){
+function guQ(op,lv,last,n,sn){
   var tb=0,o=op,l=lv,t=n&&guTb(n);
   if(op==='rnd'){o=['add','sub','mul','div'][Math.floor(Math.random()*4)];if(o==='mul'||o==='div')l=guZ()==='z'?'o':'k'}
   if(t)tb=t[Math.floor(Math.random()*t.length)];
-  var sv=st.g;st.g={op:o,lv:l,tb:tb,lastTxt:last};try{var q=gQ0();q.op=o;q.lv=l;return q}finally{st.g=sv}
+  var sv=st.g;st.g={op:o,lv:l,tb:tb,lastTxt:last,seen:sn};try{var q=gQ0();q.op=o;q.lv=l;return q}finally{st.g=sv}
 }
 function guStars(s){return '<span class="gstars">'+[1,2,3].map(function(i){return '<i'+(i<=s?' class="on"':'')+'>★</i>'}).join('')+'</span>'}
 function guOpLabel(n){var r=GUR[guReg(n)];return r.op==='rnd'?'Karışık':OPS[r.op].name}
@@ -7658,10 +7679,10 @@ function guWalk(a,b){
 var GQ=null;
 function guStopOpen(n){
   GU.pick=0;
-  var r=GUR[guReg(n)];GQ={n:n,op:r.op,lv:guLv(n),i:0,ok:0,lock:false,end:false,last:'',fto:guZC().fto?0:1,hm:0,hv:0};guStopNext();go('gustop');guQT();
+  var r=GUR[guReg(n)];GQ={sid:Date.now(),n:n,op:r.op,lv:guLv(n),i:0,ok:0,lock:false,end:false,last:'',fto:guZC().fto?0:1,hm:0,hv:0};guStopNext();go('gustop');guQT();
   smpLoad('win.mp3');guLoad('sun-gain');guLoad('wax-seal');guS('scroll-unroll',.7);
 }
-function guStopNext(){var q=guQ(GQ.op,GQ.lv,GQ.last,GQ.n);GQ.last=q.txt;GQ.q=q;GQ.lock=false}
+function guStopNext(){var q=guQ(GQ.op,GQ.lv,GQ.last,GQ.n,GQ.seen=GQ.seen||{});GQ.last=q.txt;GQ.q=q;GQ.lock=false}
 function guStopHtml2(){
   var g=GQ,r=GUR[guReg(g.n)];
   if(g.end)return guStopEndHtml();
@@ -7713,7 +7734,7 @@ function guStopAns(i,el){
   },ok?650:2600);
 }
 function guStopEnd(){
-  var g=GQ;if(!g)return;g.end=true;guQTStop();var Z=guZC();g.stars=g.ok>=10?3:(g.ok>=Z.s2?2:(g.ok>=Z.pass?1:0));
+  var g=GQ;if(!g)return;g.end=true;guQTStop();try{rkQ(g.sid,g.ok|0)}catch(e){}var Z=guZC();g.stars=g.ok>=10?3:(g.ok>=Z.s2?2:(g.ok>=Z.pass?1:0));
   if(g.stars){g.res=guPass(g.n,g.stars);setTimeout(function(){if(st.screen==='gustop')confetti(g.stars>=3,'gustop')},150);if(g.res.gain)setTimeout(function(){if(st.screen==='gustop'&&GQ===g)guS('sun-gain',.9)},500);else smpPlay('win.mp3',.8)}
   else sndEnd();
   render();
@@ -7727,7 +7748,7 @@ function guStopEndHtml(){
     h+='<button class="next" onclick="guStopOpen('+g.n+')">🔁 Bir daha dene</button><button class="ghost" onclick="guTalim()">🎯 Önce talim yap, ısın</button><button class="ghost" onclick="guToMap()">🗺️ Haritaya dön</button>'}
   return h;
 }
-function guToMap(){if(!GU.walk)GU.sel=0;if(GD&&GD.c){['-attack','-fade','-appear'].forEach(function(x){delete SMP['gu/'+GD.c+x+'.mp3']});delete SMP['gu/king-intro.mp3'];delete SMP['gu/boss-intro-short.mp3']}GQ=null;guQTStop();guDuelStop();['boss-intro-short','king-intro','spider-appear','golem-appear','kraken-appear','eye-appear','guard-appear'].forEach(function(n){smpStop('gu/'+n+'.mp3')});GD=null;go('gumap')}
+function guToMap(){if(GD&&GD.ph==='fight')guRk();if(!GU.walk)GU.sel=0;if(GD&&GD.c){['-attack','-fade','-appear'].forEach(function(x){delete SMP['gu/'+GD.c+x+'.mp3']});delete SMP['gu/king-intro.mp3'];delete SMP['gu/boss-intro-short.mp3']}GQ=null;guQTStop();guDuelStop();['boss-intro-short','king-intro','spider-appear','golem-appear','kraken-appear','eye-appear','guard-appear'].forEach(function(n){smpStop('gu/'+n+'.mp3')});GD=null;go('gumap')}
 
 /* ---------- düello: önce doğru bilen vurur; yaratık canı kademeye göre (guFoeHp), sen 3 can ---------- */
 var GD=null;
@@ -7735,12 +7756,14 @@ function guDuelOpen(n){
   GU.pick=0;
   var c=GUS[n],r=GUR[guReg(n)];
   var f0=guD().f||{},fl0=f0[n]|0,Z=guZC(),mx=fl0>=4&&Z.mer>2?4:3,hp=guFoeHp(n);
-  GD={n:n,c:c,boss:!!GUK[c][1],op:r.op,lv:guLv(n),hp:hp,hx:hp,sub:'q',timers:[],me:mx,mx:mx,lost:fl0,ph:'load',times:[],tm:{},last:'',img:null,an:{m:'idle',t0:0},fl:0,pz:0};
+  GD={sid:Date.now(),okc:0,n:n,c:c,boss:!!GUK[c][1],op:r.op,lv:guLv(n),hp:hp,hx:hp,sub:'q',timers:[],me:mx,mx:mx,lost:fl0,ph:'load',times:[],tm:{},last:'',img:null,an:{m:'idle',t0:0},fl:0,pz:0};
   go('guduel');
   var g0=GD,im=new Image();im.onload=function(){if(GD===g0&&GD.ph==='load'){GD.img=im;guEnc()}};im.onerror=function(){if(GD===g0){toast('Yaratık yüklenemedi. İnterneti kontrol edip tekrar dene');guToMap()}};im.src='gu/'+c+'.webp';
   ['creature-hit','sword-hit','light-dissolve','sun-gain',guAtkN(c),c+'-fade'].forEach(guLoad);if(c==='knight')guLoad('king-attack2');
 }
 function guFoeHp(n){var Z=guZC(),c=GUS[n];return c==='knight'?Z.khp:(GUK[c][1]?Z.bhp:Z.hp)}
+/* S74: düello doğruları Soru Ustası/Azim sayacına (oturum = düello) */
+function guRk(){try{if(GD&&GD.sid)rkQ(GD.sid,GD.okc|0)}catch(e){}}
 function guAtkN(c){return c==='knight'?'king-attack':c+'-attack'}
 /* karşılaşma: yaratığın sesi + ona eşlik eden titreşim, Kapış'a kadar (en çok 20 sn) */
 var GUV={spider:[60,80,60,80,60,80,60,80,60],viper:[500,120,350],golem:[350,250,350,250,500],kraken:[900,150,600],wizard:[150,100,150,100,700],eye:[200,300,200,300,700],knight:[500,150,500,150,900],
@@ -7773,7 +7796,7 @@ function guEnc(){
 function guFight(){
   if(!GD||GD.ph!=='enc')return;
   guEncStop();smpStop('gu/boss-intro-short.mp3');smpStop('gu/king-intro.mp3');smpStop('gu/'+GD.c+'-appear.mp3');smpStop('gu/'+guAtkN(GD.c)+'.mp3');if(GD.c==='knight')smpStop('gu/king-attack2.mp3');
-  GD.ph='fight';render();
+  GD.ph='fight';GD.arm=GD.c==='golem'&&guSpc()?1:0;render();
   if(GD.c==='knight')guAmb('king-theme',0.45);
   sndClang();guT(guNext,500);
 }
@@ -7783,6 +7806,7 @@ function guPlan(){
   var Z=guZC(),q=GD.q,op=(q&&q.op)||GD.op,lv=(q&&q.lv)||GD.lv,mer=1+0.1*Math.min(Z.mer,GD.lost|0),sp=GD.boss?Z.bsp:Z.sp;
   var base={k:7000,o:9000,z:12000}[lv]*(OPF[op]||1)*mer*Z.bf,t=GD.tm[op]||[],T;
   if(t.length>=2){var a=t.slice().sort(function(x,y){return x-y}),med=a[a.length>>1];T=med*mer*(sp[0]+Math.random()*sp[1])}
+  if(GD.rage)T*=guZ()==='z'?0.85:0.9;
   else T=base*(GD.boss?1:1.1)*(1+Math.random()*0.25);
   return Math.max(2500,Math.min(GD.L*0.85,T));
 }
@@ -7791,10 +7815,16 @@ function guNext(){
   if(!GD||GD.ph!=='fight')return;
   if(GD.pz)return guT(guNext,0);
   GD.sub='q';
-  var q=guQ(GD.op,GD.lv,GD.last,GD.n);GD.last=q.txt;GD.q=q;GD.res=false;GD.lock=false;GD.miss=false;GD.t0=Date.now();GD.L=guLim();GD.T=guPlan();GD.pc=Math.random()<(GD.boss?guZC().bpc:guZC().pc);GD.qi=(GD.qi|0)+1;
+  var q=guQ(GD.op,GD.lv,GD.last,GD.n,GD.seen=GD.seen||{});GD.last=q.txt;GD.q=q;GD.res=false;GD.lock=false;GD.miss=false;GD.t0=Date.now();GD.L=guLim();GD.T=guPlan();GD.pc=Math.random()<(GD.boss?guZC().bpc:guZC().pc);GD.qi=(GD.qi|0)+1;
   var e=document.getElementById('gd-q');if(e)e.textContent=q.txt+' = ?';
   var a=document.getElementById('gd-a');if(a)a.innerHTML=guOptsHtml(q,'guAns');
-  guMsg('');guAva('look');
+  if(GD.arm)guMsg('🛡️ Taş Dev taş zırh giydi! İlk vuruşun zırhı kırar.');
+  else if(GD.rage===1){GD.rage=2;guMsg('🔥 Sis Kralı öfkelendi! Artık daha hızlı!','bad')}
+  else guMsg('');
+  guAva('look');
+  if(GD.c==='wizard'&&guSpc()&&GD.qi>1&&Math.random()<0.5){var qi0=GD.qi;guT(function(){if(GD.ph!=='fight'||GD.qi!==qi0||GD.res||GD.sub!=='q')return;var a2=document.getElementById('gd-a');if(!a2)return;var bs=[].slice.call(a2.children),k=bs.length;
+    for(var j=0;j<6;j++){var x=Math.floor(Math.random()*k),y=Math.floor(Math.random()*k),t2=bs[x];bs[x]=bs[y];bs[y]=t2}if(bs.every(function(b,i){return b===a2.children[i]}))bs.push(bs.shift());
+    bs.forEach(function(b){a2.appendChild(b)});a2.classList.remove('gshuf');void a2.offsetWidth;a2.classList.add('gshuf');guMsg('✨ Sis Büyücüsü şıkları karıştırdı!');sndSwoosh()},1000)}
   if(!GU.tk)GU.tk=setInterval(guTick,60);
 }
 function guMsg(t,c){var m=document.getElementById('gd-m');if(m){m.textContent=t;m.className='gdmsg'+(c?' '+c:'')}}
@@ -7811,11 +7841,11 @@ function guTick(){
   }
   if(el>=GD.L){guTime(GD.L);return guFoeHit(GD.miss?'⏱ Süre bitti! Sis bir can aldı.':'⏱ Süre bitti! '+GUK[GD.c][0]+' vurdu.')}
 }
-function guShow(){if(!GD||!GD.q)return;var q=GD.q,bs=document.querySelectorAll('#gd-a .ani'),x;for(x=0;x<bs.length;x++)if(q.opts[x].v===q.ans)bs[x].classList.add('ok')}
+function guShow(){if(!GD||!GD.q)return;var q=GD.q,bs=document.querySelectorAll('#gd-a .ani'),x;for(x=0;x<bs.length;x++){var an=bs[x].querySelector('.an');if(an&&an.textContent===String(q.ans))bs[x].classList.add('ok')}}
 function guAns(i,el){
   if(!GD||GD.ph!=='fight'||GD.res||GD.lock||GD.pz||GD.sub!=='q')return;
   var q=GD.q,ok=q.opts[i].v===q.ans,t=Date.now()-GD.t0;
-  if(ok){GD.res=true;guTime(t);el.classList.add('ok');guMeHit()}
+  if(ok){GD.res=true;GD.okc=(GD.okc|0)+1;guTime(t);el.classList.add('ok');guMeHit()}
   else{
     /* yanlış cevap: yaratık fırsatı kaçırmaz, hemen vurur */
     GD.res=true;GD.lock=true;el.classList.add('bad');buzz(60);
@@ -7830,8 +7860,13 @@ function guPips(){
   if(m){s='';for(i=0;i<(GD.mx||3);i++)s+='<i'+(i<GD.me?'':' class="e"')+'></i>';m.innerHTML=s}
   var hn=document.getElementById('gd-hn');if(hn)hn.textContent=GD.hp+' / '+(GD.hx||5);
 }
+/* S74 bekçi hamleleri (yalnız Orta/Zor): Taş Dev zırhı ilk vuruşu tutar, Sis Kralı yarı canda öfkelenir, Sis Büyücüsü şıkları karıştırır */
+function guSpc(){return guZ()!=='k'}
 function guMeHit(){
-  if(!GD)return;GD.hp--;guS('sword-hit',1);guAva('cheer');draPlay('gd-dr','k-attack');guT(function(){var k=document.getElementById('gd-spk');if(k&&!RMOT){k.classList.remove('go');void k.offsetWidth;k.classList.add('go')}},380);guMsg('⚔️ Önce sen bildin!','ok');buzz(30);
+  if(!GD)return;
+  if(GD.arm){GD.arm=0;sndClang();buzz([40,30,40]);guAva('cheer');draPlay('gd-dr','k-attack');guMsg('🛡️ Taş Dev’in zırhı çatladı! Şimdi vurabilirsin!','ok');var cw0=document.getElementById('gd-cw');if(cw0){cw0.classList.remove('hit');void cw0.offsetWidth;cw0.classList.add('hit')}guT(function(){if(GD.ph==='fight')guNext()},1300);return}
+  GD.hp--;
+  if(GD.c==='knight'&&guSpc()&&!GD.rage&&GD.hp>0&&GD.hp<=Math.floor((GD.hx||5)/2)){GD.rage=1;guT(function(){if(GD.ph!=='fight')return;guFlash(0);buzz([120,60,120]);guVoice('king-attack2',.8)},700)}guS('sword-hit',1);guAva('cheer');draPlay('gd-dr','k-attack');guT(function(){var k=document.getElementById('gd-spk');if(k&&!RMOT){k.classList.remove('go');void k.offsetWidth;k.classList.add('go')}},380);guMsg('⚔️ Önce sen bildin!','ok');buzz(30);
   var sl=document.getElementById('gd-sl');if(sl){sl.classList.remove('go');void sl.offsetWidth;sl.classList.add('go')}
   var dm=document.getElementById('gd-dm');if(dm){dm.classList.remove('go');void dm.offsetWidth;dm.classList.add('go')}
   GD.fl=Date.now();var cw=document.getElementById('gd-cw');if(cw){cw.classList.remove('hit');void cw.offsetWidth;cw.classList.add('hit')}
@@ -7863,7 +7898,7 @@ function guFlash(shake){
 }
 /* yok olma: çatlaklar (ses: son haykırış + çıtırtılar) → ışık patlaması + halka → parçacıklar toplanır → güneş ışığı */
 function guWin(){
-  if(!GD)return;guTClear();clearInterval(GU.tk);GU.tk=null;guAmbStop();
+  if(!GD)return;guRk();guTClear();clearInterval(GU.tk);GU.tk=null;guAmbStop();
   GD.ph='win';GD.stars=Math.min(3,GD.me);GD.res2=guPass(GD.n,GD.stars);GD.dt0=0;GD.ps=null;GD.cr=null;
   var dl=guD();if(dl.f&&dl.f[GD.n]){delete dl.f[GD.n];guPut(dl)}
   var B=GD.boss,T1=B?2.0:1.4,c=GD.c;GD.T1=T1;
@@ -7874,8 +7909,53 @@ function guWin(){
   guT(function(){if(GD.ph==='win'){guS('sun-gain',.9);confetti(B,'guduel')}},T1*1000+1300);
 }
 function guDownHtml(n){var z=guZ(),dn=z==='z'?'o':(z==='o'?'k':''),f=(guD().f||{})[n]|0;if(!dn||f<2)return '';
-  return '<button class="gbtn ghost2 gzdn" onclick="guZPick(\''+dn+'\','+n+')">'+guSw(dn)+' '+GUZ[dn].n+' zorlukta dene</button>'}
-function guLose(){if(!GD)return;guTClear();clearInterval(GU.tk);GU.tk=null;guAmbStop();var d=guD();d.f=d.f||{};d.f[GD.n]=(d.f[GD.n]|0)+1;guPut(d);GD.ph='lose';render();sndEnd()}
+  return '<button class="gbtn ghost2 gzdn" onclick="guZPick(\''+dn+'\','+n+')"><span>'+guSw(dn)+' '+GUZ[dn].n+' zorlukta dene</span></button>'}
+/* S74: paylaşım kartları (yaratık zaferi + Güneş Ülkesi'ni kurtardı) */
+var GUACC={spider:'Dev Örümceği',viper:'Dev Engereği',golem:'Taş Devi',kraken:'Derin Sis Krakenini',wizard:'Sis Büyücüsünü',eye:'Sis Gözünü',knight:'Sis Kralını',
+  bat:'Sis Yarasasını',crow:'Sis Kargasını',wolf:'Sis Kurdunu',vine:'Dikenli Sarmaşığı',scorp:'Taş Akrebi',lizard:'Kaya Kertenkelesini',guard:'Gölge Muhafızı',rat:'Dikenli Fareyi'};
+function guMedals(p){var a=ls('mc_gu',{}),r=a[p||guKey()],o=[];if(!r||typeof r!=='object')return o;
+  if(r.e&&(r.e.c|0)>=49)o.push('k');if((r.c|0)>=49)o.push('o');if(r.x&&(r.x.c|0)>=49)o.push('z');return o}
+function guMedalHtml(z){return '<span class="gmd gmd-'+z+'"><i>☀</i>'+GUZ[z].md+'</span>'}
+function guImg(src){return new Promise(function(res){var i=new Image();i.onload=function(){res(i)};i.onerror=function(){res(null)};i.src=src})}
+function guStats(){var d=guD(),n,w=0,s=0;for(n in d.s){if(guKind(+n))w++;else s+=d.s[n]|0}return {w:w,s:s,L:guLight(d)}}
+function guEnd(){if(!GD)return;guTClear();GD.ph='end';render();try{smpPlay('win.mp3',.9)}catch(e){}setTimeout(function(){if(GD&&GD.ph==='end')confetti(true,'guduel')},300)}
+function guEndHtml(){var z=guZ(),S=guStats();
+  return '<div class="gend"><div class="gend-r"></div><img class="gend-m" src="mc-trophy.webp" alt="" aria-hidden="true"><b class="gend-t">Güneş Ülkesi’ni kurtardın!</b><span class="gend-s">Sis dağıldı, güneş yeniden doğdu. Bu zafer senin!</span>'+
+  '<div class="gend-md">'+guMedalHtml(z)+'</div><div class="gend-st"><span>⚔️ '+S.w+' yaratık</span><span>☀️ '+S.L+' ışık</span><span>⭐ '+S.s+'</span></div>'+
+  '<button class="gbtn gold" onclick="guShare(1)">📷 Hikâye kartını paylaş</button>'+(z!=='z'?'<button class="gbtn ghost2" onclick="guZPick(\''+(z==='k'?'o':'z')+'\')"><span>'+guSw(z==='k'?'o':'z')+' '+GUZ[z==='k'?'o':'z'].n+' yolunda yeni macera</span></button>':'')+'<button class="gbtn ghost2" onclick="guToMap()">🗺️ Haritaya dön</button></div>'}
+function guShare(fin){if(!GD)return;var g=GD,z=guZ(),S=guStats(),nick=st.profile?nkShow(st.profile):'';
+  var o={c:g.c,fin:!!fin,nm:GUACC[g.c]||GUK[g.c][0],pl:GUP[g.n]||'',n:g.n,stars:g.stars||0,li:(g.res2||{}).gain|0,z:z,boss:g.boss,nick:nick,S:S};
+  Promise.all([guImg(fin?'mc-trophy.webp':'gu/'+g.c+'.webp'),guImg(fin?'mc-k-cheer.webp':'mc-k-cheer.webp'),document.fonts?document.fonts.load('700 40px MCL').catch(function(){}):0]).then(function(im){
+    var cv=document.createElement('canvas');guCardDraw(cv,o,im[0],im[1]);
+    cv._rd=function(){guCardDraw(cv,o,null,null)};
+    shareCanvas(cv,fin?'gunes-ulkesi-kahraman.png':'gunes-ulkesi-'+g.c+'.png')})}
+function guCardDraw(cv,o,ci,mi){
+  var W=1080,H=1350,c,i,g,a,r;cv.width=W;cv.height=H;c=cv.getContext('2d');
+  g=c.createRadialGradient(W/2,400,60,W/2,500,H*.85);g.addColorStop(0,'#fbf1d6');g.addColorStop(.55,'#f1e0b5');g.addColorStop(1,'#d8bd86');c.fillStyle=g;c.fillRect(0,0,W,H);
+  c.save();c.translate(W/2,420);for(i=0;i<22;i++){c.rotate(Math.PI*2/22);c.beginPath();c.moveTo(0,0);c.lineTo(-40,-560);c.lineTo(40,-560);c.closePath();c.fillStyle='rgba(255,200,80,.20)';c.fill()}c.restore();
+  g=c.createRadialGradient(W/2,420,10,W/2,420,300);g.addColorStop(0,'rgba(255,248,210,1)');g.addColorStop(.4,'rgba(255,214,110,.7)');g.addColorStop(1,'rgba(255,214,110,0)');c.fillStyle=g;c.fillRect(0,100,W,640);
+  for(i=0;i<40;i++){a=i*2.39;r=200+((i*53)%230);var x=W/2+Math.cos(a)*r,y=420+Math.sin(a)*r*.7,s=4+(i*7)%10;c.beginPath();c.arc(x,y,s,0,7);c.fillStyle='rgba(255,243,184,'+(.45+(i%5)*.1)+')';c.shadowColor='rgba(255,200,80,.9)';c.shadowBlur=14;c.fill()}c.shadowBlur=0;
+  c.strokeStyle='#9a6b2c';c.lineWidth=6;rr(c,24,24,W-48,H-48,30);c.stroke();c.strokeStyle='#b4843e';c.lineWidth=3;rr(c,40,40,W-80,H-80,22);c.stroke();
+  c.textAlign='center';c.fillStyle='#7a4e1c';c.font='700 32px MCL,Lora,Georgia,serif';c.fillText('☀  G Ü N E Ş   Ü L K E S İ  ☀',W/2,112);
+  if(o.fin){if(ci)c.drawImage(ci,W/2-260,150,520,520)}
+  else{if(ci){var hh=ci.height;c.save();c.shadowColor='rgba(255,220,120,.9)';c.shadowBlur=36;c.drawImage(ci,0,0,hh,hh,W/2-360,150,580,580);c.restore()}if(mi)c.drawImage(mi,W-390,320,340,340)}
+  var rb=o.fin?'KAHRAMAN':(o.boss?'BEKÇİ DEVRİLDİ':'ZAFER');c.font='700 36px MCL,Lora,Georgia,serif';var tw=c.measureText(rb.split('').join(' ')).width+120,rx=W/2-tw/2,ry=712;
+  c.beginPath();c.moveTo(rx,ry);c.lineTo(rx+tw,ry);c.lineTo(rx+tw-24,ry+38);c.lineTo(rx+tw,ry+76);c.lineTo(rx,ry+76);c.lineTo(rx+24,ry+38);c.closePath();g=c.createLinearGradient(0,ry,0,ry+76);g.addColorStop(0,'#a83a32');g.addColorStop(1,'#7e221c');c.fillStyle=g;c.fill();
+  c.fillStyle='#fff4dc';c.fillText(rb.split('').join(' '),W/2,ry+52);
+  var t=o.fin?'Güneş Ülkesi’ni kurtardı!':o.nm+' yendi!',fs=76;c.fillStyle='#3b2a1a';do{c.font='700 '+fs+'px MCL,Lora,Georgia,serif';fs-=4}while(c.measureText(t).width>W-140&&fs>40);c.fillText(t,W/2,880);
+  c.fillStyle='#5a3a1c';c.font='700 38px MCP,Poppins,system-ui,sans-serif';if(o.nick)c.fillText(o.nick,W/2,950);
+  c.fillStyle='#6b5a44';c.font='500 30px MCP,Poppins,system-ui,sans-serif';
+  c.fillText(o.fin?GUZ[o.z].md+' madalyası':o.pl+' · Durak '+o.n,W/2,1004);
+  var it=[];if(o.fin){it.push('⚔️ '+o.S.w+' yaratık','☀️ '+o.S.L+' ışık','⭐ '+o.S.s)}else{it.push('★★★'.slice(0,o.stars)+'☆☆☆'.slice(0,3-o.stars));if(o.li)it.push('☀️ +'+o.li+' ışık')}
+  if(o.z!=='k')it.push('⚔'.repeat(GUZ[o.z].sw)+' '+GUZ[o.z].n);
+  c.font='700 32px MCP,Poppins,system-ui,sans-serif';var ws=it.map(function(s){return c.measureText(s).width+56}),tot=ws.reduce(function(a,b){return a+b},0)+(it.length-1)*22,x0=W/2-tot/2;
+  it.forEach(function(s,k){var w=ws[k],zz=o.z!=='k'&&k===it.length-1,st0=!o.fin&&k===0;c.fillStyle=zz?(o.z==='z'?'#8e2a24':'#b07d12'):(st0?'rgba(0,0,0,0)':'#fbf3e0');rr(c,x0,1052,w,70,35);c.fill();if(!zz&&!st0){c.strokeStyle='#c9ad7a';c.lineWidth=3;c.stroke()}
+    c.fillStyle=zz?'#fff8e6':(st0?'#e3a21c':'#5a3a1c');if(st0)c.font='700 52px MCP,Poppins,system-ui,sans-serif';c.fillText(s,x0+w/2,st0?1106:1098);c.font='700 32px MCP,Poppins,system-ui,sans-serif';x0+=w+22});
+  c.strokeStyle='#c9ad7a';c.lineWidth=3;c.beginPath();c.moveTo(80,1200);c.lineTo(W-80,1200);c.stroke();
+  c.textAlign='left';c.fillStyle='#3b2a1a';c.font='700 34px MCL,Lora,Georgia,serif';c.fillText('Matematik Canavarı',84,1258);
+  c.textAlign='right';c.fillStyle='#7a5a34';c.font='500 28px MCP,Poppins,system-ui,sans-serif';c.fillText(fmtDate(new Date()),W-84,1256);
+}
+function guLose(){if(!GD)return;guRk();guTClear();clearInterval(GU.tk);GU.tk=null;guAmbStop();var d=guD();d.f=d.f||{};d.f[GD.n]=(d.f[GD.n]|0)+1;guPut(d);GD.ph='lose';render();sndEnd()}
 function guDuelStop(){if(GU.tk){clearInterval(GU.tk);GU.tk=null}guEncStop();guTClear();if(GU.vc){smpStop('gu/'+GU.vc+'.mp3');GU.vc=''}}
 /* F0: düello zamanlayıcıları tek yerden (GD kimliği + duraklatma), test hızı GU.spd; yaratık sesleri tek kanal (guVoice) */
 function guT(fn,ms,g){g=g||GD;if(!g||!g.timers)return 0;var id;function run(){var i=g.timers.indexOf(id);if(i>=0)g.timers.splice(i,1);if(GD!==g)return;if(g.pz){id=setTimeout(run,250);g.timers.push(id);return}fn()}id=setTimeout(run,Math.max(0,ms*(GU.spd||1)));g.timers.push(id);return id}
@@ -7910,9 +7990,10 @@ function guDuelHtml(){
     h+='<div class="gray"></div><div class="gdcw big" id="gd-cw"><canvas id="gdc"></canvas></div>';
     h+='<div class="gdwin"><b>✨ '+nm+' ışığa dönüştü!</b><span>'+guWinSub(g.n)+'</span></div>';
     h+=(g.n===49?monImg('k-bow','gdme1'):draHtml('k-cheer','gdme1'))+'<div class="gdinfo">'+(res.gain?'<span class="gpill">☀️ +'+res.gain+' güneş ışığı</span>':'')+'</div>';
-    h+='<button class="gbtn gold" onclick="guToMap()">'+(g.n===49?'🏰 Haritaya dön':'🗺️ Yola devam')+'</button></div>';
+    h+=(g.n===49?'<button class="gbtn gold" onclick="guEnd()">🏆 Zafer sayfası</button>':'<button class="gbtn gold" onclick="guToMap()">🗺️ Yola devam</button><button class="gbtn ghost2 gshr" onclick="guShare()">📷 Zafer kartını paylaş</button>')+'</div>';
     return h;
   }
+  if(g.ph==='end')return h+guEndHtml()+'</div>';
   h+='<div class="gdcw big" id="gd-cw"><canvas id="gdc"></canvas></div><div class="gfg f3"></div>';
   h+='<div class="gdwin lose"><b>İyi mücadele! 💪</b><span>'+'Bu sefer '+nm+' kazandı. Biraz talim yapıp tekrar dene, yanındayım!</span></div>'+monImg('k-sad','gdme1 glm');
   h+='<button class="gbtn gold" onclick="guDuelOpen('+g.n+')">⚔️ Tekrar Kapış</button>'+guDownHtml(g.n)+'<button class="gbtn ghost2" onclick="guPractice()">'+r.s+' '+guOpLabel(g.n)+' pratiği yap</button><button class="gbtn ghost2" onclick="guToMap()">🗺️ Haritaya dön</button></div>';
