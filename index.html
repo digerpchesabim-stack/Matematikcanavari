@@ -2220,7 +2220,7 @@ function gQ(){
 }
 function gSeenK(op,txt){if(op==='add'||op==='mul'){var m=txt.match(/^(\d+) . (\d+)$/);if(m)return op+Math.min(+m[1],+m[2])+'_'+Math.max(+m[1],+m[2])}return txt}
 function gQ0(){
-  var g=st.g,lv=g.lv||'k',op=g.op==='rnd'?['add','sub','mul','div'][rnd(0,3)]:g.op,tbl=(op==='mul'||op==='div')?(g.tb||0):0,a,b,ans,txt,alt,i,t,sw;
+  var lt0=st.g.lastTxt,g=st.g,lv=g.lv||'k',op=g.op==='rnd'?['add','sub','mul','div'][rnd(0,3)]:g.op,tbl=(op==='mul'||op==='div')?(g.tb||0):0,a,b,ans,txt,alt,i,t,sw;
   var ALT=function(){alt=[ans+1,ans-1,ans+2,ans-2,ans+10,ans-10,ans+9]};
   for(t=0;t<50;t++){
     if(op==='add'){
@@ -2249,7 +2249,7 @@ function gQ0(){
   }
   g.lastTxt=txt;
   /* S74: oyun içinde aynı soru tekrar gelmesin (g.seen yalnızca tek kişilik oyunda ve Güneş Ülkesi'nde; tohumlu yarış/kapışma dizileri değişmez) */
-  if(g.seen){if(t>=50)g.seen={};g.seen[gSeenK(op,txt)]=1}
+  if(g.seen){if(t>=50){g.seen={};if(txt===lt0&&!g.rq){g.lastTxt=lt0;g.rq=1;try{return gQ0()}finally{g.rq=0}}}g.seen[gSeenK(op,txt)]=1}
   var pool=[];alt.forEach(function(v){if(v>=0&&v!==ans&&pool.indexOf(v)<0)pool.push(v)});
   var n=3;while(pool.length<3){if(ans+n!==ans&&pool.indexOf(ans+n)<0)pool.push(ans+n);n++}
   for(i=pool.length-1;i>0;i--){var j=rnd(0,i),tmp=pool[i];pool[i]=pool[j];pool[j]=tmp}
@@ -7806,8 +7806,8 @@ function guPlan(){
   var Z=guZC(),q=GD.q,op=(q&&q.op)||GD.op,lv=(q&&q.lv)||GD.lv,mer=1+0.1*Math.min(Z.mer,GD.lost|0),sp=GD.boss?Z.bsp:Z.sp;
   var base={k:7000,o:9000,z:12000}[lv]*(OPF[op]||1)*mer*Z.bf,t=GD.tm[op]||[],T;
   if(t.length>=2){var a=t.slice().sort(function(x,y){return x-y}),med=a[a.length>>1];T=med*mer*(sp[0]+Math.random()*sp[1])}
-  if(GD.rage)T*=guZ()==='z'?0.85:0.9;
   else T=base*(GD.boss?1:1.1)*(1+Math.random()*0.25);
+  if(GD.rage)T*=guZ()==='z'?0.85:0.9;
   return Math.max(2500,Math.min(GD.L*0.85,T));
 }
 function guTime(t){var q=GD.q,op=(q&&q.op)||GD.op;(GD.tm[op]=GD.tm[op]||[]).push(t);GD.times.push(t)}
@@ -7927,7 +7927,7 @@ function guShare(fin){if(!GD)return;var g=GD,z=guZ(),S=guStats(),nick=st.profile
   var o={c:g.c,fin:!!fin,nm:GUACC[g.c]||GUK[g.c][0],pl:GUP[g.n]||'',n:g.n,stars:g.stars||0,li:(g.res2||{}).gain|0,z:z,boss:g.boss,nick:nick,S:S};
   Promise.all([guImg(fin?'mc-trophy.webp':'gu/'+g.c+'.webp'),guImg(fin?'mc-k-cheer.webp':'mc-k-cheer.webp'),document.fonts?document.fonts.load('700 40px MCL').catch(function(){}):0]).then(function(im){
     var cv=document.createElement('canvas');guCardDraw(cv,o,im[0],im[1]);
-    cv._rd=function(){guCardDraw(cv,o,null,null)};
+    cv._rd=function(){guCardDraw(cv,o,CARDMON?im[0]:null,CARDMON?im[1]:null)};
     shareCanvas(cv,fin?'gunes-ulkesi-kahraman.png':'gunes-ulkesi-'+g.c+'.png')})}
 function guCardDraw(cv,o,ci,mi){
   var W=1080,H=1350,c,i,g,a,r;cv.width=W;cv.height=H;c=cv.getContext('2d');
@@ -8366,6 +8366,7 @@ function guBack(){
   }
 }
 function guFree(){
+  if(GD&&GD.ph==='fight')guRk();
   for(var dk in DRG)if(/^(a:)?k-/.test(dk))delete DRG[dk];if(typeof TLI!=='undefined'){TLI.bg=null;TLI.at=null}guTClear();GD=null;GQ=null;
   if(GUM.cv){GUM.cv.width=GUM.cv.height=0;GUM.cv=null;GUM.sc=0}
   for(var k in SMP)if(k.indexOf('gu/')===0)delete SMP[k];

@@ -22,8 +22,11 @@ ok(await E(()=>{var sv=st.g,seen={},rep=0;st.g={op:'add',lv:'k',tb:0,lastTxt:'',
 ok(await E(()=>{var sv=st.g,n=0;st.g={op:'mul',lv:'k',tb:7,lastTxt:'',seen:{}};try{var s={};for(var i=0;i<9;i++){s[gQ0().txt.replace(/(\d+) × (\d+)/,(m,a,b)=>Math.min(a,b)+'x'+Math.max(a,b))]=1}n=Object.keys(s).length;gQ0()}finally{st.g=sv}return n===9}),'7’ler tablosu: 9 sorunun hepsi farklı, bitince yeniden başlar');
 ok(await E(()=>{var a=[],b=[],sv=st.g;function run(arr){RNG=mulb(5);st.g={op:'add',lv:'o',tb:0,lastTxt:''};for(var i=0;i<12;i++)arr.push(gQ0().txt)}try{run(a);run(b)}finally{RNG=null;st.g=sv}return a.join()===b.join()}),'tohumlu dizi (seen yok) aynı kalır');
 ok(await E(()=>/seen:\{\}/.test(String(gStart))&&!/seen/.test(String(raceStart||''))),'seen yalnız tek kişilik oyunda');
+ok(await E(()=>{var sv=st.g,prev='',bad=0;st.g={op:'mul',lv:'k',tb:7,lastTxt:'',seen:{}};try{for(var i=0;i<60;i++){var t=gQ0().txt;if(t===prev)bad++;prev=t}}finally{st.g=sv}return bad===0}),'havuz tükenince de art arda aynı soru yok');
 // 2) durak sayaçları
 ok(await E(()=>{var x0=rkGet(st.profile).q||0;guStopOpen(1);GQ.ok=9;GQ.i=10;guStopEnd();var x1=rkGet(st.profile).q||0;guToMap();return x1-x0===9}),'durak doğruları Soru Ustası sayacına (+9)');
+await E(()=>{guZSet('k')});
+ok(await E(()=>{GD={boss:false,op:'add',lv:'k',tm:{add:[3000,4000,5000]},lost:0,L:12000,q:null};var ok1=true;for(var i=0;i<30;i++){var T=guPlan();if(!(T>=4000*1.35-1&&T<=4000*1.85+1))ok1=false}GD.rage=1;GD.tm={};var T2=guPlan();GD=null;return ok1&&isFinite(T2)}),'guPlan: Kolay çocuğun hızına uyar, öfkede NaN yok');
 // 3) Taş Dev zırhı (Orta)
 await E(()=>{guZSet('o');guToMap()});await sleep(200);
 await E(()=>{GU.spd=0.2;guDuelOpen(36)});await sleep(1500);await E(()=>guFight());await sleep(400);
@@ -33,13 +36,13 @@ ok(await E(()=>GD.arm===0&&GD.hp===GD.hx),'ilk doğru zırhı kırar, can gitmez
 await shot('01_armor');
 await E(()=>{guToMap()});await sleep(300);
 // 4) Büyücü karıştırma: doğru şık doğru işaretlenir
-await E(()=>{guDuelOpen(47)});await sleep(1500);await E(()=>{guFight();Math.random=(r=>()=>0.1)(Math.random)});await sleep(300);
+await E(()=>{guDuelOpen(47)});await sleep(1500);await E(()=>{guFight();window.__R0=Math.random;Math.random=()=>0.1});await sleep(300);
 for(let k=0;k<3;k++){await E(()=>{if(GD.ph==='fight'&&!GD.res){var i=GD.q.opts.findIndex(o=>o.v===GD.q.ans);guAns(i,document.querySelectorAll('#gd-a .ani')[i])}});await sleep(600)}
 await sleep(400);
 ok(await E(()=>{var a=document.getElementById('gd-a');return !!a}),'büyücü düellosu sürüyor');
 ok(await E(()=>{if(!GD||GD.ph!=='fight')return false;var q=GD.q,bs=[...document.querySelectorAll('#gd-a .ani')];var order=bs.map(b=>b.querySelector('.an').textContent).join();var orig=q.opts.map(o=>String(o.v)).join();guShow();var okb=bs.filter(b=>b.classList.contains('ok'));return okb.length===1&&okb[0].querySelector('.an').textContent===String(q.ans)}),'karıştırmadan sonra doğru şık doğru işaretlenir');
 await shot('02_wizard');
-await E(()=>{guToMap()});await sleep(300);
+await E(()=>{Math.random=window.__R0;guToMap()});await sleep(300);
 // 5) Kral öfkesi
 await E(()=>{guDuelOpen(49)});await sleep(1500);await E(()=>guFight());await sleep(300);
 await E(()=>{GD.hp=Math.floor(GD.hx/2)+1;var i=GD.q.opts.findIndex(o=>o.v===GD.q.ans);guAns(i,document.querySelectorAll('#gd-a .ani')[i])});await sleep(600);
