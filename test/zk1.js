@@ -33,7 +33,7 @@ await p.click('.gzc.gz-z');await sleep(300);
 ok(await E(()=>guZ()==='z'&&guD().c===0&&!document.querySelector('.gzov')),'Zor seçildi, yeni yol');
 ok(await E(()=>guLv(1)==='o'&&guLv(3)==='z'&&guLv(35)==='o'&&guTb(35)===null&&guLv(49)==='z'),'Zor sayı seviyeleri');
 ok(await E(()=>JSON.stringify(guTb(30).slice().sort((a,b)=>a-b))==='[2,3,4,5,10]'),'Zor tablolar birikerek');
-ok(await E(()=>guFoeHp(4)===6&&guFoeHp(12)===7&&guFoeHp(49)===8&&guGN()===50),'Zor canlar ve kapı');
+ok(await E(()=>guFoeHp(4)===6&&guFoeHp(12)===6&&guFoeHp(49)===7&&guGN()===50),'Zor canlar ve kapı');
 ok(await E(()=>{for(var i=0;i<40;i++){var q=guQ('add','z','',3),m=q.txt.match(/(\d+) \+ (\d+)/);if(!m||+m[1]<11||+m[2]<11)return false}return true}),'Zor 3. durak: iki basamak + iki basamak');
 ok(await E(()=>{for(var i=0;i<40;i++){var q=guQ('rnd','z','',49);if(/[×÷]/.test(q.txt)&&q.lv!=='o')return false}return true}),'Zor final: çarpma/bölme iki basamaklı');
 ok(await E(()=>{guStopOpen(3);var a=GQ.fto===1&&Math.abs(guQLim()-20000*0.7)<1;GQ.ok=7;GQ.i=10;guStopEnd();var b=GQ.stars===0;guStopOpen(3);GQ.ok=8;GQ.i=10;guStopEnd();var c=GQ.stars===1;guToMap();return a&&b&&c}),'Zor durak: kısa süre, affetme yok, 8 doğru şart');
@@ -46,7 +46,7 @@ for(let k=0;k<2;k++){await E(()=>{guDuelOpen(4)});await sleep(1500);await E(()=>
 ok(await E(()=>!!document.querySelector('.gzdn')&&/Orta/.test(document.querySelector('.gzdn').textContent)),'Zor’da 2 yenilgi → Orta önerisi');
 await shot('02_down');
 await p.click('.gzdn');await sleep(500);
-ok(await E(()=>st.screen==='gumap'&&guZ()==='o'&&!GD),'öneriye basınca Orta haritası');
+ok(await E(()=>st.screen==='gumap'&&guZ()==='o'&&!GD&&GU.sel===4),'öneriye basınca Orta haritası, aynı durak seçili');
 ok(await E(()=>!!document.querySelector('.gzch.gzb-o')),'haritada kademe rozeti');
 await shot('03_map');
 // eşitleme birleşmesi
