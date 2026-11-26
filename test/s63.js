@@ -29,7 +29,7 @@ await sleep(100);
 ok(await p.evaluate(()=>window.__cf===1),'kazanınca konfeti');
 ok(await monCount()===1,'sayfada tek canavar: '+await monCount());
 ok(await p.evaluate(()=>!document.querySelector('.top .tmon')),'başlıkta canavar yok');
-ok(await p.evaluate(()=>{var e=document.querySelector('img.rmon');return e.getAttribute('data-mk')==='win'&&e.classList.contains('mwin')}),'kazanma hareketi başladı');
+ok(await p.evaluate(()=>{var e=document.querySelector('img.rmon');return e.getAttribute('data-mk')==='trophy'}),'kazanma pozu (kupa)');
 await strip('kazan',[0,250,500,800,1100,1400,1800,2600]);
 const seenW=await p.evaluate(()=>new Promise(r=>{var e=document.querySelector('img.rmon'),s=new Set();var t=setInterval(()=>s.add(e.getAttribute('src')),60);setTimeout(()=>{clearInterval(t);r([...s])},2400)}));
 ok(seenW.some(x=>/happy/.test(x))&&seenW.some(x=>/cheer/.test(x)),'kazanınca sevinç kareleri değişiyor: '+seenW.join(' '));
@@ -49,7 +49,7 @@ ok(await p.evaluate(()=>window.__cf===0),'kaybedince konfeti yok');
 ok(await monCount()===1,'kaybedince de tek canavar');
 await strip('kaybet',[0,500,1200,1700,2300,2900,3600]);
 const seenL=await p.evaluate(()=>{var e=document.querySelector('img.rmon');return [e.getAttribute('data-mk'),e.className]});
-ok(seenL[0]==='lose'&&/mlose/.test(seenL[1]),'kaybetme hareketi');
+ok(seenL[0]==='thumb','kaybetme pozu (başparmak, moral)');
 // Akıldan İşlem sonucu ve İşlemler raporu: tek canavar
 await p.evaluate(()=>{duExit();GS.lv='k';gStart('add',0);if(RM.cd){clearInterval(RM.cd);RM.cd=null}go('game')});await sleep(300);
 await p.evaluate(()=>endGame());await sleep(500);

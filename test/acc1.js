@@ -162,7 +162,7 @@ await ev(C,()=>{Object.defineProperty(window,'speechSynthesis',{configurable:tru
 await C.click('#tts-n');await sleep(100);
 ok(await ev(C,()=>!window.__bad&&/Türkçe ses yok/.test(document.getElementById('toast').textContent)),'Türkçe ses yoksa uyarı');
 // ---------- 7) Yazı boyutu ----------
-await ev(C,()=>{fsSet(2);go('home')});await sleep(200);
+await ev(C,()=>{fsSet(2);go('ops')});await sleep(200);
 const z=await ev(C,()=>({a:document.documentElement.getAttribute('data-fs'),z:getComputedStyle(document.body).zoom,w:document.documentElement.scrollWidth,vw:window.innerWidth}));
 ok(z.a==='2'&&String(z.z)==='1.3'&&z.w<=z.vw+1,'Çok büyük yazı: zoom 1.3, yatay taşma yok ('+z.w+'/'+z.vw+')');
 await C.screenshot({path:OUT+'/s53_buyuk_yazi.png'});
