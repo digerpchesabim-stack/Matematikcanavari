@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 25 Kasım 2026 · Yayındaki sürüm: **69**
+Son güncelleme: 26 Kasım 2026 · Yayındaki sürüm: **70**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -31,7 +31,7 @@ Son güncelleme: 25 Kasım 2026 · Yayındaki sürüm: **69**
 ## 3. Yayın hattı
 - **Dosyalar:** `index.html` (tüm uygulama), `sw.js` (önbellek), `manifest.json`, `icon-192.png`, `icon-512.png` (S59: 3B canavardan üretildi). Ayrıca `firebase/` (kurallar) ve `.github/workflows/firestore-rules.yml`.
 - **Her sürümde:** `index.html` içinde `var APPV=N` (karşılama ekranındaki `Sürüm N` buradan gelir, S51) ve `sw.js` içindeki `var CACHE = 'mc-vN'` değerini artır. Service worker cache-first çalışır; yeni sürümde sayfa kendini yeniler (`controllerchange`/`PENDRELOAD`). Telefonda eski sürüm görünüyorsa uygulama kapatılıp açılır.
-- **gu/ önbelleği:** `sw.js` `GUC` (mc-guN) sürümler arasında silinmez; `gu/` içindeki bir dosya değişirse GUC'yi artır **ve index.html `GUCN` aynı değere** (Güncelle düğmesinin yedek temizliği sadece bunu korur; eski mc-gu* silinir). Şu an `mc-gu4`.
+- **gu/ önbelleği:** `sw.js` `GUC` (mc-guN) sürümler arasında silinmez; `gu/` içindeki bir dosya değişirse GUC'yi artır **ve index.html `GUCN` aynı değere** (Güncelle düğmesinin yedek temizliği sadece bunu korur; eski mc-gu* silinir). Şu an `mc-gu5`.
 - **GitHub Pages:** main'e push → "pages build and deployment" çalışır. Kontrol: `gh run list --limit 3`. (Canlı siteye WebFetch izinli değil.)
 - **Firestore kuralları:** `firebase/firestore.rules` değişip push edilince Actions kuralları otomatik yükler (secret `FIREBASE_SA`, servis hesabında "Firebase Rules Admin" rolü). Elle tetikleme: `gh api -X POST repos/digerpchesabim-stack/Matematikcanavari/actions/workflows/firestore-rules.yml/dispatches -f ref=main` (GraphQL engelli, `gh workflow run` çalışmaz).
 - **Sıra:** Kural değişikliği gerekiyorsa önce kurallar (geriye uyumlu/ek), sonra uygulama.
@@ -129,7 +129,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - Testlerdeki `U` yolu yerel `index.html`'i göstermeli (gerekirse düzenle). Animasyonlu öğelere `click({force:true})`.
 
 ## 8. Sürüm geçmişi
-Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **69** (25 Kasım 2026).
+Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **70** (26 Kasım 2026: yeni karşılama + ana sayfa, 2B maskot pozları, 2B yaratıklar, F0, gece testi düzeltmeleri).
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.

@@ -5027,7 +5027,7 @@ function rmBeat(){
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
 var GUCN='mc-gu5'; /* sw.js GUC ile aynı tutulmalı */
-var PV=2,APPV=69;
+var PV=2,APPV=70;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
