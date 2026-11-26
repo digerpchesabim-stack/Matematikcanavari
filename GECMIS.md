@@ -3,6 +3,7 @@
 `CLAUDE.md`'den taşındı (25 Kasım 2026). Gerekince `grep -n` ile oku.
 
 ## A. 8. Sürüm geçmişi (özet)
+- **72 (26 Kasım 2026):** Takımım'da kaptan, üye satırındaki **Çıkar** düğmesiyle bir üyeyi takımdan çıkarabilir (onay penceresi, `tmKick`). Firestore kuralı eklendi (önce kurallar yayınlandı). Çıkarılan oyuncuya "Artık bu takımda değilsin…" mesajı; yeniden çağrılabilir. Kılavuz güncellendi, test s56 (+4 kontrol), dsrv kuralı.
 - **71 (26 Kasım 2026):** kullanıcı telefonunda (PWA) sayfalar masaüstü gibi küçük göründü (yerleşim ~980 px). Önlem: viewport `minimum-scale=1` (web + Android), `html,body{overflow-x:clip}`, yükleme/resize'da yerleşim genişliği ekran genişliğinin 1,25 katını aşarsa viewport yeniden uygulanır. Emülasyonda (Pixel 5/7, Galaxy S9+) taşma bulunamadı; kök neden kesinleşmedi.
 - **70 (26 Kasım 2026):** tam ekran güneşli karşılama (MCB "Canavarı" yazısı, zıplayan harfler), yeni ana sayfa (Güneş Ülkesi + Oyna eşit şeritler, parıltı, 3 kare, yeni sekme çubuğu), 2B ejder maskot pozları + poz senaryosu (mcPose), Sis Kralı ve 14 yaratık 2B görseller (guDraw 2 poz), F0 düello altyapısı, gece QA: 6 hata + 27 küçük düzeltme (harita resize penceresi, canavar maçı duraklatma, büyük yazı, metinler). GUC mc-gu5.
 - ≤15: pratik, problemler, akıldan işlem oyunu, ses, profil, yarış odaları (sınıf sistemi kaldırıldı).

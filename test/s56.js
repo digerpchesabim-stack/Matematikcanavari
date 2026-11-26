@@ -117,6 +117,16 @@ ok((await ev(C,()=>rkRaw(st.profile).p))===c0,'canavar takımı maçı puan verm
 for(const p of [C,D])await ev(p,()=>{clearInterval(window.__au);rmLeave();go('home')});
 await sleep(600);
 
+// 5b) kaptan bir üyeyi çıkarır
+{const kk=Object.keys(S.store).find(x=>x.startsWith('tm/')&&x!=='tm/0'&&S.store[x].m.length>=2);
+if(kk){const t=S.store[kk],capK=Object.keys(pid).find(n=>pid[n]===t.cap),vic=t.m.find(x=>x!==t.cap),vk=Object.keys(pid).find(n=>pid[n]===vic);
+await ev(P[capK],()=>go('tml'));await sleep(900);
+ok(await ev(P[capK],()=>document.querySelectorAll('.tmkick').length>=1),'kaptan Çıkar düğmesini görüyor');
+ok(await ev(P[vk],()=>{go('tml');return document.querySelectorAll('.tmkick').length===0}),'üye Çıkar düğmesini görmüyor');
+await ev(P[capK],v=>tmKick(v),vic);await sleep(200);await ev(P[capK],()=>document.getElementById('my').click());await sleep(1800);
+ok(!S.store[kk].m.includes(vic)&&S.store[kk].cap===t.cap,'kaptan üyeyi çıkardı');
+ok(await ev(P[vk],()=>tmKey()===null),'çıkarılanın takımı yok');
+}else ok(false,'çıkarma testi için takım bulunamadı')}
 // 6) ayrılma: kaptan B ayrılır → A kaptan
 await ev(B,()=>{tmOpen()});await sleep(800);await ev(B,()=>tmLeave());await sleep(200);await ev(B,()=>document.getElementById('my').click());await sleep(1500);
 ok(JSON.stringify(S.store['tm/0'].m)===JSON.stringify([pid.A])&&S.store['tm/0'].cap===pid.A,'B ayrıldı, kaptanlık A\'ya geçti');

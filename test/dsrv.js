@@ -64,6 +64,7 @@ module.exports=function(opts){
       const ch=Object.keys(Object.assign({},old,d)).filter(k=>JSON.stringify(old[k])!==JSON.stringify(d[k]));
       const has=(a,b)=>b.every(x=>a.includes(x));
       if(d.m.length===old.m.length+1){const tv=store['tv/'+d.by];if(d.m.length<=4&&has(d.m,old.m)&&d.m.includes(d.by)&&!old.m.includes(d.by)&&ch.every(k=>['m','by','jn','ts'].includes(k))&&tv&&tv.t===+seg[1])return null;return deny('tm join')}
+      if(d.m.length===old.m.length-1&&d.by===old.cap&&d.m.includes(d.by)){if(has(old.m,d.m)&&d.cap===old.cap&&ch.every(k=>['m','by','ts'].includes(k)))return null;return deny('tm kick')}
       if(d.m.length===old.m.length-1){if(old.m.includes(d.by)&&has(old.m,d.m)&&!d.m.includes(d.by)&&d.m.includes(d.cap)&&ch.every(k=>['m','by','cap','ts'].includes(k)))return null;return deny('tm leave')}
       if(JSON.stringify(d.m)===JSON.stringify(old.m)&&old.m.includes(d.by)&&old.m.includes(d.cap)&&[0,1].includes((d.w|0)-(old.w|0))&&[0,1].includes((d.l|0)-(old.l|0))&&ch.every(k=>['cap','ct','w','l','lm','by','ts'].includes(k)))return null;
       return deny('tm update '+ch);

@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 26 Kasım 2026 · Yayındaki sürüm: **71**
+Son güncelleme: 26 Kasım 2026 · Yayındaki sürüm: **72**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -119,7 +119,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - Arkadaşlar (S38): `pk/{id}` {k,u} okunamaz, aynı k ile sahiplik taşınır; `owns(pid)` = pk.u == auth.uid. `pl/{id}` {nick,seen,v} herkese okunur. `fr/{a_b}` (a<b) {a,b,by,st,ts}: oluşturma 'req' (by sahibi), güncelleme sadece st→'ok' (karşı taraf), silme taraflar. `iv/{alıcı}`: sadece arkadaş yazar, alıcı/gönderen okur/siler.
 - Yedek (S36): `bk/{10 karakter}` {u,d,ts,v}, sadece get (liste yok), sahibi günceller.
 - S54: `iv` belgesine alıcı cevap yazar: `rs` ('seen'|'ok'|'busy'|'later'), `rr` (randevu odası), `ra` (saat). Oda `at` (zamanlı oyun başlama zamanı). `rv/{ODA}_{alıcı}` {from, fn, to, room, op, lv, win, md:'duel'|'mm', at, ts, st:'req'|'ok'|'no'|'x'(iptal)|'d'(başladı), n}: okuma oturum (liste), oluşturma arkadaş + oda kurucusu, alıcı st→ok/no, kurucu st→x/d, silme taraflar.
-- S56: `tm/{ad no}` {m:[pid ≤4], cap, by, w, l, ct (kaptanlık maçı), jn (son katılma), lm (son yazılan maç), ts, v}: okuma oturum; oluşturma m=[by]; katılma sadece kendini ekler + geçerli `tv`; ayrılma sadece kendini çıkarır (kimse başkasını çıkaramaz); cap/ct/w/l (+0/+1)/lm üyelerce; silme son üye. `tv/{alıcı}` {t,from,nick,ts} takıma çağırma (üye → arkadaş). `ti/{takım}` {by,nick,room,a,b,ts,cm?} takım çağrısı (a takımının üyesi yazar; doc a ya da b). Oda + `ka`,`kb` (−1 Canavar Takımı),`cm` (kaptanlık maçı), güncellemede `pa` (eşleşme). Oyuncu + `tk`,`br` (bot sonuçları). `pl` + `tm`. QV=5 (takım kapışması odası qv 5).
+- S56: `tm/{ad no}` {m:[pid ≤4], cap, by, w, l, ct (kaptanlık maçı), jn (son katılma), lm (son yazılan maç), ts, v}: okuma oturum; oluşturma m=[by]; katılma sadece kendini ekler + geçerli `tv`; ayrılma sadece kendini çıkarır; **S72: kaptan (by==cap) başka bir üyeyi çıkarabilir** (m bir eksilir, cap değişmez, sadece m/by/ts); cap/ct/w/l (+0/+1)/lm üyelerce; silme son üye. `tv/{alıcı}` {t,from,nick,ts} takıma çağırma (üye → arkadaş). `ti/{takım}` {by,nick,room,a,b,ts,cm?} takım çağrısı (a takımının üyesi yazar; doc a ya da b). Oda + `ka`,`kb` (−1 Canavar Takımı),`cm` (kaptanlık maçı), güncellemede `pa` (eşleşme). Oyuncu + `tk`,`br` (bot sonuçları). `pl` + `tm`. QV=5 (takım kapışması odası qv 5).
 - S55: `iv` + `g` (toplu davet; başkasının açık (10 dk içinde, cevapsız/seen) davetinin üzerine yazamaz), `md:'race'`. `ms/{gönderen}_{alıcı}` {from,to,m (1–60 tam sayı),ts,nick}: okuma oturum, yazma gönderen + arkadaş, silme taraflar.
 
 ## 7. Test düzeneği (`test/` klasörü)
@@ -129,7 +129,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - Testlerdeki `U` yolu yerel `index.html`'i göstermeli (gerekirse düzenle). Animasyonlu öğelere `click({force:true})`.
 
 ## 8. Sürüm geçmişi
-Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **71** (26 Kasım 2026, 70'in düzeltmesi: telefonda sayfa küçük/masaüstü gibi görünmesine karşı viewport minimum-scale=1, html/body overflow-x:clip, viewport bekçisi. 70: yeni karşılama + ana sayfa, 2B maskot pozları, 2B yaratıklar, F0, gece testi düzeltmeleri).
+Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **72** (26 Kasım 2026: kaptan üyeyi takımdan çıkarır — `tmKick`, `.tmkick`, kural `tm` kaptan çıkarma). 71 (70'in düzeltmesi: telefonda sayfa küçük/masaüstü gibi görünmesine karşı viewport minimum-scale=1, html/body overflow-x:clip, viewport bekçisi. 70: yeni karşılama + ana sayfa, 2B maskot pozları, 2B yaratıklar, F0, gece testi düzeltmeleri).
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
