@@ -8,7 +8,7 @@ await p.addInitScript(fs.readFileSync(__dirname+'/mockfb.js','utf8'));await p.ad
 await p.goto('http://localhost:8799/index.html');await sleep(800);
 await p.evaluate(()=>{guest&&guest()});await sleep(500);
 await p.evaluate(()=>guOpen());await sleep(600);T(await p.evaluate(()=>st.screen)==='guintro','ilk girişte hikâye');
-await p.evaluate(()=>guIntroEnd());await sleep(900);T(await p.evaluate(()=>st.screen)==='gutalim','hikâyeden sonra talim');
+await p.evaluate(()=>guIntroEnd());await sleep(600);T(await p.evaluate(()=>st.screen==='gumap'&&!!document.querySelector('.gzov')),'hikâyeden sonra zorluk seçimi');await p.evaluate(()=>guZPick('o'));await sleep(900);T(await p.evaluate(()=>st.screen)==='gutalim','seçimden sonra talim');
 T(await p.evaluate(()=>!!window.__TL&&__TL.Q.p.length===3),'3 hedef kalktı');
 for(let i=0;i<14&&await p.evaluate(()=>__TL.Q.n)<5;i++){await sleep(1800);await p.evaluate(()=>__TL.hit(true));console.log('  n=',await p.evaluate(()=>[__TL.Q.n,__TL.Q.wait,__TL.Q.p.map(x=>x.st+':'+x.ok).join(' ')]))}
 await sleep(3500);T(await p.evaluate(()=>document.getElementById('tl-end').classList.contains('on')),'5 doğruda bitiş kartı');

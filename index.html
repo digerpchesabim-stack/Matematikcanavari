@@ -963,10 +963,11 @@ html[data-fs] body.welc{zoom:1}
 .gtop #gch{min-width:0;flex:0 1 auto;overflow:hidden;text-overflow:ellipsis}
 .gtop .gl,.gtop .gbk,.gtop .gsto{flex:none}
 /* S74 zafer sayfası, madalyalar */
+.gdcw.garm::after{content:'🛡️';position:absolute;left:50%;top:14%;transform:translateX(-50%);font-size:44px;filter:drop-shadow(0 0 10px rgba(180,200,255,.8));animation:garm 1.6s ease-in-out infinite;z-index:3;pointer-events:none}@keyframes garm{50%{transform:translateX(-50%) scale(1.12)}}
 .gshuf{animation:gshuf .45s ease-out}@keyframes gshuf{0%{opacity:.2;transform:scale(.94) rotate(-1.5deg)}100%{opacity:1;transform:none}}
-.gmd{display:inline-flex;align-items:center;gap:6px;padding:6px 12px 6px 6px;border-radius:999px;font:700 14px MCP,Poppins,sans-serif;color:#3b2a1a;background:linear-gradient(#fbe7a8,#e8bf5a);border:2px solid #9a6b2c;box-shadow:0 3px 0 #7a5420}
+.gmd{display:inline-flex;align-items:center;gap:6px;padding:6px 16px 6px 6px;white-space:nowrap;max-width:100%;box-sizing:border-box;border-radius:999px;font:700 14px MCP,Poppins,sans-serif;color:#3b2a1a;background:linear-gradient(#fbe7a8,#e8bf5a);border:2px solid #9a6b2c;box-shadow:0 3px 0 #7a5420}
 .gmd i{font-style:normal;display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#fff3c4;color:#c8861a;font-size:16px}
-.gmd-k{background:linear-gradient(#f3d9b0,#d6a86a)}.gmd-o{background:linear-gradient(#fbe7a8,#e8bf5a)}.gmd-z{background:linear-gradient(#f6d2c4,#c8574a);color:#fff8e6;border-color:#6b1f18}.gmd-z i{color:#a8342b}
+.gmd-k{background:linear-gradient(#f3d9b0,#d6a86a)}.gmd-o{background:linear-gradient(#fbe7a8,#e8bf5a)}.gmd-z{background:linear-gradient(#a8342b,#7a1f19);color:#fff8e6;border-color:#6b1f18}.gmd-z i{color:#a8342b}
 .kc-gu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .gend{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;flex:1;padding:4px 4px 0}
 .gend-r{position:absolute;left:50%;top:0;width:520px;height:520px;margin-left:-260px;margin-top:-90px;border-radius:50%;pointer-events:none;background:repeating-conic-gradient(rgba(255,206,92,.22) 0 7deg,transparent 7deg 18deg);-webkit-mask:radial-gradient(circle,#000 15%,transparent 62%);mask:radial-gradient(circle,#000 15%,transparent 62%);animation:gendr 40s linear infinite}
@@ -991,7 +992,7 @@ html[data-fs] body.welc{zoom:1}
 .gzc:active{transform:translateY(3px);box-shadow:0 1px 0 #b48a48}
 .gzc .gzs{grid-row:1/3}.gzc .gzs i{font-size:20px}.gzc b{font-size:18px}.gzc span:not(.gzs){grid-column:2;font-size:13px;color:#5a4a34}.gzc small{grid-column:2;font-size:12px;font-weight:700;color:#6b4a26}
 .gzc.gz-k{border-color:#5fae74}.gzc.gz-o{border-color:#d9a83a}.gzc.gz-z{border-color:#a8433a}.gzc.on{outline:3px solid #2f6bff;outline-offset:1px}
-.gzdn .gzs i,.gend .gzs i{font-size:13px}.gend .gzs{color:#e8c36a}
+.gzdn .gzs i,.gend .gzs i{font-size:13px}.gzdn .gzs,.gzdn .gzs i{color:#e8c36a}.gzdn .gzs i.e{opacity:.35}.gend .gzs{color:#e8c36a}
 :root[data-theme="hc"] .gzp,:root[data-theme="hc"] .gzc{background:#fff;color:#000;border-color:#000}
 @media (max-width:360px){.gtop{gap:6px;padding-left:8px;padding-right:8px}.gtop .gch{padding:8px 8px;font-size:13px}}
 @media (max-height:620px){.ani{min-height:84px}.ani .an{font-size:38px}.q{padding:14px 10px;margin-bottom:12px}}
@@ -2249,7 +2250,7 @@ function gQ0(){
   }
   g.lastTxt=txt;
   /* S74: oyun içinde aynı soru tekrar gelmesin (g.seen yalnızca tek kişilik oyunda ve Güneş Ülkesi'nde; tohumlu yarış/kapışma dizileri değişmez) */
-  if(g.seen){if(t>=50){g.seen={};if(txt===lt0&&!g.rq){g.lastTxt=lt0;g.rq=1;try{return gQ0()}finally{g.rq=0}}}g.seen[gSeenK(op,txt)]=1}
+  if(g.seen){if(t>=50){g.seen={};(g.rec||[]).forEach(function(k){g.seen[k]=1});if(txt===lt0&&!g.rq){g.lastTxt=lt0;g.rq=1;try{return gQ0()}finally{g.rq=0}}}g.seen[gSeenK(op,txt)]=1;(g.rec=g.rec||[]).push(gSeenK(op,txt));if(g.rec.length>5)g.rec.shift()}
   var pool=[];alt.forEach(function(v){if(v>=0&&v!==ans&&pool.indexOf(v)<0)pool.push(v)});
   var n=3;while(pool.length<3){if(ans+n!==ans&&pool.indexOf(ans+n)<0)pool.push(ans+n);n++}
   for(i=pool.length-1;i>0;i--){var j=rnd(0,i),tmp=pool[i];pool[i]=pool[j];pool[j]=tmp}
@@ -5079,7 +5080,7 @@ function rmBeat(){
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
 var GUCN='mc-gu5'; /* sw.js GUC ile aynı tutulmalı */
-var PV=2,APPV=73;
+var PV=2,APPV=74;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
@@ -5806,8 +5807,7 @@ var RKS=[['⚔️','1\'e 1 galibiyet',2],['🛡️','Muharebe 1.\'liği',3],['�
 function rkCardHtml(d){
   var sp=nkSplit(d.nick),h='<div class="kcard kshine'+(d.r===6?' fire':'')+'"><div class="kc-rays"></div>'+['a','b','c','d'].map(function(k){return '<i class="kc-co '+k+'"><svg viewBox="0 0 30 30"><path d="M2 28V8Q2 2 8 2h20" fill="none" stroke="currentColor" stroke-width="2"/><path d="M6 24V10q0-4 4-4h14" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="6" cy="6" r="2.4" fill="currentColor"/><path d="M14 6q2 4 0 8q-2-4 0-8z" fill="currentColor" opacity=".7"/></svg></i>'}).join('')+'<div class="kc-e">'+RKA.emblem(d.r)+'</div><div class="kc-n">'+esc(sp[0]+' '+sp[1])+'</div><div class="kc-r">'+RKA.RANKS[d.r].n+(d.s?' · '+d.s[0]+' puan':'')+'</div>';
   if(d.own&&d.x)h+='<div class="kc-pg">'+(d.r<6?'<span class="rkbar"><i style="width:'+Math.min(100,Math.round(d.x.p*100/RKP[d.r+1]))+'%"></i></span>':'')+'<small>'+rkLeft(d.x)+'</small></div>';
-  var md=rkMdHtml(d.m),gm=d.own&&st.profile?guMedals(st.profile):[];
-  if(gm.length)h+='<div class="kc-t">Güneş Ülkesi</div><div class="kc-m kc-gu">'+gm.map(guMedalHtml).join('')+'</div>';
+  var gm=d.own&&st.profile?guMedals(st.profile):[],md=(gm.length?'<div class="kc-gu">'+gm.map(guMedalHtml).join('')+'</div>':'')+rkMdHtml(d.m);
   h+='<div class="kc-t">Madalyalar</div><div class="kc-m">'+(md||'<small>Henüz madalya yok</small>')+'</div>';
   if(d.s){h+='<div class="kc-s">';RKS.forEach(function(k){h+='<div><b>'+Number(d.s[k[2]]||0).toLocaleString('tr-TR')+'</b><small>'+k[0]+' '+k[1]+'</small></div>'});h+='</div>'}
   else if(!d.own)h+='<p class="kc-old">'+(d.old?'Bu oyuncu uygulamayı henüz güncellemedi. Güncelleyince kartı dolar.':'İstatistikler bir sonraki oyunundan sonra görünür.')+'</p>';
@@ -7313,7 +7313,7 @@ function guLv(n){var z=guZ(),i;
   if(n===48)return z==='k'?'k':'o';if(n===49)return z==='z'?'z':'o';
   if(GUTB[n])return guTb(n)?'k':'o';
   i=n-GUR[guReg(n)].a;return z==='k'?(i<6?'k':'o'):(z==='o'?(i<3?'k':'o'):(i<2?'o':'z'))}
-function guLvTxt(n){var t=guTb(n);if(n===48||n===49)return 'Karışık';if(!t)return ({k:'Tek basamak',o:'İki basamak',z:'İki basamak + iki basamak'})[guLv(n)];
+function guLvTxt(n){var t=guTb(n);if(n===48||n===49)return 'Karışık';if(!t)return ({k:'1 basamak',o:'2 basamak',z:'2 + 2 basamak'})[guLv(n)];
   if(t.length===1)return t[0]+'’ler tablosu';if(t.length>=8)return 'Bütün tablolar';return t.join(', ')+' karışık'}
 function guKind(n){var c=GUS[n];return !c?0:(GUK[c][1]?2:1)}
 function guKey(){return st.profile||'~'}
@@ -7583,7 +7583,7 @@ function guZHtml(){var cur=guRaw().zk,h='<div class="gzov" role="dialog" aria-la
   return h+(cur?'<button class="gbtn ghost3" onclick="guZClose()">Vazgeç</button>':'')+'</div></div>'}
 function guZOpen(){if(GU.rush)return;GU.pick=1;sndPop();render()}
 function guZClose(){GU.pick=0;render()}
-function guZPick(z,n){var nx=GU.pickNext;GU.pick=0;GU.pickNext='';GU.sel=0;GU.walk=null;guZSet(z);sndPop();var sl=0;if(n){var dd=guD();if(GUT||n<=dd.c+1)sl=n;else setTimeout(function(){toast(GUZ[z].n+' yolunda durak '+(dd.c+1)+'’den devam ediyorsun')},300)}if(nx)go(nx);else if(st.screen!=='gumap')guToMap();if(sl){GU.sel=sl;if(st.screen==='gumap')render()}else if(!nx&&st.screen==='gumap')render()}
+function guZPick(z,n){var nx=GU.pickNext;GU.pick=0;GU.pickNext='';GU.sel=0;GU.walk=null;guZSet(z);sndPop();var sl=0;if(n){var dd=guD();if(dd.c<n-1){dd.c=n-1;guPut(dd);dd=guD()}if(GUT||n<=dd.c+1)sl=n;else setTimeout(function(){toast(GUZ[z].n+' yolunda durak '+(dd.c+1)+'’den devam ediyorsun')},300)}if(nx)go(nx);else if(st.screen!=='gumap')guToMap();if(sl){GU.sel=sl;if(st.screen==='gumap')render()}else if(!nx&&st.screen==='gumap')render()}
 function guCardHtml(n,d){
   var k=guKind(n),c=GUS[n],r=GUR[guReg(n)],lv=guLv(n),done=n<=d.c,open=GUT||n<=d.c+1,L=guLight(d),t,p,b;
   var LVT={k:'Kolay',o:'Orta',z:'Zor'};
@@ -7818,7 +7818,8 @@ function guNext(){
   var q=guQ(GD.op,GD.lv,GD.last,GD.n,GD.seen=GD.seen||{});GD.last=q.txt;GD.q=q;GD.res=false;GD.lock=false;GD.miss=false;GD.t0=Date.now();GD.L=guLim();GD.T=guPlan();GD.pc=Math.random()<(GD.boss?guZC().bpc:guZC().pc);GD.qi=(GD.qi|0)+1;
   var e=document.getElementById('gd-q');if(e)e.textContent=q.txt+' = ?';
   var a=document.getElementById('gd-a');if(a)a.innerHTML=guOptsHtml(q,'guAns');
-  if(GD.arm)guMsg('🛡️ Taş Dev taş zırh giydi! İlk vuruşun zırhı kırar.');
+  var cwa=document.getElementById('gd-cw');if(cwa)cwa.classList.toggle('garm',!!GD.arm);
+  if(GD.arm)guMsg(GD.qi>1?'🛡️ Zırh hâlâ sağlam!':'🛡️ Taş Dev zırh giydi! Doğru bil, zırhı kır!');
   else if(GD.rage===1){GD.rage=2;guMsg('🔥 Sis Kralı öfkelendi! Artık daha hızlı!','bad')}
   else guMsg('');
   guAva('look');
@@ -7864,7 +7865,7 @@ function guPips(){
 function guSpc(){return guZ()!=='k'}
 function guMeHit(){
   if(!GD)return;
-  if(GD.arm){GD.arm=0;sndClang();buzz([40,30,40]);guAva('cheer');draPlay('gd-dr','k-attack');guMsg('🛡️ Taş Dev’in zırhı çatladı! Şimdi vurabilirsin!','ok');var cw0=document.getElementById('gd-cw');if(cw0){cw0.classList.remove('hit');void cw0.offsetWidth;cw0.classList.add('hit')}guT(function(){if(GD.ph==='fight')guNext()},1300);return}
+  if(GD.arm){GD.arm=0;var cwb=document.getElementById('gd-cw');if(cwb)cwb.classList.remove('garm');sndClang();buzz([40,30,40]);guAva('cheer');draPlay('gd-dr','k-attack');guMsg('🛡️ Taş Dev’in zırhı çatladı! Şimdi vurabilirsin!','ok');var cw0=document.getElementById('gd-cw');if(cw0){cw0.classList.remove('hit');void cw0.offsetWidth;cw0.classList.add('hit')}guT(function(){if(GD.ph==='fight')guNext()},1300);return}
   GD.hp--;
   if(GD.c==='knight'&&guSpc()&&!GD.rage&&GD.hp>0&&GD.hp<=Math.floor((GD.hx||5)/2)){GD.rage=1;guT(function(){if(GD.ph!=='fight')return;guFlash(0);buzz([120,60,120]);guVoice('king-attack2',.8)},700)}guS('sword-hit',1);guAva('cheer');draPlay('gd-dr','k-attack');guT(function(){var k=document.getElementById('gd-spk');if(k&&!RMOT){k.classList.remove('go');void k.offsetWidth;k.classList.add('go')}},380);guMsg('⚔️ Önce sen bildin!','ok');buzz(30);
   var sl=document.getElementById('gd-sl');if(sl){sl.classList.remove('go');void sl.offsetWidth;sl.classList.add('go')}
