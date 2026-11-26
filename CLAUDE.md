@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 26 Kasım 2026 · Yayındaki sürüm: **70**
+Son güncelleme: 26 Kasım 2026 · Yayındaki sürüm: **71**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -129,7 +129,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - Testlerdeki `U` yolu yerel `index.html`'i göstermeli (gerekirse düzenle). Animasyonlu öğelere `click({force:true})`.
 
 ## 8. Sürüm geçmişi
-Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **70** (26 Kasım 2026: yeni karşılama + ana sayfa, 2B maskot pozları, 2B yaratıklar, F0, gece testi düzeltmeleri).
+Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **71** (26 Kasım 2026, 70'in düzeltmesi: telefonda sayfa küçük/masaüstü gibi görünmesine karşı viewport minimum-scale=1, html/body overflow-x:clip, viewport bekçisi. 70: yeni karşılama + ana sayfa, 2B maskot pozları, 2B yaratıklar, F0, gece testi düzeltmeleri).
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.

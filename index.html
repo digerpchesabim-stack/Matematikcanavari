@@ -2,11 +2,13 @@
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f5f3fb">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
 <title>Matematik Canavarı</title>
+<style>html,body{overflow-x:clip;max-width:100%}</style>
+<script>(function(){function fx(){try{var w=document.documentElement.clientWidth,sw=(screen&&screen.width)||0;if(sw&&w>sw*1.25){var m=document.querySelector('meta[name=viewport]');if(m){var c=m.getAttribute('content');m.setAttribute('content','width=device-width');m.setAttribute('content',c)}}}catch(e){}}window.addEventListener('load',fx);window.addEventListener('resize',fx);window.addEventListener('pageshow',fx)})();</script>
 <script>try{var T0=JSON.parse(localStorage.getItem('mc_theme'));if(T0==='sepia'||T0==='ocean')T0='light';if(T0&&T0!=='auto')document.documentElement.setAttribute('data-theme',T0)}catch(e){}try{var F0=JSON.parse(localStorage.getItem('mc_fs'));if(F0===1||F0===2)document.documentElement.setAttribute('data-fs',F0)}catch(e){}</script>
 <style>
 :root{--bg:#f4f1fb;--card:#fff;--text:#1d2433;--muted:#6b7385;--accent:#7048e8;--accent-t:#fff;--ok:#1f9d55;--ok-bg:#d9f3e3;--bad:#d64545;--bad-bg:#fbe0e0;--line:#e0daf0}
@@ -1084,7 +1086,7 @@ function natP(n){try{return (CAPN&&CAPN.Plugins&&CAPN.Plugins[n])||null}catch(e)
 if(NATIVE)(function(){
   document.documentElement.classList.add('native');
   /* çift dokunma/sıkıştırma yakınlaştırması ve kaydırma sonu çekme efekti kapalı (sadece Android paketi) */
-  try{var vm=document.querySelector('meta[name=viewport]');if(vm)vm.setAttribute('content','width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover')}catch(e){}
+  try{var vm=document.querySelector('meta[name=viewport]');if(vm)vm.setAttribute('content','width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover')}catch(e){}
   try{var sx=document.createElement('style');sx.textContent='html.native,html.native body{touch-action:manipulation;overscroll-behavior:none}';document.head.appendChild(sx)}catch(e){}
   var H=natP('Haptics'),S=natP('Share'),F=natP('Filesystem');
   /* titreşim deseni [açık,kapalı,açık…] */
@@ -5027,7 +5029,7 @@ function rmBeat(){
 function rmLost(p){return !!(p&&!p.done&&CL.user&&p.uid!==CL.user.uid&&RM.seen[p.uid]&&Date.now()-RM.seen[p.uid]>30000)}
 /* S51: oyun başlarken rakiplerin belgesi henüz gelmemiş olabilir (davetle girende). Gelene kadar bekle. */
 var GUCN='mc-gu5'; /* sw.js GUC ile aynı tutulmalı */
-var PV=2,APPV=70;
+var PV=2,APPV=71;
 function appUpd(){
   if(!navigator.onLine){toast('Güncellemek için internet gerekir');return}
   if(!('serviceWorker' in navigator)){location.reload();return}
