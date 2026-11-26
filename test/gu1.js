@@ -24,6 +24,10 @@ ok(await p.evaluate(()=>getComputedStyle(document.getElementById('tabs')||docume
 await shot('01b_story');
 await p.click('.guvb');await sleep(300);
 ok(await p.evaluate(()=>(st.screen==='gumap'||st.screen==='gutalim')&&guD().h===1),'Geç → harita, izlendi kaydı');
+ok(await p.evaluate(()=>st.screen==='gumap'&&!!document.querySelector('.gzov')&&!guRaw().zk),'hikâyeden sonra zorluk seçimi');
+await shot('01c_tier');
+await p.click('.gzc.gz-o');await sleep(300);
+ok(await p.evaluate(()=>st.screen==='gutalim'&&guZ()==='o'&&!document.querySelector('.gzov')),'Orta seçildi → talim');
 await p.evaluate(()=>{var d=guD();d.t=1;guPut(d);go('home')});await sleep(200);await p.click('.hm-gu .hm-go');await sleep(300);
 ok(await p.evaluate(()=>st.screen==='gumap'),'ikinci açılışta doğrudan harita');
 await p.click('.gsto[aria-label="Hikâyeyi izle"]');await sleep(300);
@@ -59,7 +63,7 @@ ok(await p.evaluate(()=>GQ.end&&GQ.stars===0&&__GU.st().d.c===1),'5 doğru → g
 ok(await p.evaluate(()=>/İyi mücadele/.test(document.getElementById('app').textContent)),'moral bozmayan mesaj');
 // süre dolunca yanlış sayılır
 await p.evaluate(()=>guStopOpen(2));await sleep(150);
-ok(await p.evaluate(()=>!!document.getElementById('gs-t')&&guQLim()===12000),'durakta süre çubuğu (Kolay 12 sn)');
+ok(await p.evaluate(()=>!!document.getElementById('gs-t')&&Math.abs(guQLim()-12000*0.85)<1),'durakta süre çubuğu (Orta: 12 sn × 0,85)');
 await p.evaluate(()=>{GQ.t0-=guQLim()+50});await sleep(400);
 ok(await p.evaluate(()=>GQ.i===0&&!GQ.lock&&/Acele etme/.test(document.getElementById('gs-m').textContent)),'ilk süre dolması affedildi, aynı soru');
 await p.evaluate(()=>{GQ.t0-=guQLim()+50});await sleep(400);
