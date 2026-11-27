@@ -44,5 +44,13 @@ await E(()=>{guZSet('z');go('gutalim')});await sleep(2500);
 ok(await E(()=>st.screen==='gutalim'&&!!document.getElementById('tlcv')),'Zor’da talim açıldı');
 await shot('03_talim_z');
 await E(()=>{guZSet('o');go('gumap')});await sleep(500);
+// 4) kendiliğinden güncelleme
+ok(await E(()=>{st.screen='guduel';var a=auSafe();st.screen='home';var b=auSafe();st.screen='lobby';RM.host=true;var c=auSafe();RM.host=false;RM.started=false;var d=auSafe();go('gumap');return !a&&b&&!c&&d}),'güncelleme yalnız güvenli ekranda (oyunda ve kurucu lobisinde değil)');
+ok(await E(()=>{try{auCheck(1);return true}catch(e){return false}}),'güncelleme kontrolü hatasız');
+await E(()=>{PENDRELOAD=true;window.__rl=0;go('home')});await sleep(300);
+ok(await E(()=>!!document.querySelector('.auov')&&/güncelleniyor/.test(document.querySelector('.auov').textContent)),'yeni sürüm varken menüye dönünce "güncelleniyor" yazısı');
+await shot('04_update');
+await sleep(1500);
+ok(await E(()=>!document.querySelector('.auov')),'sayfa yenilendi');
 ok(!errs.length,'sayfa hatası yok '+errs.join(' | '));
 console.log(fail?fail+' HATA':'HEPSİ GEÇTİ');await b.close();srv.close();process.exit(fail?1:0)})();

@@ -1,7 +1,7 @@
 # Matematik Canavarı — Proje Belgesi (Claude için)
 
 Bu dosya projenin tek kaynak belgesidir. Yeni bir oturumda önce bunu oku; bilgiyi yeniden sorma.
-Son güncelleme: 26 Kasım 2026 · Yayındaki sürüm: **75**
+Son güncelleme: 26 Kasım 2026 · Yayındaki sürüm: **76**
 
 ## 1. Proje ve kullanıcı
 - **Ne:** Özel eğitim meslek okulundaki öğrenciler (11 Zihin B, hafif zihinsel yetersizlik) için 4 işlem pratik + oyun uygulaması. Tek dosyalı mobil PWA.
@@ -129,7 +129,7 @@ Girişte ve menülerde "📖 Uygulama Kılavuzu" (`GUIDE` dizisi: oyun, yarış,
 - Testlerdeki `U` yolu yerel `index.html`'i göstermeli (gerekirse düzenle). Animasyonlu öğelere `click({force:true})`.
 
 ## 8. Sürüm geçmişi
-Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **75** (26 Kasım 2026: öneri listesinin tamamı + hikâye derinleştirme; ayrıntı GECMIS.md). 74 (büyük güncelleme: Güneş Ülkesi Kolay/Orta/Zor, paylaşım kartları, zafer sayfası, madalyalar, bekçi hamleleri, tekrar etmeyen sorular, yeni hikâye videosu; ayrıntı GECMIS.md). 72 (kaptan üyeyi takımdan çıkarır — `tmKick`, `.tmkick`, kural `tm` kaptan çıkarma). 71 (70'in düzeltmesi: telefonda sayfa küçük/masaüstü gibi görünmesine karşı viewport minimum-scale=1, html/body overflow-x:clip, viewport bekçisi. 70: yeni karşılama + ana sayfa, 2B maskot pozları, 2B yaratıklar, F0, gece testi düzeltmeleri).
+Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm: **76** (27 Kasım 2026: Güneş Ülkesi'nde alt alta gösterim, talim zorluğa göre, kendiliğinden güncelleme). 75 (26 Kasım 2026: öneri listesinin tamamı + hikâye derinleştirme; ayrıntı GECMIS.md). 74 (büyük güncelleme: Güneş Ülkesi Kolay/Orta/Zor, paylaşım kartları, zafer sayfası, madalyalar, bekçi hamleleri, tekrar etmeyen sorular, yeni hikâye videosu; ayrıntı GECMIS.md). 72 (kaptan üyeyi takımdan çıkarır — `tmKick`, `.tmkick`, kural `tm` kaptan çıkarma). 71 (70'in düzeltmesi: telefonda sayfa küçük/masaüstü gibi görünmesine karşı viewport minimum-scale=1, html/body overflow-x:clip, viewport bekçisi. 70: yeni karşılama + ana sayfa, 2B maskot pozları, 2B yaratıklar, F0, gece testi düzeltmeleri).
 
 ## 9. Bekleyen / yayınlanmamış
 - **60 (11 Kasım 2026 yayında; kullanıcı "son sürümü yükle" dedi). Yasal metinlerdeki yer tutucular henüz boş (Play'e göndermeden doldurulacak).** Play Store hazırlığının ilk adımı. Kullanıcı kararları (11 Kasım 2026): mağaza hedefi normal gelişim gösteren çocuklar (6–10 yaş, Aile Politikası); **ebeveyn onayı/kilidi YOK** (Aile Politikası "sosyal özellik" = serbest içerik paylaşımı; bizde hazır ad + hazır mesaj, serbest metin yok → zorunlu değil; serbest metin eklenirse zorunlu olur); rekor tablosu olduğu gibi.
@@ -206,6 +206,7 @@ Ayrıntılı geçmiş `GECMIS.md` §A (gerekince `grep -n` ile bak). Son sürüm
   - Online: yarışta 40 sn ses vermeyen bitmiş sayılır (`roverState`), `rmLost` 30 sn, 15 sn sonra "🏠 Beklemeden çık" (`RM.rd`; çıkışta `rhistSave`); kapışmada süre + 3 sn geçip rakipten 6 sn ses yoksa "📶 Rakip bekleniyor…".
   - Hikâye derinleştirme: Sis Gözü (Orta soluklaşır 3 sn, Zor 2,5 sn'de gizlenir, dokununca 1,2 sn görünür; `guPeek`), Kalkan Refleksi (yaratık önce davranınca 🛡️, pencere Kolay 3,5 / Orta 3 / Zor 2,3 sn, düello başına 2; `guFoeAtk/guShield/guShT`, cevaplar `.gdim`), Kılıç Bileme (yanlış defteri kökte `w` son 20, `guWrong`; bekçi kartında ≥3 yanlışta düğme; ≥N−1 doğru → `kb` → bekçiye ilk vuruş çift), Gölge Kuzgunu (8. duraktan sonra durak sonunda %20, doğru → 🪶 `cr`), mühürlü sandık (bölge başına 1, bekçi yenilince açılır, 3 soru × 6 sn×OPF×tf, ☀️ +2; kademe başına `y`; konum durakları en az çakışan aday `guSidePos`), Canavar Kitabı (harita sağ üst 📖, `GU.book`). `guRootSet`, `guPut` kök alanları (w, cr, kb; null ise silinir), acMerge `y` birleşir, `cr` max, `kb` yerel kalır.
   - Testler `test/s75.js` (+ s60 etiketleri, tl1 seçim kartı). Yasal metin yer tutucuları hâlâ boş (kullanıcı bilgisi bekleniyor).
+- **S76 (27 Kasım 2026, yayında):** Güneş Ülkesi durak/düellosunda ↕ Alt alta (`guQH`, `guFmtBtn`, `guFmt`; `st.vert`/`mc_vert` Pratik'le ortak; ÷ yan yana). Talim soruları kademeye göre (`tlRun` `makeQ` → `guQ`: Kolay 'k', Orta 'o'/karışık tablo, Zor 'z'/2×1). **Kendiliğinden güncelleme:** `auCheck` (açılış +2,5 sn, görünür olunca 45 sn aralıkla, rooms/online/rjoin/lobby'ye girerken) `reg.update()`; sw.js `skipWaiting` → `controllerchange` → `auSafe()` ise `auReload()` ("🔄 Uygulaman güncelleniyor" + yenile; katılımcı lobideyse `?oda=KOD` ile odaya geri döner); oyun ekranında `PENDRELOAD`, `go()` güvenli ekrana (`AUSAFE`) geçince yenilenir. Gerçek SW güncelleme testi scratch `swupd.js` (76→77, 1,5 sn). Test `test/s76.js`.
 ## 10. Bilinen eksikler (kullanıcı "ileride" dedi)
 1. Ortak telefonda rekor satırı cihaza bağlı → başka profil adı üzerine yazar (cihaz+profil anahtarı gerekir).
 2. Yarış ortasında kopan oyuncu geri dönemez.
